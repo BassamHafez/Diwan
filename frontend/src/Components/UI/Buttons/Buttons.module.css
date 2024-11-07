@@ -1,0 +1,45 @@
+.btn_one{
+    padding: 8px 14px;
+    background-color: var(--main_color);
+    color: white;
+    transition: all .4s;
+    min-width: 6.25rem;
+    overflow:hidden ;
+}
+.white_btn{
+    background-color: white;
+    color: var(--main_color);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.227);
+}
+
+.btn_one_layer{
+    background-color: white;
+    width: 1.25rem;
+    height:150%;
+    position: absolute;
+    left: 0;
+    top:50%;
+    transform: translate(-50%,-50%);
+    rotate: 15deg;
+    opacity: 0;
+    transition: all .4s;
+}
+.white_btn .btn_one_layer{
+    background-color: var(--main_color_light);
+}
+
+.btn_one:hover{
+    scale: 1.03;
+}
+
+.btn_one:hover .btn_one_layer{
+    animation-name: buttonMovement;
+    animation-duration: .3s;
+    animation-direction: alternate;
+} 
+
+@keyframes buttonMovement {
+    0%{opacity: 0;left: 0;}
+    99%{opacity: 1;left: 100%;}
+    100%{opacity: 0;}
+}

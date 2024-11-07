@@ -1,0 +1,83 @@
+.logo{
+    width: 6.25rem;
+}
+.nav_list{
+    padding-inline: 1.25rem;
+}
+.nav_list a{
+    padding: 0;
+    margin-inline: 1.25rem;
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: black;
+    border-bottom: 0.125rem solid transparent;
+    transition: all .4s;
+}
+.nav_list a:hover{
+    border-bottom:0.125rem solid var(--main_color);
+    scale: 1.05;
+}
+.nav_list a.active{
+    color: var(--main_color);
+    border-bottom:0.125rem solid var(--main_color);
+}
+.nav_list a.active:hover{
+    scale: 1;
+}
+
+.lang_btn{
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 1.125rem !important;
+    transition: all .4s;
+}
+.lang_btn:hover{
+    color: var(--sub_color) !important;
+}
+.nav_icon{
+    display: none;
+}
+
+@media screen and (max-width:992px) {
+    .nav_list{
+        overflow-x: hidden;
+        padding: 40px 0;
+    }
+    .nav_icon{
+        display: inline;
+    }
+    .nav_list a{
+        border-bottom:none;
+        padding: 10px 20px;
+        margin:3px 10px;
+        display: flex;
+        justify-content: space-between;
+        border-radius: 5px;
+    }
+    .nav_list a:hover{
+        border-bottom:none;
+        scale: 1.01;
+        color: var(--sub_color);
+        background-color: var(--sub_light);
+    }
+    .nav_list a.active{
+        color: var(--sub_color);
+        border-bottom:none;
+        background-color: var(--sub_light);
+    }   
+}
+
+@media screen and (max-width:300px) {
+  .nav_controller{
+    flex-direction: column;
+  }
+  .nav_controller button{
+    margin: 10px;
+  }
+}
+@media screen and (max-width:178px) {
+.nav_icon{
+    display: none;
+}
+}
+
