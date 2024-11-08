@@ -22,7 +22,7 @@ const MainNav = () => {
   const navigate = useNavigate();
 
   return (
-    <Navbar expand="lg" fixed="top" className="bg-body-tertiary">
+    <Navbar expand="lg"  className="bg-body-tertiary">
       <Container fluid>
         <Navbar.Brand href="/">
           <img src={logo} className={styles.logo} alt="logo" />
