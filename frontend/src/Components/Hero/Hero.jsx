@@ -18,7 +18,7 @@ const Hero = () => {
     <header className={styles.home_header}>
       <Row className={styles.row_div}>
         <Col
-          md={6}
+          lg={6}
           className="d-flex justify-content-center align-items-center"
         >
           <div className={styles.caption}>
@@ -33,7 +33,7 @@ const Hero = () => {
             />
           </div>
         </Col>
-        <Col md={6} className={styles.header_imgs}>
+        <Col lg={6} className={styles.header_imgs}>
           <img className={styles.cirlces} src={circles} alt="cirlce_shape" />
           <img className={styles.dash} src={dash} alt="cirlce_shape" />
           <div className={styles.img1_position}>

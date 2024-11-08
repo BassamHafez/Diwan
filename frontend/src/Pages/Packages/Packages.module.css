@@ -1,0 +1,143 @@
+.container{
+    padding-inline:0.625rem;
+}
+.package{
+    padding:0.625rem 0;
+    border-radius: 0.625rem;
+    border: 0.0625rem solid rgb(222, 222, 222);
+    border-top: 0.3125rem solid black;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.488);
+}
+.package_type h3{
+    font-size: 3.125rem;
+    font-weight: 700;
+    text-align: center;
+}
+.package_type,.price{
+    border-bottom: 0.0625rem solid rgb(222, 222, 222);
+    padding: 0.625rem 0;
+}
+.price{
+    margin: 0.625rem 0;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.price_number{
+    font-size: 2.8125rem;
+    font-weight: 700;
+}
+.price_type{
+    font-size: 0.75rem;
+    color: var(--dark_white);
+}
+.del_price{
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-top: 0.3125rem;
+    opacity: .5;
+}
+.pricing_note{
+    text-align: center;
+}
+.pricing_note span{
+    font-size: 1rem;
+    margin-top: 0.625rem;
+}
+.features{
+    padding: 0.625rem 0;
+    min-height:400px;
+}
+.features ul{
+    padding-left:0.625rem;
+    min-height: 17.5rem;
+}
+.features ul li {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0.625rem 0;
+    text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    cursor: pointer;
+    transition: all .4s;
+}
+
+.features ul li:hover {
+    white-space: normal;
+    overflow: visible;
+    z-index: 1;
+    position: relative;
+}
+.list_icon{
+    margin-inline: 0.625rem;
+    color: var(--dark_white);
+}
+
+.order_btn,.order_btn_selected{
+    width: 80%;
+    padding: 0.3125rem 0.625rem;
+    background-color: transparent;
+    border: 0.0625rem solid var(--sub_color);
+    border-radius: 0.5rem;
+    color: var(--sub_color);
+    font-weight: 700;
+    transition: all .3s;
+}
+.order_btn_selected{
+    background-color: var(--sub_color);
+    border: 0.0625rem solid transparent;
+    color: white;
+}
+.order_btn:hover{
+    background-color: var(--sub_color);
+    border: 0.0625rem solid transparent;
+    color: white;
+}
+.order_btn_selected:hover{
+    background-color: transparent;
+    border: 0.0625rem solid var(--sub_color);
+    color: var(--sub_color);
+}
+.golden_package .price_number{
+    color: var(--main_color);
+}
+
+.golden_package{
+    border-color: var(--main_color);
+}
+.crown_icon{
+    color: var(--main_color);
+}
+
+@media screen and (min-width:770px) and (max-width:1158px) {
+    .features ul{
+      min-height: 350px;
+    }
+}
+
+@media screen and  (min-width:770px) and (max-width:886px) {
+   .package_type h3{
+    font-size: 2.8125rem;
+    font-weight: 700;
+    text-align: center;
+}
+}
+@media screen and (max-width:768px) {
+    .container{
+        padding-inline:3.125rem;
+    }
+}
+@media screen and (max-width:450px) {
+    .container{
+        padding-inline:0.3125rem;
+    }
+}
+@media screen and (max-width:240px) {
+   .package_type h3{
+    font-size: 2.1875rem;
+}
+}

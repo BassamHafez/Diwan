@@ -1,6 +1,5 @@
 import styles from "./Buttons.module.css";
 
-
 const ButtonTwo = ({onClick,text,type,children,classes}) => {
   return (
     <button
