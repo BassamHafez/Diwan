@@ -5,7 +5,48 @@
     "packages":"Packages",
     "login":"Login",
     "register":"Register",
+
+    "features":"Features",
+    "whuChooseUs":"Why Choose Our Platform",
     "homeTitle":"anage Smarter Live Easier",
     "homeSubTitle":"Effortlessly manage your properties with our all-in-one platform. Track tenants, handle finances, and simplify your real estate journey—all in one place.",
-    "getStarted":"Get Started"
+    "getStarted":"Get Started",
+    "section1Title1":"All-in-One Management Solution",
+    "section1Desc1":"Simplify your operations with our integrated tools. From tenant management to financial reporting, everything you need is in one place—no more juggling multiple platforms.",
+    "section1Title2":"Automate Rent Collection",
+    "section1Desc2":"Never chase rent payments again. Set up automated reminders and secure payment options to ensure consistent cash flow with minimal effort.",
+    "section1Title3":"Real-Time Financial Insights",
+    "section1Desc3":"Stay on top of your finances with real-time analytics and reports. Easily track income, expenses, and profitability to make informed decisions.",
+    "section1Title4":"Streamlined Maintenance Requests",
+    "section1Desc4":"Handle property maintenance efficiently with our user-friendly request system. Tenants can submit requests, and you can track progress all in one dashboard.",
+    "section1Title5":"Secure and Reliable Data Protection",
+    "section1Desc5":"Your data is safe with us. We use industry-standard encryption to protect your property and tenant information, ensuring privacy and peace of mind.",
+
+    "aboutPlatform":"About Platform",
+    "aboutUsTitle":"About Us",
+    "sec2Li1":"We are a dedicated platform focused on streamlining property management for landlords and investors. Our mission is to provide innovative technology solutions that simplify the complexities of managing real estate, whether it's a single property or an entire portfolio",
+    "sec2Li2":"With an intuitive interface and advanced tools, we empower you to get the most out of your investments by managing rent, tracking tenants, and organizing financial reports—all in one place. We're here to help you save time and reduce effort so you can focus on growing your business with confidence",
+    "copyRights":"All rights reserved to the Diwan team",
+    "pages":"Pages",
+    "help":"help",
+    "terms":"Terms and Conditions",
+
+    "month":"Month",
+    "3month":"3 Months",
+    "year":"Year",
+    "choosePackage":"Choose from our pricing plans",
+
+    "testimonials":"Testimonials",
+    "rateUs":"Share Your Feedback",
+    "sendMsg":"Send Message",
+
+    "name":"Name",
+    "email":"Email",
+    "subject":"Subject",
+    "message":"Message",
+    "contactUs":"Contact Us",
+    "getInTouch":"GET IN TOUCH",
+
+    "phone":"Phone",
+    "adress":"Adress"
 }

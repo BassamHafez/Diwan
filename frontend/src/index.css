@@ -5,6 +5,7 @@
   --sub_color:#5A4638;
   --sub_light:#f9f4eb;
   --dark_white:rgb(129, 129, 129);
+  --deep_navy:#2A3A47;
   --main_font:"Quicksand", sans-serif;
 }
 /* font-family: "Cairo", serif; */
@@ -15,26 +16,73 @@
 }
 
 body{
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   scroll-behavior: smooth;
   font-family: var(--main_font) !important;
 }
+
+/* main style */
+
  button,input{
   border: none;
   outline: none;
  }
+
 a {
   color: inherit;
   text-decoration: none !important;
 }
+ul li{
+  list-style: none;
+}
 
+
+/* bootstrap */
 .dropdown-toggle::after {
   display: none !important;
 }
+.accordion-header button{
+  color: black;
+  font-weight: 600;
+}
+.accordion-header button[aria-expanded="true"]{
+  background-color: var(--main_color) !important;
+  color: white;
+}
+.accordion-header button:focus{
+  box-shadow: none !important;
+}
+.opposite_arrow .accordion-button::after {
+  margin-left: 0;
+  margin-right: auto;
+}
+.nav-tabs li button{
+  color: black;
+  font-weight: 700;
+}
+.nav-tabs li .active{
+  background-color: transparent !important;
+  color: black !important;
+  border-top: 4px solid #2A3A47 !important;
+}
 
+
+/* custome style */
+.color-main{
+  color: var(--main_color);
+}
+.over{
+  overflow: hidden;
+}
 
 @media screen and (max-width:768px) {
   body,html{
     font-size: 14px;
+  }
+}
+@media screen and (max-width:550px) {
+  .swiper-button-next,
+  .swiper-button-prev {
+      display: none !important;
   }
 }
