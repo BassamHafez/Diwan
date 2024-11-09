@@ -15,14 +15,16 @@ import {
   faHouse,
   faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 const MainNav = () => {
   const [t, i18n] = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
+  const isLogin = useSelector((state) => state.userInfo.isLogin);
 
   return (
-    <Navbar expand="lg"  className="bg-body-tertiary">
+    <Navbar expand="lg" className="bg-body-tertiary">
       <Container fluid>
         <Navbar.Brand href="/">
           <img src={logo} className={styles.logo} alt="logo" />
@@ -79,7 +81,9 @@ const MainNav = () => {
               />
             </NavLink>
           </Nav>
-          <div className={`${styles.nav_controller} d-flex align-items-center justify-content-center`}>
+          <div
+            className={`${styles.nav_controller} d-flex align-items-center justify-content-center`}
+          >
             <Dropdown>
               <Dropdown.Toggle
                 className={`${styles.lang_btn} bg-transparent text-dark`}
@@ -98,17 +102,27 @@ const MainNav = () => {
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-            <ButtonOne
-              onClick={() => navigate("register")}
-              classes="mx-2"
-              color="white"
-              text={t("register")}
-            />
-            <ButtonOne
-              onClick={() => navigate("login")}
-              classes="mx-2"
-              text={t("login")}
-            />
+            {!isLogin ? (
+              <>
+                <ButtonOne
+                  onClick={() => navigate("register")}
+                  classes="mx-2"
+                  color="white"
+                  text={t("register")}
+                />
+                <ButtonOne
+                  onClick={() => navigate("login")}
+                  classes="mx-2"
+                  text={t("login")}
+                />
+              </>
+            ) : (
+              <ButtonOne
+                // onClick={() => navigate("login")}
+                classes="mx-2"
+                text={t("profile")}
+              />
+            )}
           </div>
         </Navbar.Collapse>
       </Container>

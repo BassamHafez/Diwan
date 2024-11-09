@@ -8,11 +8,17 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import circles from "../../assets/svg/circles.svg";
 import dash from "../../assets/svg/dash.svg";
+import AOS from "aos";
+import { useEffect } from "react";
 
 const Hero = () => {
   const navigate = useNavigate();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
+
+  useEffect(() => {
+    AOS.init();
+  }, []);
 
   return (
     <header className={styles.home_header}>
@@ -21,7 +27,11 @@ const Hero = () => {
           lg={6}
           className="d-flex justify-content-center align-items-center"
         >
-          <div className={styles.caption}>
+          <div
+            className={styles.caption}
+            data-aos="zoom-in-up"
+            data-aos-duration="800"
+          >
             <h1>
               {!isArLang && <span>M</span>}
               {key("homeTitle")}
@@ -36,14 +46,22 @@ const Hero = () => {
         <Col lg={6} className={styles.header_imgs}>
           <img className={styles.cirlces} src={circles} alt="cirlce_shape" />
           <img className={styles.dash} src={dash} alt="cirlce_shape" />
-          <div className={styles.img1_position}>
+          <div
+            className={styles.img1_position}
+            data-aos="zoom-in-right"
+            data-aos-duration="800"
+          >
             <div className={styles.header1_img}>
               <div className={styles.overlay}></div>
               <img src={header1} alt="buildings1" />
             </div>
           </div>
 
-          <div className={styles.img2_position}>
+          <div
+            className={styles.img2_position}
+            data-aos="zoom-in-right"
+            data-aos-duration="800"
+          >
             <div className={styles.header2_img}>
               <div className={styles.overlay}></div>
               <img src={header2} alt="buildings2" />
