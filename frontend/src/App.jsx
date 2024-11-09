@@ -11,6 +11,14 @@ import Register from "./Pages/Auth/Register/Register";
 import About from "./Pages/About/About";
 import Contact from "./Pages/Contact/Contact";
 import Packages from "./Pages/Packages/Packages";
+import { useDispatch} from "react-redux";
+import {
+  getisLoginState,
+  getRoleState,
+  getToken,
+  getUserInfoFromLocalStorage,
+} from "./Store/userInfo-actions";
+// import fetchProfileData from "./Store/profileInfo-actions";
 
 const router = createBrowserRouter(
   [
@@ -37,7 +45,11 @@ const router = createBrowserRouter(
 function App() {
   const queryClient = new QueryClient();
   const { i18n: control } = useTranslation();
+  const dispatch = useDispatch();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+
+  // const token = useSelector((state) => state.userInfo.token);
+  // const role = useSelector((state) => state.userInfo.role);
 
   useEffect(() => {
     const updateFontFamily = () => {
@@ -66,17 +78,42 @@ function App() {
     };
   }, [control]);
 
+  
+
+  // // get profile data from api
+  // useEffect(() => {
+  //   if (token) {
+  //     dispatch(fetchProfileData(token));
+  //   }
+  // }, [dispatch, token, role]);
+
+
+
+  // recieve user data from localStorage with login and role states
+  useEffect(() => {
+    if (JSON.parse(localStorage.getItem("userData"))) {
+      dispatch(getUserInfoFromLocalStorage());
+    }
+    if (JSON.parse(localStorage.getItem("token"))) {
+      dispatch(getRoleState());
+      dispatch(getToken());
+    }
+    dispatch(getisLoginState());
+  }, [dispatch]);
+
+
+
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer
-        position="bottom-right"
+        position={isArLang?"bottom-right":"bottom-left"}
         autoClose={3000}
         hideProgressBar={false}
         closeOnClick
         draggable
         pauseOnHover={false}
         pauseOnFocusLoss={false}
-        // className={isArLang ? "ar_toast" : ""}
+        className="toast_content"
       />
       <RouterProvider router={router} />
     </QueryClientProvider>

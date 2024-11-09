@@ -1,16 +1,17 @@
 
 .error_message{
-    color:red;
+    color:rgb(210, 5, 5);
     font-weight: 600;
-    font-size: 14px;
+    font-size: 12px;
     position: absolute;
     top: 100%;
+    transform: translateY(-50%);
     transition: all .4s;
 }
 
 .error_message_ar{
-right:0 !important
+right:15px !important
 }
 .error_message_en{
-left: 0 !important;
+left: 15px !important;
 }

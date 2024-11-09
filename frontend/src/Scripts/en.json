@@ -48,5 +48,29 @@
     "getInTouch":"GET IN TOUCH",
 
     "phone":"Phone",
-    "adress":"Adress"
+    "adress":"Adress",
+
+   "wrong":"something went wrong please try again later",
+   "logged":"You have been logged in successfully",
+
+   "invalidPhone":"Invalid Saudi Arabia phone number",
+   "fieldReq":"Field is required",
+   "min5":"Min 5 characters",
+   "validationUpperCase":"Must contain at least one uppercase character",
+   "validationLowerCase":"Must contain at least one lowercase character",
+   "validationNumber":"Must contain at least one number",
+   "noPhone":"Incorrect phone or password",
+   "forgotPass":"Forgot Password?",
+   "creatAcc":"create account?",
+   "password":"Password",
+   "nameValidation1":"Name should be at min 3 char",
+   "nameValidation2":"Name should be at max 20 char",
+   "nameValidation3":"Name is required",
+   "emailValidation1":"email not valid",
+   "emailValidation2":"email is required",
+   "passwordMismatch":"the password doesn't not match",
+   "duplicate":"Phone Number or Email already exist",
+   "haveAcc":"Already have account?",
+   "passwordConfirm":"Confirm Password",
+   "registeredSuccess":"Your account has been created successfully"
 }
