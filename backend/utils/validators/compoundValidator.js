@@ -1,0 +1,126 @@
+const { check } = require("express-validator");
+const validatorMiddleware = require("./validatorMiddleware");
+
+exports.createCompoundValidator = [
+  check("name")
+    .notEmpty()
+    .withMessage("Name is required")
+    .trim()
+    .isString()
+    .withMessage("Name must be a string")
+    .isLength({ min: 3 })
+    .withMessage("Name must be at least 3 characters long"),
+
+  check("description")
+    .notEmpty()
+    .withMessage("Description is required")
+    .trim()
+    .isString()
+    .withMessage("Description must be a string")
+    .isLength({ min: 5 })
+    .withMessage("Description must be at least 5 characters long"),
+
+  check("address")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Address must be a string"),
+
+  check("region")
+    .notEmpty()
+    .withMessage("Region is required")
+    .trim()
+    .isString()
+    .withMessage("Region must be a string"),
+
+  check("city")
+    .notEmpty()
+    .withMessage("City is required")
+    .trim()
+    .isString()
+    .withMessage("City must be a string"),
+
+  check("neighborhood")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Neighborhood must be a string"),
+
+  check("tags").optional().isArray().withMessage("Tags must be an array"),
+
+  check("tags.*").isString().withMessage("Tags must be strings"),
+
+  // NOT ALLOWED
+
+  check("user").isEmpty().withMessage("User cannot be set manually"),
+
+  validatorMiddleware,
+];
+
+exports.updateCompoundValidator = [
+  check("id")
+    .notEmpty()
+    .withMessage("Compound ID is required")
+    .isMongoId()
+    .withMessage("Invalid Compound ID"),
+
+  check("name")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Name must be a string")
+    .isLength({ min: 3 })
+    .withMessage("Name must be at least 3 characters long"),
+
+  check("description")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Description must be a string")
+    .isLength({ min: 5 })
+    .withMessage("Description must be at least 5 characters long"),
+
+  check("address")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Address must be a string"),
+
+  check("region")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Region must be a string"),
+
+  check("city")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("City must be a string"),
+
+  check("neighborhood")
+    .optional()
+    .trim()
+    .isString()
+    .withMessage("Neighborhood must be a string"),
+
+  check("tags").optional().isArray().withMessage("Tags must be an array"),
+
+  check("tags.*").optional().isString().withMessage("Tags must be strings"),
+
+  // NOT ALLOWED
+
+  check("user").isEmpty().withMessage("User cannot be set manually"),
+
+  validatorMiddleware,
+];
+
+exports.getCompoundValidator = [
+  check("id")
+    .notEmpty()
+    .withMessage("Compound ID is required")
+    .isMongoId()
+    .withMessage("Invalid Compound ID"),
+
+  validatorMiddleware,
+];
