@@ -22,9 +22,9 @@ body{
   font-family: var(--main_font) !important;
 }
 
-/* main style */
+/* general style */
 
- button,input{
+ button,input,.text_area{
   border: none;
   outline: none;
  }
@@ -37,7 +37,6 @@ ul li{
   list-style: none;
 }
 
-
 /* bootstrap */
 .dropdown-toggle::after {
   display: none !important;
@@ -47,8 +46,12 @@ ul li{
   font-weight: 600;
 }
 .accordion-header button[aria-expanded="true"]{
-  background-color: var(--main_color) !important;
-  color: white;
+  background-color: var(--sky) !important;
+  color: black;
+}
+.accordion-header button span{
+  font-weight: 600;
+
 }
 .accordion-header button:focus{
   box-shadow: none !important;
@@ -57,6 +60,7 @@ ul li{
   margin-left: 0;
   margin-right: auto;
 }
+
 .nav-tabs li button{
   color: black;
   font-weight: 700;
@@ -66,7 +70,10 @@ ul li{
   color: black !important;
   border-top: 4px solid #2A3A47 !important;
 }
-
+.modal_header_ar button{
+  margin: 0 !important;
+  margin-right: auto !important;
+}
 
 /* custome style */
 .color-main{
@@ -83,20 +90,24 @@ ul li{
   margin-bottom: 30px;
   position: relative;
 }
-.field input{
+.field input,.text_area{
   padding: 10px;
   border-radius: 5px;
   background-color: #f8f9fb64;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.362);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.134);
   border: 1px solid rgb(242, 241, 241);
   width: 100%;
   transition: all .4s;
 }
+.text_area{
+  height: 135px;
+}
+
 .field input::placeholder{
   transition: all .4s;
 }
-.field input:focus{
-  scale: 1.02;
+.field input:focus,.text_area:focus{
+  scale: 1.01;
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.362);
 }
 .field input:focus::placeholder{
@@ -105,6 +116,7 @@ ul li{
 .field label{
   font-weight:600;
   margin-bottom:10px;
+  text-align: start;
 }
 .toast_content *{
   font-family: var(--main_color) !important;
@@ -112,6 +124,26 @@ ul li{
 }
 .ar_direction{
   direction: rtl;
+}
+.submit_btn,.cancel_btn{
+  padding:8px 14px;
+  border-radius: 5px;
+  background-color: var(--deep_navy);
+  color: white;
+  min-width: 120px;
+  transition: all .4s;
+}
+.submit_btn:hover{
+  transform: translateX(4px);
+}
+.cancel_btn{
+  background-color: rgb(246, 246, 246);
+  color: black;
+  box-shadow:  0 0 3px rgba(0, 0, 0, 0.281);
+  font-weight: 550;
+}
+.cancel_btn:hover{
+  background-color: rgb(225, 225, 225);
 }
 
 @media screen and (max-width:768px) {

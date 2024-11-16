@@ -72,5 +72,50 @@
    "duplicate":"Phone Number or Email already exist",
    "haveAcc":"Already have account?",
    "passwordConfirm":"Confirm Password",
-   "registeredSuccess":"Your account has been created successfully"
+   "registeredSuccess":"Your account has been created successfully",
+
+   "properties":"Properties",
+   "contacts":"Contacts",
+   "tasks":"Tasks",
+
+   "types":"Types",
+   "allProp":"Properties",
+   "compounds":"Compounds",
+   "bookmarked":"Bookmarked",
+
+    "status":"Status",
+    "all":"All",
+    "rented":"Rented",
+    "reserved":"Reserved",
+    "vacant":"Vacant",
+
+    "Contracts":"Contracts",
+    "nextMonth":"Ends within month",
+    "next3Month":"Ends within 3 months",
+
+    "parentRealEstate":"Parent RealEstate",
+
+    "createProp":"Add Property",
+    "addCompound":"Add Compound",
+    "exProp":"Apartment-Floor-Building with Single tenant etc..",
+    "exCompound":"Building - Residential/Commercial building etc..",
+    "search":"search here",
+
+    "dashboard":"Dashboard",
+
+    "uploadPhoto":"Uploade Image",
+    "addedSuccess":"Data has been added successfully",
+    "imgSizeError":"Maximum size for image is 20MB.",
+    "compoundImage":"compound Image",
+    "description":"Description",
+
+    "region":"Region",
+    "city":"City",
+    "district":"District",
+    "address":"Address",
+    "agent":"Agent",
+    "lessor":"Lessor",
+    "tag":"Tag",
+    "add":"Add",
+    "cancel":"Cancel"
 }
