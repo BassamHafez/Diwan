@@ -29,6 +29,7 @@ exports.createEstateValidator = [
     .withMessage("Address must be a string"),
 
   check("region")
+    .if((value, { req }) => !req.body.compound)
     .notEmpty()
     .withMessage("Region is required")
     .trim()
@@ -36,6 +37,7 @@ exports.createEstateValidator = [
     .withMessage("Region must be a string"),
 
   check("city")
+    .if((value, { req }) => !req.body.compound)
     .notEmpty()
     .withMessage("City is required")
     .trim()
@@ -82,6 +84,10 @@ exports.createEstateValidator = [
     .matches(/^\d{10}$/)
     .withMessage("Water account number must be a string of 10 digits"),
 
+  check("broker").optional().isMongoId().withMessage("Invalid broker ID"),
+
+  check("landlord").optional().isMongoId().withMessage("Invalid landlord ID"),
+
   // NOT ALLOWED
 
   check("user").isEmpty().withMessage("User cannot be set manually"),
@@ -95,8 +101,6 @@ exports.updateEstateValidator = [
     .withMessage("Estate ID is required")
     .isMongoId()
     .withMessage("Invalid estate ID"),
-
-  check("compound").optional().isMongoId().withMessage("Invalid compound ID"),
 
   check("name")
     .optional()
@@ -170,9 +174,15 @@ exports.updateEstateValidator = [
     .matches(/^\d{10}$/)
     .withMessage("Water account number must be a string of 10 digits"),
 
+  check("broker").optional().isMongoId().withMessage("Invalid broker ID"),
+
+  check("landlord").optional().isMongoId().withMessage("Invalid landlord ID"),
+
   // NOT ALLOWED
 
   check("user").isEmpty().withMessage("User cannot be set manually"),
+
+  check("compound").isEmpty().withMessage("Compound cannot be edited"),
 
   validatorMiddleware,
 ];
