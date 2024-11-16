@@ -55,6 +55,14 @@ const estateSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    broker: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Contact",
+    },
+    landlord: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Contact",
+    },
   },
   { timestamps: true }
 );
