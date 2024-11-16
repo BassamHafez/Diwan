@@ -69,5 +69,48 @@
     "duplicate":"رقم الهاتف أو الإيميل موجود بالفعل",
     "haveAcc":"تمتلك حساب بالفعل؟",
     "passwordConfirm":"تأكيد كلمة السر",
-    "registeredSuccess":"تم إنشاء حسابك بنجاح"
+    "registeredSuccess":"تم إنشاء حسابك بنجاح",
+
+    "properties":"العقارات",
+    "contacts":"جهات الاتصال",
+    "tasks":"المهام",
+
+    "types":"الأنواع",
+    "allProp":"العقارات",
+    "compounds":"المجمعات",
+    "bookmarked":"المفضلة",
+
+    "status":"الحالة",
+     "all":"الكل",
+     "rented":"مؤجرة",
+     "reserved":"محجوزة",
+     "vacant":"شاغرة",
+ 
+     "Contracts":"العقود",
+     "nextMonth":"تنتهي خلال شهر",
+     "next3Month":"تنتهي خلال ٣ أشهر",
+ 
+     "parentRealEstate":"المجمع",
+ 
+     "createProp":"إضافة عقار",
+     "exProp":"عمارة - مجمع سكني/تجاري وغيرها",
+     "addCompound":"إضافة مجمع",
+     "exCompound":"شقة - دور - عمارة بمستأجر وحيد وغيرها",
+     "search":"ابحث هنا",
+
+     "dashboard":"الرئيسية",
+     "uploadPhoto":"يرجي رفع الصورة",
+     "addedSuccess":"تم إضافة البيانات بنجاح",
+     "imgSizeError":"الحد الأقصي للصور هو 20 ميجا",
+     "compoundImage":"صورة المجمع",
+     "description":"الوصف",
+     "region":"المنطقة",
+     "city":"المدينة",
+     "district":"الحيّ",
+     "address":"العنوان",
+     "agent":"الوسيط",
+     "lessor":"المؤجر",
+     "tag":"الوسم",
+     "add":"إضافة",
+     "cancel":"الغاء"
 }

@@ -1,5 +1,5 @@
 .logo{
-    width: 6.25rem;
+    width: 90px;
 }
 .nav_list{
     padding-inline: 1.25rem;
@@ -8,11 +8,12 @@
     padding: 0;
     margin-inline: 1.25rem;
     font-weight: 600;
-    font-size: 1.125rem;
+    font-size: 1.0625rem;
     color: black;
     border-bottom: 0.125rem solid transparent;
     transition: all .4s;
 }
+
 .nav_list a:hover{
     border-bottom:0.125rem solid var(--main_color);
     scale: 1.05;
@@ -28,7 +29,7 @@
 .lang_btn{
     border: none !important;
     font-weight: 600 !important;
-    font-size: 1.125rem !important;
+    font-size: 1rem !important;
     transition: all .4s;
 }
 .lang_btn:hover{
@@ -36,8 +37,32 @@
 }
 .nav_icon{
     display: none;
+    color: var(--dark_white);
 }
-
+.ar_icon{
+    margin-left: 10px;
+}
+.en_icon{
+    margin-right: 10px;
+}
+.avatar{
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    border:2px solid var(--dark_white);
+    transition: scale .4s;
+    cursor: pointer;
+    margin-inline: 10px;
+}
+.avatar img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+.avatar:hover{
+    border:2px solid var(--main_color);
+    scale: 1.05;
+}
 @media screen and (max-width:992px) {
     .nav_list{
         overflow-x: hidden;
@@ -48,11 +73,10 @@
     }
     .nav_list a{
         border-bottom:none;
-        padding: 10px 20px;
-        margin:3px 10px;
-        display: flex;
-        justify-content: space-between;
+        padding: 10px;
+        margin:3px;
         border-radius: 5px;
+        font-size: 18px;
     }
     .nav_list a:hover{
         border-bottom:none;

@@ -11,14 +11,18 @@ import Register from "./Pages/Auth/Register/Register";
 import About from "./Pages/About/About";
 import Contact from "./Pages/Contact/Contact";
 import Packages from "./Pages/Packages/Packages";
-import { useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   getisLoginState,
   getRoleState,
   getToken,
   getUserInfoFromLocalStorage,
 } from "./Store/userInfo-actions";
+import UserHome from "./Pages/UserDashboard/UserHome/UserHome";
 // import fetchProfileData from "./Store/profileInfo-actions";
+import Properties from "./Pages/UserDashboard/Properties/Properties";
+import Tasks from "./Pages/UserDashboard/Tasks/Tasks";
+import Contacts from "./Pages/UserDashboard/Contacts/Contacts";
 
 const router = createBrowserRouter(
   [
@@ -26,12 +30,18 @@ const router = createBrowserRouter(
       path: "/",
       element: <Root />,
       children: [
+        //main pages
         { index: true, element: <Home /> },
         { path: "about", element: <About /> },
         { path: "contact", element: <Contact /> },
         { path: "packages", element: <Packages /> },
         { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
+        //userDashboard
+        { path: "dashboard", element: <UserHome /> },
+        { path: "properties", element: <Properties /> },
+        { path: "contacts", element: <Contacts /> },
+        { path: "tasks", element: <Tasks /> },
       ],
     },
   ],
@@ -78,16 +88,12 @@ function App() {
     };
   }, [control]);
 
-  
-
-  // // get profile data from api
+  // get profile data from api
   // useEffect(() => {
   //   if (token) {
   //     dispatch(fetchProfileData(token));
   //   }
   // }, [dispatch, token, role]);
-
-
 
   // recieve user data from localStorage with login and role states
   useEffect(() => {
@@ -101,12 +107,10 @@ function App() {
     dispatch(getisLoginState());
   }, [dispatch]);
 
-
-
   return (
     <QueryClientProvider client={queryClient}>
       <ToastContainer
-        position={isArLang?"bottom-right":"bottom-left"}
+        position={isArLang ? "bottom-right" : "bottom-left"}
         autoClose={3000}
         hideProgressBar={false}
         closeOnClick
