@@ -1,8 +1,8 @@
-export const packagesList={
+export const packagesList = {
   // month
-  packagesPerMonthEn:[
+  packagesPerMonthEn: [
     {
-      _id: "1",
+      __id: "1",
       packageName: "Silver",
       originalPrice: "500",
       offerPrice: "399",
@@ -20,7 +20,7 @@ export const packagesList={
       ],
     },
     {
-      _id: "2",
+      __id: "2",
       packageName: "Golden",
       originalPrice: "800",
       offerPrice: "699",
@@ -39,7 +39,7 @@ export const packagesList={
       ],
     },
     {
-      _id: "3",
+      __id: "3",
       packageName: "Platinum",
       originalPrice: "1200",
       offerPrice: "999",
@@ -58,34 +58,34 @@ export const packagesList={
       ],
     },
   ],
-  packagePerMonthAr:[
+  packagePerMonthAr: [
     {
-      _id: "ar_1",
+      __id: "ar_1",
       packageName: "الفضة",
       originalPrice: "500",
       offerPrice: "399",
       type: "ريال/شهر",
       features: [
         "إدارة العقارات والأصول",
-        "بوابة دخول للمستأجرين",
+        "بوابة دخول للمؤجرةين",
         "لوحة تحكم ذكية",
         "إدارة العقود والمدفوعات",
         "إدارة الإيرادات والمصاريف",
         "إدارة المهام التشغيلية والمالية",
         "تحميل الوثائق",
         "تقارير العملاء والعمليات",
-        "إشعارات المستأجر عبر الرسائل القصيرة",
+        "إشعارات المؤجرة عبر الرسائل القصيرة",
       ],
     },
     {
-      _id: "ar_2",
+      __id: "ar_2",
       packageName: "الذهب",
       originalPrice: "800",
       offerPrice: "699",
       type: "ريال/شهر",
       features: [
         "إدارة العقارات والأصول",
-        "بوابة دخول للمستأجرين",
+        "بوابة دخول للمؤجرةين",
         "لوحة تحكم ذكية متقدمة",
         "إدارة العقود والمدفوعات الآلية",
         "تحليلات شاملة للدخل والمصاريف",
@@ -97,7 +97,7 @@ export const packagesList={
       ],
     },
     {
-      _id: "ar_3",
+      __id: "ar_3",
       packageName: "البلاتين",
       originalPrice: "1200",
       offerPrice: "999",
@@ -117,15 +117,14 @@ export const packagesList={
     },
   ],
 
-
-// 3 months
-  packagePerThreeMonthsEn:[
+  // 3 months
+  packagePerThreeMonthsEn: [
     {
-      _id:"4",
+      __id: "4",
       packageName: "Silver",
       originalPrice: "1500",
       offerPrice: "1299",
-      type:"SAR/3 months",
+      type: "SAR/3 months",
       features: [
         "Property and Asset Management",
         "Tenant Login Portal",
@@ -139,11 +138,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"5",
+      __id: "5",
       packageName: "Golden",
       originalPrice: "2400",
       offerPrice: "1999",
-      type:"SAR/3 months",
+      type: "SAR/3 months",
       features: [
         "Property Management and Asset Tracking",
         "Tenant Portal Access",
@@ -157,11 +156,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"6",
+      __id: "6",
       packageName: "Platinum",
       originalPrice: "3600",
       offerPrice: "2999",
-      type:"SAR/3 months",
+      type: "SAR/3 months",
       features: [
         "Complete Property Management Suite",
         "Personalized Tenant Login Portal",
@@ -176,13 +175,13 @@ export const packagesList={
       ],
     },
   ],
-  packagePerThreeMonthsAr:[
+  packagePerThreeMonthsAr: [
     {
-      _id:"ar_4",
+      __id: "ar_4",
       packageName: "الفضة",
       originalPrice: "5000",
       offerPrice: "4000",
-      type:"ريال/3 أشهر",
+      type: "ريال/3 أشهر",
       features: [
         "إدارة العقارات والأصول",
         "بوابة دخول للمستأجرين",
@@ -196,11 +195,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"ar_5",
+      __id: "ar_5",
       packageName: "الذهب",
       originalPrice: "2400",
       offerPrice: "2000",
-      type:"ريال/3 أشهر",
+      type: "ريال/3 أشهر",
       features: [
         "إدارة العقارات وتتبع الأصول",
         "وصول إلى بوابة المستأجرين",
@@ -214,11 +213,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"ar_6",
+      __id: "ar_6",
       packageName: "البلاتين",
       originalPrice: "3600",
       offerPrice: "3000",
-      type:"ريال/3 أشهر",
+      type: "ريال/3 أشهر",
       features: [
         "جناح إدارة العقارات الشامل",
         "بوابة دخول مخصصة للمستأجرين",
@@ -234,15 +233,14 @@ export const packagesList={
     },
   ],
 
-  
-// year
-  packagePerYearEn:[
+  // year
+  packagePerYearEn: [
     {
-      _id:"7",
+      __id: "7",
       packageName: "Silver",
       originalPrice: "6000",
       offerPrice: "4999",
-      type:"SAR/year",
+      type: "SAR/year",
       features: [
         "Property and Asset Management",
         "Tenant Portal Access",
@@ -256,11 +254,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"8",
+      __id: "8",
       packageName: "Golden",
       originalPrice: "9600",
       offerPrice: "7999",
-      type:"SAR/year",
+      type: "SAR/year",
       features: [
         "Property and Asset Management",
         "Tenant Portal with Customization",
@@ -275,11 +273,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"9",
+      __id: "9",
       packageName: "Platinum",
       originalPrice: "14400",
       offerPrice: "11999",
-      type:"SAR/year",
+      type: "SAR/year",
       features: [
         "Comprehensive Property Management Suite",
         "Advanced Tenant Login Portal",
@@ -294,13 +292,13 @@ export const packagesList={
       ],
     },
   ],
-  packagePerYearAr:[
+  packagePerYearAr: [
     {
-      _id:"ar_7",
+      __id: "ar_7",
       packageName: "الفضة",
       originalPrice: "6000",
       offerPrice: "4999",
-      type:"ريال/سنة",
+      type: "ريال/سنة",
       features: [
         "إدارة العقارات والأصول",
         "وصول إلى بوابة المستأجرين",
@@ -314,11 +312,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"ar_8",
+      __id: "ar_8",
       packageName: "الذهب",
       originalPrice: "9600",
       offerPrice: "7999",
-      type:"ريال/سنة",
+      type: "ريال/سنة",
       features: [
         "إدارة العقارات والأصول",
         "بوابة مستأجرين مخصصة",
@@ -333,11 +331,11 @@ export const packagesList={
       ],
     },
     {
-      _id:"ar_9",
+      __id: "ar_9",
       packageName: "البلاتين",
       originalPrice: "14400",
       offerPrice: "11999",
-      type:"ريال/سنة",
+      type: "ريال/سنة",
       features: [
         "جناح إدارة العقارات الشامل",
         "بوابة دخول متقدمة للمستأجرين",
@@ -352,4 +350,167 @@ export const packagesList={
       ],
     },
   ],
-}
+};
+
+export const realEstates = [
+  { label: "Riyadh Building", value: "Riyadh Building" },
+  { label: "Asmara Compund", value: "Asmara Compund" },
+];
+
+export const properties = [
+  {
+    _id: 1,
+    name: "Al-Masif Villa",
+    image: "b1",
+    state: "Vacant",
+    compound: "Masif Compound",
+    address: "Al-Masif St, Riyadh",
+    region: "Riyadh Province",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  },
+  {
+    _id: 2,
+    name: "Jeddah Tower",
+    image: "b2",
+    state: "Rented",
+    compound: "Jeddah Towers",
+    address: "Beachfront,Jeddah",
+    region: "Riyadh Province",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  },
+  {
+    _id: 3,
+    name: "Beach House",
+    image: "b3",
+    state: "Reserved",
+    compound: "Riyadh Villas",
+    address: "Beachfront,Jeddah",
+    region: "Makkah Province",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  },
+  {
+    _id: 4,
+    name: "Makkah Luxury",
+    image: "b4",
+    state: "Rented",
+    compound: "Res_idences",
+    address: "King Abdulaziz Road, Makkah",
+    region: "Makkah Province",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  },
+  {
+    _id: 5,
+    name: "Al-Khobar Duplex",
+    image: "b1",
+    state: "Vacant",
+    compound: "Al-Khobar Heights",
+    address: "Al-Khobar, Eastern Province",
+    region: "Eastern Province",
+    description: "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+  },
+];
+
+export const arProperties = [
+  {
+    _id: "ar_1",
+    name: "فيلا المصيف",
+    image: "b1",
+    state: "شاغرة",
+    compound: "مجمع المصيف",
+    address: "شارع المصيف، الرياض",
+    region: "منطقة الرياض",
+    description: "لوريم إيبسوم دولور سيت أميت كونسكتتور أديبيسيسينغ إليت.",
+  },
+  {
+    _id: "ar_2",
+    name: "برج جدة",
+    image: "b2",
+    state: "مؤجرة",
+    compound: "أبراج جدة",
+    address: "الواجهة البحرية، جدة",
+    region: "منطقة الرياض",
+    description: "لوريم إيبسوم دولور سيت أميت كونسكتتور أديبيسيسينغ إليت.",
+  },
+  {
+    _id: "ar_3",
+    name: "البيت الشاطئي",
+    image: "b3",
+    state: "محجوزة",
+    compound: "فلل الرياض",
+    address: "الواجهة البحرية، جدة",
+    region: "منطقة مكة المكرمة",
+    description: "لوريم إيبسوم دولور سيت أميت كونسكتتور أديبيسيسينغ إليت.",
+  },
+  {
+    _id: "ar_4",
+    name: "الرفاهية في مكة",
+    image: "b4",
+    state: "مؤجرة",
+    compound: "ريزيدنس",
+    address: "طريق الملك عبد العزيز، مكة",
+    region: "منطقة مكة المكرمة",
+    description: "لوريم إيبسوم دولور سيت أميت كونسكتتور أديبيسيسينغ إليت.",
+  },
+  {
+    _id: "ar_5",
+    name: "دوبلكس الخبر",
+    image: "b1",
+    state: "شاغرة",
+    compound: "هايتس الخبر",
+    address: "الخبر، المنطقة الشرقية",
+    region: "المنطقة الشرقية",
+    description: "لوريم إيبسوم دولور سيت أميت كونسكتتور أديبيسيسينغ إليت.",
+  },
+];
+
+export const SaudiRegion = [
+  { label: "Riyadh", value: "Riyadh" },
+  { label: "Makkah", value: "Makkah" },
+  { label: "Al-Madinah", value: "Madinah" },
+  { label: "Al-Qassim", value: "Al-Qassim" },
+  { label: "Eastern", value: "Eastern" },
+];
+
+export const citiesByRegion = {
+  Riyadh: [
+    { label: "Al Malaz", value: "Al Malaz" },
+    { label: "Al Olaya", value: "Al Olaya" },
+  ],
+  Makkah: [
+    { label: "Jeddah", value: "Jeddah" },
+    { label: "Taif", value: "Taif" },
+  ],
+  Madinah: [
+    { label: "Yanbu", value: "Yanbu" },
+    { label: "Al-Ula", value: "Al-Ula" },
+  ],
+  "Al-Qassim": [
+    { label: "Buraydah", value: "Buraydah" },
+    { label: "Unaizah", value: "Unaizah" },
+  ],
+  Eastern: [
+    { label: "Dammam", value: "Dammam" },
+    { label: "Al Khobar", value: "Al Khobar" },
+  ],
+};
+
+export const districtsByCity = {
+  "Al Malaz": [{ label: "District 1", value: "District 1" }],
+  "Al Olaya": [{ label: "District 2", value: "District 2" }],
+  Jeddah: [{ label: "District 3", value: "District 3" }],
+  Taif: [{ label: "District 4", value: "District 4" }],
+};
+
+
+
+export const tagOptions=[
+  {label:"block1",value:"block1"},
+  {label:"block2",value:"block2"},
+  {label:"block3",value:"block3"},
+]
+
+export const agents=[
+  {label:"Ahmed",value:"Ahmed"},
+  {label:"Salim",value:"Salim"},
+  {label:"Said",value:"Said"},
+]

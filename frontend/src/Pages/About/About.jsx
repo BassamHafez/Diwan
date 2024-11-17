@@ -10,9 +10,9 @@ import styles from "./About.module.css";
 import { useEffect } from "react";
 import AOS from "aos";
 import ScrollTopBtn from "../../Components/UI/Buttons/ScrollTopBtn";
+import AccordionContent from "../../Components/UI/Tools/AccordionContent";
 
 const About = () => {
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
 
   useEffect(() => {
@@ -101,56 +101,21 @@ const About = () => {
                 data-aos-duration="1000"
               >
                 <Accordion defaultActiveKey="0">
-                  <Accordion.Item dir={isArLang ? "rtl" : "ltr"} eventKey="0">
-                    <Accordion.Header
-                      className={isArLang ? "opposite_arrow" : ""}
-                    >
-                      {key("section1Title1")}
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <p className={styles.acc_p}>{key("section1Desc1")}</p>
-                    </Accordion.Body>
-                  </Accordion.Item>
-                  <Accordion.Item dir={isArLang ? "rtl" : "ltr"} eventKey="1">
-                    <Accordion.Header
-                      className={isArLang ? "opposite_arrow" : ""}
-                    >
-                      {key("section1Title2")}
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <p className={styles.acc_p}>{key("section1Desc2")}</p>
-                    </Accordion.Body>
-                  </Accordion.Item>
-                  <Accordion.Item dir={isArLang ? "rtl" : "ltr"} eventKey="2">
-                    <Accordion.Header
-                      className={isArLang ? "opposite_arrow" : ""}
-                    >
-                      {key("section1Title3")}
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <p className={styles.acc_p}>{key("section1Desc3")}</p>
-                    </Accordion.Body>
-                  </Accordion.Item>
-                  <Accordion.Item dir={isArLang ? "rtl" : "ltr"} eventKey="3">
-                    <Accordion.Header
-                      className={isArLang ? "opposite_arrow" : ""}
-                    >
-                      {key("section1Title4")}
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <p className={styles.acc_p}>{key("section1Desc4")}</p>
-                    </Accordion.Body>
-                  </Accordion.Item>
-                  <Accordion.Item dir={isArLang ? "rtl" : "ltr"} eventKey="4">
-                    <Accordion.Header
-                      className={isArLang ? "opposite_arrow" : ""}
-                    >
-                      {key("section1Title5")}
-                    </Accordion.Header>
-                    <Accordion.Body>
-                      <p className={styles.acc_p}>{key("section1Desc5")}</p>
-                    </Accordion.Body>
-                  </Accordion.Item>
+                  <AccordionContent title={key("section1Title1")} eventKey="0">
+                    <p className={styles.acc_p}>{key("section1Desc1")}</p>
+                  </AccordionContent>
+                  <AccordionContent title={key("section1Title2")} eventKey="1">
+                    <p className={styles.acc_p}>{key("section1Desc2")}</p>
+                  </AccordionContent>
+                  <AccordionContent title={key("section1Title3")} eventKey="2">
+                    <p className={styles.acc_p}>{key("section1Desc3")}</p>
+                  </AccordionContent>
+                  <AccordionContent title={key("section1Title4")} eventKey="3">
+                    <p className={styles.acc_p}>{key("section1Desc4")}</p>
+                  </AccordionContent>
+                  <AccordionContent title={key("section1Title5")} eventKey="4">
+                    <p className={styles.acc_p}>{key("section1Desc5")}</p>
+                  </AccordionContent>
                 </Accordion>
               </div>
             </Col>

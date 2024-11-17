@@ -6,7 +6,7 @@
     border-radius: 0.625rem;
     border: 0.0625rem solid rgb(222, 222, 222);
     border-top: 0.3125rem solid black;
-    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.488);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.314);
 }
 .package_type h3{
     font-size: 3.125rem;
