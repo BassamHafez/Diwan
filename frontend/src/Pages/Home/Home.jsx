@@ -12,13 +12,23 @@ import ButtonTwo from "../../Components/UI/Buttons/ButtonTwo";
 import About from "../About/About";
 import Contact from "../Contact/Contact";
 import ScrollTopBtn from "../../Components/UI/Buttons/ScrollTopBtn";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const { t: key } = useTranslation();
+  const isLogin = useSelector((state) => state.userInfo.isLogin);
+  const navigate=useNavigate();
 
   useEffect(() => {
     AOS.init();
   }, []);
+
+  useEffect(()=>{
+    if(isLogin){
+      navigate("/dashboard")
+    }
+  })
 
   return (
     <>

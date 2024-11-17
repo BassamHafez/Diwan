@@ -30,21 +30,17 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const saveDataForRedux = (res, role) => {
+  const saveDataIntoRedux = (res) => {
     dispatch(userActions.setUserInfo(res.data.user));
     dispatch(userActions.setIsLogin(true));
-    dispatch(userActions.setRole(role));
+    dispatch(userActions.setRole(res?.data?.user?.role));
     dispatch(userActions.setToken(res.token));
     dispatch(saveUserInfoIntoLocalStorag(res.data.user));
     dispatch(saveIsLoginState(true));
-    dispatch(saveRoleState(role));
+    dispatch(saveRoleState(res?.data?.user?.role));
     dispatch(saveTokenState(res.token));
     notifySuccess(key("logged"));
-    if (role === "user") {
-      navigate("/");
-    } else {
-      navigate("/admin");
-    }
+    navigate("/");
   };
 
   const { mutate, isPending } = useMutation({
@@ -54,11 +50,7 @@ const LoginForm = () => {
       if (res.status === "success") {
         console.log("res", res);
         if (res.data.user) {
-          if (res.data.user.role === "user") {
-            saveDataForRedux(res, "user");
-          } else if (res.data.user.role === "admin") {
-            saveDataForRedux(res, "admin");
-          }
+          saveDataIntoRedux(res);
         }
       } else {
         console.log(res);
@@ -67,10 +59,9 @@ const LoginForm = () => {
     },
     onError: (error) => {
       console.log(error);
-      if(error.data.message==="Incorrect phone or password"){
-        notifyError(key("noPhone"))
-      }
-       else {
+      if (error.data.message === "Incorrect phone or password") {
+        notifyError(key("noPhone"));
+      } else {
         console.log(error);
         notifyError(key("wrong"));
       }
@@ -124,11 +115,18 @@ const LoginForm = () => {
           </div>
           <div className="field position-relative">
             <label htmlFor="passwordInput">{key("password")}</label>
-            <Field type={passwordType} id="passwordInput" name="password" placeholder="*****" />
+            <Field
+              type={passwordType}
+              id="passwordInput"
+              name="password"
+              placeholder="*****"
+            />
             <ErrorMessage name="password" component={InputErrorMessage} />
             <FontAwesomeIcon
               onClick={toggleShowPassword}
-              className={isArLang?styles.show_pass_eye_ar:styles.show_pass_eye}
+              className={
+                isArLang ? styles.show_pass_eye_ar : styles.show_pass_eye
+              }
               icon={eyeShape}
             />
           </div>
@@ -147,8 +145,7 @@ const LoginForm = () => {
               <Link to={"/forget-password"}>{key("forgotPass")}</Link>
             </span>
             <span>
-              {key("creatAcc")}{" "}
-              <Link to={"/register"}>{key("register")}</Link>
+              {key("creatAcc")} <Link to={"/register"}>{key("register")}</Link>
             </span>
           </div>
         </Form>

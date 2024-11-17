@@ -1,19 +1,29 @@
 import { userActions } from "./userInfo-slice";
 
+
+//save data into locale storage
 const saveUserInfoIntoLocalStorag = (userInfo) => {
-  localStorage.setItem("userData", JSON.stringify(userInfo));
+  return () => {
+    localStorage.setItem("userData", JSON.stringify(userInfo));
+  };
 };
 
 export const saveIsLoginState = (isLoginState) => {
-  localStorage.setItem("isLogin", JSON.stringify(isLoginState));
+  return () => {
+    localStorage.setItem("isLogin", JSON.stringify(isLoginState));
+  };
 };
 
 export const saveRoleState = (role) => {
-  localStorage.setItem("role", JSON.stringify(role));
+  return () => {
+    localStorage.setItem("role", JSON.stringify(role));
+  };
 };
 
 export const saveTokenState = (token) => {
-  localStorage.setItem("token", JSON.stringify(token));
+  return () => {
+    localStorage.setItem("token", JSON.stringify(token));
+  };
 };
 
 //get from locale storage
