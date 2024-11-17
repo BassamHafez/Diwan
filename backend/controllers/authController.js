@@ -1,6 +1,7 @@
 const { promisify } = require("util");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
+const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
@@ -25,12 +26,17 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create({
+  const userData = {
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
     password: req.body.password,
-  });
+  };
+
+  const [newUser, _] = await Promise.all([
+    User.create(userData),
+    Tag.create({ user: newUser._id }),
+  ]);
 
   createSendToken(newUser, 201, res);
 });

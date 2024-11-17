@@ -3,6 +3,7 @@ const sharp = require("sharp");
 
 const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
+const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const factory = require("./handlerFactory");
@@ -41,7 +42,6 @@ exports.resizeCompoundImage = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.createCompound = factory.createOne(Compound);
 exports.updateCompound = factory.updateOne(Compound);
 
 exports.deleteCompound = catchAsync(async (req, res, next) => {
@@ -64,5 +64,61 @@ exports.deleteCompound = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     data: null,
+  });
+});
+
+exports.createCompound = catchAsync(async (req, res, next) => {
+  const { tags } = req.body;
+
+  const tagUpdatePromise = tags
+    ? Tag.findOneAndUpdate(
+        { user: req.user._id },
+        { $addToSet: { tags: { $each: tags } } },
+        { upsert: true, lean: true }
+      )
+    : Promise.resolve();
+
+  const compoundCreatePromise = Compound.create(req.body);
+
+  const [_, compound] = await Promise.all([
+    tagUpdatePromise,
+    compoundCreatePromise,
+  ]);
+
+  res.status(201).json({
+    status: "success",
+    data: compound,
+  });
+});
+
+exports.updateCompound = catchAsync(async (req, res, next) => {
+  const { tags } = req.body;
+  const { id } = req.params;
+
+  const tagUpdatePromise = tags
+    ? Tag.findOneAndUpdate(
+        { user: req.user._id },
+        { $addToSet: { tags: { $each: tags } } },
+        { upsert: true, lean: true }
+      )
+    : Promise.resolve();
+
+  const compoundUpdatePromise = Compound.findByIdAndUpdate(id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  const [_, compound] = await Promise.all([
+    tagUpdatePromise,
+    compoundUpdatePromise,
+  ]);
+
+  if (!compound) {
+    return next(new ApiError("No compound found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: compound,
   });
 });
