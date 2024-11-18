@@ -5,47 +5,62 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
 import AOS from "aos";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
-const Property = ({ property, hideState }) => {
-  console.log(property);
+const Property = ({ property, hideState, hideCompound,type }) => {
+  // console.log(property);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const { t: key } = useTranslation();
+  const navigate=useNavigate();
 
   let stateColor = styles.green;
-  if (isArLang) {
-    switch (property.state) {
-      case "مؤجرة":
-        stateColor = styles.green;
-        break;
-      case "محجوزة":
-        stateColor = styles.yellow;
 
-        break;
-      case "شاغرة":
-        stateColor = styles.red;
+  if (!hideState) {
+    if (isArLang) {
+      switch (property.state) {
+        case "مؤجرة":
+          stateColor = styles.green;
+          break;
+        case "محجوزة":
+          stateColor = styles.yellow;
 
-        break;
+          break;
+        case "شاغرة":
+          stateColor = styles.red;
 
-      default:
-        break;
-    }
-  } else {
-    switch (property.state) {
-      case "Rented":
-        stateColor = styles.green;
-        break;
-      case "Reserved":
-        stateColor = styles.yellow;
+          break;
 
-        break;
-      case "Vacant":
-        stateColor = styles.red;
+        default:
+          break;
+      }
+    } else {
+      switch (property.state) {
+        case "Rented":
+          stateColor = styles.green;
+          break;
+        case "Reserved":
+          stateColor = styles.yellow;
 
-        break;
+          break;
+        case "Vacant":
+          stateColor = styles.red;
 
-      default:
-        break;
+          break;
+
+        default:
+          break;
+      }
     }
   }
+
+
+  const navigateToDetails=()=>{
+    if(type==="estate"){
+      navigate(`/property-details/${property._id}`)
+    }
+  }
+
   useEffect(() => {
     AOS.init();
   }, []);
@@ -61,7 +76,7 @@ const Property = ({ property, hideState }) => {
         data-aos="fade-up"
         data-aos-duration="1000"
       >
-        <div className={styles.card_img}>
+        <div className={styles.card_img} onClick={navigateToDetails}>
           <img
             src={
               property.image
@@ -94,9 +109,9 @@ const Property = ({ property, hideState }) => {
             </span>
           </div>
           <p className={styles.desc}>{property.description}</p>
-          {!hideState && (
+          {!hideCompound && (
             <div className={isArLang ? "text-start" : "text-end"}>
-              <span className={styles.compound_badge}>{property.compound}</span>
+              <span className={styles.compound_badge}>{property.compound?property.compound.name:key("noCompound")}</span>
             </div>
           )}
         </div>

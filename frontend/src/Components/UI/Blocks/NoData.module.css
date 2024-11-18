@@ -1,0 +1,25 @@
+.noData{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.noData img{
+    width: 400px;
+}
+.noData span{
+    color: var(--dark_white);
+    font-weight: 600;
+    font-size: 14px;
+}
+@media screen and (max-width:420px) {
+    .noData img{
+        width:300px;
+    } 
+}
+@media screen and (max-width:310px) {
+    .noData img{
+        width:200px;
+    } 
+}
