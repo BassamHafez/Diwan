@@ -3,6 +3,7 @@ const sharp = require("sharp");
 
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
+const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const factory = require("./handlerFactory");
@@ -50,11 +51,9 @@ exports.resizeEstateImage = catchAsync(async (req, res, next) => {
 });
 
 exports.createEstate = catchAsync(async (req, res, next) => {
-  let estate;
+  const { tags } = req.body;
 
-  if (!req.body.compound) {
-    estate = await Estate.create(req.body);
-  } else {
+  if (req.body.compound) {
     const compound = await Compound.findById(req.body.compound);
 
     if (!compound) {
@@ -66,9 +65,22 @@ exports.createEstate = catchAsync(async (req, res, next) => {
     if (compound.neighborhood) req.body.neighborhood = compound.neighborhood;
     if (compound.broker) req.body.broker = compound.broker;
     if (compound.landlord) req.body.landlord = compound.landlord;
-
-    estate = await Estate.create(req.body);
   }
+
+  const estateCreatePromise = Estate.create(req.body);
+
+  const tagUpdatePromise = tags
+    ? Tag.findOneAndUpdate(
+        { user: req.user._id },
+        { $addToSet: { tags: { $each: tags } } },
+        { upsert: true, lean: true }
+      )
+    : Promise.resolve();
+
+  const [_, estate] = await Promise.all([
+    tagUpdatePromise,
+    estateCreatePromise,
+  ]);
 
   res.status(201).json({
     status: "success",
@@ -78,6 +90,7 @@ exports.createEstate = catchAsync(async (req, res, next) => {
 
 exports.updateEstate = catchAsync(async (req, res, next) => {
   const estate = await Estate.findById(req.params.id);
+  const { tags } = req.body;
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -93,11 +106,28 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
     if (compound.landlord) req.body.landlord = compound.landlord;
   }
 
-  const updatedEstate = await Estate.findByIdAndUpdate(
+  const estateUpdatePromise = Estate.findByIdAndUpdate(
     req.params.id,
     req.body,
     { new: true, runValidators: true }
   );
+
+  const tagUpdatePromise = tags
+    ? Tag.findOneAndUpdate(
+        { user: req.user._id },
+        { $addToSet: { tags: { $each: tags } } },
+        { upsert: true, lean: true }
+      )
+    : Promise.resolve();
+
+  const [_, updatedEstate] = await Promise.all([
+    tagUpdatePromise,
+    estateUpdatePromise,
+  ]);
+
+  if (!updatedEstate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
 
   res.status(200).json({
     status: "success",
