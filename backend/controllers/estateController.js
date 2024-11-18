@@ -19,15 +19,30 @@ exports.filterUserEstates = (req, res, next) => {
   next();
 };
 
-const compoundPopOptions = [
+const estatesPopOptions = [
   {
     path: "compound",
     select: "name address region city neighborhood image",
   },
 ];
 
-exports.getAllEstates = factory.getAll(Estate, compoundPopOptions);
-exports.getEstate = factory.getOne(Estate, compoundPopOptions);
+const estatePopOptions = [
+  {
+    path: "compound",
+    select: "name address region city neighborhood image",
+  },
+  {
+    path: "broker",
+    select: "name phone phone2 type",
+  },
+  {
+    path: "landlord",
+    select: "name phone phone2 type",
+  },
+];
+
+exports.getAllEstates = factory.getAll(Estate, estatesPopOptions);
+exports.getEstate = factory.getOne(Estate, estatePopOptions);
 exports.deleteEstate = factory.deleteOne(Estate);
 
 exports.uploadEstateImage = uploadSingleImage("image");
