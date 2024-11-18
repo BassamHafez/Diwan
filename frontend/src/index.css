@@ -64,7 +64,7 @@ ul li{
 
 .nav-tabs li button{
   color: black;
-  font-weight: 700;
+  font-weight: 550;
 }
 .nav-tabs li .active{
   background-color: transparent !important;

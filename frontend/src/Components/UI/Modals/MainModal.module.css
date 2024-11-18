@@ -11,3 +11,15 @@
 .modal_body,.modal_footer{
     background-color: white;
 }
+.modal_header{
+    border-radius: 10px 10px 0 0;
+}
+.rounded_body{
+    border-radius: 10px 10px 0 0 ;
+}
+.modal_footer{
+    border-radius: 0 0 10px 10px;
+}
+.rounded_modal_body{
+    border-radius: 10px;
+}
