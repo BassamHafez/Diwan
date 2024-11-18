@@ -12,7 +12,7 @@ const ModalForm = ({show, onHide, children,modalSize}) => {
       centered
       className={styles.modal_container}
     >
-      <Modal.Body className={`${styles.modal_body} text-center`}>
+      <Modal.Body className={`${styles.modal_body} ${styles.rounded_modal_body} text-center`}>
         {children}
       </Modal.Body>
     </Modal>

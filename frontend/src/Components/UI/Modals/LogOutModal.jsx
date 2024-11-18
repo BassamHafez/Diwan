@@ -36,7 +36,7 @@ const LogOutModal = ({ onClose, onHide, show }) => {
       centered
       className={styles.modal_container}
     >
-      <Modal.Body className={`${styles.modal_body} text-center`}>
+      <Modal.Body className={`${styles.modal_body} ${styles.rounded_body} text-center`}>
         <h4>{key("logoutText")}</h4>
       </Modal.Body>
       <Modal.Footer className={styles.modal_footer}>

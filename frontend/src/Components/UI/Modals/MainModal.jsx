@@ -26,16 +26,16 @@ const MainModal = ({
       {title && (
         <Modal.Header
           closeButton
-          className={`${isArLang ? "modal_header_ar" : ""}`}
+          className={`${isArLang ? "modal_header_ar" : ""} ${styles.modal_header}`}
         >
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
       )}
-      <Modal.Body className={`${styles.modal_body} text-center`}>
+      <Modal.Body className={`${styles.modal_body} ${title?"":styles.rounded_body} ${(!cancelBtn && !okBtn)&&styles.rounded_modal_body} text-center`}>
         {children}
       </Modal.Body>
       {(cancelBtn || okBtn) && (
-        <Modal.Footer className={styles.modal_footer}>
+        <Modal.Footer className={`${styles.modal_footer}`}>
           {cancelBtn && (
             <div className={isArLang ? styles.close_btn_ar : styles.close_btn}>
               <ButtonOne color="white" onClick={onHide}>

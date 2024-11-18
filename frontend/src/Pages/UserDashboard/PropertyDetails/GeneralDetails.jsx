@@ -46,7 +46,7 @@ const GeneralDetails = ({ details }) => {
                   />
                   {key("address")}
                 </span>
-                <span className={styles.data}>{details.address}</span>
+                <span className={styles.data}>{details.address?details.address:key("notSpecified")}</span>
               </li>
               <li>
                 <span className={styles.title}>
@@ -76,7 +76,7 @@ const GeneralDetails = ({ details }) => {
                   />
                   {key("district")}
                 </span>
-                <span className={styles.data}>{details.neighborhood}</span>
+                <span className={styles.data}>{details.neighborhood?details.neighborhood:key("notSpecified")}</span>
               </li>
             </ul>
           </div>
@@ -86,7 +86,7 @@ const GeneralDetails = ({ details }) => {
               <p className="m-0">
                 <FontAwesomeIcon icon={faQuoteLeft} /> {details.description}{" "}
                 <FontAwesomeIcon icon={faQuoteRight} />
-              </p>
+              </p>  
             </div>
           </div>
         </Col>
@@ -102,7 +102,7 @@ const GeneralDetails = ({ details }) => {
                   />
                   {key("lessor")}
                 </span>
-                <span className={styles.data}>Gamal Alaa</span>
+                <span className={styles.data}>محمد حسن</span>
               </li>
               <li>
                 <span className={styles.title}>
@@ -112,7 +112,7 @@ const GeneralDetails = ({ details }) => {
                   />
                   {key("agent")}
                 </span>
-                <span className={styles.data}>Mohammed Ali</span>
+                <span className={styles.data}>محمود بكر</span>
               </li>
               <li>
                 <span className={styles.title}>
