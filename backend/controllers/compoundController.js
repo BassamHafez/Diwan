@@ -19,8 +19,19 @@ exports.filterUserCompounds = (req, res, next) => {
   next();
 };
 
+const compoundPopOptions = [
+  {
+    path: "broker",
+    select: "name phone phone2 type",
+  },
+  {
+    path: "landlord",
+    select: "name phone phone2 type",
+  },
+];
+
 exports.getAllCompounds = factory.getAll(Compound);
-exports.getCompound = factory.getOne(Compound);
+exports.getCompound = factory.getOne(Compound, compoundPopOptions);
 
 exports.uploadCompoundImage = uploadSingleImage("image");
 
