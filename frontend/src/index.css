@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Quicksand:wght@300..700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Quicksand:wght@300..700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
 :root {
   --main_color:#D39833;
   --main_color_light:#F4E3CF;
@@ -7,9 +8,9 @@
   --dark_white:rgb(129, 129, 129);
   --sky:#f9f5ed;
   --deep_navy:#2A3A47;
-  --main_font:"Quicksand", sans-serif;
+  --main_font:"Cairo", sans-serif;
+  --sub_white:rgb(247, 247, 247);
 }
-/* font-family: "Cairo", serif; */
 *{
   margin: 0;
   padding: 0;
@@ -75,10 +76,16 @@ ul li{
   margin-right: auto !important;
 }
 
+.ar_canvas_header button{
+  margin: 0 !important;
+  margin-right: auto !important;
+}
+
 /* custome style */
 .color-main{
   color: var(--main_color);
 }
+
 .over{
   overflow: hidden;
 }
@@ -87,7 +94,7 @@ ul li{
   padding: 10px;
   display: flex;
   flex-direction: column;
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   position: relative;
 }
 .field input,.text_area{
@@ -134,7 +141,7 @@ ul li{
   transition: all .4s;
 }
 .submit_btn:hover{
-  transform: translateX(4px);
+  background-color:#436079;
 }
 .cancel_btn{
   background-color: rgb(246, 246, 246);

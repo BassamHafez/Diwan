@@ -1,12 +1,12 @@
 import styles from "./MainModal.module.css";
 import Modal from "react-bootstrap/Modal";
 
-const ModalForm = ({show, onHide, children}) => {
+const ModalForm = ({show, onHide, children,modalSize}) => {
   return (
     <Modal
       show={show}
       onHide={onHide}
-      size="xl"
+      size={modalSize?modalSize:"xl"}
       fullscreen="md-down"
       aria-labelledby="contained-modal-title-vcenter"
       centered
