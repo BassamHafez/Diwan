@@ -80,7 +80,7 @@ const GeneralDetails = ({ details }) => {
               </li>
             </ul>
           </div>
-          <div className={styles.information}>
+          <div className={`${styles.information} mt-3`}>
             <h5 className="mb-3 color-main">{key("description")}</h5>
             <div className={styles.desc_content}>
               <p className="m-0">
@@ -91,7 +91,7 @@ const GeneralDetails = ({ details }) => {
           </div>
         </Col>
         <Col md={6}>
-          <div className={styles.information}>
+          <div className={`${styles.information} mb-2`}>
             <h5 className="mb-3 color-main">{key("addInfo")}</h5>
             <ul className={styles.info_list}>
               <li>
@@ -161,7 +161,7 @@ const GeneralDetails = ({ details }) => {
             </ul>
           </div>
           <div className={styles.information}>
-            <h5 className="mb-3 color-main">{key("tags")}</h5>
+            <h5 className="mb-3 color-main">{key("tag")}</h5>
             <Row className="g-2">
               {details.tags?.length > 0 ? (
                 details.tags.map((tag, index) => (
