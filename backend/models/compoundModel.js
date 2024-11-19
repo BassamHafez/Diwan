@@ -35,11 +35,11 @@ const compoundSchema = new mongoose.Schema(
     },
     broker: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Contact",
+      ref: "BrokerContact",
     },
     landlord: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Contact",
+      ref: "LandlordContact",
     },
   },
   { timestamps: true }
