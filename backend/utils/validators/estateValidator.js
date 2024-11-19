@@ -92,6 +92,10 @@ exports.createEstateValidator = [
 
   check("user").isEmpty().withMessage("User cannot be set manually"),
 
+  check("inFavorites")
+    .isEmpty()
+    .withMessage("To add to favorites, use favorites endpoints"),
+
   validatorMiddleware,
 ];
 
@@ -183,6 +187,10 @@ exports.updateEstateValidator = [
   check("user").isEmpty().withMessage("User cannot be set manually"),
 
   check("compound").isEmpty().withMessage("Compound cannot be edited"),
+
+  check("inFavorites")
+    .isEmpty()
+    .withMessage("To add to favorites, use favorites endpoints"),
 
   validatorMiddleware,
 ];

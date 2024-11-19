@@ -63,6 +63,10 @@ const estateSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "LandlordContact",
     },
+    inFavorites: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
