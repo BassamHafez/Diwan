@@ -1,0 +1,147 @@
+.header{
+    background: linear-gradient(to right,#FEF1E2,#E1EDF3);
+    min-height: 50vh;
+    overflow: hidden;
+    padding: 0.625rem;
+    position: relative;
+}
+.estate_img{    
+    width:37.5rem;
+    border-radius: 1.875rem;
+}
+.estate_img img{
+    width: 100%;
+    border-radius: 1.875rem;
+}
+.estate_main_details{
+    border-radius: 1.875rem;
+    padding: 0.625rem;
+}
+.main_details{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(0.625rem);
+    box-shadow:0 0.0625rem 0.25rem rgba(0, 0, 0, 0.24);
+    padding: 0.9375rem 0.125rem;
+    border-radius: 1.875rem;
+    min-width: 12.5rem;
+}
+.main_details span{
+    color: var(--dark_white);
+    font-size: 0.75rem;
+}
+
+.main_details p{
+    margin: 0;
+    margin-top: 0.625rem;
+    font-size: 1.25rem;
+}
+
+.header_footer{
+    background-color: white;
+    margin: 0.625rem;
+    border-radius: 1.875rem;
+    box-shadow:0 0.0625rem 0.25rem rgba(0, 0, 0, 0.24);
+    padding: 0.625rem;
+}
+.header_footerItem{
+    background-color: var(--main_color);
+    color: white;
+    border-radius: 0.625rem;
+    padding: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-width: 12.5rem;
+}
+.header_footerItem span{
+    font-size: 0.75rem;
+    color: var(--sub_light);
+}
+.header_footer p{
+    margin: 0;
+    font-weight: 600;
+    font-size: 1.125rem;
+}
+
+/* tabs */
+.tabs_section{
+    background-color: #F8F9FD;
+    padding: 3.125rem;
+}
+.information{
+    background-color: white;
+    box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.203);
+    padding: 1.25rem;
+    border-radius: 1.875rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+.info_list li{
+    display: flex;
+    justify-content: space-between;
+    margin: 0.625rem;
+}
+.info_list li .title{
+    color: var(--dark_white);
+    font-size: 1.0625rem;
+}
+
+
+.desc_content{
+    text-align: center;
+    background-color: var(--sub_white);
+    padding:1.25rem 0.625rem;
+    border: 0.0625rem solid rgb(219, 219, 219);
+    border-radius: 0.625rem;
+}
+.desc_content p svg{
+    color: var(--sub_color);
+}
+
+.tag{
+    background-color: var(--sub_white);
+    text-align: center;
+    border-radius: 0.625rem;
+    padding: 0.625rem 0.125rem;
+    border: 0.0625rem solid rgb(219, 219, 219);
+}
+
+@media screen and (max-width:890px) {
+    .main_details{
+        border-radius: 1.875rem;
+        min-width: 11.25rem;
+    }
+}
+@media screen and (max-width:460px) {
+    .tabs_section{
+        background-color: #F8F9FD;
+        padding: 10px;
+    }
+    .information{
+        padding: 10px;
+        border-radius: 10px;
+    }
+    .info_list{
+        padding: 0;
+    }
+    .info_list li{
+        flex-wrap: wrap;
+    }
+}
+@media screen and (max-width:355px) {
+.estate_main_details_row{
+    flex-direction: column;
+    align-items: center;
+}
+}
+@media screen and (max-width:245px) {
+.header_footerItem{
+    min-width: 0;
+    width: 99%;
+}
+}

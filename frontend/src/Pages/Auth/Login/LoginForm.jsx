@@ -40,7 +40,7 @@ const LoginForm = () => {
     dispatch(saveRoleState(res?.data?.user?.role));
     dispatch(saveTokenState(res.token));
     notifySuccess(key("logged"));
-    navigate("/");
+    navigate("/properties");
   };
 
   const { mutate, isPending } = useMutation({

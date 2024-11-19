@@ -8,43 +8,67 @@ import AccordionContent from "../../../Components/UI/Tools/AccordionContent";
 import Property from "../../../Components/Property/Property";
 import SearchField from "../../../Components/Search/SearchField";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { realEstates } from "../../../Components/Logic/StaticLists";
 import Select from "react-select";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
+  faBuilding,
   faCubes,
   faFileSignature,
-  faHouse,
   faRotate,
 } from "@fortawesome/free-solid-svg-icons";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddCompound from "../PropertyForms/AddCompound";
 import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import AddEstate from "../PropertyForms/AddEstate";
+import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
+import NoData from "../../../Components/UI/Blocks/NoData";
 
 const Properties = () => {
   const { t: key } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [showAddCompoundModal, setShowAddCompoundModal] = useState(false);
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState("compounds");
+  const [selectedFilter, setSelectedFilter] = useState("estates");
+  const [selectedCompoundId, setSelectedCompoundId] = useState(null);
   const token = JSON.parse(localStorage.getItem("token"));
+  const [compoundsOptions, setCompoundsOptions] = useState([]);
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
-  const { data: compounds, isFetching: fetchingCompounds } = useQuery({
+  const {
+    data: compounds,
+    isFetching: fetchingCompounds,
+    refetch: refetchCompound,
+  } = useQuery({
     queryKey: ["compounds", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: selectedFilter === "compounds" && !!token,
+    enabled: !!token,
+    staleTime: Infinity,
   });
 
-  const { data: estates, isFetching: fetchingEstates } = useQuery({
+  useEffect(() => {
+    let compoundOptions;
+    if (compounds) {
+      compoundOptions = compounds.data?.map((compound) => {
+        return { label: compound.name, value: compound._id };
+      });
+    }
+    setCompoundsOptions(compoundOptions);
+  }, [compounds, key]);
+
+  const {
+    data: estates,
+    isFetching: fetchingEstates,
+    refetch: refetchEstate,
+  } = useQuery({
     queryKey: ["estates", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "estates", token: token }),
     enabled: selectedFilter === "estates" && !!token,
+    staleTime: Infinity,
   });
 
   const { data: bookmarked, isFetching: fetchingBookmarked } = useQuery({
@@ -52,22 +76,12 @@ const Properties = () => {
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "bookmarked", token: token }),
     enabled: selectedFilter === "bookmarked" && !!token,
+    staleTime: Infinity,
   });
 
   const handleFilterChange = (event) => {
     setSelectedFilter(event.target.value);
   };
-
-  const cubes = <FontAwesomeIcon className={styles.acc_icon} icon={faCubes} />;
-  const status = (
-    <FontAwesomeIcon className={styles.acc_icon} icon={faRotate} />
-  );
-  const Contracts = (
-    <FontAwesomeIcon className={styles.acc_icon} icon={faFileSignature} />
-  );
-  const parentRealEstate = (
-    <FontAwesomeIcon className={styles.acc_icon} icon={faHouse} />
-  );
 
   const showNextModal = (selectedModal) => {
     setShowModal(false);
@@ -77,6 +91,29 @@ const Properties = () => {
       setShowAddEstateModal(true);
     }
   };
+
+  const handleCompoundFilterChange = (value) => {
+    setSelectedCompoundId(value);
+  };
+
+  const filteredEstates = estates
+    ? estates.data?.filter(
+        (estate) =>
+          !selectedCompoundId || estate.compound?._id === selectedCompoundId
+      )
+    : [];
+
+  //statics
+  const cubes = <FontAwesomeIcon className={styles.acc_icon} icon={faCubes} />;
+  const status = (
+    <FontAwesomeIcon className={styles.acc_icon} icon={faRotate} />
+  );
+  const Contracts = (
+    <FontAwesomeIcon className={styles.acc_icon} icon={faFileSignature} />
+  );
+  const parentRealEstate = (
+    <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
+  );
 
   return (
     <div className={styles.main_body}>
@@ -88,11 +125,18 @@ const Properties = () => {
               type="radio"
               className="btn-check"
               name="types"
-              id="allPropSmall"
+              value="estates"
+              id="estatesSmall"
               autoComplete="off"
-              value="all"
+              checked={selectedFilter === "estates"}
+              onChange={handleFilterChange}
             />
-            <label className="btn" htmlFor="allPropSmall">
+            <label
+              className={`${
+                selectedFilter === "estates" && styles.label_checked
+              } btn`}
+              htmlFor="estatesSmall"
+            >
               {key("allProp")}
             </label>
 
@@ -100,11 +144,18 @@ const Properties = () => {
               type="radio"
               className="btn-check"
               name="types"
-              id="compounds"
-              value="compounds"
+              id="compoundsSmall"
               autoComplete="off"
+              value="compounds"
+              checked={selectedFilter === "compounds"}
+              onChange={handleFilterChange}
             />
-            <label className="btn" htmlFor="compounds">
+            <label
+              className={`${
+                selectedFilter === "compounds" && styles.label_checked
+              } btn`}
+              htmlFor="compoundsSmall"
+            >
               {key("compounds")}
             </label>
 
@@ -112,92 +163,112 @@ const Properties = () => {
               type="radio"
               className="btn-check"
               name="types"
-              id="bookmarked"
+              id="bookmarkedSmall"
               value="bookmarked"
               autoComplete="off"
+              checked={selectedFilter === "bookmarked"}
+              onChange={handleFilterChange}
             />
-            <label className="btn" htmlFor="bookmarked">
+            <label
+              className={`${
+                selectedFilter === "bookmarked" && styles.label_checked
+              } btn`}
+              htmlFor="bookmarkedSmall"
+            >
               {key("bookmarked")}
             </label>
           </div>
 
-          <div className={styles.small_filter}>
-            <h5>{key("status")}</h5>
-            <input
-              type="radio"
-              className="btn-check"
-              name="status"
-              id="statusAllSmall"
-              autoComplete="off"
-              value="all"
-            />
-            <label className="btn" htmlFor="statusAllSmall">
-              {key("all")}
-            </label>
+          {selectedFilter !== "compounds" && (
+            <>
+              <div className={styles.small_filter}>
+                <h5>{key("status")}</h5>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="status"
+                  id="statusAllSmall"
+                  autoComplete="off"
+                  value="all"
+                />
+                <label className="btn" htmlFor="statusAllSmall">
+                  {key("all")}
+                </label>
 
-            <input
-              type="radio"
-              className="btn-check"
-              name="status"
-              id="rentedSmall"
-              value="rented"
-              autoComplete="off"
-            />
-            <label className="btn" htmlFor="rentedSmall">
-              {key("rented")}
-            </label>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="status"
+                  id="rentedSmall"
+                  value="rented"
+                  autoComplete="off"
+                />
+                <label className="btn" htmlFor="rentedSmall">
+                  {key("rented")}
+                </label>
 
-            <input
-              type="radio"
-              className="btn-check"
-              name="status"
-              id="reservedSmall"
-              value="reserved"
-              autoComplete="off"
-            />
-            <label className="btn" htmlFor="reservedSmall">
-              {key("reserved")}
-            </label>
-          </div>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="status"
+                  id="reservedSmall"
+                  value="reserved"
+                  autoComplete="off"
+                />
+                <label className="btn" htmlFor="reservedSmall">
+                  {key("reserved")}
+                </label>
+              </div>
 
-          <div className={styles.small_filter}>
-            <h5>{key("Contracts")}</h5>
-            <input
-              type="radio"
-              className="btn-check"
-              name="Contracts"
-              id="nextMonthSmall"
-              autoComplete="off"
-              value="nextMonth"
-            />
-            <label className="btn" htmlFor="nextMonthSmall">
-              {key("nextMonth")}
-            </label>
+              <div className={styles.small_filter}>
+                <h5>{key("Contracts")}</h5>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="Contracts"
+                  id="nextMonthSmall"
+                  autoComplete="off"
+                  value="nextMonth"
+                />
+                <label className="btn" htmlFor="nextMonthSmall">
+                  {key("nextMonth")}
+                </label>
 
-            <input
-              type="radio"
-              className="btn-check"
-              name="Contracts"
-              id="next3MonthSmall"
-              value="next3Month"
-              autoComplete="off"
-            />
-            <label className="btn" htmlFor="next3MonthSmall">
-              {key("next3Month")}
-            </label>
-          </div>
+                <input
+                  type="radio"
+                  className="btn-check"
+                  name="Contracts"
+                  id="next3MonthSmall"
+                  value="next3Month"
+                  autoComplete="off"
+                />
+                <label className="btn" htmlFor="next3MonthSmall">
+                  {key("next3Month")}
+                </label>
+              </div>
 
-          <div className={styles.small_filter}>
-            <h5>{key("parentRealEstate")}</h5>
-            <Select
-              classNamePrefix="select"
-              className="select"
-              isSearchable={true}
-              name="parentRealEstate"
-              options={realEstates}
-              // onChange={(value) => filterOperations(false, value, "title")}
-            />
-          </div>
+              <div className={styles.small_filter}>
+                <h5>{key("parentRealEstate")}</h5>
+                <Select
+                  isSearchable={true}
+                  name="parentRealEstate"
+                  options={compoundsOptions}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                  isClearable
+                  value={
+                    compoundsOptions?.find(
+                      (option) => option.value === selectedCompoundId
+                    ) || null
+                  }
+                  onChange={(val) =>
+                    handleCompoundFilterChange(val ? val.value : null)
+                  }
+                />
+              </div>
+            </>
+          )}
         </div>
         <Col md={3} lg={2} className={styles.filters}>
           <aside>
@@ -267,131 +338,143 @@ const Properties = () => {
                   </div>
                 </div>
               </AccordionContent>
-
-              <AccordionContent
-                removeTitle={true}
-                title={key("status")}
-                icon={status}
-                eventKey="1"
-              >
-                <div className="form-check">
-                  <input
-                    className={`${styles.filter_input} form-check-input`}
-                    type="radio"
-                    name="status"
-                    value="all"
-                    id="statusAll"
-                  />
-                  <label
-                    className={`form-check-label ${styles.filter_label}`}
-                    htmlFor="statusAll"
+              {selectedFilter !== "compounds" && (
+                <>
+                  <AccordionContent
+                    title={key("parentRealEstate")}
+                    icon={parentRealEstate}
+                    eventKey="3"
                   >
-                    {key("all")}
-                  </label>
-                </div>
+                    <Select
+                      isSearchable={true}
+                      name="parentRealEstate"
+                      options={compoundsOptions}
+                      className={`${isArLang ? "text-end" : "text-start"}`}
+                      isRtl={isArLang ? false : true}
+                      placeholder={isArLang ? "" : "select"}
+                      isClearable
+                      value={
+                        compoundsOptions?.find(
+                          (option) => option.value === selectedCompoundId
+                        ) || null
+                      }
+                      onChange={(val) =>
+                        handleCompoundFilterChange(val ? val.value : null)
+                      }
+                    />
+                  </AccordionContent>
 
-                <div className="form-check">
-                  <input
-                    className={`${styles.filter_input} form-check-input`}
-                    type="radio"
-                    name="status"
-                    value="rented"
-                    id="rented"
-                  />
-                  <label
-                    className={`form-check-label ${styles.filter_label}`}
-                    htmlFor="rented"
+                  <AccordionContent
+                    removeTitle={true}
+                    title={key("status")}
+                    icon={status}
+                    eventKey="1"
                   >
-                    {key("rented")}
-                  </label>
-                </div>
+                    <div className="form-check">
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="status"
+                        value="all"
+                        id="statusAll"
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="statusAll"
+                      >
+                        {key("all")}
+                      </label>
+                    </div>
 
-                <div className="form-check">
-                  <input
-                    className={`${styles.filter_input} form-check-input`}
-                    type="radio"
-                    name="status"
-                    value="reserved"
-                    id="reserved"
-                  />
-                  <label
-                    className={`form-check-label ${styles.filter_label}`}
-                    htmlFor="reserved"
+                    <div className="form-check">
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="status"
+                        value="rented"
+                        id="rented"
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="rented"
+                      >
+                        {key("rented")}
+                      </label>
+                    </div>
+
+                    <div className="form-check">
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="status"
+                        value="reserved"
+                        id="reserved"
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="reserved"
+                      >
+                        {key("reserved")}
+                      </label>
+                    </div>
+
+                    <div className="form-check">
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="status"
+                        value="vacant"
+                        id="vacant"
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="vacant"
+                      >
+                        {key("vacant")}
+                      </label>
+                    </div>
+                  </AccordionContent>
+
+                  <AccordionContent
+                    removeTitle={true}
+                    title={key("Contracts")}
+                    icon={Contracts}
+                    eventKey="2"
                   >
-                    {key("reserved")}
-                  </label>
-                </div>
+                    <div className="form-check">
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="Contracts"
+                        value="nextMonth"
+                        id="nextMonth"
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="nextMonth"
+                      >
+                        {key("nextMonth")}
+                      </label>
+                    </div>
 
-                <div className="form-check">
-                  <input
-                    className={`${styles.filter_input} form-check-input`}
-                    type="radio"
-                    name="status"
-                    value="vacant"
-                    id="vacant"
-                  />
-                  <label
-                    className={`form-check-label ${styles.filter_label}`}
-                    htmlFor="vacant"
-                  >
-                    {key("vacant")}
-                  </label>
-                </div>
-              </AccordionContent>
-
-              <AccordionContent
-                removeTitle={true}
-                title={key("Contracts")}
-                icon={Contracts}
-                eventKey="2"
-              >
-                <div className="form-check">
-                  <input
-                    className={`${styles.filter_input} form-check-input`}
-                    type="radio"
-                    name="Contracts"
-                    value="nextMonth"
-                    id="nextMonth"
-                  />
-                  <label
-                    className={`form-check-label ${styles.filter_label}`}
-                    htmlFor="nextMonth"
-                  >
-                    {key("nextMonth")}
-                  </label>
-                </div>
-
-                <div className="form-check">
-                  <input
-                    className={`${styles.filter_input} form-check-input`}
-                    type="radio"
-                    name="Contracts"
-                    value="next3Month"
-                    id="next3Month"
-                  />
-                  <label
-                    className={`form-check-label ${styles.filter_label}`}
-                    htmlFor="next3Month"
-                  >
-                    {key("next3Month")}
-                  </label>
-                </div>
-              </AccordionContent>
-
-              <AccordionContent
-                title={key("parentRealEstate")}
-                icon={parentRealEstate}
-                eventKey="3"
-              >
-                <Select
-                  classNamePrefix="select"
-                  className="select"
-                  isSearchable={true}
-                  name="parentRealEstate"
-                  options={realEstates}
-                  // onChange={(value) => filterOperations(false, value, "title")}
-                />
-              </AccordionContent>
+                    <div className="form-check">
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="Contracts"
+                        value="next3Month"
+                        id="next3Month"
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="next3Month"
+                      >
+                        {key("next3Month")}
+                      </label>
+                    </div>
+                  </AccordionContent>
+                </>
+              )}
             </Accordion>
           </aside>
         </Col>
@@ -412,34 +495,46 @@ const Properties = () => {
                 />
               </div>
             </div>
-
             <Row className={styles.properties_row}>
               {selectedFilter === "compounds" && compounds ? (
                 fetchingCompounds ? (
-                  <h1>fetching...</h1>
+                  <LoadingOne />
                 ) : (
-                  compounds.data?.map((prop) => (
-                    <Property hideState={true} key={prop._id} property={prop} />
+                  compounds.data?.map((comp) => (
+                    <Property
+                      hideState={true}
+                      hideCompound={true}
+                      key={comp._id}
+                      property={comp}
+                      type="compound"
+                    />
                   ))
                 )
               ) : selectedFilter === "estates" && estates ? (
                 fetchingEstates ? (
-                  <h1>fetching...</h1>
-                ) : (
-                  estates.data?.map((prop) => (
-                    <Property key={prop._id} property={prop} />
+                  <LoadingOne />
+                ) : filteredEstates?.length > 0 ? (
+                  filteredEstates.map((prop) => (
+                    <Property
+                      key={prop._id}
+                      hideState={true}
+                      property={prop}
+                      type="estate"
+                    />
                   ))
+                ) : (
+                  <NoData text={key("noSearchFound")} />
                 )
               ) : selectedFilter === "bookmarked" && bookmarked ? (
                 fetchingBookmarked ? (
-                  <h1>fetching....</h1>
+                  <LoadingOne />
                 ) : (
                   bookmarked.data?.map((prop) => (
                     <Property key={prop._id} property={prop} />
                   ))
                 )
               ) : (
-                <h1>no data</h1>
+                <NoData text={key("noItemsFound")} />
               )}
             </Row>
           </Container>
@@ -477,7 +572,10 @@ const Properties = () => {
           show={showAddCompoundModal}
           onHide={() => setShowAddCompoundModal(false)}
         >
-          <AddCompound hideModal={() => setShowAddCompoundModal(false)} />
+          <AddCompound
+            hideModal={() => setShowAddCompoundModal(false)}
+            refetch={refetchCompound}
+          />
         </ModalForm>
       )}
 
@@ -486,7 +584,10 @@ const Properties = () => {
           show={showAddEstateModal}
           onHide={() => setShowAddEstateModal(false)}
         >
-          <AddEstate hideModal={() => setShowAddEstateModal(false)} />
+          <AddEstate
+            hideModal={() => setShowAddEstateModal(false)}
+            refetch={refetchEstate}
+          />
         </ModalForm>
       )}
     </div>

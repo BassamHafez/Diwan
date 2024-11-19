@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import {
+  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
+} from "../../../util/Http";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -15,23 +18,41 @@ import Select from "react-select";
 import {
   agents,
   citiesByRegion,
+  citiesByRegionAr,
   districtsByCity,
+  districtsByCityAr,
   SaudiRegion,
-  tagOptions,
+  SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
 import CreatableSelect from "react-select/creatable";
 
-const AddCompound = ({hideModal}) => {
+const AddCompound = ({ hideModal, refetch }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
+  const [tagsOptions, setTagsOptions] = useState([]);
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
+
+  const { data: tags,refetch:refetchTags} = useQuery({
+    queryKey: ["tags", token],
+    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
+    enabled: !!token,
+    staleTime: Infinity,
+  });
+
+  useEffect(() => {
+    let myTagsOptions = tags?.data?.map((tag) => {
+      return { label: tag, value: tag };
+    });
+    setTagsOptions(myTagsOptions);
+  }, [tags]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
@@ -49,7 +70,7 @@ const AddCompound = ({hideModal}) => {
     agent: "",
     lessor: "",
   };
-
+  
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
     const formData = new FormData();
@@ -63,7 +84,9 @@ const AddCompound = ({hideModal}) => {
     formData.append("description", values.description);
     formData.append("city", values.city);
     formData.append("region", values.region);
-    formData.append("address", values.address);
+    if (values.address) {
+      formData.append("address", values.address);
+    }
     formData.append("neighborhood", values.neighborhood);
     if (values.tags?.length > 0) {
       values.tags.forEach((obj, index) => {
@@ -74,18 +97,20 @@ const AddCompound = ({hideModal}) => {
       {
         formData: formData,
         token: token,
-        method:"add",
-        type:"compounds"
+        method: "add",
+        type: "compounds",
       },
       {
         onSuccess: (data) => {
-            console.log(data)
+          console.log(data);
           if (data?.status === "success") {
-            // refetch();
+            refetch();
+            refetchTags();
             notifySuccess(key("addedSuccess"));
             setSelectedFile(null);
             setImagePreviewUrl(null);
             resetForm();
+            hideModal();
           } else {
             notifyError(key("wrong"));
           }
@@ -103,8 +128,10 @@ const AddCompound = ({hideModal}) => {
     description: string().required(key("fieldReq")),
     city: string().required(key("fieldReq")),
     region: string().required(key("fieldReq")),
-    address: string().required(key("fieldReq")),
-    neighborhood: string(),
+    neighborhood: string().required(key("fieldReq")),
+    address: string(),
+    agent: string(),
+    lessor: string(),
   });
 
   const handleFileChange = (e) => {
@@ -125,7 +152,13 @@ const AddCompound = ({hideModal}) => {
     setFieldValue("region", selectedRegion?.value || "");
     setFieldValue("city", "");
     setFieldValue("neighborhood", "");
-    const cities = citiesByRegion[selectedRegion?.value] || [];
+    let cities;
+    if(isArLang){
+      cities = citiesByRegionAr[selectedRegion?.value] || [];
+    }else{
+      cities = citiesByRegion[selectedRegion?.value] || [];
+    }
+    
     setCityOptions(cities);
     setDistrictOptions([]);
   };
@@ -133,8 +166,14 @@ const AddCompound = ({hideModal}) => {
   const handleCityChange = (selectedCity, setFieldValue) => {
     setFieldValue("city", selectedCity?.value || "");
     setFieldValue("neighborhood", "");
-    const districts = districtsByCity[selectedCity?.value] || [];
-    setDistrictOptions(districts);
+    let districts;
+    if(isArLang){
+      districts = districtsByCityAr[selectedCity?.value] || [];
+    }else{
+      districts = districtsByCity[selectedCity?.value] || [];
+    }
+    let finalDistricts=[{label:key("notSpecified"),value:"not specified"},...districts]
+    setDistrictOptions(finalDistricts);
   };
 
   return (
@@ -175,10 +214,12 @@ const AddCompound = ({hideModal}) => {
                 <label htmlFor="tags">{key("tag")}</label>
                 <CreatableSelect
                   isClearable
-                  options={tagOptions}
+                  options={tagsOptions}
                   isMulti
                   onChange={(val) => setFieldValue("tags", val)}
-                  className="text-start"
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="tags" component={InputErrorMessage} />
               </div>
@@ -190,7 +231,9 @@ const AddCompound = ({hideModal}) => {
                   name="lessor"
                   options={agents}
                   onChange={(val) => setFieldValue("lessor", val.value)}
-                  className="text-start"
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="lessor" component={InputErrorMessage} />
               </div>
@@ -203,15 +246,17 @@ const AddCompound = ({hideModal}) => {
                 <Select
                   id="region"
                   name="region"
-                  options={SaudiRegion}
+                  options={isArLang?SaudiRegionAr:SaudiRegion}
                   onChange={(selected) =>
                     handleRegionChange(selected, setFieldValue)
                   }
                   value={
-                    SaudiRegion.find((opt) => opt.value === values.region) ||
+                    (isArLang?SaudiRegionAr:SaudiRegion).find((opt) => opt.value === values.region) ||
                     null
                   }
-                  className="text-start"
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
               </div>
@@ -229,7 +274,9 @@ const AddCompound = ({hideModal}) => {
                     cityOptions.find((opt) => opt.value === values.city) || null
                   }
                   isDisabled={!values.region}
-                  className="text-start"
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="city" component="div" className="error" />
               </div>
@@ -247,7 +294,9 @@ const AddCompound = ({hideModal}) => {
                     ) || null
                   }
                   isDisabled={!values.city}
-                  className="text-start"
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage
                   name="neighborhood"
@@ -269,7 +318,9 @@ const AddCompound = ({hideModal}) => {
                   name="agent"
                   options={agents}
                   onChange={(val) => setFieldValue("agent", val.value)}
-                  className="text-start"
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="agent" component={InputErrorMessage} />
               </div>
@@ -305,7 +356,9 @@ const AddCompound = ({hideModal}) => {
           </div>
 
           <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
-            <button onClick={hideModal} className="cancel_btn my-2">{key("cancel")}</button>
+            <button onClick={hideModal} className="cancel_btn my-2">
+              {key("cancel")}
+            </button>
 
             <button className="submit_btn my-2" type="submit">
               {isPending ? (

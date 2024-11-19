@@ -23,8 +23,8 @@ const Packages = () => {
               {(isArLang
                 ? packagesList.packagePerMonthAr
                 : packagesList.packagesPerMonthEn
-              ).map((pack) => (
-                <PackageItem key={pack._id} pack={pack} />
+              ).map((pack,index) => (
+                <PackageItem key={`${pack._id}_${index}`} pack={pack} />
               ))}
             </Row>
           </Tab>
@@ -34,8 +34,8 @@ const Packages = () => {
               {(isArLang
                 ? packagesList.packagePerThreeMonthsAr
                 : packagesList.packagePerThreeMonthsEn
-              ).map((pack) => (
-                <PackageItem key={pack._id} pack={pack} />
+              ).map((pack,index) => (
+                <PackageItem key={`${pack._id}_${index}`} pack={pack} />
               ))}
             </Row>
           </Tab>
@@ -45,8 +45,8 @@ const Packages = () => {
               {(isArLang
                 ? packagesList.packagePerYearAr
                 : packagesList.packagePerYearEn
-              ).map((pack) => (
-                <PackageItem key={pack._id} pack={pack} />
+              ).map((pack,index) => (
+                <PackageItem key={`${pack._id}_${index}`} pack={pack} />
               ))}
             </Row>
           </Tab>

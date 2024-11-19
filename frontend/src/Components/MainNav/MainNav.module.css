@@ -49,7 +49,7 @@
     border-radius: 50%;
     width: 55px;
     height: 55px;
-    border:2px solid var(--dark_white);
+    border:2px solid rgb(93, 156, 179);
     transition: scale .4s;
     cursor: pointer;
     margin-inline: 10px;
