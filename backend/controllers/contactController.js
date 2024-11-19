@@ -1,8 +1,25 @@
-const Contact = require("../models/contactModel");
-const factory = require("./handlerFactory");
+const BrokerContact = require("../models/brokerContactModel");
+const ServiceContact = require("../models/serviceContactModel");
+const LandlordContact = require("../models/landlordContactModel");
+const TenantContact = require("../models/tenantContactModel");
+const catchAsync = require("../utils/catchAsync");
+const ApiError = require("../utils/ApiError");
 
-exports.getAllContacts = factory.getAll(Contact);
-exports.getContact = factory.getOne(Contact);
-exports.createContact = factory.createOne(Contact);
-exports.updateContact = factory.updateOne(Contact);
-exports.deleteContact = factory.deleteOne(Contact);
+exports.getAllContacts = catchAsync(async (req, res, next) => {
+  const [brokers, services, landlords, tenants] = await Promise.all([
+    BrokerContact.find({ user: req.user.id }),
+    ServiceContact.find({ user: req.user.id }),
+    LandlordContact.find({ user: req.user.id }),
+    TenantContact.find({ user: req.user.id }),
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      brokers,
+      services,
+      landlords,
+      tenants,
+    },
+  });
+});

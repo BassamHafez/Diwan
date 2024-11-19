@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const contactSchema = new mongoose.Schema(
+const brokerContactSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -11,11 +11,7 @@ const contactSchema = new mongoose.Schema(
       required: true,
     },
     phone2: String,
-    type: {
-      type: String,
-      enum: ["broker", "tenant", "landlord", "service"],
-      required: true,
-    },
+    notes: String,
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -25,6 +21,6 @@ const contactSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Contact = mongoose.model("Contact", contactSchema);
+const BrokerContact = mongoose.model("BrokerContact", brokerContactSchema);
 
-module.exports = Contact;
+module.exports = BrokerContact;

@@ -3,6 +3,10 @@ const compoundRoutes = require("../routes/compoundRoutes");
 const estateRoutes = require("../routes/estateRoutes");
 const favoriteRoutes = require("../routes/favoriteRoutes");
 const contactRoutes = require("../routes/contactRoutes");
+const brokerContactRoutes = require("../routes/brokerContactRoutes");
+const landlordContactRoutes = require("../routes/landlordContactRoutes");
+const serviceContactRoutes = require("../routes/serviceContactRoutes");
+const tenantContactRoutes = require("../routes/tenantContactRoutes");
 const tagRoutes = require("../routes/tagRoutes");
 
 const mountRoutes = (app) => {
@@ -11,6 +15,10 @@ const mountRoutes = (app) => {
   app.use("/api/v1/estates", estateRoutes);
   app.use("/api/v1/favorites", favoriteRoutes);
   app.use("/api/v1/contacts", contactRoutes);
+  app.use("/api/v1/contacts/brokers", brokerContactRoutes);
+  app.use("/api/v1/contacts/landlords", landlordContactRoutes);
+  app.use("/api/v1/contacts/services", serviceContactRoutes);
+  app.use("/api/v1/contacts/tenants", tenantContactRoutes);
   app.use("/api/v1/tags", tagRoutes);
 };
 
