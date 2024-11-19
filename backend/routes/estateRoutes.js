@@ -4,17 +4,18 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const estateController = require("../controllers/estateController");
 const estateValidator = require("../utils/validators/estateValidator");
+const { filterUserResults, setUserId } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
 router
   .route("/")
-  .get(estateController.filterUserEstates, estateController.getAllEstates)
+  .get(filterUserResults, estateController.getAllEstates)
   .post(
     estateController.uploadEstateImage,
     estateController.resizeEstateImage,
     estateValidator.createEstateValidator,
-    estateController.setUserId,
+    setUserId,
     estateController.createEstate
   );
 
