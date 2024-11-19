@@ -8,6 +8,20 @@ const { filterUserResults, setUserId } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
+// Favorites
+
+router
+  .route("/:id/favorites")
+  .post(
+    estateValidator.getEstateValidator,
+    setUserId,
+    estateController.favoriteEstate
+  )
+  .delete(
+    estateValidator.getEstateValidator,
+    estateController.unfavoriteEstate
+  );
+
 router
   .route("/")
   .get(filterUserResults, estateController.getAllEstates)

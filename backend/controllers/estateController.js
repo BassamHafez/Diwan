@@ -139,3 +139,37 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
     data: updatedEstate,
   });
 });
+
+// Favorites
+
+exports.favoriteEstate = catchAsync(async (req, res, next) => {
+  const estate = await Estate.findOneAndUpdate(
+    { _id: req.params.id, user: req.user._id },
+    { inFavorites: true }
+  );
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Estate added to favorites",
+  });
+});
+
+exports.unfavoriteEstate = catchAsync(async (req, res, next) => {
+  const estate = await Estate.findOneAndUpdate(
+    { _id: req.params.id, user: req.user._id },
+    { inFavorites: false }
+  );
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Estate removed from favorites",
+  });
+});
