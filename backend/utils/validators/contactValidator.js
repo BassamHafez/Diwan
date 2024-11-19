@@ -24,13 +24,11 @@ exports.createContactValidator = [
     .isMobilePhone("ar-SA")
     .withMessage("Invalid Saudi phone number"),
 
-  check("type")
-    .notEmpty()
-    .withMessage("Type is required")
+  check("notes")
+    .optional()
     .isString()
-    .withMessage("Type must be a string")
-    .isIn(["broker", "tenant", "landlord", "service"])
-    .withMessage("Invalid type (broker, tenant, landlord, service)"),
+    .withMessage("Notes must be a string")
+    .trim(),
 
   // NOT ALLOWED
 
@@ -66,12 +64,11 @@ exports.updateContactValidator = [
     .isMobilePhone("ar-SA")
     .withMessage("Invalid Saudi phone number"),
 
-  check("type")
+  check("notes")
     .optional()
     .isString()
-    .withMessage("Type must be a string")
-    .isIn(["broker", "tenant", "landlord", "service"])
-    .withMessage("Invalid type (broker, tenant, landlord, service)"),
+    .withMessage("Notes must be a string")
+    .trim(),
 
   // NOT ALLOWED
 
@@ -86,6 +83,142 @@ exports.getContactValidator = [
     .withMessage("Contact ID is required")
     .isMongoId()
     .withMessage("Invalid Contact ID"),
+
+  validatorMiddleware,
+];
+
+// Tenant Contact
+
+exports.createTenantContactValidator = [
+  check("type")
+    .notEmpty()
+    .withMessage("Type is required")
+    .isIn(["individual", "organization"])
+    .withMessage("Type must be individual or organization"),
+
+  check("name")
+    .notEmpty()
+    .withMessage("Name is required")
+    .isString()
+    .withMessage("Name must be a string")
+    .trim(),
+
+  check("phone")
+    .notEmpty()
+    .withMessage("Phone number required")
+    .isLength({ min: 10 })
+    .withMessage("Invalid phone number")
+    .isMobilePhone("ar-SA")
+    .withMessage("Invalid Saudi phone number"),
+
+  check("phone2")
+    .optional()
+    .isLength({ min: 10 })
+    .withMessage("Invalid phone number")
+    .isMobilePhone("ar-SA")
+    .withMessage("Invalid Saudi phone number"),
+
+  check("nationalId")
+    .optional()
+    .isString()
+    .withMessage("Invalid national ID")
+    .matches(/^\d{10}$/)
+    .withMessage("Invalid national ID")
+    .matches(/^[12]/)
+    .withMessage("Invalid national ID"),
+
+  check("address")
+    .optional()
+    .isString()
+    .withMessage("Address must be a string")
+    .trim(),
+
+  check("email").optional().isEmail().withMessage("Invalid email").trim(),
+
+  check("commercialRecord")
+    .optional()
+    .isString()
+    .withMessage("Commercial record must be a string")
+    .matches(/^\d{10}$/)
+    .withMessage("Invalid commercial record"),
+
+  check("taxNumber")
+    .optional()
+    .isString()
+    .withMessage("Tax number must be a string")
+    .matches(/^\d{15}$/)
+    .withMessage("Invalid tax number"),
+
+  // NOT ALLOWED
+
+  check("user").isEmpty().withMessage("User cannot be set"),
+
+  validatorMiddleware,
+];
+
+exports.updateTenantContactValidator = [
+  check("id")
+    .notEmpty()
+    .withMessage("Contact ID is required")
+    .isMongoId()
+    .withMessage("Invalid Contact ID"),
+
+  check("name")
+    .optional()
+    .isString()
+    .withMessage("Name must be a string")
+    .trim(),
+
+  check("phone")
+    .optional()
+    .isLength({ min: 10 })
+    .withMessage("Invalid phone number")
+    .isMobilePhone("ar-SA")
+    .withMessage("Invalid Saudi phone number"),
+
+  check("phone2")
+    .optional()
+    .isLength({ min: 10 })
+    .withMessage("Invalid phone number")
+    .isMobilePhone("ar-SA")
+    .withMessage("Invalid Saudi phone number"),
+
+  check("nationalId")
+    .optional()
+    .isString()
+    .withMessage("Invalid national ID")
+    .matches(/^\d{10}$/)
+    .withMessage("Invalid national ID")
+    .matches(/^[12]/)
+    .withMessage("Invalid national ID"),
+
+  check("address")
+    .optional()
+    .isString()
+    .withMessage("Address must be a string")
+    .trim(),
+
+  check("email").optional().isEmail().withMessage("Invalid email").trim(),
+
+  check("commercialRecord")
+    .optional()
+    .isString()
+    .withMessage("Commercial record must be a string")
+    .matches(/^\d{10}$/)
+    .withMessage("Invalid commercial record"),
+
+  check("taxNumber")
+    .optional()
+    .isString()
+    .withMessage("Tax number must be a string")
+    .matches(/^\d{15}$/)
+    .withMessage("Invalid tax number"),
+
+  // NOT ALLOWED
+
+  check("user").isEmpty().withMessage("User cannot be edited"),
+
+  check("type").isEmpty().withMessage("Type cannot be edited"),
 
   validatorMiddleware,
 ];
