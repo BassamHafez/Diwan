@@ -23,6 +23,7 @@ import UserHome from "./Pages/UserDashboard/UserHome/UserHome";
 import Properties from "./Pages/UserDashboard/Properties/Properties";
 import Tasks from "./Pages/UserDashboard/Tasks/Tasks";
 import Contacts from "./Pages/UserDashboard/Contacts/Contacts";
+import PropertyDetails from "./Pages/UserDashboard/PropertyDetails/PropertyDetails";
 
 const router = createBrowserRouter(
   [
@@ -40,6 +41,7 @@ const router = createBrowserRouter(
         //userDashboard
         { path: "dashboard", element: <UserHome /> },
         { path: "properties", element: <Properties /> },
+        { path: "property-details/:propId", element: <PropertyDetails /> },
         { path: "contacts", element: <Contacts /> },
         { path: "tasks", element: <Tasks /> },
       ],
@@ -66,17 +68,9 @@ function App() {
       if (control.language === "ar") {
         document.documentElement.setAttribute("dir", "rtl");
         document.documentElement.setAttribute("lang", "ar");
-        document.documentElement.style.setProperty(
-          "--main_font",
-          '"Cairo", sans-serif'
-        );
       } else {
         document.documentElement.setAttribute("dir", "ltr");
         document.documentElement.setAttribute("lang", "en");
-        document.documentElement.style.setProperty(
-          "--main_font",
-          '"Quicksand", sans-serif'
-        );
       }
     };
     updateFontFamily();

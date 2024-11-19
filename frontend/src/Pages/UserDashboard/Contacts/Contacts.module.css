@@ -1,0 +1,70 @@
+.contact_item{
+    padding: 20px;
+    background-color: var(--sub_white);
+    margin: 20px 0;
+    border-radius: 20px;
+    box-shadow:  0 0 3px rgba(0, 0, 0, 0.284);
+    min-height: 215px;
+}
+.noAvatar{
+    width:50px;
+}
+
+.contact_header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.img_side{
+    display: flex;
+    align-items: center;
+}
+.name_div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.name_div h6{
+    margin: 0;
+}
+.name_div span{
+    font-size: 13px;
+    color: var(--main_color);
+}
+
+.contacts_icons{
+    display: flex;
+    justify-content: end;
+    margin-inline: 10px;
+}
+.contact_icon{
+    font-size: 20px;
+    margin-inline:5px;
+    color: var(--deep_navy);
+    cursor: pointer;
+    transition: transform .4s;
+}
+.whatsappLink{
+    color: #25D366;
+}
+.controller_icons svg{
+    font-size: 20px;
+    margin-inline: 10px;
+    color: var(--deep_navy);
+    cursor: pointer;
+    transition: transform .4s;
+}
+.controller_icons svg:hover,.contact_icon:hover{
+    transform: translateY(-3px);
+}
+.number{
+    font-size: 18px;
+    
+}
+
+@media screen and (max-width:270px) {
+    .controller_icons{
+        margin-top: 5px;
+    }
+}

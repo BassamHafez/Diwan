@@ -20,207 +20,239 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import avatar from "../../assets/p1.jpeg";
+import { useState } from "react";
+import SettingOffCanvas from "../SettingOffCanvas/SettingOffCanvas";
 
 const MainNav = () => {
+  const [showSetting, setShowSetting] = useState(false);
   const [t, i18n] = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
   const isLogin = useSelector((state) => state.userInfo.isLogin);
 
   return (
-    <Navbar expand="lg" className="bg-body-tertiary">
-      <Container fluid>
-        <Navbar.Brand href="/">
-          <img src={logo} className={styles.logo} alt="logo" />
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className={`${isArLang ? "ms-auto" : "me-auto"}  my-2 my-lg-0 ${
-              styles.nav_list
-            }`}
-            navbarScroll
-          >
-            {isLogin ? (
-              <>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/dashboard"}
-                  end
+    <>
+      <Navbar expand="lg" className="bg-body-tertiary">
+        <Container fluid>
+          <Navbar.Brand href="/">
+            <img src={logo} className={styles.logo} alt="logo" />
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="navbarScroll" />
+          <Navbar.Collapse id="navbarScroll">
+            <Nav
+              className={`${isArLang ? "ms-auto" : "me-auto"}  my-2 my-lg-0 ${
+                styles.nav_list
+              }`}
+              navbarScroll
+            >
+              {isLogin ? (
+                <>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/dashboard"}
+                    end
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faHouse}
+                      />
+                      {t("dashboard")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/properties"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faBuilding}
+                      />
+                      {t("properties")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/contacts"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faUsers}
+                      />
+                      {t("contacts")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/tasks"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faClipboard}
+                      />
+                      {t("tasks")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/contact"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faEnvelope}
+                      />
+                      {t("contact")}
+                    </span>
+                  </NavLink>
+                </>
+              ) : (
+                <>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/"}
+                    end
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faHouse}
+                      />
+                      {t("home")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/about"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faCircleInfo}
+                      />
+                      {t("about")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/contact"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faEnvelope}
+                      />
+                      {t("contact")}
+                    </span>
+                  </NavLink>
+                  <NavLink
+                    className={({ isActive }) =>
+                      isActive ? styles.active : undefined
+                    }
+                    to={"/packages"}
+                  >
+                    <span>
+                      <FontAwesomeIcon
+                        className={`${styles.nav_icon} ${
+                          isArLang ? styles.ar_icon : styles.en_icon
+                        }`}
+                        icon={faLayerGroup}
+                      />
+                      {t("packages")}
+                    </span>
+                  </NavLink>
+                </>
+              )}
+            </Nav>
+            <div
+              className={`${styles.nav_controller} d-flex align-items-center justify-content-center`}
+            >
+              <Dropdown>
+                <Dropdown.Toggle
+                  className={`${styles.lang_btn} bg-transparent text-dark`}
+                  id="dropdown-basic"
                 >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faHouse}
-                    />
-                    {t("dashboard")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/properties"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faBuilding}
-                    />
-                    {t("properties")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/tasks"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faClipboard}
-                    />
-                    {t("tasks")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/contacts"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faUsers}
-                    />
-                    {t("contacts")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/contact"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faEnvelope}
-                    />
-                    {t("contact")}
-                  </span>
-                </NavLink>
-              </>
-            ) : (
-              <>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/"}
-                  end
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faHouse}
-                    />
-                    {t("home")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/about"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faCircleInfo}
-                    />
-                    {t("about")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/contact"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faEnvelope}
-                    />
-                    {t("contact")}
-                  </span>
-                </NavLink>
-                <NavLink
-                  className={({ isActive }) =>
-                    isActive ? styles.active : undefined
-                  }
-                  to={"/packages"}
-                >
-                  <span>
-                    <FontAwesomeIcon
-                      className={`${styles.nav_icon} ${isArLang?styles.ar_icon:styles.en_icon}`}
-                      icon={faLayerGroup}
-                    />
-                    {t("packages")}
-                  </span>
-                </NavLink>
-              </>
-            )}
-          </Nav>
-          <div
-            className={`${styles.nav_controller} d-flex align-items-center justify-content-center`}
-          >
-            <Dropdown>
-              <Dropdown.Toggle
-                className={`${styles.lang_btn} bg-transparent text-dark`}
-                id="dropdown-basic"
-              >
-                <FontAwesomeIcon icon={faGlobe} />{" "}
-                {isArLang ? "العربية" : "English"}
-              </Dropdown.Toggle>
+                  <FontAwesomeIcon icon={faGlobe} />{" "}
+                  {isArLang ? "العربية" : "English"}
+                </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                <Dropdown.Item onClick={() => i18n.changeLanguage("en")}>
-                  English
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => i18n.changeLanguage("ar")}>
-                  العربية
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-            {!isLogin ? (
-              <>
-                <ButtonOne
-                  onClick={() => navigate("register")}
-                  classes="mx-2"
-                  color="white"
-                  text={t("register")}
-                />
-                <ButtonOne
-                  onClick={() => navigate("login")}
-                  classes="mx-2"
-                  text={t("login")}
-                />
-              </>
-            ) : (
-              <div className={styles.avatar}>
-                <img src={avatar} alt="profile" />
-              </div>
-            )}
-          </div>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={() => i18n.changeLanguage("en")}>
+                    English
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={() => i18n.changeLanguage("ar")}>
+                    العربية
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+              {!isLogin ? (
+                <>
+                  <ButtonOne
+                    onClick={() => navigate("register")}
+                    classes="mx-2"
+                    color="white"
+                    text={t("register")}
+                  />
+                  <ButtonOne
+                    onClick={() => navigate("login")}
+                    classes="mx-2"
+                    text={t("login")}
+                  />
+                </>
+              ) : (
+                <div
+                  className={styles.avatar}
+                  onClick={() => setShowSetting(true)}
+                >
+                  <img src={avatar} alt="profile" />
+                </div>
+              )}
+            </div>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      {showSetting && (
+        <SettingOffCanvas
+          show={showSetting}
+          handleClose={() => setShowSetting(false)}
+        />
+      )}
+    </>
   );
 };
 

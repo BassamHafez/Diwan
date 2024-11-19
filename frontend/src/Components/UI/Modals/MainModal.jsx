@@ -1,8 +1,17 @@
 import styles from "./MainModal.module.css";
-import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
+import ButtonOne from "../Buttons/ButtonOne";
 
-const MainModal = ({ show, onHide, title, children, okBtn, cancelBtn,modalSize }) => {
+const MainModal = ({
+  show,
+  onHide,
+  title,
+  children,
+  okBtn,
+  cancelBtn,
+  modalSize,
+  confirmFun,
+}) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   return (
@@ -14,30 +23,34 @@ const MainModal = ({ show, onHide, title, children, okBtn, cancelBtn,modalSize }
       centered
       className={styles.modal_container}
     >
-      <Modal.Header closeButton className={`${isArLang?"modal_header_ar":""}`}>
-        <Modal.Title>{title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body className={`${styles.modal_body} text-center`}>
+      {title && (
+        <Modal.Header
+          closeButton
+          className={`${isArLang ? "modal_header_ar" : ""} ${styles.modal_header}`}
+        >
+          <Modal.Title>{title}</Modal.Title>
+        </Modal.Header>
+      )}
+      <Modal.Body className={`${styles.modal_body} ${title?"":styles.rounded_body} ${(!cancelBtn && !okBtn)&&styles.rounded_modal_body} text-center`}>
         {children}
       </Modal.Body>
       {(cancelBtn || okBtn) && (
-        <Modal.Footer className={styles.modal_footer}>
+        <Modal.Footer className={`${styles.modal_footer}`}>
           {cancelBtn && (
-            <Button
-              variant="secondary"
-              className={isArLang ? styles.close_btn_ar : styles.close_btn}
-              onClick={onHide}
-            >
-              {cancelBtn}
-            </Button>
+            <div className={isArLang ? styles.close_btn_ar : styles.close_btn}>
+              <ButtonOne color="white" onClick={onHide}>
+                {cancelBtn}
+              </ButtonOne>
+            </div>
           )}
           {okBtn && (
-            <Button
-              variant="primary"
-              className={isArLang ? styles.logout_btn_ar : styles.logout_btn}
+            <div
+              className={isArLang ? styles.confirm_btn_ar : styles.confirm_btn}
             >
-              {okBtn}
-            </Button>
+              <ButtonOne classes="bg-dark" onClick={confirmFun}>
+                {okBtn}
+              </ButtonOne>
+            </div>
           )}
         </Modal.Footer>
       )}

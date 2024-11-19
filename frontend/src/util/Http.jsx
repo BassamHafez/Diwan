@@ -53,3 +53,32 @@ export const mainFormsHandlerTypeFormData = async ({ type, formData, method, tok
     return error;
   }
 };
+
+export const mainFormsHandlerTypeRaw = async ({ type, formData, method, token }) => {
+  try {
+    let response = null;
+    if (method === "add") {
+      response = await axios.post(`${baseServerUrl}${type}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else if (method === "patch") {
+      response = await axios.patch(`${baseServerUrl}${type}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else {
+      response = await axios.get(`${baseServerUrl}${type}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+    return response.data;
+  } catch (error) {
+    console.log("from http", error);
+    return error;
+  }
+};

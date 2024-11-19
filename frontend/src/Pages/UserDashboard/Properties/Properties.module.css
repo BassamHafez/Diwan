@@ -6,7 +6,7 @@
     background-color:white;
     min-height: 82vh;
     border-radius: 10px;
-    box-shadow: 0 0 3px rgba(0, 0, 0, 0.308);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.078);
     padding: 0 !important;
     display: flex;
     justify-content: center;
@@ -32,11 +32,9 @@
   }
   .small_controllers{
     display: none;
-    margin-bottom: 0.625rem;
-    padding: 0.625rem;
+    padding: 3px;
   }
   .small_filter{
-    padding: 0.625rem;
     margin-bottom:1.25rem;
   }
   .small_filter h5{
@@ -46,7 +44,7 @@
   .small_filter label{
     background-color: rgb(242, 241, 241);
     box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.31);
-    margin: 0.625rem 0.625rem;
+    margin: 0.3125rem 0.625rem;
     min-width: 6.25rem;
     cursor: pointer;
     font-weight: 600;
@@ -55,7 +53,7 @@
   .small_filter label:hover{
     transform: translateY(-0.3125rem);
   }
-  .small_filter input:checked + label{
+  .label_checked{
     background-color: var(--sub_color) !important;
     border: none;
     color:white !important;
@@ -85,7 +83,9 @@
     color: rgb(242, 242, 242);
     font-size: 0.8125rem;
   }
-
+  .properties_row{
+    position: relative;
+}
   
 @media screen and (max-width:768px) {
     .filters{
