@@ -16,6 +16,7 @@ const tenantContactSchema = new mongoose.Schema(
       required: true,
     },
     phone2: String,
+    notes: String,
     user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
@@ -26,6 +27,11 @@ const tenantContactSchema = new mongoose.Schema(
     email: String,
     commercialRecord: String,
     taxNumber: String,
+    contactType: {
+      type: String,
+      enum: ["tenant"],
+      default: "tenant",
+    },
   },
   { timestamps: true }
 );

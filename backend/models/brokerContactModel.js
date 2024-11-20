@@ -17,6 +17,11 @@ const brokerContactSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    contactType: {
+      type: String,
+      enum: ["broker"],
+      default: "broker",
+    },
   },
   { timestamps: true }
 );
