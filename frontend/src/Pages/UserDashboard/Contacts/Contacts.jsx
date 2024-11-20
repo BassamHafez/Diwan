@@ -20,10 +20,12 @@ const Contacts = () => {
   const [showSelectContactTypeModal, setShowSelectContactTypeModal] =
     useState(false);
   const [showNotes, setShowNotes] = useState(false);
+  const [showTenantDetials, setShowTenantDetails] = useState(false);
   const [isListView, setIsListView] = useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
   const [selectedFilter, setSelectedFilter] = useState("contacts");
+  const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
 
   const {
     data: allContacts,
@@ -99,35 +101,50 @@ const Contacts = () => {
   const handleFilterChange = (event) => {
     setSelectedFilter(event.target.value);
   };
+  const handleTenantType = (event) => {
+    setTenantTypeFilter(event.target.value);
+  };
 
   const renderContacts = (contacts, type, isFetching) => {
-    if (isFetching) {
-      return <LoadingOne />;
-    }
+    if (isFetching) return <LoadingOne />;
 
-    if (contacts?.data?.length > 0) {
-      return contacts.data.map((contact) => (
-        <ContactItem
-          key={contact._id}
-          contact={contact}
-          type={type}
-          showNotes={showNotes}
-          isListView={isListView}
-          refetch={
-            selectedFilter === "broker"
-              ? refetchBrokers
-              : selectedFilter === "landlord"
-              ? refetchLandlords
-              : selectedFilter === "service"
-              ? refetchServices
-              : selectedFilter === "tenant" && refetchTenants
-          }
-          refetchAllContacts={refetchAllContacts}
-        />
-      ));
-    }
+    if (!contacts?.data?.length) return <NoData text={key("noContacts")} />;
 
-    return <NoData text={key("noContacts")} />;
+    const getRefetchFunction = () => {
+      switch (selectedFilter) {
+        case "broker":
+          return refetchBrokers;
+        case "landlord":
+          return refetchLandlords;
+        case "service":
+          return refetchServices;
+        case "tenant":
+          return refetchTenants;
+        default:
+          return refetchAllContacts;
+      }
+    };
+
+    const filteredData =
+      selectedFilter === "tenant"
+        ? contacts.data.filter(
+            (contact) =>
+              tenantTypeFilter === "all" || contact.type === tenantTypeFilter
+          )
+        : contacts.data;
+
+    return filteredData.map((contact) => (
+      <ContactItem
+        key={contact._id}
+        contact={contact}
+        type={type}
+        showNotes={showNotes}
+        showTenantDetials={showTenantDetials}
+        isListView={isListView}
+        refetch={getRefetchFunction()}
+        refetchAllContacts={refetchAllContacts}
+      />
+    ));
   };
 
   const showAddModal = () => {
@@ -142,6 +159,14 @@ const Contacts = () => {
     setShowSelectContactTypeModal(false);
     setSelectedFilter(selection);
     setShowAddContactModal(true);
+  };
+
+  const toggleSwitchBtn = () => {
+    if (selectedFilter === "tenant") {
+      setShowTenantDetails(!showTenantDetials);
+    } else {
+      setShowNotes(!showNotes);
+    }
   };
 
   return (
@@ -312,6 +337,102 @@ const Contacts = () => {
                 </Col>
               </Row>
             </div>
+            {selectedFilter === "tenant" && (
+              <div className="small_filter">
+                <h5 className="mb-4">{key("tenantType")}</h5>
+                <Row className={styles.filter_row}>
+                  <Col
+                    xs={4}
+                    sm={12}
+                    md={6}
+                    xl={6}
+                    xxl={4}
+                    className="d-flex justify-content-center algn-items-center"
+                  >
+                    <div>
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="tenantType"
+                        value="all"
+                        id="all"
+                        autoComplete="off"
+                        checked={tenantTypeFilter === "all"}
+                        onChange={handleTenantType}
+                      />
+                      <label
+                        className={`${
+                          tenantTypeFilter === "all" && styles.label_checked
+                        } btn mx-1`}
+                        htmlFor="all"
+                      >
+                        {key("all")}
+                      </label>
+                    </div>
+                  </Col>
+                  <Col
+                    xs={4}
+                    sm={12}
+                    md={6}
+                    xl={6}
+                    xxl={4}
+                    className="d-flex justify-content-center algn-items-center"
+                  >
+                    <div>
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="tenantType"
+                        value="organization"
+                        id="organization"
+                        autoComplete="off"
+                        checked={tenantTypeFilter === "organization"}
+                        onChange={handleTenantType}
+                      />
+                      <label
+                        className={`${
+                          tenantTypeFilter === "organization" &&
+                          styles.label_checked
+                        } btn mx-1`}
+                        htmlFor="organization"
+                      >
+                        {key("organization")}
+                      </label>
+                    </div>
+                  </Col>
+                  <Col
+                    xs={4}
+                    sm={12}
+                    md={6}
+                    xl={6}
+                    xxl={4}
+                    className="d-flex justify-content-center algn-items-center"
+                  >
+                    <div>
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="tenantType"
+                        value="individual"
+                        id="individual"
+                        autoComplete="off"
+                        checked={tenantTypeFilter === "individual"}
+                        onChange={handleTenantType}
+                      />
+                      <label
+                        className={`${
+                          tenantTypeFilter === "individual" &&
+                          styles.label_checked
+                        } btn mx-1`}
+                        htmlFor="individual"
+                      >
+                        {key("individual")}
+                      </label>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            )}
             <hr />
             <div className="form-check form-switch p-0 m-0  mt-3 d-flex justify-content-between align-items-center">
               <label className="form-check-label m-0 fs-sm-5" htmlFor="alpha">
@@ -329,7 +450,9 @@ const Contacts = () => {
 
             <div className="form-check form-switch p-0 m-0  mt-2 d-flex justify-content-between align-items-center">
               <label className="form-check-label m-0 fs-sm-5" htmlFor="alpha">
-                {key("showNotes")}
+                {selectedFilter === "tenant"
+                  ? key("showDetails")
+                  : key("showNotes")}
               </label>
               <input
                 className="form-check-input fs-3  m-0"
@@ -337,7 +460,7 @@ const Contacts = () => {
                 type="checkbox"
                 role="switch"
                 id="alpha"
-                onChange={() => setShowNotes(!showNotes)}
+                onChange={toggleSwitchBtn}
               />
             </div>
           </div>
