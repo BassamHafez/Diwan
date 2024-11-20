@@ -38,7 +38,7 @@ const MainModal = ({
         <Modal.Footer className={`${styles.modal_footer}`}>
           {cancelBtn && (
             <div className={isArLang ? styles.close_btn_ar : styles.close_btn}>
-              <ButtonOne color="white" onClick={onHide}>
+              <ButtonOne classes="bg-secondary" borderd={true} onClick={onHide}>
                 {cancelBtn}
               </ButtonOne>
             </div>
@@ -47,7 +47,7 @@ const MainModal = ({
             <div
               className={isArLang ? styles.confirm_btn_ar : styles.confirm_btn}
             >
-              <ButtonOne classes="bg-dark" onClick={confirmFun}>
+              <ButtonOne classes="bg-dark" borderd={true} onClick={confirmFun}>
                 {okBtn}
               </ButtonOne>
             </div>

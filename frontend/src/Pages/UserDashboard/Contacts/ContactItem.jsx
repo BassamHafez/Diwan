@@ -17,19 +17,17 @@ import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import Col from "react-bootstrap/esm/Col";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
+import { mainDeleteFunHandler } from "../../../util/Http";
 
-const ContactItem = ({ contact }) => {
+const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
   const [renamedType, setRenamedType] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = useSelector((state) => state.userInfo.token);
-  const queryClient = useQueryClient();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
@@ -45,43 +43,38 @@ const ContactItem = ({ contact }) => {
   useEffect(() => {
     let renamedTypeVal;
     if (!isArLang) {
-      renamedTypeVal = renameContactTypeEn(contact?.type);
+      renamedTypeVal = renameContactTypeEn(type);
     } else {
-      renamedTypeVal = renameContactTypeAr(contact?.type);
+      renamedTypeVal = renameContactTypeAr(type);
     }
 
     setRenamedType(renamedTypeVal);
-  }, [renamedType, isArLang, contact]);
+  }, [renamedType, isArLang, type]);
 
   const deleteContact = async () => {
     setShowDeleteModal(false);
     if (contact._id && token) {
-      try {
-        const response = await axios.delete(
-          `${import.meta.env.VITE_Base_API_URL}contacts/${contact._id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        if (response.status === 204) {
-          queryClient.invalidateQueries(["contacts", token]);
-          notifySuccess(key("deletedSucc"));
-        } else {
-          notifyError(key("wrong"));
-        }
-      } catch (error) {
-        console.log(error);
+      const res = await mainDeleteFunHandler({
+        id: contact._id,
+        token: token,
+        type: `contacts/${type}s`,
+      });
+      if (res.status === 204) { 
+        refetch()
+        notifySuccess(key("deletedSucc"));
+      } else {
         notifyError(key("wrong"));
       }
     } else {
       notifyError(key("deleteWrong"));
     }
   };
+  const gridXXLSystem=isListView?12:4;
+  const gridLgSystem=isListView?12:6;
 
   return (
     <>
-      <Col sm={6} lg={4}>
+      <Col lg={gridLgSystem} xxl={gridXXLSystem}>
         <div className={styles.contact_item}>
           <div className={styles.contact_header}>
             <div className={styles.img_side}>
@@ -90,10 +83,10 @@ const ContactItem = ({ contact }) => {
                 className={`${styles.name_div} ${isArLang ? "me-2" : "ms-2"}`}
               >
                 <h6>{contact.name}</h6>
-                <span>{renamedType || contact?.type}</span>
+                <span>{renamedType || type}</span>
               </div>
             </div>
-            <div className={styles.controller_icons}>
+            <div className={`${styles.controller_icons} ${isArLang?styles.controller_icons_ar:styles.controller_icons_en}`}>
               <FontAwesomeIcon
                 title={key("delete")}
                 className="text-danger"
@@ -155,6 +148,10 @@ const ContactItem = ({ contact }) => {
                 </div>
               </div>
             )}
+
+            {contact.notes&&showNotes&&<div>
+              {contact.notes}
+            </div>}
           </div>
         </div>
       </Col>

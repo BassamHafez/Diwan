@@ -382,7 +382,7 @@ export const contactsTypeAr=[
 ]
 
 
-
+//saudi arabia En
 export const SaudiRegion = [
   { label: "Riyadh", value: "Riyadh" },
   { label: "Makkah", value: "Makkah" },
@@ -494,7 +494,7 @@ export const districtsByCity = {
 };
 
 
-
+//saudi arabia Ar
 export const SaudiRegionAr = [
   { label: "الرياض", value: "الرياض" },
   { label: "مكة", value: "مكة" },

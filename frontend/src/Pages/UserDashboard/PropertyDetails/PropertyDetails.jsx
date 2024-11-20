@@ -1,21 +1,26 @@
-import { useQuery,useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import {
+  addEstateToFav,
+  mainDeleteFunHandler,
+  mainFormsHandlerTypeFormData,
+} from "../../../util/Http";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import styles from "./PropertyDetails.module.css";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import GeneralDetails from "./GeneralDetails";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import axios from "axios";
 import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
 
 const PropertyDetails = () => {
   const { t: key } = useTranslation();
@@ -23,42 +28,74 @@ const PropertyDetails = () => {
   const { propId } = useParams();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const queryClient = useQueryClient();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const [isMarked, setIsMarked] = useState(false);
 
   const { data, isFetching } = useQuery({
     queryKey: ["singleProp", propId],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
-    staleTime: Infinity,
-    enabled: !!token,
+    staleTime: 3000,
+    enabled: propId && !!token,
   });
+
+  useEffect(() => {
+    if (data?.data?.inFavorites) {
+      setIsMarked(true);
+    } else {
+      setIsMarked(false);
+    }
+  }, [data]);
 
   const deleteEstate = async () => {
     setShowDeleteModal(false);
     if (propId && token) {
-      try {
-        const response = await axios.delete(
-          `${import.meta.env.VITE_Base_API_URL}estates/${propId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        if (response.status === 204) {
-          queryClient.invalidateQueries(["estates", token]);
-          notifySuccess(key("deletedSucc"))
-          navigate("/properties")
-        } else {
-          notifyError(key("wrong"));
-        }
-      } catch (error) {
-        console.log(error)
+      const res = await mainDeleteFunHandler({
+        id: propId,
+        token: token,
+        type: "estates",
+      });
+      if (res.status === 204) {
+        queryClient.invalidateQueries(["estates", token]);
+        notifySuccess(key("deletedSucc"));
+        navigate("/properties");
+      } else {
         notifyError(key("wrong"));
       }
     } else {
       notifyError(key("deleteWrong"));
+    }
+  };
+
+  const bookMarkEstate = async () => {
+    let res;
+    if (isMarked) {
+      res = await mainDeleteFunHandler({
+        type: "estates",
+        id: `${propId}/favorites`,
+        token: token,
+      });
+      console.log(res);
+      if (res.data.status === "success") {
+        setIsMarked(false);
+        notifySuccess(key("removedSucc"));
+      } else {
+        notifyError(key("wrong"));
+      }
+    } else {
+      res = await addEstateToFav({
+        id: propId,
+        token: token,
+      });
+      console.log(res);
+      if (res.status === "success") {
+        setIsMarked(true);
+        notifySuccess(key("bookmarkedSucc"));
+      } else {
+        notifyError(key("wrong"));
+      }
     }
   };
 
@@ -72,11 +109,26 @@ const PropertyDetails = () => {
             <Row>
               <div className="d-flex justify-content-between align-items-center">
                 <h3 className="my-4 mx-1">{data.data?.name}</h3>
-                <ButtonOne
-                  onClick={()=>setShowDeleteModal(true)}
-                  classes="bg-danger"
-                  text={key("delete")}
-                />
+                <div className="d-flex align-items-center justify-content-center flex-wrap">
+                  <div
+                    className={`${styles.controller_btn} ${styles.delete_btn}`}
+                    onClick={() => setShowDeleteModal(true)}
+                    title={key("delete")}
+                  >
+                    <FontAwesomeIcon icon={faTrashCan} />
+                  </div>
+                  <div
+                    className={
+                      isMarked ? styles.bookmarked : styles.no_bookmark
+                    }
+                    onClick={bookMarkEstate}
+                    title={`${
+                      isMarked ? key("removeBookMark") : key("bookmarked")
+                    }`}
+                  >
+                    <FontAwesomeIcon icon={isMarked ? solidHeart : faHeart} />
+                  </div>
+                </div>
               </div>
 
               <Col
