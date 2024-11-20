@@ -67,6 +67,11 @@ const estateSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    status: {
+      type: String,
+      enum: ["available", "rented", "pending"],
+      default: "available",
+    },
   },
   { timestamps: true }
 );

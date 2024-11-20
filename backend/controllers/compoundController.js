@@ -52,9 +52,7 @@ exports.deleteCompound = catchAsync(async (req, res, next) => {
     return next(new ApiError("No compound found with that ID", 404));
   }
 
-  const estates = await Estate.find({ compound: compound._id });
-
-  if (estates.length > 0) {
+  if (compound.estatesCount > 0) {
     return next(
       new ApiError("Please delete all estates in this compound first", 400)
     );

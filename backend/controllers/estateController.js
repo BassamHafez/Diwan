@@ -33,7 +33,6 @@ const estatePopOptions = [
 
 exports.getAllEstates = factory.getAll(Estate, estatesPopOptions);
 exports.getEstate = factory.getOne(Estate, estatePopOptions);
-exports.deleteEstate = factory.deleteOne(Estate);
 
 exports.uploadEstateImage = uploadSingleImage("image");
 
@@ -74,6 +73,14 @@ exports.createEstate = catchAsync(async (req, res, next) => {
 
   const estateCreatePromise = Estate.create(req.body);
 
+  const estateCountUpdatePromise = req.body.compound
+    ? Compound.findByIdAndUpdate(
+        req.body.compound,
+        { $inc: { estatesCount: 1 } },
+        { lean: true }
+      )
+    : Promise.resolve();
+
   const tagUpdatePromise = tags
     ? Tag.findOneAndUpdate(
         { user: req.user._id },
@@ -85,6 +92,7 @@ exports.createEstate = catchAsync(async (req, res, next) => {
   const [_, estate] = await Promise.all([
     tagUpdatePromise,
     estateCreatePromise,
+    estateCountUpdatePromise,
   ]);
 
   res.status(201).json({
@@ -137,6 +145,31 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: updatedEstate,
+  });
+});
+
+exports.deleteEstate = catchAsync(async (req, res, next) => {
+  const estate = await Estate.findById(req.params.id);
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  const estateDeletePromise = Estate.findByIdAndDelete(req.params.id);
+
+  const estateCountUpdatePromise = estate.compound
+    ? Compound.findByIdAndUpdate(
+        estate.compound,
+        { $inc: { estatesCount: -1 } },
+        { lean: true }
+      )
+    : Promise.resolve();
+
+  await Promise.all([estateDeletePromise, estateCountUpdatePromise]);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });
 
