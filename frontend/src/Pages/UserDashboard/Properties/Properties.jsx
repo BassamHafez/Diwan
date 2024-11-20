@@ -74,13 +74,20 @@ const Properties = () => {
   const { data: bookmarked, isFetching: fetchingBookmarked } = useQuery({
     queryKey: ["bookmarked", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "bookmarked", token: token }),
+      mainFormsHandlerTypeFormData({
+        type: "estates?inFavorites=true",
+        token: token,
+      }),
     enabled: selectedFilter === "bookmarked" && !!token,
     staleTime: Infinity,
   });
 
   const handleFilterChange = (event) => {
     setSelectedFilter(event.target.value);
+  };
+
+  const handleCompoundFilterChange = (value) => {
+    setSelectedCompoundId(value);
   };
 
   const showNextModal = (selectedModal) => {
@@ -92,14 +99,16 @@ const Properties = () => {
     }
   };
 
-  const handleCompoundFilterChange = (value) => {
-    setSelectedCompoundId(value);
-  };
-
   const filteredEstates = estates
     ? estates.data?.filter(
         (estate) =>
           !selectedCompoundId || estate.compound?._id === selectedCompoundId
+      )
+    : [];
+
+  const filteredBookmarked = bookmarked
+    ? bookmarked.data?.filter(
+        (fav) => !selectedCompoundId || fav.compound?._id === selectedCompoundId
       )
     : [];
 
@@ -115,11 +124,31 @@ const Properties = () => {
     <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
   );
 
+  const renderProperties = (data, isFetching, type, hideCompound = false) => {
+    if (isFetching) {
+      return <LoadingOne />;
+    }
+
+    if (data?.length > 0) {
+      return data.map((item) => (
+        <Property
+          key={item._id}
+          hideState={true}
+          hideCompound={hideCompound}
+          property={item}
+          type={type}
+        />
+      ));
+    }
+
+    return <NoData text={key("noItemsFound")} />;
+  };
+
   return (
     <div className={styles.main_body}>
       <Row>
         <div className={styles.small_controllers}>
-          <div className={styles.small_filter}>
+          <div className="small_filter">
             <h5>{key("types")}</h5>
             <input
               type="radio"
@@ -181,7 +210,7 @@ const Properties = () => {
 
           {selectedFilter !== "compounds" && (
             <>
-              <div className={styles.small_filter}>
+              <div className="small_filter">
                 <h5>{key("status")}</h5>
                 <input
                   type="radio"
@@ -220,7 +249,7 @@ const Properties = () => {
                 </label>
               </div>
 
-              <div className={styles.small_filter}>
+              <div className="small_filter">
                 <h5>{key("Contracts")}</h5>
                 <input
                   type="radio"
@@ -247,7 +276,7 @@ const Properties = () => {
                 </label>
               </div>
 
-              <div className={styles.small_filter}>
+              <div className="small_filter">
                 <h5>{key("parentRealEstate")}</h5>
                 <Select
                   isSearchable={true}
@@ -287,15 +316,15 @@ const Properties = () => {
                     <input
                       className={`${styles.filter_input} form-check-input`}
                       type="radio"
-                      name="types"
+                      name="typesSelection"
                       value="estates"
-                      id="estates"
+                      id="estatesSelection"
                       checked={selectedFilter === "estates"}
                       onChange={handleFilterChange}
                     />
                     <label
                       className={`form-check-label ${styles.filter_label}`}
-                      htmlFor="estates"
+                      htmlFor="estatesSelection"
                     >
                       {key("allProp")}
                     </label>
@@ -305,15 +334,15 @@ const Properties = () => {
                     <input
                       className={`${styles.filter_input} form-check-input`}
                       type="radio"
-                      name="types"
+                      name="typesSelection"
                       value="compounds"
                       checked={selectedFilter === "compounds"}
                       onChange={handleFilterChange}
-                      id="compoundsVal"
+                      id="compoundsSelection"
                     />
                     <label
                       className={`form-check-label ${styles.filter_label}`}
-                      htmlFor="compoundsVal"
+                      htmlFor="compoundsSelection"
                     >
                       {key("compounds")}
                     </label>
@@ -323,15 +352,15 @@ const Properties = () => {
                     <input
                       className={`${styles.filter_input} form-check-input`}
                       type="radio"
-                      name="types"
+                      name="typesSelection"
                       value="bookmarked"
-                      id="bookmarkedVal"
+                      id="bookmarkedSelection"
                       checked={selectedFilter === "bookmarked"}
                       onChange={handleFilterChange}
                     />
                     <label
                       className={`form-check-label ${styles.filter_label}`}
-                      htmlFor="bookmarkedVal"
+                      htmlFor="bookmarkedSelection"
                     >
                       {key("bookmarked")}
                     </label>
@@ -374,7 +403,7 @@ const Properties = () => {
                       <input
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
-                        name="status"
+                        name="statusSelection"
                         value="all"
                         id="statusAll"
                       />
@@ -390,7 +419,7 @@ const Properties = () => {
                       <input
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
-                        name="status"
+                        name="statusSelection"
                         value="rented"
                         id="rented"
                       />
@@ -406,7 +435,7 @@ const Properties = () => {
                       <input
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
-                        name="status"
+                        name="statusSelection"
                         value="reserved"
                         id="reserved"
                       />
@@ -422,7 +451,7 @@ const Properties = () => {
                       <input
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
-                        name="status"
+                        name="statusSelection"
                         value="vacant"
                         id="vacant"
                       />
@@ -445,7 +474,7 @@ const Properties = () => {
                       <input
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
-                        name="Contracts"
+                        name="ContractsSelection"
                         value="nextMonth"
                         id="nextMonth"
                       />
@@ -461,7 +490,7 @@ const Properties = () => {
                       <input
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
-                        name="Contracts"
+                        name="ContractsSelection"
                         value="next3Month"
                         id="next3Month"
                       />
@@ -482,60 +511,33 @@ const Properties = () => {
           <Container fluid>
             <div className="d-flex justify-content-between align-items-center flex-wrap my-3 px-1">
               <div className="my-2">
-                <SearchField
-                  // onSearch={handleSearch}
-                  text={key("search")}
-                />
+                <SearchField text={key("search")} />
               </div>
               <div className="my-2">
                 <ButtonOne
                   onClick={() => setShowModal(true)}
                   borderd={true}
-                  text={key("createProp")}
+                  text={key("addEstateUnit")}
                 />
               </div>
             </div>
             <Row className={styles.properties_row}>
-              {selectedFilter === "compounds" && compounds ? (
-                fetchingCompounds ? (
-                  <LoadingOne />
-                ) : (
-                  compounds.data?.map((comp) => (
-                    <Property
-                      hideState={true}
-                      hideCompound={true}
-                      key={comp._id}
-                      property={comp}
-                      type="compound"
-                    />
-                  ))
-                )
-              ) : selectedFilter === "estates" && estates ? (
-                fetchingEstates ? (
-                  <LoadingOne />
-                ) : filteredEstates?.length > 0 ? (
-                  filteredEstates.map((prop) => (
-                    <Property
-                      key={prop._id}
-                      hideState={true}
-                      property={prop}
-                      type="estate"
-                    />
-                  ))
-                ) : (
-                  <NoData text={key("noSearchFound")} />
-                )
-              ) : selectedFilter === "bookmarked" && bookmarked ? (
-                fetchingBookmarked ? (
-                  <LoadingOne />
-                ) : (
-                  bookmarked.data?.map((prop) => (
-                    <Property key={prop._id} property={prop} />
-                  ))
-                )
-              ) : (
-                <NoData text={key("noItemsFound")} />
-              )}
+              {selectedFilter === "compounds" && compounds
+                ? renderProperties(
+                    compounds.data,
+                    fetchingCompounds,
+                    "compound",
+                    true
+                  )
+                : selectedFilter === "estates" && estates
+                ? renderProperties(filteredEstates, fetchingEstates, "estate")
+                : selectedFilter === "bookmarked" && bookmarked
+                ? renderProperties(
+                    filteredBookmarked,
+                    fetchingBookmarked,
+                    "estate"
+                  )
+                : null}
             </Row>
           </Container>
         </Col>

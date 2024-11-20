@@ -71,13 +71,13 @@
     "passwordConfirm":"تأكيد كلمة السر",
     "registeredSuccess":"تم إنشاء حسابك بنجاح",
 
-    "properties":"العقارات",
+    "properties":"الوحدات",
     "contacts":"جهات الاتصال",
     "tasks":"المهام",
 
     "types":"الأنواع",
-    "allProp":"العقارات",
-    "compounds":"المجمعات",
+    "allProp":"الوحدات",
+    "compounds":"العقارات",
     "bookmarked":"المفضلة",
 
     "status":"الحالة",
@@ -92,10 +92,10 @@
  
      "parentRealEstate":"المجمع",
  
-     "createProp":"إضافة عقار",
-     "exProp":"عمارة - مجمع سكني/تجاري وغيرها",
-     "addCompound":"إضافة مجمع",
-     "exCompound":"شقة - دور - عمارة بمستأجر وحيد وغيرها",
+     "createProp":"إضافة وحدة",
+     "addCompound":"إضافة عقار",
+     "exProp":"شقة - دور - عمارة بمستأجر وحيد وغيرها",
+     "exCompound":"عمارة - مجمع سكني/تجاري وغيرها",
      "search":"ابحث هنا",
 
      "dashboard":"الرئيسية",
@@ -155,5 +155,19 @@
      "deleteText":"هل أنت متأكد أنك تريد الحذف؟",
      "deletedSucc":"تم الحذف بنجاح",
      "deleteWrong":"الوحدة التي تريد حذفها لم تعد موجودة",
-     "general":"عامة"
+     "general":"عامة",
+     "addEstateUnit":"إضافة عقار/وحدة",
+     "noTags":"لم تتم إضافة أي أوسمة حتي الآن",
+     "bookmarkedSucc":"تمت الإضافة إلي المفضلة بنجاح",
+     "contactType":"نوع جهة الاتصال",
+     "landlord":"مالك",
+     "tenant":"مستأجر",
+     "serviceType":"مزود خدمة",
+     "broker":"وسيط",
+     "removeBookMark":"إزالة من المفضلة",
+     "removedSucc":"تمت اللإزالة بنجاح",
+     "notes":"ملاحظات",
+     "showNotes":"عرض الملاحظات",
+     "listView":"عرض كقائمة",
+     "service":"مزود خدمة"
 }   

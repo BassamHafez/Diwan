@@ -14,15 +14,22 @@ import {
   faSignature,
   faStreetView,
   faUserTie,
+  faWrench,
 } from "@fortawesome/free-solid-svg-icons";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 
 const GeneralDetails = ({ details }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   return (
     <div className={styles.general_div}>
+      <div className={`${isArLang?"text-start":"text-end"} my-4`}>
+        <ButtonOne classes="bg-navy" borderd={true}>
+          {key("ediet")} <FontAwesomeIcon className={`${isArLang?"me-1":"ms-1"}`} icon={faWrench}/>
+        </ButtonOne>
+      </div>
       <Row>
         <Col md={6}>
           <div className={styles.information}>
@@ -46,7 +53,9 @@ const GeneralDetails = ({ details }) => {
                   />
                   {key("address")}
                 </span>
-                <span className={styles.data}>{details.address?details.address:key("notSpecified")}</span>
+                <span className={styles.data}>
+                  {details.address ? details.address : key("notSpecified")}
+                </span>
               </li>
               <li>
                 <span className={styles.title}>
@@ -76,22 +85,27 @@ const GeneralDetails = ({ details }) => {
                   />
                   {key("district")}
                 </span>
-                <span className={styles.data}>{details.neighborhood?details.neighborhood:key("notSpecified")}</span>
+                <span className={styles.data}>
+                  {details.neighborhood
+                    ? details.neighborhood
+                    : key("notSpecified")}
+                </span>
               </li>
             </ul>
           </div>
-          <div className={`${styles.information} mt-3`}>
+          <div className={styles.information}>
             <h5 className="mb-3 color-main">{key("description")}</h5>
             <div className={styles.desc_content}>
               <p className="m-0">
-                <FontAwesomeIcon icon={faQuoteLeft} /> {details.description}{" "}
-                <FontAwesomeIcon icon={faQuoteRight} />
-              </p>  
+                <FontAwesomeIcon icon={isArLang ? faQuoteRight : faQuoteLeft} />{" "}
+                {details.description}{" "}
+                <FontAwesomeIcon icon={isArLang ? faQuoteLeft : faQuoteRight} />
+              </p>
             </div>
           </div>
         </Col>
         <Col md={6}>
-          <div className={`${styles.information} mb-2`}>
+          <div className={styles.information}>
             <h5 className="mb-3 color-main">{key("addInfo")}</h5>
             <ul className={styles.info_list}>
               <li>
@@ -130,18 +144,6 @@ const GeneralDetails = ({ details }) => {
                 <span className={styles.title}>
                   <FontAwesomeIcon
                     className={`${isArLang ? "ms-2" : "me-2"}`}
-                    icon={faMapLocationDot}
-                  />
-                  {key("area")}
-                </span>
-                <span className={styles.data}>
-                  {details.area} {key("areaUnit")}
-                </span>
-              </li>
-              <li>
-                <span className={styles.title}>
-                  <FontAwesomeIcon
-                    className={`${isArLang ? "ms-2" : "me-2"}`}
                     icon={faBolt}
                   />
                   {key("elecAccount")}
@@ -160,9 +162,10 @@ const GeneralDetails = ({ details }) => {
               </li>
             </ul>
           </div>
+
           <div className={styles.information}>
             <h5 className="mb-3 color-main">{key("tag")}</h5>
-            <Row className="g-2">
+            <Row>
               {details.tags?.length > 0 ? (
                 details.tags.map((tag, index) => (
                   <Col key={`${tag}_${index}`} sm={4}>
@@ -173,7 +176,7 @@ const GeneralDetails = ({ details }) => {
                 ))
               ) : (
                 <div className="text-center">
-                  <span className="text-secondary">No tags added yet !</span>
+                  <span className="text-secondary">{key("noTags")}</span>
                 </div>
               )}
             </Row>
