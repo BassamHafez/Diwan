@@ -17,6 +17,11 @@ const serviceContactSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    contactType: {
+      type: String,
+      enum: ["service"],
+      default: "service",
+    },
   },
   { timestamps: true }
 );

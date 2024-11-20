@@ -17,6 +17,11 @@ const landlordContactSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    contactType: {
+      type: String,
+      enum: ["landlord"],
+      default: "landlord",
+    },
   },
   { timestamps: true }
 );

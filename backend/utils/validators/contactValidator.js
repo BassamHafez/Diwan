@@ -34,6 +34,8 @@ exports.createContactValidator = [
 
   check("user").isEmpty().withMessage("User cannot be set"),
 
+  check("contactType").isEmpty().withMessage("Contact type cannot be set"),
+
   validatorMiddleware,
 ];
 
@@ -73,6 +75,8 @@ exports.updateContactValidator = [
   // NOT ALLOWED
 
   check("user").isEmpty().withMessage("User cannot be set"),
+
+  check("contactType").isEmpty().withMessage("Contact type cannot be set"),
 
   validatorMiddleware,
 ];
@@ -153,6 +157,8 @@ exports.createTenantContactValidator = [
 
   check("user").isEmpty().withMessage("User cannot be set"),
 
+  check("contactType").isEmpty().withMessage("Contact type cannot be set"),
+
   validatorMiddleware,
 ];
 
@@ -219,6 +225,8 @@ exports.updateTenantContactValidator = [
   check("user").isEmpty().withMessage("User cannot be edited"),
 
   check("type").isEmpty().withMessage("Type cannot be edited"),
+
+  check("contactType").isEmpty().withMessage("Contact type cannot be edited"),
 
   validatorMiddleware,
 ];
