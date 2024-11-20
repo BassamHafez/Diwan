@@ -96,6 +96,8 @@ exports.createEstateValidator = [
     .isEmpty()
     .withMessage("To add to favorites, use favorites endpoints"),
 
+  check("status").isEmpty().withMessage("Status cannot be set manually"),
+
   validatorMiddleware,
 ];
 
@@ -191,6 +193,8 @@ exports.updateEstateValidator = [
   check("inFavorites")
     .isEmpty()
     .withMessage("To add to favorites, use favorites endpoints"),
+
+  check("status").isEmpty().withMessage("Status cannot be set manually"),
 
   validatorMiddleware,
 ];
