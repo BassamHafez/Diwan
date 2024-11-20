@@ -23,21 +23,26 @@ export const signFormsHandler = async ({ type, formData, method }) => {
   }
 };
 
-export const mainFormsHandlerTypeFormData = async ({ type, formData, method, token }) => {
+export const mainFormsHandlerTypeFormData = async ({
+  type,
+  formData,
+  method,
+  token,
+}) => {
   try {
     let response = null;
     if (method === "add") {
       response = await axios.post(`${baseServerUrl}${type}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
     } else if (method === "patch") {
       response = await axios.patch(`${baseServerUrl}${type}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       });
     } else {
@@ -54,7 +59,12 @@ export const mainFormsHandlerTypeFormData = async ({ type, formData, method, tok
   }
 };
 
-export const mainFormsHandlerTypeRaw = async ({ type, formData, method, token }) => {
+export const mainFormsHandlerTypeRaw = async ({
+  type,
+  formData,
+  method,
+  token,
+}) => {
   try {
     let response = null;
     if (method === "add") {
@@ -79,6 +89,36 @@ export const mainFormsHandlerTypeRaw = async ({ type, formData, method, token })
     return response.data;
   } catch (error) {
     console.log("from http", error);
+    return error;
+  }
+};
+
+export const mainDeleteFunHandler = async ({ id, token, type }) => {
+  try {
+    const response = await axios.delete(
+      `${import.meta.env.VITE_Base_API_URL}${type}/${id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const addEstateToFav = async ({ id, token }) => {
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_Base_API_URL}estates/${id}/favorites`,{},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    return response.data
+  } catch (error) {
+    console.log(error);
     return error;
   }
 };

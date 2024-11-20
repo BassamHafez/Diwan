@@ -74,13 +74,13 @@
    "passwordConfirm":"Confirm Password",
    "registeredSuccess":"Your account has been created successfully",
 
-   "properties":"Properties",
+   "properties":"Estate Units",
    "contacts":"Contacts",
    "tasks":"Tasks",
 
    "types":"Types",
-   "allProp":"Properties",
-   "compounds":"Compounds",
+   "allProp":"Estate Units",
+   "compounds":"Estates",
    "bookmarked":"Bookmarked",
 
     "status":"Status",
@@ -95,8 +95,8 @@
 
     "parentRealEstate":"Parent RealEstate",
 
-    "createProp":"Add Property",
-    "addCompound":"Add Compound",
+    "createProp":"Add Estate Units",
+    "addCompound":"Add Estate",
     "exProp":"Apartment-Floor-Building with Single tenant etc..",
     "exCompound":"Building - Residential/Commercial building etc..",
     "search":"search here",
@@ -114,7 +114,7 @@
     "city":"City",
     "district":"District",
     "address":"Address",
-    "agent":"Agent",
+    "agent":"Broker",
     "lessor":"Lessor",
     "tag":"Tag",
     "add":"Add",
@@ -160,5 +160,19 @@
     "addInfo":"Additional Information",
     "deleteText":"Are you sure you want to delete?",
     "deletedSucc":"Deleted successfully",
-    "deleteWrong":"The Unit you want to delete is no longer exist"
+    "deleteWrong":"The Unit you want to delete is no longer exist",
+    "addEstateUnit":"Add Estate/Unit",
+    "noTags":"No tags added yet!",
+    "bookmarkedSucc":"bookmarked successfully",
+    "contactType":"Contact Type",
+    "serviceType":"Service",
+    "landlord":"Landlord",
+    "tenant":"Tenant",
+    "broker":"Broker",
+    "removeBookMark":"Remove bookmark",
+    "removedSucc":"Removed successfully",
+    "notes":"Notes",
+    "showNotes":"Show Notes",
+    "listView":"List view",
+    "service":"Service"
 }

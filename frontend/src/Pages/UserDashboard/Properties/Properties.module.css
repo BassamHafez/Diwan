@@ -34,29 +34,10 @@
     display: none;
     padding: 3px;
   }
-  .small_filter{
-    margin-bottom:1.25rem;
-  }
-  .small_filter h5{
-    font-weight: 600;
-    margin-inline: 0.625rem;
-  }
-  .small_filter label{
-    background-color: rgb(242, 241, 241);
-    box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.31);
-    margin: 0.3125rem 0.625rem;
-    min-width: 6.25rem;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all .4s;
-  }
-  .small_filter label:hover{
-    transform: translateY(-0.3125rem);
-  }
-  .label_checked{
-    background-color: var(--sub_color) !important;
-    border: none;
-    color:white !important;
+  .label_checked {
+    background-color: var(--main_color) !important;
+    border: none !important;
+    color: white !important;
   }
 
   .add_prop_div{
