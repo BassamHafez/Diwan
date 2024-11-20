@@ -7,11 +7,15 @@ const landlordContactRoutes = require("../routes/landlordContactRoutes");
 const serviceContactRoutes = require("../routes/serviceContactRoutes");
 const tenantContactRoutes = require("../routes/tenantContactRoutes");
 const tagRoutes = require("../routes/tagRoutes");
+const contractRoutes = require("../routes/contractRoutes");
+const revenueRoutes = require("../routes/revenueRoutes");
 
 const mountRoutes = (app) => {
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/compounds", compoundRoutes);
   app.use("/api/v1/estates", estateRoutes);
+  app.use("/api/v1/estates/:estateId/contracts", contractRoutes);
+  app.use("/api/v1/estates/:estateId/revenues", revenueRoutes);
   app.use("/api/v1/contacts", contactRoutes);
   app.use("/api/v1/contacts/brokers", brokerContactRoutes);
   app.use("/api/v1/contacts/landlords", landlordContactRoutes);
