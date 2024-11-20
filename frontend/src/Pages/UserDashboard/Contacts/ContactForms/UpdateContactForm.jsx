@@ -9,11 +9,12 @@ import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import Select from "react-select";
 
-const AddContactForm = ({
+const UpdateContactForm = ({
   hideModal,
   contactType,
   refetch,
   refetchAllContacts,
+  contact,
 }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -32,17 +33,16 @@ const AddContactForm = ({
   });
 
   const initialValues = {
-    name: "",
-    phone: "",
-    phone2: "",
-    notes: "",
-    //related to tenant
-    type: "", //organization or individual
-    nationalId: "", //individual
-    address: "", //organization
-    commercialRecord: "", //organization
-    taxNumber: "", //organization,
-    contactType: contactType,
+    name: contact.name || "",
+    phone: contact.phone || "",
+    phone2: contact.phone2 || "",
+    notes: contact.notes || "",
+    type: contact.type || "",
+    nationalId: contact.nationalId || "",
+    address: contact.address || "",
+    commercialRecord: contact.commercialRecord || "",
+    taxNumber: contact.taxNumber || "",
+    contactType: contactType || "",
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -57,13 +57,17 @@ const AddContactForm = ({
       Object.entries(updatedValues).filter(([, value]) => value !== "")
     );
 
+    if ("type" in filteredValues) {
+      delete filteredValues.type;
+    }
+
     console.log(filteredValues);
     mutate(
       {
         formData: filteredValues,
         token: token,
-        method: "add",
-        type: `contacts/${contactType}s`,
+        method: "patch",
+        type: `contacts/${contactType}s/${contact._id}`,
       },
       {
         onSuccess: (data) => {
@@ -73,7 +77,7 @@ const AddContactForm = ({
               refetch();
             }
             refetchAllContacts();
-            notifySuccess(key("addedSuccess"));
+            notifySuccess(key("updatedSucc"));
             resetForm();
             hideModal();
           } else {
@@ -95,11 +99,6 @@ const AddContactForm = ({
       .required(key("fieldReq")),
     phone2: string().matches(/^05\d{8}$/, key("invalidPhone")),
     notes: string(),
-    type: string().when("contactType", {
-      is: (contactType) => contactType === "tenant",
-      then: (schema) => schema.required(key("fieldReq")),
-      otherwise: (schema) => schema,
-    }),
     nationalId: string().when("type", {
       is: (type) => type === "individual",
       then: (schema) =>
@@ -136,8 +135,9 @@ const AddContactForm = ({
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      enableReinitialize
     >
-      {({ setFieldValue, values }) => (
+      {({ setFieldValue }) => (
         <Form>
           <div className="field">
             <label htmlFor="name">
@@ -160,11 +160,15 @@ const AddContactForm = ({
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
+                  value={tenantTypeOptions.find(
+                    (val) => val.value === contact.type
+                  )}
+                  isDisabled={true}
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />
               </div>
 
-              {values.type === "individual" && (
+              {contact?.type === "individual" && (
                 <div className="field">
                   <label htmlFor="nationalId">
                     {key("nationalId")} {requiredLabel}
@@ -176,7 +180,7 @@ const AddContactForm = ({
                   />
                 </div>
               )}
-              {values.type === "organization" && (
+              {contact?.type === "organization" && (
                 <>
                   <div className="field">
                     <label htmlFor="address">
@@ -267,7 +271,7 @@ const AddContactForm = ({
               {isPending ? (
                 <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
               ) : (
-                key("add")
+                key("update")
               )}
             </button>
           </div>
@@ -277,4 +281,4 @@ const AddContactForm = ({
   );
 };
 
-export default AddContactForm;
+export default UpdateContactForm;

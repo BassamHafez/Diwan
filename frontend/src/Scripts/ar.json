@@ -180,5 +180,7 @@
   "taxNumber":"الرقم الضريبي",
   "taxNumberValidation":"رقم ضريبي غير صحيح",
   "nationalId":"الهوية الوطنية",
-  "showDetails":"عرض التفاصيل"
+  "showDetails":"عرض التفاصيل",
+  "updatedSucc":"تم تحديث البيانات بنجاح",
+  "update":"تحديث"
 }

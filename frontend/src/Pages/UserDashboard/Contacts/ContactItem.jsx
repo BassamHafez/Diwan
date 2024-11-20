@@ -22,6 +22,8 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { mainDeleteFunHandler } from "../../../util/Http";
+import ModalForm from "../../../Components/UI/Modals/ModalForm";
+import UpdateContactForm from "./ContactForms/UpdateContactForm";
 
 const ContactItem = ({
   contact,
@@ -30,10 +32,11 @@ const ContactItem = ({
   isListView,
   refetch,
   refetchAllContacts,
-  showTenantDetials
+  showTenantDetials,
 }) => {
   const [renamedType, setRenamedType] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showUpdateContactModal, setShowUpdateContactModal] = useState(false);
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -126,7 +129,7 @@ const ContactItem = ({
                 icon={faTrash}
                 onClick={() => setShowDeleteModal(true)}
               />
-              <FontAwesomeIcon title={key("ediet")} icon={faPenToSquare} />
+              <FontAwesomeIcon onClick={()=>setShowUpdateContactModal(true)} title={key("ediet")} icon={faPenToSquare} />
             </div>
           </div>
           <hr />
@@ -233,6 +236,22 @@ const ContactItem = ({
         >
           <h5>{key("deleteText")}</h5>
         </MainModal>
+      )}
+
+      {showUpdateContactModal && (
+        <ModalForm
+          show={showUpdateContactModal}
+          onHide={() => setShowUpdateContactModal(false)}
+          modalSize="lg"
+        >
+          <UpdateContactForm
+            hideModal={() => setShowUpdateContactModal(false)}
+            contactType={type==="contact"?contact.contactType:type}
+            refetch={refetch}
+            refetchAllContacts={refetchAllContacts}
+            contact={contact}
+          />
+        </ModalForm>
       )}
     </>
   );

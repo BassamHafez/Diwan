@@ -37,6 +37,9 @@ a {
 ul li{
   list-style: none;
 }
+input:disabled {
+  background-color: #F2F2F2 !important; 
+}
 
 /* bootstrap */
 .dropdown-toggle::after {
