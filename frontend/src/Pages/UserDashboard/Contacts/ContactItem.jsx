@@ -1,4 +1,6 @@
 import noAvatar from "../../../assets/default.png";
+import organizationImage from "../../../assets/organization.png";
+import noAvatarGray from "../../../assets/noAvatar.png";
 import styles from "./Contacts.module.css";
 import {
   formatPhoneNumber,
@@ -21,7 +23,15 @@ import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { mainDeleteFunHandler } from "../../../util/Http";
 
-const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
+const ContactItem = ({
+  contact,
+  type,
+  showNotes,
+  isListView,
+  refetch,
+  refetchAllContacts,
+  showTenantDetials
+}) => {
   const [renamedType, setRenamedType] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -42,25 +52,30 @@ const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
 
   useEffect(() => {
     let renamedTypeVal;
+    let myType = type === "contact" ? contact.contactType : type;
     if (!isArLang) {
-      renamedTypeVal = renameContactTypeEn(type);
+      renamedTypeVal = renameContactTypeEn(myType);
     } else {
-      renamedTypeVal = renameContactTypeAr(type);
+      renamedTypeVal = renameContactTypeAr(myType);
     }
 
     setRenamedType(renamedTypeVal);
-  }, [renamedType, isArLang, type]);
+  }, [renamedType, isArLang, type, contact]);
 
   const deleteContact = async () => {
     setShowDeleteModal(false);
+    const myType = type === "contact" ? contact.contactType : type;
     if (contact._id && token) {
       const res = await mainDeleteFunHandler({
         id: contact._id,
         token: token,
-        type: `contacts/${type}s`,
+        type: `contacts/${myType}s`,
       });
-      if (res.status === 204) { 
-        refetch()
+      if (res.status === 204) {
+        if (refetch) {
+          refetch();
+        }
+        refetchAllContacts();
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -69,8 +84,8 @@ const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
       notifyError(key("deleteWrong"));
     }
   };
-  const gridXXLSystem=isListView?12:4;
-  const gridLgSystem=isListView?12:6;
+  const gridXXLSystem = isListView ? 12 : 4;
+  const gridLgSystem = isListView ? 12 : 6;
 
   return (
     <>
@@ -78,15 +93,33 @@ const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
         <div className={styles.contact_item}>
           <div className={styles.contact_header}>
             <div className={styles.img_side}>
-              <img className={styles.noAvatar} src={noAvatar} alt="avatar" />
+              <img
+                className={styles.noAvatar}
+                src={
+                  type === "tenant"
+                    ? contact.type === "organization"
+                      ? organizationImage
+                      : noAvatarGray
+                    : noAvatar
+                }
+                alt="avatar"
+              />
               <div
                 className={`${styles.name_div} ${isArLang ? "me-2" : "ms-2"}`}
               >
                 <h6>{contact.name}</h6>
-                <span>{renamedType || type}</span>
+                <span>
+                  {(contact.address ? contact.address : renamedType) || type}
+                </span>
               </div>
             </div>
-            <div className={`${styles.controller_icons} ${isArLang?styles.controller_icons_ar:styles.controller_icons_en}`}>
+            <div
+              className={`${styles.controller_icons} ${
+                isArLang
+                  ? styles.controller_icons_ar
+                  : styles.controller_icons_en
+              }`}
+            >
               <FontAwesomeIcon
                 title={key("delete")}
                 className="text-danger"
@@ -97,7 +130,7 @@ const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
             </div>
           </div>
           <hr />
-          <div>
+          <div className={styles.phones_div}>
             <h6 className="text-secondary">{key("phoneNum")}</h6>
             <div className="d-flex align-items-center flex-wrap">
               <span
@@ -148,11 +181,46 @@ const ContactItem = ({ contact, type, showNotes, isListView,refetch }) => {
                 </div>
               </div>
             )}
-
-            {contact.notes&&showNotes&&<div>
-              {contact.notes}
-            </div>}
           </div>
+          {type === "tenant" && showTenantDetials && (
+            <>
+              {contact.nationalId && (
+                <div>
+                  <h6 className="text-secondary">{key("nationalId")}</h6>
+                  <span
+                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
+                  >
+                    {contact.nationalId}
+                  </span>
+                </div>
+              )}
+              {contact.taxNumber && (
+                <div>
+                  <h6 className="text-secondary">{key("taxNumber")}</h6>
+                  <span
+                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
+                  >
+                    {contact.taxNumber}
+                  </span>
+                </div>
+              )}
+              {contact.commercialRecord && (
+                <div className="mt-2">
+                  <h6 className="text-secondary">{key("commercialRecord")}</h6>
+                  <span
+                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
+                  >
+                    {contact.commercialRecord}
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+          {showNotes && type !== "tenant" && (
+            <div className={styles.note}>
+              <p>{contact.notes ? contact.notes : key("noNotes")}</p>
+            </div>
+          )}
         </div>
       </Col>
       {showDeleteModal && (
