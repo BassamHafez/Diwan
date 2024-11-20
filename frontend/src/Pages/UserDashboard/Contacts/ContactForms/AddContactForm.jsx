@@ -42,27 +42,27 @@ const AddContactForm = ({
     address: "", //organization
     commercialRecord: "", //organization
     taxNumber: "", //organization,
-    contactType:contactType
+    contactType: contactType,
   };
 
   const onSubmit = (values, { resetForm }) => {
-    console.log(values);
+    // console.log(values);
 
-    const updatedValues = {
-      name: values.name,
-      phone: values.phone,
-    };
+    const { contactType, commercialRecord, taxNumber, ...updatedValues } =
+      values;
 
-    if (values.phone2 !== "") {
-      updatedValues.phone2 = values.phone2;
-    }
-    if (values.notes !== "") {
-      updatedValues.notes = values.notes;
-    }
+    if (commercialRecord)
+      updatedValues.commercialRecord = String(commercialRecord);
+    if (taxNumber) updatedValues.taxNumber = String(taxNumber);
 
+    const filteredValues = Object.fromEntries(
+      Object.entries(updatedValues).filter(([, value]) => value !== "")
+    );
+
+    console.log(filteredValues);
     mutate(
       {
-        formData: updatedValues,
+        formData: filteredValues,
         token: token,
         method: "add",
         type: `contacts/${contactType}s`,
@@ -115,14 +115,18 @@ const AddContactForm = ({
     }),
     commercialRecord: string().when("type", {
       is: (type) => type === "organization",
-      then: (schema) => schema.matches(/^\d{10}$/, key("CommercialValidation"))
-        .required(key("fieldReq")),
+      then: (schema) =>
+        schema
+          .matches(/^\d{10}$/, key("CommercialValidation"))
+          .required(key("fieldReq")),
       otherwise: (schema) => schema,
     }),
     taxNumber: string().when("type", {
       is: (type) => type === "organization",
-      then: (schema) => schema.matches(/^3\d{14}$/,key("taxNumberValidation"))
-        .required(key("fieldReq")),
+      then: (schema) =>
+        schema
+          .matches(/^3\d{14}$/, key("taxNumberValidation"))
+          .required(key("fieldReq")),
       otherwise: (schema) => schema,
     }),
   });
@@ -241,16 +245,18 @@ const AddContactForm = ({
             />
             <ErrorMessage name="phone2" component={InputErrorMessage} />
           </div>
-          <div className="field">
-            <label htmlFor="notes">{key("notes")}</label>
-            <Field
-              as="textarea"
-              className="text_area"
-              id="notes"
-              name="notes"
-            />
-            <ErrorMessage name="notes" component={InputErrorMessage} />
-          </div>
+          {contactType !== "tenant" && (
+            <div className="field">
+              <label htmlFor="notes">{key("notes")}</label>
+              <Field
+                as="textarea"
+                className="text_area"
+                id="notes"
+                name="notes"
+              />
+              <ErrorMessage name="notes" component={InputErrorMessage} />
+            </div>
+          )}
 
           <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
             <button onClick={hideModal} className="cancel_btn my-2">

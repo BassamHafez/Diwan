@@ -1,4 +1,6 @@
 import noAvatar from "../../../assets/default.png";
+import organizationImage from "../../../assets/organization.png";
+import noAvatarGray from "../../../assets/noAvatar.png";
 import styles from "./Contacts.module.css";
 import {
   formatPhoneNumber,
@@ -28,6 +30,7 @@ const ContactItem = ({
   isListView,
   refetch,
   refetchAllContacts,
+  showTenantDetials
 }) => {
   const [renamedType, setRenamedType] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -61,7 +64,7 @@ const ContactItem = ({
 
   const deleteContact = async () => {
     setShowDeleteModal(false);
-    const myType=type==="contact"?contact.contactType:type;
+    const myType = type === "contact" ? contact.contactType : type;
     if (contact._id && token) {
       const res = await mainDeleteFunHandler({
         id: contact._id,
@@ -69,7 +72,7 @@ const ContactItem = ({
         type: `contacts/${myType}s`,
       });
       if (res.status === 204) {
-        if(refetch){
+        if (refetch) {
           refetch();
         }
         refetchAllContacts();
@@ -90,12 +93,24 @@ const ContactItem = ({
         <div className={styles.contact_item}>
           <div className={styles.contact_header}>
             <div className={styles.img_side}>
-              <img className={styles.noAvatar} src={noAvatar} alt="avatar" />
+              <img
+                className={styles.noAvatar}
+                src={
+                  type === "tenant"
+                    ? contact.type === "organization"
+                      ? organizationImage
+                      : noAvatarGray
+                    : noAvatar
+                }
+                alt="avatar"
+              />
               <div
                 className={`${styles.name_div} ${isArLang ? "me-2" : "ms-2"}`}
               >
                 <h6>{contact.name}</h6>
-                <span>{renamedType || type}</span>
+                <span>
+                  {(contact.address ? contact.address : renamedType) || type}
+                </span>
               </div>
             </div>
             <div
@@ -167,7 +182,45 @@ const ContactItem = ({
               </div>
             )}
           </div>
-          {showNotes && <div className={styles.note}><p>{contact.notes?contact.notes:key("noNotes")}</p></div>}
+          {type === "tenant" && showTenantDetials && (
+            <>
+              {contact.nationalId && (
+                <div>
+                  <h6 className="text-secondary">{key("nationalId")}</h6>
+                  <span
+                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
+                  >
+                    {contact.nationalId}
+                  </span>
+                </div>
+              )}
+              {contact.taxNumber && (
+                <div>
+                  <h6 className="text-secondary">{key("taxNumber")}</h6>
+                  <span
+                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
+                  >
+                    {contact.taxNumber}
+                  </span>
+                </div>
+              )}
+              {contact.commercialRecord && (
+                <div className="mt-2">
+                  <h6 className="text-secondary">{key("commercialRecord")}</h6>
+                  <span
+                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
+                  >
+                    {contact.commercialRecord}
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+          {showNotes && type !== "tenant" && (
+            <div className={styles.note}>
+              <p>{contact.notes ? contact.notes : key("noNotes")}</p>
+            </div>
+          )}
         </div>
       </Col>
       {showDeleteModal && (

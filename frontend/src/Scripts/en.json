@@ -184,5 +184,6 @@
     "commercialRecord":"Commercial Record",
     "taxNumberValidation":"Invalid Tax Number",
     "taxNumber":"Tax Number",
-    "nationalId":"National Id"
+    "nationalId":"National Id",
+    "showDetails":"Show Details"
 }

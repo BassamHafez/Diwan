@@ -179,5 +179,6 @@
   "commercialRecord":"السجل التجاري",
   "taxNumber":"الرقم الضريبي",
   "taxNumberValidation":"رقم ضريبي غير صحيح",
-  "nationalId":"الهوية الوطنية"
+  "nationalId":"الهوية الوطنية",
+  "showDetails":"عرض التفاصيل"
 }
