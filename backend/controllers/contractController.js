@@ -1,6 +1,7 @@
 const Contract = require("../models/contractModel");
 const Estate = require("../models/estateModel");
 const Revenue = require("../models/revenueModel");
+const Compound = require("../models/compoundModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const calculateRevenues = require("../utils/calculateRevenues");
@@ -61,8 +62,19 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("No estate found with that ID", 404));
   }
 
+  const updateCompoundEstatesCountPromise = isActiveContract
+    ? Compound.findByIdAndUpdate(estate.compound, {
+        $inc: { rentedEstatesCount: 1 },
+      })
+    : Promise.resolve();
+
   const calculatedRevenues = calculateRevenues(contract);
-  const revenues = await Revenue.insertMany(calculatedRevenues);
+  const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
+
+  const [revenues] = await Promise.all([
+    insertRevenuesPromise,
+    updateCompoundEstatesCountPromise,
+  ]);
 
   res.status(201).json({
     status: "success",
