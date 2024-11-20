@@ -1,7 +1,7 @@
 const ServiceContact = require("../models/serviceContactModel");
 const factory = require("./handlerFactory");
 
-const serviceFields = "name phone phone2";
+const serviceFields = "name phone phone2 notes";
 
 exports.getAllServiceContacts = factory.getAll(
   ServiceContact,
