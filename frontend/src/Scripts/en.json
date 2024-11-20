@@ -185,5 +185,7 @@
     "taxNumberValidation":"Invalid Tax Number",
     "taxNumber":"Tax Number",
     "nationalId":"National Id",
-    "showDetails":"Show Details"
+    "showDetails":"Show Details",
+    "updatedSucc":"Data has been updated successfully",
+    "update":"Update"
 }

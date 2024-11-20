@@ -32,19 +32,21 @@
   min-height: 70px;
   overflow: hidden;
   word-wrap: break-word;
-  white-space: normal;
   transition: all 0.4s;
 }
 
 .note p {
-  margin: 0;  
-  display: block;
+  margin: 0;
+  display: -webkit-box; 
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal; 
 }
 
 .note:hover p {
+  line-clamp: unset;
   white-space: normal;
   overflow: visible;
 }

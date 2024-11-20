@@ -505,6 +505,7 @@ const Contacts = () => {
           />
         </ModalForm>
       )}
+
       {showSelectContactTypeModal && (
         <MainModal
           show={showSelectContactTypeModal}
