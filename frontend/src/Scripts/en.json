@@ -174,5 +174,15 @@
     "notes":"Notes",
     "showNotes":"Show Notes",
     "listView":"List view",
-    "service":"Service"
+    "service":"Service",
+    "noNotes":"there is no notes related to that person",
+    "organization":"Organization",
+    "individual":"Individual",
+    "tenantType":"Tenant Type",
+    "nationalIdValidation":"Invalid National ID",
+    "CommercialValidation":"Commercial Record must be 10 digits",
+    "commercialRecord":"Commercial Record",
+    "taxNumberValidation":"Invalid Tax Number",
+    "taxNumber":"Tax Number",
+    "nationalId":"National Id"
 }

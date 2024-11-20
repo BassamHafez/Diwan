@@ -13,14 +13,32 @@ import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "./ContactForms/AddContactForm";
 import styles from "./Contacts.module.css";
 import Col from "react-bootstrap/esm/Col";
+import MainModal from "../../../Components/UI/Modals/MainModal";
 
 const Contacts = () => {
   const [showAddContactModal, setShowAddContactModal] = useState(false);
+  const [showSelectContactTypeModal, setShowSelectContactTypeModal] =
+    useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [isListView, setIsListView] = useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
-  const [selectedFilter, setSelectedFilter] = useState("broker");
+  const [selectedFilter, setSelectedFilter] = useState("contacts");
+
+  const {
+    data: allContacts,
+    isFetching: isFetchingContacts,
+    refetch: refetchAllContacts,
+  } = useQuery({
+    queryKey: ["contacts", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "contacts",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: selectedFilter === "contacts" && !!token,
+  });
 
   const {
     data: brokers,
@@ -48,6 +66,7 @@ const Contacts = () => {
     staleTime: Infinity,
     enabled: selectedFilter === "landlord" && !!token,
   });
+
   const {
     data: services,
     isFetching: isFetchingServices,
@@ -61,6 +80,20 @@ const Contacts = () => {
       }),
     staleTime: Infinity,
     enabled: selectedFilter === "service" && !!token,
+  });
+  const {
+    data: tenants,
+    isFetching: isFetchingTenants,
+    refetch: refetchTenants,
+  } = useQuery({
+    queryKey: ["tenant", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "contacts/tenants",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: selectedFilter === "tenant" && !!token,
   });
 
   const handleFilterChange = (event) => {
@@ -85,13 +118,30 @@ const Contacts = () => {
               ? refetchBrokers
               : selectedFilter === "landlord"
               ? refetchLandlords
-              : selectedFilter === "service" && refetchServices
+              : selectedFilter === "service"
+              ? refetchServices
+              : selectedFilter === "tenant" && refetchTenants
           }
+          refetchAllContacts={refetchAllContacts}
         />
       ));
     }
 
     return <NoData text={key("noContacts")} />;
+  };
+
+  const showAddModal = () => {
+    if (selectedFilter === "contacts") {
+      setShowSelectContactTypeModal(true);
+    } else {
+      setShowAddContactModal(true);
+    }
+  };
+
+  const triggerAddModalDependsOnSelection = (selection) => {
+    setShowSelectContactTypeModal(false);
+    setSelectedFilter(selection);
+    setShowAddContactModal(true);
   };
 
   return (
@@ -103,7 +153,7 @@ const Contacts = () => {
 
         <div>
           <ButtonOne
-            onClick={() => setShowAddContactModal(true)}
+            onClick={showAddModal}
             text={`${key("add")} ${key(selectedFilter)}`}
           />
         </div>
@@ -111,10 +161,7 @@ const Contacts = () => {
 
       <Row style={{ minHeight: "65vh" }}>
         <Col sm={4} lg={3} className="p-0">
-          <div
-            className={styles.filter_side}
-          >
-
+          <div className={styles.filter_side}>
             <div className="small_filter">
               <h5 className="mb-4">{key("contactType")}</h5>
               <Row className={styles.filter_row}>
@@ -131,17 +178,17 @@ const Contacts = () => {
                       type="radio"
                       className="btn-check"
                       name="types"
-                      value="all"
-                      id="all"
+                      value="contacts"
+                      id="contacts"
                       autoComplete="off"
-                      checked={selectedFilter === "all"}
+                      checked={selectedFilter === "contacts"}
                       onChange={handleFilterChange}
                     />
                     <label
                       className={`${
-                        selectedFilter === "all" && styles.label_checked
+                        selectedFilter === "contacts" && styles.label_checked
                       } btn mx-1`}
-                      htmlFor="all"
+                      htmlFor="contacts"
                     >
                       {key("all")}
                     </label>
@@ -295,14 +342,19 @@ const Contacts = () => {
             </div>
           </div>
         </Col>
+
         <Col sm={8} lg={9}>
           <Row className={styles.contacts_side}>
-            {selectedFilter === "broker" && brokers
-              ? renderContacts(brokers, "broker", isFetchingBrokers)
+            {selectedFilter === "contacts" && allContacts
+              ? renderContacts(allContacts, "contact", isFetchingContacts)
               : selectedFilter === "landlord" && landlords
               ? renderContacts(landlords, "landlord", isFetchingLandlords)
               : selectedFilter === "service" && services
               ? renderContacts(services, "service", isFetchingServices)
+              : selectedFilter === "broker" && brokers
+              ? renderContacts(brokers, "broker", isFetchingBrokers)
+              : selectedFilter === "tenant" && tenants
+              ? renderContacts(tenants, "tenant", isFetchingTenants)
               : null}
           </Row>
         </Col>
@@ -322,10 +374,44 @@ const Contacts = () => {
                 ? refetchBrokers
                 : selectedFilter === "landlord"
                 ? refetchLandlords
-                : selectedFilter === "service" && refetchServices
+                : selectedFilter === "service"
+                ? refetchServices
+                : selectedFilter === "tenant" && refetchTenants
             }
+            refetchAllContacts={refetchAllContacts}
           />
         </ModalForm>
+      )}
+      {showSelectContactTypeModal && (
+        <MainModal
+          show={showSelectContactTypeModal}
+          onHide={() => setShowSelectContactTypeModal(false)}
+          modalSize="xl"
+        >
+          <h2 className="my-3">{key("contactType")}</h2>
+          <div className={styles.select_contact_type}>
+            <div onClick={() => triggerAddModalDependsOnSelection("broker")}>
+              <h5>
+                {key("add")} {key("broker")}
+              </h5>
+            </div>
+            <div onClick={() => triggerAddModalDependsOnSelection("tenant")}>
+              <h5>
+                {key("add")} {key("tenant")}
+              </h5>
+            </div>
+            <div onClick={() => triggerAddModalDependsOnSelection("landlord")}>
+              <h5>
+                {key("add")} {key("landlord")}
+              </h5>
+            </div>
+            <div onClick={() => triggerAddModalDependsOnSelection("service")}>
+              <h5>
+                {key("add")} {key("service")}
+              </h5>
+            </div>
+          </div>
+        </MainModal>
       )}
     </div>
   );
