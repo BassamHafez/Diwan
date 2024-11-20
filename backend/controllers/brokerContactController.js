@@ -1,7 +1,7 @@
 const BrokerContact = require("../models/brokerContactModel");
 const factory = require("./handlerFactory");
 
-const brokerFields = "name phone phone2";
+const brokerFields = "name phone phone2 notes";
 
 exports.getAllBrokerContacts = factory.getAll(BrokerContact, [], brokerFields);
 exports.getBrokerContact = factory.getOne(BrokerContact, [], brokerFields);

@@ -1,7 +1,7 @@
 const LandlordContact = require("../models/landlordContactModel");
 const factory = require("./handlerFactory");
 
-const landlordFields = "name phone phone2";
+const landlordFields = "name phone phone2 notes";
 
 exports.getAllLandlordContacts = factory.getAll(
   LandlordContact,

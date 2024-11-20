@@ -23,11 +23,11 @@ const estatePopOptions = [
   },
   {
     path: "broker",
-    select: "name phone phone2 type",
+    select: "name phone phone2 notes",
   },
   {
     path: "landlord",
-    select: "name phone phone2 type",
+    select: "name phone phone2 notes",
   },
 ];
 
