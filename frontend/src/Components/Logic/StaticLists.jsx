@@ -381,7 +381,45 @@ export const contactsTypeAr=[
   {label:"مزود خدمة",value:"service"},
 ]
 
+export const contractStatusOptionsEn=[
+  {label:"pending",value:"pending"},
+  {label:"Cancelled",value:"Cancelled"},
+  {label:"Ongoing",value:"Ongoing"},
+]
+export const contractStatusOptionsAr=[
+  {label:"معلق",value:"pending"},
+  {label:"ملغي",value:"Cancelled"},
+  {label:"ساري",value:"Ongoing"},
+]
+export const unitOptions = {
+  en: [
+    { label: "Day", value: "day" },
+    { label: "Week", value: "week" },
+    { label: "Month", value: "month" },
+    { label: "Year", value: "year" },
+  ],
+  ar: [
+    { label: "يومي", value: "day" },
+    { label: "أسبوعي", value: "week" },
+    { label: "شهري", value: "month" },
+    { label: "سنوي", value: "year" },
+  ],
+};
 
+export const paymentPeriodValueOptions=[
+  {label:"1",value:"1"},
+  {label:"2",value:"1"},
+  {label:"3",value:"1"},
+  {label:"4",value:"1"},
+  {label:"5",value:"1"},
+  {label:"6",value:"1"},
+  {label:"7",value:"1"},
+  {label:"8",value:"1"},
+  {label:"9",value:"1"},
+  {label:"10",value:"1"},
+  {label:"11",value:"1"},
+  {label:"12",value:"1"},
+]
 //saudi arabia En
 export const SaudiRegion = [
   { label: "Riyadh", value: "Riyadh" },

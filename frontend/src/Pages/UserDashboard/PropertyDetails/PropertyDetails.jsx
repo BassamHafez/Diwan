@@ -33,11 +33,11 @@ const PropertyDetails = () => {
   const notifyError = (message) => toast.error(message);
   const [isMarked, setIsMarked] = useState(false);
 
-  const { data, isFetching } = useQuery({
+  const { data, isFetching,refetch } = useQuery({
     queryKey: ["singleProp", propId],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
-    staleTime: 3000,
+    staleTime: Infinity,
     enabled: propId && !!token,
   });
 
@@ -48,6 +48,10 @@ const PropertyDetails = () => {
       setIsMarked(false);
     }
   }, [data]);
+
+  useEffect(()=>{
+    return()=>refetch()
+  },[refetch])
 
   const deleteEstate = async () => {
     setShowDeleteModal(false);
