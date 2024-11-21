@@ -72,7 +72,9 @@ const AddContactForm = ({
             if (refetch) {
               refetch();
             }
-            refetchAllContacts();
+            if (refetchAllContacts) {
+              refetchAllContacts();
+            }
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();

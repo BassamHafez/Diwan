@@ -1,0 +1,62 @@
+.contracts_body {
+  background-color: white;
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 30px;
+  box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.12);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.contract_content {
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.12);
+  margin-top: 15px;
+}
+.content_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 30px;
+}
+
+.contract_table {
+  border-collapse: separate !important;
+  border-spacing: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+.table_body tr td {
+  text-align: center;
+  background-color: transparent;
+  padding: 10px 0;
+}
+.table_head tr th {
+  background-color: #f8f9fd;
+  text-align: center;
+  color: var(--dark_white);
+  font-weight: 500;
+  padding: 10px 0;
+}
+
+@media screen and (max-width:570px) {
+    .content_header {
+        padding-inline:2px;
+      }
+}
+@media screen and (max-width:510px) {
+    .content_header {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .content_header .search_field{
+        margin-bottom:10px;
+      }
+}

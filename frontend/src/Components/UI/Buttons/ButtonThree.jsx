@@ -1,6 +1,6 @@
 import styles from "./ButtonThree.module.css";
 
-const ButtonThree = ({ color, text, onClick,type }) => {
+const ButtonThree = ({ color, text, onClick,type,children }) => {
   let btn_type = color === "white" ? styles.white_btn : styles.main_color_btn;
   let first_layer =
   color === "white" ? styles.first_layer1 : styles.first_layer2;
@@ -14,7 +14,7 @@ const ButtonThree = ({ color, text, onClick,type }) => {
       <div className={first_layer}></div>
       <div className={second_layer}></div>
       <div className={third_layer}></div>
-      <span className={styles.btn_text}>{text}</span>
+      <span className={styles.btn_text}>{text?text:children}</span>
     </div>
   );
 };

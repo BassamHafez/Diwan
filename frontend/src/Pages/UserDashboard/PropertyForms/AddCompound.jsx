@@ -16,7 +16,6 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import Select from "react-select";
 import {
-  agents,
   citiesByRegion,
   citiesByRegionAr,
   districtsByCity,
@@ -32,6 +31,8 @@ const AddCompound = ({ hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
+  const [brokersOptions, setBrokersOptions] = useState([]);
+  const [tenantsOptions, setTenantsOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const notifySuccess = (message) => toast.success(message);
@@ -40,11 +41,28 @@ const AddCompound = ({ hideModal, refetch }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 
-  const { data: tags,refetch:refetchTags} = useQuery({
+  const { data: tags, refetch: refetchTags } = useQuery({
     queryKey: ["tags", token],
     queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
     enabled: !!token,
     staleTime: Infinity,
+  });
+  const { data: tenants } = useQuery({
+    queryKey: ["tenant", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "contacts/tenants",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
+  const { data: brokers } = useQuery({
+    queryKey: ["brokers", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({ type: "contacts/brokers", token: token }),
+    staleTime: Infinity,
+    enabled: !!token,
   });
 
   useEffect(() => {
@@ -53,6 +71,19 @@ const AddCompound = ({ hideModal, refetch }) => {
     });
     setTagsOptions(myTagsOptions);
   }, [tags]);
+
+  useEffect(() => {
+    let myTenants = tenants?.data?.map((tenant) => {
+      return { label: tenant.name, value: tenant.name };
+    });
+    setTenantsOptions(myTenants);
+  }, [tenants]);
+  useEffect(() => {
+    let myBrokers = brokers?.data?.map((broker) => {
+      return { label: broker.name, value: broker.name };
+    });
+    setBrokersOptions(myBrokers);
+  }, [brokers]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
@@ -70,7 +101,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     agent: "",
     lessor: "",
   };
-  
+
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
     const formData = new FormData();
@@ -153,12 +184,12 @@ const AddCompound = ({ hideModal, refetch }) => {
     setFieldValue("city", "");
     setFieldValue("neighborhood", "");
     let cities;
-    if(isArLang){
+    if (isArLang) {
       cities = citiesByRegionAr[selectedRegion?.value] || [];
-    }else{
+    } else {
       cities = citiesByRegion[selectedRegion?.value] || [];
     }
-    
+
     setCityOptions(cities);
     setDistrictOptions([]);
   };
@@ -167,12 +198,15 @@ const AddCompound = ({ hideModal, refetch }) => {
     setFieldValue("city", selectedCity?.value || "");
     setFieldValue("neighborhood", "");
     let districts;
-    if(isArLang){
+    if (isArLang) {
       districts = districtsByCityAr[selectedCity?.value] || [];
-    }else{
+    } else {
       districts = districtsByCity[selectedCity?.value] || [];
     }
-    let finalDistricts=[{label:key("notSpecified"),value:"not specified"},...districts]
+    let finalDistricts = [
+      { label: key("notSpecified"), value: "not specified" },
+      ...districts,
+    ];
     setDistrictOptions(finalDistricts);
   };
 
@@ -229,7 +263,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                 <Select
                   id="lessor"
                   name="lessor"
-                  options={agents}
+                  options={tenantsOptions}
                   onChange={(val) => setFieldValue("lessor", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
@@ -246,13 +280,14 @@ const AddCompound = ({ hideModal, refetch }) => {
                 <Select
                   id="region"
                   name="region"
-                  options={isArLang?SaudiRegionAr:SaudiRegion}
+                  options={isArLang ? SaudiRegionAr : SaudiRegion}
                   onChange={(selected) =>
                     handleRegionChange(selected, setFieldValue)
                   }
                   value={
-                    (isArLang?SaudiRegionAr:SaudiRegion).find((opt) => opt.value === values.region) ||
-                    null
+                    (isArLang ? SaudiRegionAr : SaudiRegion).find(
+                      (opt) => opt.value === values.region
+                    ) || null
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
@@ -316,7 +351,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                 <Select
                   id="agent"
                   name="agent"
-                  options={agents}
+                  options={brokersOptions}
                   onChange={(val) => setFieldValue("agent", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
