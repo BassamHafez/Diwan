@@ -17,6 +17,7 @@
   border-radius: 20px;
   box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.12);
   margin-top: 15px;
+  position: relative;
 }
 .content_header {
   display: flex;
@@ -45,6 +46,33 @@
   padding: 10px 0;
 }
 
+.status_span{
+  padding: 1px 12px;
+  border-radius:15px;
+  font-size: 12px;
+}
+
+.green{
+  background-color: rgb(206, 243, 193);
+  color: green;
+}
+.red{
+  background-color: rgb(252, 191, 191);
+  color: red;
+}
+.orange{
+  background-color: rgba(245, 207, 150, 0.228);
+  color: rgb(197, 131, 7);
+}
+.yellow{
+  background-color: rgb(247, 247, 212);
+  color: rgb(157, 162, 8);
+}
+.dropdown_menu{
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--dark_white) !important;
+}
 @media screen and (max-width:570px) {
     .content_header {
         padding-inline:2px;
