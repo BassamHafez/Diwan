@@ -1,51 +1,31 @@
+// main fun
+export const formattedDate=(date)=>{
+  const formattedDate=new Date(date).toISOString().split("T")[0]
+  return formattedDate
+}
+
 //contact func
 
-export const renameContactTypeEn = (type) => {
-  let name = "";
-  switch (type) {
-    case "broker":
-      name = "Agent";
-      break;
-    case "tenant":
-      name = "tenant";
-
-      break;
-    case "landlord":
-      name = "landlord";
-
-      break;
-    case "service":
-      name = "service";
-      break;
-
-    default:
-      break;
-  }
-  return name;
+const contactTypeMappings = {
+  en: {
+    broker: "Agent",
+    tenant: "Tenant",
+    landlord: "Landlord",
+    service: "Service",
+  },
+  ar: {
+    broker: "وسيط",
+    tenant: "مستأجر",
+    landlord: "مالك",
+    service: "مزود خدمة",
+  },
 };
-export const renameContactTypeAr = (type) => {
-  let name = "";
-  switch (type) {
-    case "broker":
-      name = "وسيط";
-      break;
-    case "tenant":
-      name = "مستأجر";
 
-      break;
-    case "landlord":
-      name = "مالك";
-
-      break;
-    case "service":
-      name = "مزود خدمة";
-      break;
-
-    default:
-      break;
-  }
-  return name;
+export const renameContactType = (type, language) => {
+  const mappings = contactTypeMappings[language];
+  return mappings?.[type] || "";
 };
+
 export const formatPhoneNumber = (phone) => {
   const countryCode = "+966";
   if (phone.startsWith("0") && phone.length === 10) {
@@ -123,6 +103,29 @@ export const filterTimeUnitDpendsOnDaysDifference = (
   return filteredUnits;
 };
 
+
+const contractStatus = {
+  en: {
+    active: "Active",
+    upcoming: "Upcoming",
+    canceled: "Canceled",
+    completed: "completed",
+  },
+  ar: {
+    active: "ساري",
+    upcoming: "قادم",
+    canceled: "ملغي",
+    completed: "اكتمل",
+  },
+};
+
+export const renamedContractStatus = (type, language) => {
+  const mappings = contractStatus[language];
+  return mappings?.[type] || "";
+};
+
+// revenues
+
 export const calculateRevenues = (totalAmount,paymentPeriodValue,paymentPeriodUnit,startDate,endDate) => {
   const revenues = [];
   const start = new Date(startDate);
@@ -159,11 +162,29 @@ export const calculateRevenues = (totalAmount,paymentPeriodValue,paymentPeriodUn
 
     revenues.push({
       amount: amount,
-      dueDate: new Date(currentDate).toISOString().split("T")[0], // Format date as YYYY-MM-DD,
+      dueDate: formattedDate(currentDate),
     });
 
     currentDate.setDate(currentDate.getDate() + intervalInDays);
   }
 
   return revenues;
+};
+
+const revenuesStatus = {
+  en: {
+    pending: "pending",
+    canceled: "canceled",
+    paid: "paid",
+  },
+  ar: {
+    pending: "معلق",
+    canceled: "ملغي",
+    paid: "مدفوع",
+  },
+};
+
+export const renamedRevenuesStatus = (type, language) => {
+  const mappings = revenuesStatus[language];
+  return mappings?.[type] || "";
 };

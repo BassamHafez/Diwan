@@ -32,7 +32,7 @@ const AddCompound = ({ hideModal, refetch }) => {
   const [districtOptions, setDistrictOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
   const [brokersOptions, setBrokersOptions] = useState([]);
-  const [tenantsOptions, setTenantsOptions] = useState([]);
+  const [landlordOptions, setlandlordOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const notifySuccess = (message) => toast.success(message);
@@ -47,16 +47,17 @@ const AddCompound = ({ hideModal, refetch }) => {
     enabled: !!token,
     staleTime: Infinity,
   });
-  const { data: tenants } = useQuery({
-    queryKey: ["tenant", token],
+  const { data: landlords } = useQuery({
+    queryKey: ["landlord", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: "contacts/tenants",
+        type: "contacts/landlords",
         token: token,
       }),
     staleTime: Infinity,
     enabled: !!token,
   });
+
   const { data: brokers } = useQuery({
     queryKey: ["brokers", token],
     queryFn: () =>
@@ -73,14 +74,15 @@ const AddCompound = ({ hideModal, refetch }) => {
   }, [tags]);
 
   useEffect(() => {
-    let myTenants = tenants?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant.name };
+    let myLandlords = landlords?.data?.map((tenant) => {
+      return { label: tenant.name, value: tenant._id };
     });
-    setTenantsOptions(myTenants);
-  }, [tenants]);
+    setlandlordOptions(myLandlords);
+  }, [landlords]);
+
   useEffect(() => {
     let myBrokers = brokers?.data?.map((broker) => {
-      return { label: broker.name, value: broker.name };
+      return { label: broker.name, value: broker._id };
     });
     setBrokersOptions(myBrokers);
   }, [brokers]);
@@ -98,12 +100,11 @@ const AddCompound = ({ hideModal, refetch }) => {
     neighborhood: "",
     address: "",
     tags: [],
-    agent: "",
-    lessor: "",
+    broker: "",
+    landlord: "",
   };
 
   const onSubmit = (values, { resetForm }) => {
-    console.log(values);
     const formData = new FormData();
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -119,6 +120,12 @@ const AddCompound = ({ hideModal, refetch }) => {
       formData.append("address", values.address);
     }
     formData.append("neighborhood", values.neighborhood);
+    if (values.landlord) {
+      formData.append("landlord", values.landlord);
+    }
+    if (values.broker) {
+      formData.append("broker", values.broker);
+    }
     if (values.tags?.length > 0) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
@@ -161,7 +168,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     region: string().required(key("fieldReq")),
     neighborhood: string().required(key("fieldReq")),
     address: string(),
-    agent: string(),
+    broker: string(),
     lessor: string(),
   });
 
@@ -259,17 +266,17 @@ const AddCompound = ({ hideModal, refetch }) => {
               </div>
 
               <div className="field mb-1">
-                <label htmlFor="lessor">{key("lessor")}</label>
+                <label htmlFor="landlord">{key("landlord")}</label>
                 <Select
-                  id="lessor"
-                  name="lessor"
-                  options={tenantsOptions}
-                  onChange={(val) => setFieldValue("lessor", val.value)}
+                  id="landlord"
+                  name="landlord"
+                  options={landlordOptions}
+                  onChange={(val) => setFieldValue("landlord", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
                 />
-                <ErrorMessage name="lessor" component={InputErrorMessage} />
+                <ErrorMessage name="landlord" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
@@ -347,17 +354,17 @@ const AddCompound = ({ hideModal, refetch }) => {
               </div>
 
               <div className="field mb-1">
-                <label htmlFor="agent">{key("agent")}</label>
+                <label htmlFor="broker">{key("broker")}</label>
                 <Select
-                  id="agent"
-                  name="agent"
+                  id="broker"
+                  name="broker"
                   options={brokersOptions}
-                  onChange={(val) => setFieldValue("agent", val.value)}
+                  onChange={(val) => setFieldValue("broker", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
                 />
-                <ErrorMessage name="agent" component={InputErrorMessage} />
+                <ErrorMessage name="broker" component={InputErrorMessage} />
               </div>
             </Col>
           </Row>
