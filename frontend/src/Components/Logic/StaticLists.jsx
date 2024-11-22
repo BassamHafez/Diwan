@@ -354,15 +354,17 @@ export const packagesList = {
   ],
 };
 
+
+//contract
 export const contractStatusOptions={
   en:[
-    {label:"Pending",value:"pending"},
+    {label:"}ompleted",value:"completed"},
     {label:"Cancelled",value:"canceled"},
     {label:"Upcoming",value:"upcoming"},
     {label:"Active",value:"active"},
   ],
   ar:[
-    {label:"معلق",value:"pending"},
+    {label:"مكتمل",value:"completed"},
     {label:"ملغي",value:"canceled"},
     {label:"قادم",value:"upcoming"},
     {label:"ساري",value:"active"},
@@ -398,9 +400,21 @@ export const paymentPeriodValueOptions=[
   {label:"12",value:"1"},
 ]
 
-
-
-
+//revenues
+export const revenueTypeOptions = {
+  en: [
+    { label: "Add-due", value: "add-due" },
+    { label: "Extra-Fee", value: "extra-fee" },
+    { label: "Commission", value: "commission" },
+    { label: "Other", value: "other" },
+  ],
+  ar: [
+    { label: "مستحقات", value: "add-due" },
+    { label: "رسوم إضافية", value: "extra-fee" },
+    { label: "عمولة", value: "commission" },
+    { label: "أخرى", value: "other" },
+  ],
+};
 
 
 
@@ -544,7 +558,7 @@ export const citiesByRegionAr = {
     { label: "رابغ", value: "رابغ" },
     { label: "منى", value: "منى" },
   ],
-  المدينة: [
+  "المدينة المنورة": [
     { label: "ينبع", value: "ينبع" },
     { label: "العلا", value: "العلا" },
     { label: "خيبر", value: "خيبر" },
