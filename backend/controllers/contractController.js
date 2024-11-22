@@ -37,31 +37,55 @@ exports.getAllContracts = catchAsync(async (req, res, next) => {
 exports.createContract = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
+  const newStartDate = new Date(req.body.startDate);
+  const newEndDate = new Date(req.body.endDate);
+
+  if (newStartDate >= newEndDate) {
+    return next(new ApiError("Start date must be before end date", 400));
+  }
+
   const isActiveContract =
-    new Date(req.body.startDate) < Date.now() &&
-    new Date(req.body.endDate) > Date.now();
+    newStartDate <= Date.now() && newEndDate >= Date.now();
 
-  const isFutureContract = new Date(req.body.startDate) > Date.now();
+  const isFutureContract = newStartDate > Date.now();
 
-  const [estate, contract] = await Promise.all([
-    isActiveContract
-      ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-      : isFutureContract
-      ? Estate.findByIdAndUpdate(estateId, { status: "pending" })
-      : Estate.findById(estateId),
+  const overlappingContractPromise = Contract.findOne({
+    estate: estateId,
+    startDate: { $lte: newEndDate },
+    endDate: { $gte: newStartDate },
+    status: { $nin: ["canceled", "completed"] },
+  });
 
-    Contract.create({
-      ...req.body,
-      status: isActiveContract ? "active" : "upcoming",
-      estate: estateId,
-      user: req.user.id,
-    }),
+  const estatePromise = isActiveContract
+    ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
+    : isFutureContract
+    ? Estate.findByIdAndUpdate(estateId, { status: "pending" })
+    : Estate.findById(estateId);
+
+  const [estate, overlappingContract] = await Promise.all([
+    estatePromise,
+    overlappingContractPromise,
   ]);
 
   if (!estate) {
-    await Contract.findByIdAndDelete(contract._id);
     return next(new ApiError("No estate found with that ID", 404));
   }
+
+  if (overlappingContract) {
+    return next(
+      new ApiError(
+        "There is an contract overlapping with the selected dates",
+        400
+      )
+    );
+  }
+
+  const contract = await Contract.create({
+    ...req.body,
+    status: isActiveContract ? "active" : "upcoming",
+    estate: estateId,
+    user: req.user.id,
+  });
 
   const updateCompoundEstatesCountPromise = isActiveContract
     ? Compound.findByIdAndUpdate(estate.compound, {
