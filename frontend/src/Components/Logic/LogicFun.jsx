@@ -1,3 +1,9 @@
+// main fun
+export const formattedDate=(date)=>{
+  const formattedDate=new Date(date).toISOString().split("T")[0]
+  return formattedDate
+}
+
 //contact func
 
 const contactTypeMappings = {
@@ -97,10 +103,29 @@ export const filterTimeUnitDpendsOnDaysDifference = (
   return filteredUnits;
 };
 
-export const formattedDate=(date)=>{
-  const formattedDate=new Date(date).toISOString().split("T")[0]
-  return formattedDate
-}
+
+const contractStatus = {
+  en: {
+    active: "Active",
+    upcoming: "Upcoming",
+    canceled: "Canceled",
+    completed: "completed",
+  },
+  ar: {
+    active: "ساري",
+    upcoming: "قادم",
+    canceled: "ملغي",
+    completed: "اكتمل",
+  },
+};
+
+export const renamedContractStatus = (type, language) => {
+  const mappings = contractStatus[language];
+  return mappings?.[type] || "";
+};
+
+// revenues
+
 export const calculateRevenues = (totalAmount,paymentPeriodValue,paymentPeriodUnit,startDate,endDate) => {
   const revenues = [];
   const start = new Date(startDate);
@@ -146,23 +171,20 @@ export const calculateRevenues = (totalAmount,paymentPeriodValue,paymentPeriodUn
   return revenues;
 };
 
-
-const contractStatus = {
+const revenuesStatus = {
   en: {
-    active: "Active",
-    upcoming: "Upcoming",
-    canceled: "Canceled",
-    pending: "Pending",
+    pending: "pending",
+    canceled: "canceled",
+    paid: "paid",
   },
   ar: {
-    active: "ساري",
-    upcoming: "قادم",
-    canceled: "ملغي",
     pending: "معلق",
+    canceled: "ملغي",
+    paid: "مدفوع",
   },
 };
 
-export const renamedContractStatus = (type, language) => {
-  const mappings = contractStatus[language];
+export const renamedRevenuesStatus = (type, language) => {
+  const mappings = revenuesStatus[language];
   return mappings?.[type] || "";
 };

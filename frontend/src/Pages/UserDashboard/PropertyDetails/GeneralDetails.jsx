@@ -20,6 +20,7 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Contracts from "./Contracts";
+import Revenue from "./Revenue";
 
 const GeneralDetails = ({ details }) => {
   const { t: key } = useTranslation();
@@ -186,6 +187,7 @@ const GeneralDetails = ({ details }) => {
       </Row>
 
       <Contracts/>
+      <Revenue/>
     </div>
   );
 };

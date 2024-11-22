@@ -73,6 +73,18 @@
   border: none !important;
   color: var(--dark_white) !important;
 }
+
+
+
+/* revenue */
+.select_type{
+  min-width: 9.375rem;
+}
+.rev_note{
+  font-size: 13px;
+  color: var(--dark_white);
+}
+
 @media screen and (max-width:570px) {
     .content_header {
         padding-inline:2px;
