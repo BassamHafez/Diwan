@@ -54,7 +54,9 @@ exports.createContract = catchAsync(async (req, res, next) => {
     startDate: { $lte: newEndDate },
     endDate: { $gte: newStartDate },
     status: { $nin: ["canceled", "completed"] },
-  });
+  })
+    .select("_id")
+    .lean();
 
   const estatePromise = isActiveContract
     ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
@@ -96,17 +98,11 @@ exports.createContract = catchAsync(async (req, res, next) => {
   const calculatedRevenues = calculateRevenues(contract);
   const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
 
-  const [revenues] = await Promise.all([
-    insertRevenuesPromise,
-    updateCompoundEstatesCountPromise,
-  ]);
+  await Promise.all([insertRevenuesPromise, updateCompoundEstatesCountPromise]);
 
   res.status(201).json({
     status: "success",
-    data: {
-      contract,
-      revenues,
-    },
+    data: contract,
   });
 });
 
