@@ -1,3 +1,5 @@
+
+// packages
 export const packagesList = {
   // month
   packagesPerMonthEn: [
@@ -352,45 +354,20 @@ export const packagesList = {
   ],
 };
 
-export const realEstates = [
-  { label: "Riyadh Building", value: "Riyadh Building" },
-  { label: "Asmara Compund", value: "Asmara Compund" },
-];
-
-export const tagOptions=[
-  {label:"block1",value:"block1"},
-  {label:"block2",value:"block2"},
-  {label:"block3",value:"block3"},
-]
-
-export const agents=[
-  {label:"Ahmed",value:"Ahmed"},
-  {label:"Salim",value:"Salim"},
-  {label:"Said",value:"Said"},
-]
-export const contactsTypeEn=[
-  {label:"Agent",value:"broker"},
-  {label:"Tenant",value:"tenant"},
-  {label:"Landlord",value:"landlord"},
-  {label:"Service",value:"service"},
-]
-export const contactsTypeAr=[
-  {label:"وسيط",value:"broker"},
-  {label:"مستأجر",value:"tenant"},
-  {label:"مالك",value:"landlord"},
-  {label:"مزود خدمة",value:"service"},
-]
-
-export const contractStatusOptionsEn=[
-  {label:"pending",value:"pending"},
-  {label:"Cancelled",value:"Cancelled"},
-  {label:"Ongoing",value:"Ongoing"},
-]
-export const contractStatusOptionsAr=[
-  {label:"معلق",value:"pending"},
-  {label:"ملغي",value:"Cancelled"},
-  {label:"ساري",value:"Ongoing"},
-]
+export const contractStatusOptions={
+  en:[
+    {label:"Pending",value:"pending"},
+    {label:"Cancelled",value:"canceled"},
+    {label:"Upcoming",value:"upcoming"},
+    {label:"Active",value:"active"},
+  ],
+  ar:[
+    {label:"معلق",value:"pending"},
+    {label:"ملغي",value:"canceled"},
+    {label:"قادم",value:"upcoming"},
+    {label:"ساري",value:"active"},
+  ]
+}
 export const unitOptions = {
   en: [
     { label: "Day", value: "day" },
@@ -420,6 +397,15 @@ export const paymentPeriodValueOptions=[
   {label:"11",value:"1"},
   {label:"12",value:"1"},
 ]
+
+
+
+
+
+
+
+
+// ----------------------------------------------------------Saudi Arabia----------------------------
 //saudi arabia En
 export const SaudiRegion = [
   { label: "Riyadh", value: "Riyadh" },

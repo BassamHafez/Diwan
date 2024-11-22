@@ -216,5 +216,6 @@
     "fillReq":"Please, fill all required fields",
     "confirm":"Confirm",
     "contract":"Contract",
-    "startDateValidation":"Start date must be today or later"
+    "startDateValidation":"Start date must be today or later",
+    "actions":"Actions"
 }

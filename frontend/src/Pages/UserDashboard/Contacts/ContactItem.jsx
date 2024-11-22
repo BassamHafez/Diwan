@@ -5,8 +5,7 @@ import styles from "./Contacts.module.css";
 import {
   formatPhoneNumber,
   formatWhatsAppLink,
-  renameContactTypeAr,
-  renameContactTypeEn,
+  renameContactType
 } from "../../../Components/Logic/LogicFun";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -53,17 +52,13 @@ const ContactItem = ({
     ? formatWhatsAppLink(contact.phone2)
     : null;
 
-  useEffect(() => {
-    let renamedTypeVal;
-    let myType = type === "contact" ? contact.contactType : type;
-    if (!isArLang) {
-      renamedTypeVal = renameContactTypeEn(myType);
-    } else {
-      renamedTypeVal = renameContactTypeAr(myType);
-    }
 
-    setRenamedType(renamedTypeVal);
-  }, [renamedType, isArLang, type, contact]);
+  useEffect(() => {
+    const myType = type === "contact" ? contact.contactType : type;
+    const language = isArLang ? "ar" : "en";
+  
+    setRenamedType(renameContactType(myType, language));
+  }, [isArLang, type, contact]);
 
   const deleteContact = async () => {
     setShowDeleteModal(false);
@@ -87,6 +82,7 @@ const ContactItem = ({
       notifyError(key("deleteWrong"));
     }
   };
+  
   const gridXXLSystem = isListView ? 12 : 4;
   const gridLgSystem = isListView ? 12 : 6;
 

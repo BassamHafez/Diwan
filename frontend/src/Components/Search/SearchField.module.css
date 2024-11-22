@@ -21,8 +21,8 @@
     top: 50%;
     color: white;
     font-size: 1.0625rem;
-    width: 2.5rem;
-    height: 102%;
+    padding-inline: 10px;
+    height: 101%;
     cursor: pointer;
     background-color: var(--deep_navy);
     border: none;
@@ -38,8 +38,8 @@
     border-radius:0 10px  10px 0;
     transform: translateY(-50%);
 }
-.search_icon:hover{
-    background-color: var(--main_color);
+.search_icon:hover svg{
+    background-color: var(--dark_white);
 }
 
 @media screen and (max-width:1100px) {
