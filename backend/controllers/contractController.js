@@ -24,6 +24,7 @@ exports.getAllContracts = catchAsync(async (req, res, next) => {
 
   const contracts = await Contract.find({ estate: estateId, user: req.user.id })
     .populate(contractPopOptions)
+    .sort("startDate")
     .lean();
 
   res.status(200).json({
