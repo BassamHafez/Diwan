@@ -8,6 +8,7 @@ const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const factory = require("./handlerFactory");
 const { uploadSingleImage } = require("../utils/uploadImage");
+const mongoose = require("mongoose");
 
 const compoundPopOptions = [
   {
@@ -21,7 +22,28 @@ const compoundPopOptions = [
 ];
 
 exports.getAllCompounds = factory.getAll(Compound);
-exports.getCompound = factory.getOne(Compound, compoundPopOptions);
+exports.updateCompound = factory.updateOne(Compound);
+
+exports.getCompound = catchAsync(async (req, res, next) => {
+  const compoundId = req.params.id;
+
+  const [compound, estates] = await Promise.all([
+    Compound.findById(compoundId).populate(compoundPopOptions).lean(),
+    Estate.find({ compound: compoundId }).lean(),
+  ]);
+
+  if (!compound) {
+    return next(new ApiError("No compound found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      compound,
+      estates,
+    },
+  });
+});
 
 exports.uploadCompoundImage = uploadSingleImage("image");
 
@@ -42,8 +64,6 @@ exports.resizeCompoundImage = catchAsync(async (req, res, next) => {
 
   next();
 });
-
-exports.updateCompound = factory.updateOne(Compound);
 
 exports.deleteCompound = catchAsync(async (req, res, next) => {
   const compound = await Compound.findById(req.params.id);
