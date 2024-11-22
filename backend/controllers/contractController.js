@@ -86,15 +86,21 @@ exports.createContract = catchAsync(async (req, res, next) => {
 });
 
 exports.cancelContract = catchAsync(async (req, res, next) => {
+  const contract = await Contract.findById(req.params.id);
+
+  if (!contract) {
+    return next(new ApiError("No contract found with that ID", 404));
+  }
+
+  if (contract.status === "completed") {
+    return next(new ApiError("Cannot cancel a completed contract", 400));
+  }
+
   const updatedContract = await Contract.findByIdAndUpdate(
     req.params.id,
     { status: "canceled" },
     { new: true }
   );
-
-  if (!updatedContract) {
-    return next(new ApiError("No contract found with that ID", 404));
-  }
 
   return res.status(200).json({
     status: "success",
