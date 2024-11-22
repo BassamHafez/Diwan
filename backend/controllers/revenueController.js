@@ -12,8 +12,7 @@ const revenuePopOptions = [
 exports.getAllRevenues = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
-  const revenues = await Revenue.find
-    .find({ estate: estateId })
+  const revenues = await Revenue.find({ estate: estateId })
     .populate(revenuePopOptions)
     .sort("dueDate")
     .lean();
