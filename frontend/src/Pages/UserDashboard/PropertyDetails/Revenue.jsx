@@ -3,10 +3,9 @@ import styles from "./Contracts.module.css";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
-import { contractStatusOptions } from "../../../Components/Logic/StaticLists";
-import {useState } from "react";
+import { revenueTypeOptions } from "../../../Components/Logic/StaticLists";
+import { useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery } from "@tanstack/react-query";
 import {
   mainDeleteFunHandler,
@@ -17,18 +16,19 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
-  renamedContractStatus,
+  renamedRevenuesStatus,
 } from "../../../Components/Logic/LogicFun";
 import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
+import AddRevenue from "../PropertyForms/AddRevenue";
 
-const Contracts = () => {
-  const [showAddContractModal, setShowAddContractModal] = useState(false);
+const Revenue = () => {
+  const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [contractId, setContractId] = useState("");
+  const [revenueId, setRevenueId] = useState("");
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
@@ -37,14 +37,14 @@ const Contracts = () => {
   const notifyError = (message) => toast.error(message);
 
   const {
-    data: contractsData,
+    data: revenuesData,
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["contracts", token],
+    queryKey: ["revenuesData", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: `estates/${propId}/contracts`,
+        type: `estates/${propId}/revenues`,
         token: token,
       }),
     enabled: propId && !!token,
@@ -53,14 +53,12 @@ const Contracts = () => {
 
   const getStatusBgColor = (status) => {
     switch (status) {
-      case "active":
-        return styles.green;
       case "pending":
-        return styles.orange;
+        return styles.yellow;
       case "canceled":
         return styles.red;
-      case "upcoming":
-        return styles.yellow;
+      case "paid":
+        return styles.green;
       default:
         return "";
     }
@@ -68,13 +66,13 @@ const Contracts = () => {
 
   const deleteContract = async () => {
     setShowDeleteModal(false);
-    if (propId && contractId && token) {
+    if (propId && revenueId && token) {
       const res = await mainDeleteFunHandler({
-        id: contractId,
+        id: revenueId,
         token: token,
-        type: `estates/${propId}/contracts`,
+        type: `estates/${propId}/revenues`,
       });
-      if (res.status === 204||res.status===200) {
+      if (res.status === 204 || res.status === 200) {
         refetch();
         notifySuccess(key("deletedSucc"));
       } else {
@@ -88,7 +86,7 @@ const Contracts = () => {
   return (
     <div className={styles.contracts_body}>
       <div className={styles.header}>
-        <h4>{key("contracts")}</h4>
+        <h4>{key("revenues")}</h4>
         <div>
           <ButtonOne
             classes="m-2"
@@ -97,10 +95,10 @@ const Contracts = () => {
             text={key("exportCsv")}
           />
           <ButtonOne
-            onClick={() => setShowAddContractModal(true)}
+            onClick={() => setShowAddRevenueModal(true)}
             classes="m-2 bg-navy"
             borderd
-            text={key("addContracts")}
+            text={`${key("addRevenue")}`}
           />
         </div>
       </div>
@@ -108,54 +106,54 @@ const Contracts = () => {
       <div className={styles.contract_content}>
         <div className={styles.content_header}>
           <div className={styles.search_field}>
-            <SearchField text={key("searchContract")} />
+            <SearchField text={key("searchRevenue")} />
           </div>
           <Select
             options={
-              isArLang
-                ? contractStatusOptions["ar"]
-                : contractStatusOptions["en"]
+              isArLang ? revenueTypeOptions["ar"] : revenueTypeOptions["en"]
             }
             // onChange={(val) => setFieldValue("lessor", val.value)}
-            className={`${isArLang ? "text-end" : "text-start"}`}
+            className={`${isArLang ? "text-end" : "text-start"} ${styles.select_type}`}
             isRtl={isArLang ? false : true}
-            placeholder={key("contractStaus")}
+            placeholder={key("type")}
           />
         </div>
 
         <div className="my-4">
-          {contractsData || !isFetching ? (
-            contractsData.data?.length > 0 ? (
+          {revenuesData || !isFetching ? (
+            revenuesData.data?.length > 0 ? (
               <table className={`${styles.contract_table} table`}>
                 <thead className={styles.table_head}>
                   <tr>
-                    <th>{key("tenant")}</th>
-                    <th>{key("startContract")}</th>
-                    <th>{key("endContract")}</th>
-                    <th>{key("price")}</th>
+                    <th>{key("singleContactType")}</th>
+                    <th>{key("type")}</th>
+                    <th>{key("amount")}</th>
+                    <th>{key("dueDate")}</th>
                     <th>{key("status")}</th>
+                    <th>{key("notes")}</th>
                     <th>{key("actions")}</th>
                   </tr>
                 </thead>
 
                 <tbody className={styles.table_body}>
-                  {contractsData.data.map((contract) => (
-                    <tr key={contract._id}>
-                      <td>{contract.tenant?.name}</td>
-                      <td>{formattedDate(contract.startDate)}</td>
-                      <td>{formattedDate(contract.endDate)}</td>
-                      <td>{contract.totalAmount}</td>
+                  {revenuesData.data.map((rev) => (
+                    <tr key={rev._id}>
+                      <td>ابراهيم</td>
+                      <td>{key(rev.type)}</td>
+                      <td>{rev.amount}</td>
+                      <td>{formattedDate(rev.dueDate)}</td>
                       <td>
                         <span
-                          className={`${getStatusBgColor(contract.status)} ${
+                          className={`${getStatusBgColor(rev.status)} ${
                             styles.status_span
                           }`}
                         >
                           {isArLang
-                            ? renamedContractStatus(contract.status, "ar")
-                            : renamedContractStatus(contract.status, "en")}
+                            ? renamedRevenuesStatus(rev.status, "ar")
+                            : renamedRevenuesStatus(rev.status, "en")}
                         </span>
                       </td>
+                      <td><span className={styles.rev_note}>{rev.note?rev.note:"-"}</span></td>
                       <td>
                         <Dropdown>
                           <Dropdown.Toggle
@@ -171,7 +169,7 @@ const Contracts = () => {
                             </Dropdown.Item>
                             <Dropdown.Item
                               onClick={() => {
-                                setContractId(contract._id);
+                                setRevenueId(rev._id);
                                 setShowDeleteModal(true);
                               }}
                               className="text-center"
@@ -186,7 +184,7 @@ const Contracts = () => {
                 </tbody>
               </table>
             ) : (
-              <NoData text={key("noContracts")} />
+              <NoData text={key("noRevenues")} />
             )
           ) : (
             <LoadingOne />
@@ -194,13 +192,13 @@ const Contracts = () => {
         </div>
       </div>
 
-      {showAddContractModal && (
+      {showAddRevenueModal && (
         <ModalForm
-          show={showAddContractModal}
-          onHide={() => setShowAddContractModal(false)}
+          show={showAddRevenueModal}
+          onHide={() => setShowAddRevenueModal(false)}
         >
-          <AddNewContract
-            hideModal={() => setShowAddContractModal(false)}
+          <AddRevenue
+            hideModal={() => setShowAddRevenueModal(false)}
             refetch={refetch}
           />
         </ModalForm>
@@ -220,4 +218,4 @@ const Contracts = () => {
   );
 };
 
-export default Contracts;
+export default Revenue;
