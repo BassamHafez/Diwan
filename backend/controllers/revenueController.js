@@ -2,10 +2,21 @@ const Revenue = require("../models/revenueModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
+const revenuePopOptions = [
+  {
+    path: "tenant",
+    select: "name phone phone2",
+  },
+];
+
 exports.getAllRevenues = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
-  const revenues = await Revenue.find({ estate: estateId });
+  const revenues = await Revenue.find
+    .find({ estate: estateId })
+    .populate(revenuePopOptions)
+    .sort("dueDate")
+    .lean();
 
   res.status(200).json({
     status: "success",
