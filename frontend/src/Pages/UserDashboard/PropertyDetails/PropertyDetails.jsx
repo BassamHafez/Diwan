@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  addEstateToFav,
+  mainEmptyBodyFun,
   mainDeleteFunHandler,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
@@ -89,9 +89,11 @@ const PropertyDetails = () => {
         notifyError(key("wrong"));
       }
     } else {
-      res = await addEstateToFav({
+      res = await mainEmptyBodyFun({
         id: propId,
         token: token,
+        method:"post",
+        type:"favorites"
       });
       console.log(res);
       if (res.status === "success") {

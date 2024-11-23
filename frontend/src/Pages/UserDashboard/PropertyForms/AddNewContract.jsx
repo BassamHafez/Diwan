@@ -126,6 +126,10 @@ const AddNewContract = ({ hideModal, refetch }) => {
       {
         onSuccess: (data) => {
           console.log(data);
+          if(data.response?.data?.message==="There is an contract overlapping with the selected dates"){
+            notifyError(key("contractOverlapping"));
+            return;
+          }
           if (data?.status === "success") {
             notifySuccess(key("addedSuccess"));
             refetch();
