@@ -234,6 +234,18 @@
   "paidAt":"Paid Date",
   "details":"Details",
   "revenueDetails":"Revenue Details",
+  "contractDetails":"Contract Details",
   "print":"Print",
-  "contractOverlapping":"There is an contract overlapping with the selected dates"
+  "contractOverlapping":"There is an contract overlapping with the selected dates",
+  "noEstates":"No Units",
+  "unit":"unit",
+  "totalProperties":"Total Units",
+  "rentedEstates":"Rented Units",
+  "totalRentedEstate":"Rented Units Ratio",
+  "forEstates":"For Units",
+  "collectionCurrentMonth":"Current Month Collections",
+  "addEstate":"Add Unit",
+  "theLandlord":"Landlord",
+  "searchEstates":"search for unit",
+  "deleteEstatesFirst":"You have to delete all units inside this estate first!"
 }

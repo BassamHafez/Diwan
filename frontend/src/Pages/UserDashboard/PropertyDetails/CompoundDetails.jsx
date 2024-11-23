@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
-  mainEmptyBodyFun,
   mainDeleteFunHandler,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
@@ -15,93 +14,60 @@ import Col from "react-bootstrap/esm/Col";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import GeneralDetails from "./GeneralDetails";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
-import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
+import { calculateRentedPercentage } from "../../../Components/Logic/LogicFun";
+import ModalForm from "../../../Components/UI/Modals/ModalForm";
+import AddEstate from "../PropertyForms/AddEstate";
 
-const PropertyDetails = () => {
+const CompoundDetails = () => {
+    const [showAddEstateModal, setShowAddEstateModal] = useState();
+
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
-  const { propId } = useParams();
+  const { compId } = useParams();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  const [isMarked, setIsMarked] = useState(false);
 
-  const { data, isFetching,refetch } = useQuery({
-    queryKey: ["singleProp", propId],
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: ["singleCompound", compId],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
+      mainFormsHandlerTypeFormData({
+        type: `compounds/${compId}`,
+        token: token,
+      }),
     staleTime: Infinity,
-    enabled: propId && !!token,
+    enabled: compId && !!token,
   });
 
-  useEffect(() => {
-    if (data?.data?.inFavorites) {
-      setIsMarked(true);
-    } else {
-      setIsMarked(false);
-    }
-  }, [data]);
-
-  useEffect(()=>{
-    return()=>refetch()
-  },[refetch])
-
-  const deleteEstate = async () => {
+  const deleteCompound = async () => {
     setShowDeleteModal(false);
-    if (propId && token) {
+    if (compId && token) {
       const res = await mainDeleteFunHandler({
-        id: propId,
+        id: compId,
         token: token,
-        type: "estates",
+        type: "compounds",
       });
+      console.log(res)
+
       if (res.status === 204) {
-        queryClient.invalidateQueries(["estates", token]);
+        queryClient.invalidateQueries(["compounds", token]);
         notifySuccess(key("deletedSucc"));
         navigate("/properties");
-      } else {
+      } else if(res.response?.data?.message==="Please delete all estates in this compound first") {
+        notifyError(key("deleteEstatesFirst"))
+      }else{
         notifyError(key("wrong"));
       }
     } else {
       notifyError(key("deleteWrong"));
-    }
-  };
-
-  const bookMarkEstate = async () => {
-    let res;
-    if (isMarked) {
-      res = await mainDeleteFunHandler({
-        type: "estates",
-        id: `${propId}/favorites`,
-        token: token,
-      });
-      console.log(res);
-      if (res.data.status === "success") {
-        setIsMarked(false);
-        notifySuccess(key("removedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      res = await mainEmptyBodyFun({
-        id: propId,
-        token: token,
-        method:"post",
-        type:"favorites"
-      });
-      console.log(res);
-      if (res.status === "success") {
-        setIsMarked(true);
-        notifySuccess(key("bookmarkedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
     }
   };
 
@@ -111,10 +77,10 @@ const PropertyDetails = () => {
         <LoadingOne />
       ) : data ? (
         <div className={styles.detials_content}>
-          <header className={styles.header}>
+          <header className={`${styles.header} pt-3 pb-4`}>
             <Row>
               <div className="d-flex justify-content-between align-items-center">
-                <h3 className="my-4 mx-1">{data.data?.name}</h3>
+                <h3 className="my-4 mx-1">{data.data?.compound?.name}</h3>
                 <div className="d-flex align-items-center justify-content-center flex-wrap">
                   <div
                     className={`${styles.controller_btn} ${styles.delete_btn}`}
@@ -124,15 +90,11 @@ const PropertyDetails = () => {
                     <FontAwesomeIcon icon={faTrashCan} />
                   </div>
                   <div
-                    className={
-                      isMarked ? styles.bookmarked : styles.no_bookmark
-                    }
-                    onClick={bookMarkEstate}
-                    title={`${
-                      isMarked ? key("removeBookMark") : key("bookmarked")
-                    }`}
+                    className={styles.bookmarked}
+                    onClick={() => setShowAddEstateModal(true)}
+                    title={key("addEstate")}
                   >
-                    <FontAwesomeIcon icon={isMarked ? solidHeart : faHeart} />
+                    <FontAwesomeIcon icon={faPlus} />
                   </div>
                 </div>
               </div>
@@ -143,8 +105,10 @@ const PropertyDetails = () => {
               >
                 <div className={styles.estate_img}>
                   <img
-                    src={`${import.meta.env.VITE_Host}${data.data?.image}`}
-                    alt="unit_img"
+                    src={`${import.meta.env.VITE_Host}${
+                      data.data?.compound?.image
+                    }`}
+                    alt="estate_img"
                   />
                 </div>
               </Col>
@@ -160,8 +124,8 @@ const PropertyDetails = () => {
                       className="d-flex justify-content-center align-items-center"
                     >
                       <div className={styles.main_details}>
-                        <span>{key("totalIncome")}</span>
-                        <p>600,000 {key("sar")}</p>
+                        <span>{key("totalProperties")}</span>
+                        <p>{data.data?.estates?.length}</p>
                       </div>
                     </Col>
                     <Col
@@ -171,8 +135,8 @@ const PropertyDetails = () => {
                       className="d-flex justify-content-center align-items-center"
                     >
                       <div className={styles.main_details}>
-                        <span>{key("totalCosts")}</span>
-                        <p>20 {key("sar")}</p>
+                        <span>{key("rentedEstates")}</span>
+                        <p>{data.data?.compound?.rentedEstatesCount}</p>
                       </div>
                     </Col>
                     <Col
@@ -182,42 +146,13 @@ const PropertyDetails = () => {
                       className="d-flex justify-content-center align-items-center"
                     >
                       <div className={styles.main_details}>
-                        <span>{key("collectionRatio")}</span>
-                        <p>70%</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("grandReturns")}</span>
-                        <p>8.2%</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("netReturns")}</span>
-                        <p>8.2%</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("area")}</span>
+                        <span>{key("totalRentedEstate")}</span>
                         <p>
-                          {data.data?.area} {key("areaUnit")}
+                          {calculateRentedPercentage(
+                            data.data?.compound?.rentedEstatesCount,
+                            data.data?.estates?.length
+                          )}
+                          %
                         </p>
                       </div>
                     </Col>
@@ -228,8 +163,10 @@ const PropertyDetails = () => {
                       className="d-flex justify-content-center align-items-center"
                     >
                       <div className={styles.main_details}>
-                        <span>{key("rentPerSqm")}</span>
-                        <p>30 {key("sar")}</p>
+                        <span>
+                          {key("collectionRatio")} {key("forEstates")}
+                        </span>
+                        <p>60%</p>
                       </div>
                     </Col>
                     <Col
@@ -239,50 +176,37 @@ const PropertyDetails = () => {
                       className="d-flex justify-content-center align-items-center"
                     >
                       <div className={styles.main_details}>
-                        <span>{key("uncollectedAmount")}</span>
-                        <p>200 {key("sar")}</p>
+                        <span>
+                          {key("netReturns")} {key("forEstates")}
+                        </span>
+                        <p>8.2%</p>
+                      </div>
+                    </Col>
+                    <Col
+                      xs={6}
+                      sm={4}
+                      md={6}
+                      className="d-flex justify-content-center align-items-center"
+                    >
+                      <div className={styles.main_details}>
+                        <span>{key("collectionCurrentMonth")}</span>
+                        <p>5%</p>
                       </div>
                     </Col>
                   </Row>
                 </div>
               </Col>
             </Row>
-            <div className={styles.header_footer}>
-              <Row className="justify-content-around g-2">
-                <Col
-                  sm={4}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <div className={styles.header_footerItem}>
-                    <span>{key("nextPaymentDue")}</span>
-                    <p>4/10/2025</p>
-                  </div>
-                </Col>
-                <Col
-                  sm={4}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <div className={styles.header_footerItem}>
-                    <span>{key("nextPaymentAmount")}</span>
-                    <p>3000 {key("sar")}</p>
-                  </div>
-                </Col>
-                <Col
-                  sm={4}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <div className={styles.header_footerItem}>
-                    <span>{key("endOfContract")}</span>
-                    <p>8/12/2027</p>
-                  </div>
-                </Col>
-              </Row>
-            </div>
           </header>
           <section className={styles.tabs_section}>
             <Tabs defaultActiveKey="general" className="my-3" fill>
               <Tab eventKey="general" title={key("general")}>
-                <GeneralDetails details={data?.data} />
+                <GeneralDetails
+                  isCompound={true}
+                  details={data?.data?.compound}
+                  compoundEstates={data?.data?.estates}
+                  showAddEstatesModal={() => setShowAddEstateModal(true)}
+                />
               </Tab>
 
               <Tab eventKey="tasks" title={key("tasks")}>
@@ -303,15 +227,28 @@ const PropertyDetails = () => {
         <MainModal
           show={showDeleteModal}
           onHide={() => setShowDeleteModal(false)}
-          confirmFun={deleteEstate}
+          confirmFun={deleteCompound}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}
         >
           <h5>{key("deleteText")}</h5>
         </MainModal>
       )}
+
+      {showAddEstateModal && (
+        <ModalForm
+          show={showAddEstateModal}
+          onHide={() => setShowAddEstateModal(false)}
+        >
+          <AddEstate
+            hideModal={() => setShowAddEstateModal(false)}
+            refetch={refetch}
+            compId={compId}
+          />
+        </ModalForm>
+      )}
     </div>
   );
 };
 
-export default PropertyDetails;
+export default CompoundDetails;

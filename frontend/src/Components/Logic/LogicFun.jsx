@@ -4,8 +4,38 @@ export const formattedDate=(date)=>{
   return formattedDate
 }
 
-//contact func
 
+
+// estates
+const estateStatus = {
+  en: {
+    available: "Available",
+    pending: "Pending",
+    rented: "Rented",
+  },
+  ar: {
+    available: "شاغرة",
+    pending: "معلقة",
+    rented: "مؤجرة",
+  },
+};
+
+export const renamedEstateStatus = (type, language) => {
+  const mappings = estateStatus[language];
+  return mappings?.[type] || "";
+};
+
+//compounds
+
+export const calculateRentedPercentage = (rented, total) => {
+  if(total===0||rented===0){
+    return 0
+  }
+  const percentage = (rented / total) * 100;
+  return Number.isInteger(percentage) ? percentage : percentage.toFixed(1);
+};
+
+//contact func
 const contactTypeMappings = {
   en: {
     broker: "Agent",
