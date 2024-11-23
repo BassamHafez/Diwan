@@ -25,6 +25,10 @@ router
 // /api/v1/estates/:estateId/contracts/:id
 router
   .route("/:id")
+  .patch(
+    contractValidator.updateContractValidator,
+    contractController.updateContract
+  )
   .delete(
     contractValidator.getContractValidator,
     contractController.cancelContract
