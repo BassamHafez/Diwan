@@ -221,5 +221,16 @@
   "commission": "عمولة",
   "extra-fee": "رسوم إضافية",
   "noRevenues": "لا إيرادات في الوقت الحالي",
-  "noContracts": "لم تقم بإضافة عقد  حتي الآن"
+  "noContracts": "لم تقم بإضافة عقد  حتي الآن",
+  "paid":"مدفوع",
+  "unPaid":"غير مدفوع",
+  "canceled":"ملغي",
+  "paidSucc":"تم الدفع بنجاح",
+  "unPayedSucc":"تم التراجع عن الدفع بنجاح",
+  "paymentMethod":"طريقة الدفع",
+  "paidAt":"تاريخ الدفع",
+  "details":"تفاصيل",
+  "revenueDetails":"تفاصيل الإيراد",
+  "print":"طباعة",
+  "contractOverlapping":"هناك عقد متداخل مع التواريخ المحددة"
 }

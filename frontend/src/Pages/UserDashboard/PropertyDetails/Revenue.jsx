@@ -9,6 +9,7 @@ import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
   mainDeleteFunHandler,
+  mainEmptyBodyFun,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
 import { useParams } from "react-router-dom";
@@ -24,9 +25,14 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import AddRevenue from "../PropertyForms/AddRevenue";
+import PayRevenue from "../PropertyForms/PayRevenue";
+import RevenueDetails from "./RevenueDetails";
 
 const Revenue = () => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
+  const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
+  const [revDetails, setRevDetails] = useState({});
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [revenueId, setRevenueId] = useState("");
   const { t: key } = useTranslation();
@@ -64,7 +70,7 @@ const Revenue = () => {
     }
   };
 
-  const deleteContract = async () => {
+  const deleteRevenue = async () => {
     setShowDeleteModal(false);
     if (propId && revenueId && token) {
       const res = await mainDeleteFunHandler({
@@ -83,6 +89,34 @@ const Revenue = () => {
     }
   };
 
+  const unPayRevenue = async (revId) => {
+    const res = await mainEmptyBodyFun({
+      id: propId,
+      method: "patch",
+      token: token,
+      type: `revenues/${revId}/unpay`,
+    });
+    if (res.status === "success") {
+      refetch();
+      notifySuccess(key("unPayedSucc"));
+    } else {
+      notifyError(key("wrong"));
+    }
+  };
+
+  const mainpulateRev = (type, revId) => {
+    setRevenueId(revId);
+    if (type === "pay") {
+      setShowPayRevenueModal(true);
+    } else if (type === "cancel") {
+      setShowDeleteModal(true);
+    } else if (type === "unPay") {
+      setRevenueId("");
+      unPayRevenue(revId);
+    }
+  };
+
+  console.log(revenuesData);
   return (
     <div className={styles.contracts_body}>
       <div className={styles.header}>
@@ -113,7 +147,9 @@ const Revenue = () => {
               isArLang ? revenueTypeOptions["ar"] : revenueTypeOptions["en"]
             }
             // onChange={(val) => setFieldValue("lessor", val.value)}
-            className={`${isArLang ? "text-end" : "text-start"} ${styles.select_type}`}
+            className={`${isArLang ? "text-end" : "text-start"} ${
+              styles.select_type
+            }`}
             isRtl={isArLang ? false : true}
             placeholder={key("type")}
           />
@@ -130,7 +166,6 @@ const Revenue = () => {
                     <th>{key("amount")}</th>
                     <th>{key("dueDate")}</th>
                     <th>{key("status")}</th>
-                    <th>{key("notes")}</th>
                     <th>{key("actions")}</th>
                   </tr>
                 </thead>
@@ -138,7 +173,7 @@ const Revenue = () => {
                 <tbody className={styles.table_body}>
                   {revenuesData.data.map((rev) => (
                     <tr key={rev._id}>
-                      <td>ابراهيم</td>
+                      <td>{rev.tenant?.name}</td>
                       <td>{key(rev.type)}</td>
                       <td>{rev.amount}</td>
                       <td>{formattedDate(rev.dueDate)}</td>
@@ -153,7 +188,6 @@ const Revenue = () => {
                             : renamedRevenuesStatus(rev.status, "en")}
                         </span>
                       </td>
-                      <td><span className={styles.rev_note}>{rev.note?rev.note:"-"}</span></td>
                       <td>
                         <Dropdown>
                           <Dropdown.Toggle
@@ -163,18 +197,39 @@ const Revenue = () => {
                             <FontAwesomeIcon icon={faEllipsisVertical} />
                           </Dropdown.Toggle>
 
-                          <Dropdown.Menu>
-                            <Dropdown.Item className="text-center">
-                              {key("ediet")}
-                            </Dropdown.Item>
+                          <Dropdown.Menu className={styles.dropdown_list}>
+                            {rev.status === "pending" && (
+                              <Dropdown.Item
+                                onClick={() => mainpulateRev("pay", rev._id)}
+                                className="text-center"
+                              >
+                                {key("paid")}
+                              </Dropdown.Item>
+                            )}
+                            {rev.status === "paid" && (
+                              <Dropdown.Item
+                                onClick={() => mainpulateRev("unPay", rev._id)}
+                                className="text-center"
+                              >
+                                {key("unPaid")}
+                              </Dropdown.Item>
+                            )}
+                            {rev.status !== "paid" && (
+                              <Dropdown.Item
+                                onClick={() => mainpulateRev("cancel", rev._id)}
+                                className="text-center"
+                              >
+                                {key("canceled")}
+                              </Dropdown.Item>
+                            )}
                             <Dropdown.Item
                               onClick={() => {
-                                setRevenueId(rev._id);
-                                setShowDeleteModal(true);
+                                setRevDetails(rev);
+                                setShowDetailsModal(true);
                               }}
                               className="text-center"
                             >
-                              {key("delete")}
+                              {key("details")}
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -203,15 +258,41 @@ const Revenue = () => {
           />
         </ModalForm>
       )}
+      {showPayRevenueModal && (
+        <ModalForm
+          show={showPayRevenueModal}
+          onHide={() => setShowPayRevenueModal(false)}
+          modalSize="md"
+        >
+          <PayRevenue
+            hideModal={() => setShowPayRevenueModal(false)}
+            refetch={refetch}
+            revId={revenueId}
+          />
+        </ModalForm>
+      )}
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
           onHide={() => setShowDeleteModal(false)}
-          confirmFun={deleteContract}
+          confirmFun={deleteRevenue}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}
         >
           <h5>{key("deleteText")}</h5>
+        </MainModal>
+      )}
+      {showDetailsModal && (
+        <MainModal
+          show={showDetailsModal}
+          onHide={() => setShowDetailsModal(false)}
+          cancelBtn={key("cancel")}
+          okBtn={key("print")}
+          // confirmFun={deleteRevenue}
+          title={key("revenueDetails")}
+          modalSize={"lg"}
+        >
+          <RevenueDetails revDetails={revDetails}/>
         </MainModal>
       )}
     </div>

@@ -188,3 +188,20 @@ export const renamedRevenuesStatus = (type, language) => {
   const mappings = revenuesStatus[language];
   return mappings?.[type] || "";
 };
+const paymentMethod = {
+  en: {
+    cash: "Cash",
+    "bank-transfer": "Bank transfer",
+    online: "Online",
+  },
+  ar: {
+    cash: "كاش",
+    "bank-transfer": "حوالة بنكية",
+    online: "أونلاين",
+  },
+};
+
+export const renamedPaymentMethod = (type, language) => {
+  const mappings = paymentMethod[language];
+  return mappings?.[type] || "";
+};
