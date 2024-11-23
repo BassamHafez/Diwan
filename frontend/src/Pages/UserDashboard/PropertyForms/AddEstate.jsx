@@ -25,7 +25,7 @@ import {
 } from "../../../Components/Logic/StaticLists";
 import CreatableSelect from "react-select/creatable";
 
-const AddEstate = ({ hideModal, refetch }) => {
+const AddEstate = ({ hideModal, refetch, compId }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
@@ -48,11 +48,11 @@ const AddEstate = ({ hideModal, refetch }) => {
   });
 
   useEffect(() => {
-    let compoundOptions=[];
+    let compoundOptions = [];
     if (compounds) {
       compoundOptions = compounds?.data?.map((compound) => {
         return { label: compound.name, value: compound._id };
-      }); 
+      });
     }
     let allCompoundsOptions = [
       { label: key("notSpecified"), value: "not" },
@@ -81,7 +81,7 @@ const AddEstate = ({ hideModal, refetch }) => {
 
   const initialValues = {
     image: "",
-    compound: "",
+    compound: compId || "",
     name: "",
     description: "",
     region: "",
@@ -219,7 +219,10 @@ const AddEstate = ({ hideModal, refetch }) => {
     } else {
       districts = districtsByCity[selectedCity?.value] || [];
     }
-    let finalDistricts=[{label:key("notSpecified"),value:"not specified"},...districts]
+    let finalDistricts = [
+      { label: key("notSpecified"), value: "not specified" },
+      ...districts,
+    ];
     setDistrictOptions(finalDistricts);
   };
 
@@ -228,6 +231,7 @@ const AddEstate = ({ hideModal, refetch }) => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      enableReinitialize
     >
       {({ setFieldValue, values }) => (
         <Form>
@@ -242,7 +246,13 @@ const AddEstate = ({ hideModal, refetch }) => {
                   onChange={(val) => setFieldValue("compound", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
+                  isDisabled={compId ? true : false}
+                  placeholder={
+                    compId
+                      ? compoundsOptions?.find((comp) => comp.value === compId)
+                          ?.label || ""
+                      : ""
+                  }
                 />
                 <ErrorMessage name="compound" component={InputErrorMessage} />
               </div>
@@ -312,7 +322,9 @@ const AddEstate = ({ hideModal, refetch }) => {
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
-                  isDisabled={values.compound && values.compound !== "not"}
+                  isDisabled={
+                    (values.compound && values.compound !== "not") || compId
+                  }
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
@@ -332,6 +344,7 @@ const AddEstate = ({ hideModal, refetch }) => {
                   }
                   isDisabled={
                     !values.region ||
+                    compId ||
                     (values.compound && values.compound !== "not")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
@@ -355,6 +368,7 @@ const AddEstate = ({ hideModal, refetch }) => {
                   }
                   isDisabled={
                     !values.city ||
+                    compId ||
                     (values.compound && values.compound !== "not")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}

@@ -4,7 +4,7 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
 import { revenueTypeOptions } from "../../../Components/Logic/StaticLists";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -54,8 +54,12 @@ const Revenue = () => {
         token: token,
       }),
     enabled: propId && !!token,
-    staleTime: 3000,
+    staleTime: Infinity,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const getStatusBgColor = (status) => {
     switch (status) {
@@ -116,7 +120,6 @@ const Revenue = () => {
     }
   };
 
-  console.log(revenuesData);
   return (
     <div className={styles.contracts_body}>
       <div className={styles.header}>
@@ -214,14 +217,17 @@ const Revenue = () => {
                                 {key("unPaid")}
                               </Dropdown.Item>
                             )}
-                            {rev.status !== "paid" && (
-                              <Dropdown.Item
-                                onClick={() => mainpulateRev("cancel", rev._id)}
-                                className="text-center"
-                              >
-                                {key("canceled")}
-                              </Dropdown.Item>
-                            )}
+                            {rev.status !== "paid" &&
+                              rev.status !== "canceled" && (
+                                <Dropdown.Item
+                                  onClick={() =>
+                                    mainpulateRev("cancel", rev._id)
+                                  }
+                                  className="text-center"
+                                >
+                                  {key("canceled")}
+                                </Dropdown.Item>
+                              )}
                             <Dropdown.Item
                               onClick={() => {
                                 setRevDetails(rev);
@@ -292,7 +298,7 @@ const Revenue = () => {
           title={key("revenueDetails")}
           modalSize={"lg"}
         >
-          <RevenueDetails revDetails={revDetails}/>
+          <RevenueDetails revDetails={revDetails} />
         </MainModal>
       )}
     </div>

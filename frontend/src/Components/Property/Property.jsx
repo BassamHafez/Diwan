@@ -7,63 +7,58 @@ import { useEffect } from "react";
 import AOS from "aos";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { calculateRentedPercentage, renamedEstateStatus } from "../Logic/LogicFun";
 
-const Property = ({ property, hideState, hideCompound,type }) => {
+const Property = ({ property, hideStatus, hideCompound, type }) => {
   // console.log(property);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  let stateColor = styles.green;
-
-  if (!hideState) {
-    if (isArLang) {
-      switch (property.state) {
-        case "مؤجرة":
-          stateColor = styles.green;
-          break;
-        case "محجوزة":
-          stateColor = styles.yellow;
-
-          break;
-        case "شاغرة":
-          stateColor = styles.red;
-
-          break;
-
-        default:
-          break;
-      }
-    } else {
-      switch (property.state) {
-        case "Rented":
-          stateColor = styles.green;
-          break;
-        case "Reserved":
-          stateColor = styles.yellow;
-
-          break;
-        case "Vacant":
-          stateColor = styles.red;
-
-          break;
-
-        default:
-          break;
-      }
+  const navigateToDetails = () => {
+    if (type === "estate") {
+      navigate(`/estate-unit-details/${property._id}`);
+    }else{
+      navigate(`/estate-details/${property._id}`);
     }
-  }
-
-
-  const navigateToDetails=()=>{
-    if(type==="estate"){
-      navigate(`/property-details/${property._id}`)
-    }
-  }
-
+  };
   useEffect(() => {
     AOS.init();
   }, []);
+
+  const getStatusBgColor = (status) => {
+    switch (status) {
+      case "pending":
+        return styles.yellow;
+      case "available":
+        return styles.red;
+      case "rented":
+        return styles.green;
+      default:
+        return "";
+    }
+  };
+
+  const renderCompoundName = (property) => {
+    return property.compound?.name || key("noCompound");
+  };
+
+  const renderEstateInfo = (property) => {
+    if (property.estatesCount === 0) {
+      return key("noEstates");
+    }
+ 
+    const rentedPercentage = calculateRentedPercentage(
+      property.rentedEstatesCount,
+      property.estatesCount
+    );
+
+    return `${key("rented")}: ${property.rentedEstatesCount}/${
+      property.estatesCount
+    } ${key("unit")} (${rentedPercentage}%)`;
+  };
+
+
 
   return (
     <Col
@@ -88,13 +83,15 @@ const Property = ({ property, hideState, hideCompound,type }) => {
         </div>
 
         <div className={styles.card_caption}>
-          {!hideState && (
+          {!hideStatus && (
             <span
-              className={`${styles.state_badge} ${
-                isArLang ? styles.state_badge_ar : styles.state_badge_en
-              } ${stateColor}`}
+              className={`${styles.status_badge} ${
+                isArLang ? styles.status_badge_ar : styles.status_badge_en
+              } ${getStatusBgColor(property.status)}`}
             >
-              {property.state}
+              {isArLang
+                ? renamedEstateStatus(property.status, "ar")
+                : renamedEstateStatus(property.status, "en")}
             </span>
           )}
           <div className={styles.caption_header}>
@@ -109,11 +106,18 @@ const Property = ({ property, hideState, hideCompound,type }) => {
             </span>
           </div>
           <p className={styles.desc}>{property.description}</p>
-          {!hideCompound && (
-            <div className={isArLang ? "text-start" : "text-end"}>
-              <span className={styles.compound_badge}>{property.compound?property.compound.name:key("noCompound")}</span>
-            </div>
-          )}
+
+          <div className={isArLang ? "text-start" : "text-end"}>
+            <span
+              className={`${styles.compound_badge} ${
+                hideCompound ? styles.percent_estate_badge : ""
+              }`}
+            >
+              {hideCompound
+                ? renderEstateInfo(property)
+                : renderCompoundName(property)}
+            </span>
+          </div>
         </div>
       </div>
     </Col>

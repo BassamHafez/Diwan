@@ -1,25 +1,22 @@
 import { useTranslation } from "react-i18next";
 import {
   formattedDate,
-  renamedPaymentMethod,
-  renamedRevenuesStatus,
+  renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
 import styles from "./Details.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRotateForward,
-  faCalendar,
   faClock,
   faCoins,
-  faMoneyBill,
   faPhone,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 
-const RevenueDetails = ({ revDetails }) => {
+const ContractDetails = ({ contract }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
+    
   return (
     <div>
       <ul className={styles.details_list}>
@@ -32,7 +29,7 @@ const RevenueDetails = ({ revDetails }) => {
             {key("amount")}
           </span>
           <span>
-            {revDetails.amount} {key("sar")}
+            {contract.totalAmount} {key("sar")}
           </span>
         </li>
         <li>
@@ -41,9 +38,19 @@ const RevenueDetails = ({ revDetails }) => {
               className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
               icon={faClock}
             />
-            {key("dueDate")}
+            {key("startContract")}
           </span>
-          <span>{formattedDate(revDetails.dueDate)}</span>
+          <span>{formattedDate(contract.startDate)}</span>
+        </li>
+        <li>
+          <span>
+            <FontAwesomeIcon
+              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
+              icon={faClock}
+            />
+            {key("endContract")}
+          </span>
+          <span>{formattedDate(contract.endDate)}</span>
         </li>
         <li>
           <span>
@@ -51,9 +58,9 @@ const RevenueDetails = ({ revDetails }) => {
               className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
               icon={faUser}
             />
-            {key("tenant")}
+            {key("theTenant")}
           </span>
-          <span>{revDetails.tenant?.name}</span>
+          <span>{contract.tenant?.name}</span>
         </li>
         <li>
           <span>
@@ -63,7 +70,7 @@ const RevenueDetails = ({ revDetails }) => {
             />
             {key("phone")}
           </span>
-          <span>{revDetails.tenant?.phone}</span>
+          <span>{contract.tenant?.phone}</span>
         </li>
         <li>
           <span>
@@ -73,7 +80,7 @@ const RevenueDetails = ({ revDetails }) => {
             />
             {key("phone2")}
           </span>
-          <span>{revDetails.tenant?.phone2}</span>
+          <span>{contract.tenant?.phone2}</span>
         </li>
         <li>
           <span>
@@ -85,47 +92,13 @@ const RevenueDetails = ({ revDetails }) => {
           </span>
           <span>
             {isArLang
-              ? renamedRevenuesStatus(revDetails.status, "ar")
-              : renamedRevenuesStatus(revDetails.status, "en")}
+              ? renamedContractStatus(contract.status, "ar")
+              : renamedContractStatus(contract.status, "en")}
           </span>
         </li>
-        {revDetails.paymentMethod && (
-          <li>
-            <span>
-              <FontAwesomeIcon
-                className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-                icon={faMoneyBill}
-              />
-              {key("paymentMethod")}
-            </span>
-            <span>
-              {isArLang
-                ? renamedPaymentMethod(revDetails.paymentMethod, "ar")
-                : renamedPaymentMethod(revDetails.paymentMethod, "en")}
-            </span>
-          </li>
-        )}
-        {revDetails.paidAt && (
-          <li>
-            <span>
-              <FontAwesomeIcon
-                className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-                icon={faCalendar}
-              />
-              {key("paidAt")}
-            </span>
-            <span>{formattedDate(revDetails.paidAt)}</span>
-          </li>
-        )}
       </ul>
-      <div className={styles.notes}>
-        <h5>{key("notes")}</h5>
-        <div>
-          <p>{revDetails.note ? revDetails.note : "-"}</p>
-        </div>
-      </div>
     </div>
   );
 };
 
-export default RevenueDetails;
+export default ContractDetails;

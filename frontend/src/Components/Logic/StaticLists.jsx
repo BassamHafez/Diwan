@@ -356,7 +356,7 @@ export const packagesList = {
 //contract
 export const contractStatusOptions = {
   en: [
-    { label: "}ompleted", value: "completed" },
+    { label: "Completed", value: "completed" },
     { label: "Cancelled", value: "canceled" },
     { label: "Upcoming", value: "upcoming" },
     { label: "Active", value: "active" },
@@ -382,21 +382,6 @@ export const unitOptions = {
     { label: "سنوي", value: "year" },
   ],
 };
-
-export const paymentPeriodValueOptions = [
-  { label: "1", value: "1" },
-  { label: "2", value: "1" },
-  { label: "3", value: "1" },
-  { label: "4", value: "1" },
-  { label: "5", value: "1" },
-  { label: "6", value: "1" },
-  { label: "7", value: "1" },
-  { label: "8", value: "1" },
-  { label: "9", value: "1" },
-  { label: "10", value: "1" },
-  { label: "11", value: "1" },
-  { label: "12", value: "1" },
-];
 
 //revenues
 export const revenueTypeOptions = {
@@ -426,6 +411,20 @@ export const paymentMethodOptions = {
     { label: "أونلاين", value: "online" },
   ],
 };
+
+export const estateStatus={
+en:[
+  {label:"Available",value:"available"},
+  {label:"Pending",value:"pending"},
+  {label:"Rented",value:"rented"},
+],
+ar:[
+  {label:"شاغرة",value:"available"},
+  {label:"معلقة",value:"pending"},
+  {label:"مؤجرة",value:"rented"},
+]
+}
+
 
 // ----------------------------------------------------------Saudi Arabia----------------------------
 //saudi arabia En

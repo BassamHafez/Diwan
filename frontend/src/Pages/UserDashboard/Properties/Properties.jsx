@@ -124,7 +124,7 @@ const Properties = () => {
     <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
   );
 
-  const renderProperties = (data, isFetching, type, hideCompound = false) => {
+  const renderProperties = (data, isFetching, type, hideCompound = false,hideStatus=false) => {
     if (isFetching) {
       return <LoadingOne />;
     }
@@ -133,7 +133,7 @@ const Properties = () => {
       return data.map((item) => (
         <Property
           key={item._id}
-          hideState={true}
+          hideStatus={hideStatus}
           hideCompound={hideCompound}
           property={item}
           type={type}
@@ -527,6 +527,7 @@ const Properties = () => {
                     compounds.data,
                     fetchingCompounds,
                     "compound",
+                    true,
                     true
                   )
                 : selectedFilter === "estates" && estates
