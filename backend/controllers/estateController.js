@@ -122,7 +122,7 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
   const estateUpdatePromise = Estate.findByIdAndUpdate(
     req.params.id,
     req.body,
-    { new: true, runValidators: true }
+    { new: true, runValidators: true, populate: estatePopOptions }
   );
 
   const tagUpdatePromise = tags

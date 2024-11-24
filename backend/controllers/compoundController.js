@@ -8,7 +8,6 @@ const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const factory = require("./handlerFactory");
 const { uploadSingleImage } = require("../utils/uploadImage");
-const mongoose = require("mongoose");
 
 const compoundPopOptions = [
   {
@@ -22,7 +21,6 @@ const compoundPopOptions = [
 ];
 
 exports.getAllCompounds = factory.getAll(Compound);
-exports.updateCompound = factory.updateOne(Compound);
 
 exports.getCompound = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
@@ -125,6 +123,7 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
   const compoundUpdatePromise = Compound.findByIdAndUpdate(id, req.body, {
     new: true,
     runValidators: true,
+    populate: compoundPopOptions,
   });
 
   const [_, compound] = await Promise.all([
