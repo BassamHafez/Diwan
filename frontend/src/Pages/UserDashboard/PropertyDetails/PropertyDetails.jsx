@@ -21,6 +21,7 @@ import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
+import AOS from "aos";
 
 const PropertyDetails = () => {
   const { t: key } = useTranslation();
@@ -33,7 +34,11 @@ const PropertyDetails = () => {
   const notifyError = (message) => toast.error(message);
   const [isMarked, setIsMarked] = useState(false);
 
-  const { data, isFetching,refetch } = useQuery({
+  useEffect(() => {
+    AOS.init();
+  }, []);
+
+  const { data, isFetching, refetch } = useQuery({
     queryKey: ["singleProp", propId],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
@@ -49,9 +54,9 @@ const PropertyDetails = () => {
     }
   }, [data]);
 
-  useEffect(()=>{
-    return()=>refetch()
-  },[refetch])
+  useEffect(() => {
+    return () => refetch();
+  }, [refetch]);
 
   const deleteEstate = async () => {
     setShowDeleteModal(false);
@@ -92,8 +97,8 @@ const PropertyDetails = () => {
       res = await mainEmptyBodyFun({
         id: propId,
         token: token,
-        method:"post",
-        type:"favorites"
+        method: "post",
+        type: "favorites",
       });
       console.log(res);
       if (res.status === "success") {
@@ -113,7 +118,11 @@ const PropertyDetails = () => {
         <div className={styles.detials_content}>
           <header className={styles.header}>
             <Row>
-              <div className="d-flex justify-content-between align-items-center">
+              <div
+                className="d-flex justify-content-between align-items-center"
+                data-aos="fade-in"
+                data-aos-duration="1000"
+              >
                 <h3 className="my-4 mx-1">{data.data?.name}</h3>
                 <div className="d-flex align-items-center justify-content-center flex-wrap">
                   <div
@@ -141,7 +150,11 @@ const PropertyDetails = () => {
                 md={6}
                 className="d-flex justify-content-center align-items-center"
               >
-                <div className={styles.estate_img}>
+                <div
+                  className={styles.estate_img}
+                  data-aos="fade-in"
+                  data-aos-duration="1000"
+                >
                   <img
                     src={`${import.meta.env.VITE_Host}${data.data?.image}`}
                     alt="unit_img"
@@ -149,7 +162,11 @@ const PropertyDetails = () => {
                 </div>
               </Col>
               <Col md={6}>
-                <div className={styles.estate_main_details}>
+                <div
+                  className={styles.estate_main_details}
+                  data-aos="fade-in"
+                  data-aos-duration="1000"
+                >
                   <Row
                     className={`${styles.estate_main_details_row} g-4 justify-content-evenly`}
                   >
@@ -282,7 +299,7 @@ const PropertyDetails = () => {
           <section className={styles.tabs_section}>
             <Tabs defaultActiveKey="general" className="my-3" fill>
               <Tab eventKey="general" title={key("general")}>
-                <GeneralDetails details={data?.data} />
+                <GeneralDetails details={data?.data} refetch={refetch} />
               </Tab>
 
               <Tab eventKey="tasks" title={key("tasks")}>

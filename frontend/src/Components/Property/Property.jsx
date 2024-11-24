@@ -7,9 +7,18 @@ import { useEffect } from "react";
 import AOS from "aos";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { calculateRentedPercentage, renamedEstateStatus } from "../Logic/LogicFun";
+import {
+  calculateRentedPercentage,
+  renamedEstateStatus,
+} from "../Logic/LogicFun";
 
-const Property = ({ property, hideStatus, hideCompound, type }) => {
+const Property = ({
+  property,
+  hideStatus,
+  hideCompound,
+  type,
+  isCompoundDetailsPage,
+}) => {
   // console.log(property);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
@@ -18,7 +27,7 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
   const navigateToDetails = () => {
     if (type === "estate") {
       navigate(`/estate-unit-details/${property._id}`);
-    }else{
+    } else {
       navigate(`/estate-details/${property._id}`);
     }
   };
@@ -47,7 +56,7 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
     if (property.estatesCount === 0) {
       return key("noEstates");
     }
- 
+
     const rentedPercentage = calculateRentedPercentage(
       property.rentedEstatesCount,
       property.estatesCount
@@ -57,8 +66,6 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
       property.estatesCount
     } ${key("unit")} (${rentedPercentage}%)`;
   };
-
-
 
   return (
     <Col
@@ -107,17 +114,19 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
           </div>
           <p className={styles.desc}>{property.description}</p>
 
-          <div className={isArLang ? "text-start" : "text-end"}>
-            <span
-              className={`${styles.compound_badge} ${
-                hideCompound ? styles.percent_estate_badge : ""
-              }`}
-            >
-              {hideCompound
-                ? renderEstateInfo(property)
-                : renderCompoundName(property)}
-            </span>
-          </div>
+          {!isCompoundDetailsPage && (
+            <div className={isArLang ? "text-start" : "text-end"}>
+              <span
+                className={`${styles.compound_badge} ${
+                  hideCompound ? styles.percent_estate_badge : ""
+                }`}
+              >
+                {hideCompound
+                  ? renderEstateInfo(property)
+                  : renderCompoundName(property)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </Col>
