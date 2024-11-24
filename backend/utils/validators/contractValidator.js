@@ -114,12 +114,6 @@ exports.updateContractValidator = [
     .isMongoId()
     .withMessage("Invalid Contract ID"),
 
-  check("tenant")
-    .exists()
-    .withMessage("Tenant is required")
-    .isMongoId()
-    .withMessage("Tenant must be a valid ID"),
-
   check("startDate")
     .exists()
     .withMessage("Start date is required")
@@ -177,6 +171,8 @@ exports.updateContractValidator = [
   check("user").not().exists().withMessage("User cannot be edited"),
 
   check("estate").not().exists().withMessage("Estate cannot be set manually"),
+
+  check("tenant").not().exists().withMessage("Tenant cannot be edited"),
 
   validatorMiddleware,
 ];
