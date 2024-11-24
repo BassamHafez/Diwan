@@ -28,6 +28,14 @@ const compoundSchema = new mongoose.Schema(
       default: "/compounds/default-compound.png",
     },
     tags: [String],
+    electricityAccountNumber: {
+      type: String,
+      // match: /^\d{11}$/, // 11 digits
+    },
+    waterAccountNumber: {
+      type: String,
+      // match: /^\d{10}$/, // 10 digits
+    },
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

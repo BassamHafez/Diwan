@@ -50,6 +50,20 @@ exports.createCompoundValidator = [
 
   check("tags.*").isString().withMessage("Tags must be strings"),
 
+  check("electricityAccountNumber")
+    .optional()
+    .isString()
+    .withMessage("Electricity account number must be a string of 11 digits")
+    .matches(/^\d{11}$/)
+    .withMessage("Electricity account number must be a string of 11 digits"),
+
+  check("waterAccountNumber")
+    .optional()
+    .isString()
+    .withMessage("Water account number must be a string of 10 digits")
+    .matches(/^\d{10}$/)
+    .withMessage("Water account number must be a string of 10 digits"),
+
   // NOT ALLOWED
 
   check("user").isEmpty().withMessage("User cannot be set manually"),
