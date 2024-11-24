@@ -108,15 +108,28 @@ export const mainDeleteFunHandler = async ({ id, token, type }) => {
   }
 };
 
-export const addEstateToFav = async ({ id, token }) => {
+export const mainEmptyBodyFun = async ({ id, token, type, method }) => {
+  let response;
   try {
-    const response = await axios.post(
-      `${import.meta.env.VITE_Base_API_URL}estates/${id}/favorites`,{},
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
-    return response.data
+    if (method === "post") {
+      response = await axios.post(
+        `${import.meta.env.VITE_Base_API_URL}estates/${id}/${type}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } else if (method === "patch") {
+      response = await axios.patch(
+        `${import.meta.env.VITE_Base_API_URL}estates/${id}/${type}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    }
+
+    return response.data;
   } catch (error) {
     console.log(error);
     return error;

@@ -14,23 +14,23 @@
     width: 100%;
     padding: 1.875rem 0.5rem 0.9375rem 0.5rem;
 }
-.state_badge{
+.status_badge{
     background-color: var(--main_color_light);
     font-size: 0.6875rem;
     color: black;
     position: absolute;
-    padding: 0.25rem;
-    border-radius: 1.125rem 0 1.125rem 0;
+    padding:0.125rem 0.25rem;
+    border-radius:0.9375rem;
     min-width: 3.125rem;
     text-align: center;
-    top:0.25rem;
+    top:1.25rem;
 
 }
-.state_badge_ar{
-    left:0.25rem;
+.status_badge_ar{
+    left:0.5rem;
 }
-.state_badge_en{
-    right:0.25rem;
+.status_badge_en{
+    right:0.5rem;
 }
 .card_img{
     width:100%;
@@ -79,15 +79,22 @@
     color: white;
     padding: 0.3125rem 0.5625rem;
     border-radius: 0.25rem;
-    font-size: 12px;
+    font-size: 0.75rem;
+}
+
+.percent_estate_badge{
+    font-size: 0.9375rem;
 }
 
 .green{
-    background-color: rgba(0, 255, 0, 0.389);
-}
-.red{
-    background-color: rgba(255, 0, 0, 0.264);
-}
-.yellow{
-    background-color: rgba(255, 255, 0, 0.392);
-}
+    background-color: rgb(206, 243, 193);
+    color: green;
+  }
+  .red{
+    background-color: rgb(252, 191, 191);
+    color: red;
+  }
+  .yellow{
+    background-color: rgb(247, 247, 212);
+    color: rgb(157, 162, 8);
+  }

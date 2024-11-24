@@ -1,4 +1,3 @@
-
 // packages
 export const packagesList = {
   // month
@@ -354,22 +353,21 @@ export const packagesList = {
   ],
 };
 
-
 //contract
-export const contractStatusOptions={
-  en:[
-    {label:"}ompleted",value:"completed"},
-    {label:"Cancelled",value:"canceled"},
-    {label:"Upcoming",value:"upcoming"},
-    {label:"Active",value:"active"},
+export const contractStatusOptions = {
+  en: [
+    { label: "Completed", value: "completed" },
+    { label: "Cancelled", value: "canceled" },
+    { label: "Upcoming", value: "upcoming" },
+    { label: "Active", value: "active" },
   ],
-  ar:[
-    {label:"مكتمل",value:"completed"},
-    {label:"ملغي",value:"canceled"},
-    {label:"قادم",value:"upcoming"},
-    {label:"ساري",value:"active"},
-  ]
-}
+  ar: [
+    { label: "مكتمل", value: "completed" },
+    { label: "ملغي", value: "canceled" },
+    { label: "قادم", value: "upcoming" },
+    { label: "ساري", value: "active" },
+  ],
+};
 export const unitOptions = {
   en: [
     { label: "Day", value: "day" },
@@ -385,21 +383,6 @@ export const unitOptions = {
   ],
 };
 
-export const paymentPeriodValueOptions=[
-  {label:"1",value:"1"},
-  {label:"2",value:"1"},
-  {label:"3",value:"1"},
-  {label:"4",value:"1"},
-  {label:"5",value:"1"},
-  {label:"6",value:"1"},
-  {label:"7",value:"1"},
-  {label:"8",value:"1"},
-  {label:"9",value:"1"},
-  {label:"10",value:"1"},
-  {label:"11",value:"1"},
-  {label:"12",value:"1"},
-]
-
 //revenues
 export const revenueTypeOptions = {
   en: [
@@ -409,14 +392,38 @@ export const revenueTypeOptions = {
     { label: "Other", value: "other" },
   ],
   ar: [
-    { label: "مستحقات", value: "add-due" },
+    { label: "مستحقات اضافية", value: "add-due" },
     { label: "رسوم إضافية", value: "extra-fee" },
     { label: "عمولة", value: "commission" },
     { label: "أخرى", value: "other" },
   ],
 };
 
+export const paymentMethodOptions = {
+  en: [
+    { label: "Cash", value: "cash" },
+    { label: "Bank transfer", value: "bank-transfer" },
+    { label: "Online", value: "online" },
+  ],
+  ar: [
+    { label: "كاش", value: "cash" },
+    { label: "حوالة بنكية", value: "bank-transfer" },
+    { label: "أونلاين", value: "online" },
+  ],
+};
 
+export const estateStatus={
+en:[
+  {label:"Available",value:"available"},
+  {label:"Pending",value:"pending"},
+  {label:"Rented",value:"rented"},
+],
+ar:[
+  {label:"شاغرة",value:"available"},
+  {label:"معلقة",value:"pending"},
+  {label:"مؤجرة",value:"rented"},
+]
+}
 
 
 // ----------------------------------------------------------Saudi Arabia----------------------------
@@ -509,11 +516,11 @@ export const districtsByCity = {
     { label: "Yanbu Al Sinaiyah", value: "Yanbu Al Sinaiyah" },
     { label: "Al Aziziyah", value: "Al Aziziyah" },
   ],
-  "Abha": [
+  Abha: [
     { label: "Al Manhal", value: "Al Manhal" },
     { label: "Al Rabwah", value: "Al Rabwah" },
   ],
-  "Dammam": [
+  Dammam: [
     { label: "Al Faisaliah", value: "Al Faisaliah" },
     { label: "Al Shatea", value: "Al Shatea" },
   ],
@@ -521,16 +528,15 @@ export const districtsByCity = {
     { label: "Al Aqrabiyah", value: "Al Aqrabiyah" },
     { label: "Al Khuzama", value: "Al Khuzama" },
   ],
-  "Najran": [
+  Najran: [
     { label: "Al Faysaliah", value: "Al Faysaliah" },
     { label: "Al Dawasir", value: "Al Dawasir" },
   ],
-  "Jazan": [
+  Jazan: [
     { label: "Al Rawdah", value: "Al Rawdah" },
     { label: "Al Safa", value: "Al Safa" },
   ],
 };
-
 
 //saudi arabia Ar
 export const SaudiRegionAr = [
@@ -642,4 +648,3 @@ export const districtsByCityAr = {
     { label: "الصفا", value: "الصفا" },
   ],
 };
-

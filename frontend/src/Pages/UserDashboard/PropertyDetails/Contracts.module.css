@@ -29,9 +29,8 @@
 .contract_table {
   border-collapse: separate !important;
   border-spacing: 0;
-  border-radius: 20px;
-  overflow: hidden;
-  border: 1px solid #ccc;
+  /* border-radius: 20px; */
+  /* border: 1px solid #ccc; */
 }
 .table_body tr td {
   text-align: center;
