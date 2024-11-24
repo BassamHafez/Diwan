@@ -21,15 +21,25 @@ import Col from "react-bootstrap/esm/Col";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Contracts from "./Contracts";
 import Revenue from "./Revenue";
+import CompoundEstates from "./CompoundEstates";
 
-const GeneralDetails = ({ details }) => {
+const GeneralDetails = ({
+  details,
+  isCompound,
+  compoundEstates,
+  showAddEstatesModal,
+}) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   return (
     <div className={styles.general_div}>
-      <div className={`${isArLang?"text-start":"text-end"} my-4`}>
+      <div className={`${isArLang ? "text-start" : "text-end"} my-4`}>
         <ButtonOne classes="bg-navy" borderd={true}>
-          {key("ediet")} <FontAwesomeIcon className={`${isArLang?"me-1":"ms-1"}`} icon={faWrench}/>
+          {key("ediet")}{" "}
+          <FontAwesomeIcon
+            className={`${isArLang ? "me-1" : "ms-1"}`}
+            icon={faWrench}
+          />
         </ButtonOne>
       </div>
       <Row>
@@ -116,7 +126,7 @@ const GeneralDetails = ({ details }) => {
                     className={`${isArLang ? "ms-2" : "me-2"}`}
                     icon={faUserTie}
                   />
-                  {key("lessor")}
+                  {key("theLandlord")}
                 </span>
                 <span className={styles.data}>محمد حسن</span>
               </li>
@@ -130,18 +140,20 @@ const GeneralDetails = ({ details }) => {
                 </span>
                 <span className={styles.data}>محمود بكر</span>
               </li>
-              <li>
-                <span className={styles.title}>
-                  <FontAwesomeIcon
-                    className={`${isArLang ? "ms-2" : "me-2"}`}
-                    icon={faCoins}
-                  />
-                  {key("propCost")}
-                </span>
-                <span className={styles.data}>
-                  {details.price} {key("sar")}
-                </span>
-              </li>
+              {details.price && (
+                <li>
+                  <span className={styles.title}>
+                    <FontAwesomeIcon
+                      className={`${isArLang ? "ms-2" : "me-2"}`}
+                      icon={faCoins}
+                    />
+                    {key("propCost")}
+                  </span>
+                  <span className={styles.data}>
+                    {details.price} {key("sar")}
+                  </span>
+                </li>
+              )}
               <li>
                 <span className={styles.title}>
                   <FontAwesomeIcon
@@ -186,8 +198,17 @@ const GeneralDetails = ({ details }) => {
         </Col>
       </Row>
 
-      <Contracts/>
-      <Revenue/>
+      {isCompound ? (
+        <CompoundEstates
+          compoundEstates={compoundEstates}
+          showAddEstatesModal={showAddEstatesModal}
+        />
+      ) : (
+        <>
+          <Contracts />
+          <Revenue />
+        </>
+      )}
     </div>
   );
 };

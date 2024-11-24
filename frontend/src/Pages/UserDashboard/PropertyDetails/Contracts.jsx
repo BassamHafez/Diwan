@@ -4,7 +4,7 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
 import { contractStatusOptions } from "../../../Components/Logic/StaticLists";
-import {useState } from "react";
+import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery } from "@tanstack/react-query";
@@ -24,10 +24,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
+import ContractDetails from "./ContractDetails";
+import UpdateContract from "../PropertyForms/UpdateContract";
 
 const Contracts = () => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
+  const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [contractDetails, setContractDetails] = useState({});
   const [contractId, setContractId] = useState("");
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -48,9 +53,14 @@ const Contracts = () => {
         token: token,
       }),
     enabled: propId && !!token,
-    staleTime: 3000,
+    staleTime: Infinity,
   });
 
+
+  useEffect(()=>{
+    refetch()
+  },[refetch]);
+  
   const getStatusBgColor = (status) => {
     switch (status) {
       case "active":
@@ -74,7 +84,7 @@ const Contracts = () => {
         token: token,
         type: `estates/${propId}/contracts`,
       });
-      if (res.status === 204||res.status===200) {
+      if (res.status === 204 || res.status === 200) {
         refetch();
         notifySuccess(key("deletedSucc"));
       } else {
@@ -166,7 +176,13 @@ const Contracts = () => {
                           </Dropdown.Toggle>
 
                           <Dropdown.Menu>
-                            <Dropdown.Item className="text-center">
+                            <Dropdown.Item
+                              onClick={() => {
+                                setContractDetails(contract);
+                                setShowUpdateContractModal(true);
+                              }}
+                              className="text-center"
+                            >
                               {key("ediet")}
                             </Dropdown.Item>
                             <Dropdown.Item
@@ -176,7 +192,16 @@ const Contracts = () => {
                               }}
                               className="text-center"
                             >
-                              {key("delete")}
+                              {key("cancel")}
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => {
+                                setContractDetails(contract);
+                                setShowDetailsModal(true);
+                              }}
+                              className="text-center"
+                            >
+                              {key("details")}
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -205,6 +230,18 @@ const Contracts = () => {
           />
         </ModalForm>
       )}
+      {showUpdateContractModal && (
+        <ModalForm
+          show={showUpdateContractModal}
+          onHide={() => setShowUpdateContractModal(false)}
+        >
+          <UpdateContract
+            hideModal={() => setShowUpdateContractModal(false)}
+            refetch={refetch}
+            contract={contractDetails}
+          />
+        </ModalForm>
+      )}
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
@@ -214,6 +251,19 @@ const Contracts = () => {
           okBtn={key("delete")}
         >
           <h5>{key("deleteText")}</h5>
+        </MainModal>
+      )}
+      {showDetailsModal && (
+        <MainModal
+          show={showDetailsModal}
+          onHide={() => setShowDetailsModal(false)}
+          cancelBtn={key("cancel")}
+          okBtn={key("print")}
+          // confirmFun={deleteRevenue}
+          title={key("contractDetails")}
+          modalSize={"lg"}
+        >
+          <ContractDetails contract={contractDetails} />
         </MainModal>
       )}
     </div>

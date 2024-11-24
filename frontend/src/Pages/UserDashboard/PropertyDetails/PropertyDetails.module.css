@@ -90,7 +90,10 @@
     color: var(--dark_white);
     font-size: 1.0625rem;
 }
-
+.info_list li span:last-child{
+    min-width: 100px;
+    text-align: center;
+}
 
 .desc_content{
     text-align: center;

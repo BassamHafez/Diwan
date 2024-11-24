@@ -1,15 +1,12 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { date, number, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -20,26 +17,27 @@ import {
   calculateDaysDifference,
   calculateRevenues,
   filterTimeUnitDpendsOnDaysDifference,
+  formattedDate,
   generatePeriodOptions,
 } from "../../../Components/Logic/LogicFun";
 import ContractRevenues from "../PropertyDetails/ContractRevenues";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import AddContactForm from "../Contacts/ContactForms/AddContactForm";
 
-const AddNewContract = ({ hideModal, refetch }) => {
-  const [tenantsOptions, setTenantsOptions] = useState([]);
+const UpdateContract = ({ contract, hideModal, refetch }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
+  const [paymentPeriodUnit, setPaymentPeriodUnit] = useState(
+    contract.paymentPeriodUnit || ""
+  );
   const [paymentPeriodValueOptions, setPaymentPeriodValueOptions] = useState(
     []
   );
   const [paymentPeriodUnitOptions, setPaymentPeriodUnitOptions] = useState([]);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState(
+    formattedDate(contract.startDate) || ""
+  );
+  const [endDate, setEndDate] = useState(formattedDate(contract.endDate) || "");
   const [revenues, setRevenues] = useState([]);
   const [showRevenuesTable, setShowRevenuesTable] = useState(false);
-  const [showAddTenantModal, setShowAddTenantModal] = useState(false);
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -47,26 +45,8 @@ const AddNewContract = ({ hideModal, refetch }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
-  const queryClient=useQueryClient();
-
-  const { data: tenants, refetch: refetchTenants } = useQuery({
-    queryKey: ["tenant", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/tenants",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    let myTenants = tenants?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant._id };
-    });
-    setTenantsOptions(myTenants);
-  }, [tenants]);
-
+  const queryClient =useQueryClient();
+  
   useEffect(() => {
     if (startDate && endDate) {
       const daysDifference = calculateDaysDifference(startDate, endDate);
@@ -107,32 +87,44 @@ const AddNewContract = ({ hideModal, refetch }) => {
   });
 
   const initialValues = {
-    tenant: "",
-    startDate: "",
-    endDate: "",
-    totalAmount: "",
-    paymentPeriodValue: "",
-    paymentPeriodUnit: "",
+    tenant: contract.tenant?.name || "",
+    startDate: formattedDate(contract.startDate) || "",
+    endDate: formattedDate(contract.endDate) || "",
+    totalAmount: contract.totalAmount || "",
+    paymentPeriodValue: contract.paymentPeriodValue || "",
+    paymentPeriodUnit: contract.paymentPeriodUnit || "",
   };
 
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
+    const updatedValues = {
+      tenant: contract.tenant?._id,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      totalAmount: values.totalAmount,
+      paymentPeriodValue: values.paymentPeriodValue,
+      paymentPeriodUnit: values.paymentPeriodUnit,
+    };
+    console.log(updatedValues);
     mutate(
       {
-        formData: values,
+        formData: updatedValues,
         token: token,
-        method: "add",
-        type: `estates/${propId}/contracts`,
+        method: "patch",
+        type: `estates/${propId}/contracts/${contract._id}`,
       },
       {
         onSuccess: (data) => {
           console.log(data);
-          if(data.response?.data?.message==="There is an contract overlapping with the selected dates"){
+          if (
+            data.response?.data?.message ===
+            "There is an contract overlapping with the selected dates"
+          ) {
             notifyError(key("contractOverlapping"));
             return;
           }
           if (data?.status === "success") {
-            notifySuccess(key("addedSuccess"));
+            notifySuccess(key("updatedSucc"));
             refetch();
             queryClient.invalidateQueries(["revenuesData", token])
             resetForm();
@@ -175,6 +167,7 @@ const AddNewContract = ({ hideModal, refetch }) => {
   });
 
   const showCalculatedRevenues = (values) => {
+    console.log(values);
     const {
       totalAmount,
       paymentPeriodValue,
@@ -204,12 +197,14 @@ const AddNewContract = ({ hideModal, refetch }) => {
       notifyError("fillReq");
     }
   };
+
   return (
     <>
       <Formik
         initialValues={initialValues}
         onSubmit={onSubmit}
         validationSchema={validationSchema}
+        enableReinitialize
       >
         {({ setFieldValue, values }) => (
           <Form>
@@ -230,36 +225,22 @@ const AddNewContract = ({ hideModal, refetch }) => {
                   >
                     {key("showRevenues")}
                   </button>
-
-                  <button
-                    className="submit_btn bg-navy mx-2"
-                    type="button"
-                    onClick={() => setShowAddTenantModal(true)}
-                  >
-                    {`${key("add")} ${key("tenant")}`}
-                  </button>
                 </div>
               </Col>
               <Col sm={6}>
-                <div className="field mb-1">
-                  <label htmlFor="tenant">
-                    {key("theTenant")}
-                    {requiredLabel}
-                  </label>
-                  <Select
+                <div className="field">
+                  <label htmlFor="tenant">{key("theTenant")}</label>
+                  <Field
+                    type="text"
                     id="tenant"
                     name="tenant"
-                    options={tenantsOptions}
-                    onChange={(val) => setFieldValue("tenant", val.value)}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
-                    placeholder={isArLang ? "" : "select"}
+                    disabled={true}
                   />
                   <ErrorMessage name="tenant" component={InputErrorMessage} />
                 </div>
               </Col>
               <Col sm={6}>
-                <div className="field mb-1">
+                <div className="field">
                   <label htmlFor="totalAmount">
                     {key("price")}
                     {requiredLabel} ({key("sar")})
@@ -327,8 +308,12 @@ const AddNewContract = ({ hideModal, refetch }) => {
                     }}
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? false : true}
-                    placeholder={""}
                     isDisabled={!startDate || !endDate}
+                    placeholder={`${
+                      paymentPeriodUnitOptions.find(
+                        (unit) => unit.value === values.paymentPeriodUnit
+                      )?.label || ""
+                    }`}
                   />
                   <ErrorMessage
                     name="paymentPeriodUnit"
@@ -351,8 +336,12 @@ const AddNewContract = ({ hideModal, refetch }) => {
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? false : true}
-                    placeholder={""}
                     isDisabled={!paymentPeriodUnit}
+                    placeholder={`${
+                      paymentPeriodValueOptions.find(
+                        (unit) => unit.value === values.paymentPeriodValue
+                      )?.label || ""
+                    }`}
                   />
                   <ErrorMessage
                     name="paymentPeriodValue"
@@ -371,7 +360,7 @@ const AddNewContract = ({ hideModal, refetch }) => {
                 {isPending ? (
                   <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
                 ) : (
-                  `${key("add")} ${key("contract")}`
+                  `${key("update")}`
                 )}
               </button>
             </div>
@@ -387,22 +376,8 @@ const AddNewContract = ({ hideModal, refetch }) => {
       >
         <ContractRevenues revenues={revenues} />
       </MainModal>
-
-      {showAddTenantModal && (
-        <ModalForm
-          show={showAddTenantModal}
-          onHide={() => setShowAddTenantModal(false)}
-          modalSize="lg"
-        >
-          <AddContactForm
-            hideModal={() => setShowAddTenantModal(false)}
-            contactType={"tenant"}
-            refetch={refetchTenants}
-          />
-        </ModalForm>
-      )}
     </>
   );
 };
 
-export default AddNewContract;
+export default UpdateContract;
