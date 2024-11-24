@@ -50,6 +50,7 @@ const CompoundEstates = ({ compoundEstates,showAddEstatesModal }) => {
                   hideCompound={false}
                   property={estate}
                   type="estate"
+                  isCompoundDetailsPage={true}
                 />
               ))}
             </Row>

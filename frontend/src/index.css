@@ -67,7 +67,11 @@ button:disabled {
   margin-left: 0;
   margin-right: auto;
 }
-
+.accordion-header .accordion-button::after{
+  background-size: cover;
+  width: 0.875rem;
+  height: 0.875rem;
+}
 .nav-tabs li button{
   color: black;
   font-weight: 550;

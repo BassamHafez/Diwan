@@ -247,5 +247,13 @@
   "addEstate":"Add Unit",
   "theLandlord":"Landlord",
   "searchEstates":"search for unit",
-  "deleteEstatesFirst":"You have to delete all units inside this estate first!"
+  "deleteEstatesFirst":"You have to delete all units inside this estate first!",
+  "utilityAcc":"Utility Accounts",
+  "propDetails":"Estate Details",
+  "unitDetails":"Unit Details",
+  "estate":"Estate",
+  "theUnit":"Unit",
+  "elcMinValidation":"Electricity Account Number must be 11 digits",
+  "waterMinValidation":"Water Account Number must be 10 digits",
+  "digitValidation":"only digits allowed"
 }

@@ -14,7 +14,7 @@ import Col from "react-bootstrap/esm/Col";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
 import GeneralDetails from "./GeneralDetails";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,9 +23,10 @@ import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { calculateRentedPercentage } from "../../../Components/Logic/LogicFun";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddEstate from "../PropertyForms/AddEstate";
+import AOS from "aos";
 
 const CompoundDetails = () => {
-    const [showAddEstateModal, setShowAddEstateModal] = useState();
+  const [showAddEstateModal, setShowAddEstateModal] = useState(false);
 
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
@@ -47,6 +48,10 @@ const CompoundDetails = () => {
     enabled: compId && !!token,
   });
 
+  useEffect(() => {
+    AOS.init();
+  }, []);
+
   const deleteCompound = async () => {
     setShowDeleteModal(false);
     if (compId && token) {
@@ -55,15 +60,18 @@ const CompoundDetails = () => {
         token: token,
         type: "compounds",
       });
-      console.log(res)
+      console.log(res);
 
       if (res.status === 204) {
         queryClient.invalidateQueries(["compounds", token]);
         notifySuccess(key("deletedSucc"));
         navigate("/properties");
-      } else if(res.response?.data?.message==="Please delete all estates in this compound first") {
-        notifyError(key("deleteEstatesFirst"))
-      }else{
+      } else if (
+        res.response?.data?.message ===
+        "Please delete all estates in this compound first"
+      ) {
+        notifyError(key("deleteEstatesFirst"));
+      } else {
         notifyError(key("wrong"));
       }
     } else {
@@ -79,7 +87,11 @@ const CompoundDetails = () => {
         <div className={styles.detials_content}>
           <header className={`${styles.header} pt-3 pb-4`}>
             <Row>
-              <div className="d-flex justify-content-between align-items-center">
+              <div
+                className="d-flex justify-content-between align-items-center"
+                data-aos="fade-in"
+                data-aos-duration="1000"
+              >
                 <h3 className="my-4 mx-1">{data.data?.compound?.name}</h3>
                 <div className="d-flex align-items-center justify-content-center flex-wrap">
                   <div
@@ -103,7 +115,11 @@ const CompoundDetails = () => {
                 md={6}
                 className="d-flex justify-content-center align-items-center"
               >
-                <div className={styles.estate_img}>
+                <div
+                  className={styles.estate_img}
+                  data-aos="fade-in"
+                  data-aos-duration="1000"
+                >
                   <img
                     src={`${import.meta.env.VITE_Host}${
                       data.data?.compound?.image
@@ -113,7 +129,11 @@ const CompoundDetails = () => {
                 </div>
               </Col>
               <Col md={6}>
-                <div className={styles.estate_main_details}>
+                <div
+                  className={styles.estate_main_details}
+                  data-aos="fade-in"
+                  data-aos-duration="1000"
+                >
                   <Row
                     className={`${styles.estate_main_details_row} g-4 justify-content-evenly`}
                   >
@@ -206,6 +226,7 @@ const CompoundDetails = () => {
                   details={data?.data?.compound}
                   compoundEstates={data?.data?.estates}
                   showAddEstatesModal={() => setShowAddEstateModal(true)}
+                  refetch={refetch}
                 />
               </Tab>
 
