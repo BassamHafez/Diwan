@@ -178,27 +178,6 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     );
   }
 
-  const contractInfo = {
-    ...req.body,
-    _id: id,
-    estate: estateId,
-    user: req.user.id,
-  };
-
-  const updateCompoundEstatesCountPromise = isActiveContract
-    ? Compound.findByIdAndUpdate(estate.compound, {
-        $inc: { rentedEstatesCount: 1 },
-      })
-    : Promise.resolve();
-
-  const cancelOldRevenuesPromise = Revenue.updateMany(
-    { contract: id, status: { $ne: "paid" } },
-    { status: "canceled" }
-  );
-
-  const calculatedRevenues = calculateRevenues(contractInfo);
-  const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
-
   const updateContractPromise = Contract.findByIdAndUpdate(
     id,
     {
@@ -208,12 +187,26 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     { new: true }
   );
 
+  const cancelOldRevenuesPromise = Revenue.updateMany(
+    { contract: id, status: { $ne: "paid" } },
+    { status: "canceled" }
+  );
+
   const [updatedContract] = await Promise.all([
     updateContractPromise,
     cancelOldRevenuesPromise,
-    insertRevenuesPromise,
-    updateCompoundEstatesCountPromise,
   ]);
+
+  const updateCompoundEstatesCountPromise = isActiveContract
+    ? Compound.findByIdAndUpdate(estate.compound, {
+        $inc: { rentedEstatesCount: 1 },
+      })
+    : Promise.resolve();
+
+  const calculatedRevenues = calculateRevenues(updatedContract);
+  const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
+
+  await Promise.all([insertRevenuesPromise, updateCompoundEstatesCountPromise]);
 
   res.status(201).json({
     status: "success",
