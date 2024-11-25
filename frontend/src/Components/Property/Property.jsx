@@ -95,6 +95,7 @@ const Property = ({
         </div>
 
         <div className={styles.card_caption}>
+          <h4>{property.name}</h4>
           {!hideStatus && (
             <span
               className={`${styles.status_badge} ${

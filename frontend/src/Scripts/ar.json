@@ -84,7 +84,7 @@
   "all": "الكل",
   "rented": "مؤجرة",
   "reserved": "محجوزة",
-  "vacant": "شاغرة",
+  "available": "شاغرة",
 
   "Contracts": "العقود",
   "nextMonth": "تنتهي خلال شهر",
@@ -234,7 +234,7 @@
   "print": "طباعة",
   "contractOverlapping": "هناك عقد متداخل مع التواريخ المحددة",
   "contractDetails": "تفاصيل العقد",
-  "noEstates": "بلا وحدات",
+  "noEstates": "لا وحدات",
   "unit": "وحدة",
   "totalProperties": "إجمالي الوحدات",
   "rentedEstates": "الوحدات المؤجرة",
@@ -252,5 +252,9 @@
   "theUnit": "الوحدة",
   "elcMinValidation": "رقم حساب الكهرباء يجب أن  يكون 11 رقماً",
   "waterMinValidation": "رقم حساب المياه يجب أن  يكون 10 أرقام",
-  "digitValidation": "مسموح بالأرقام فقط"
+  "digitValidation": "مسموح بالأرقام فقط",
+  "pending":"معلقة",
+  "rentedCompounds":"المؤجرة بالكامل",
+  "partialRentedCompounds":"المؤجرة جزئياً",
+  "availableCompounds":"الشاغرة بالكامل"
 }
