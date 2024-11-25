@@ -22,6 +22,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { calculateRentedPercentage } from "../../../Components/Logic/LogicFun";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
+import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 import AddEstate from "../PropertyForms/AddEstate";
 import AOS from "aos";
 
@@ -81,6 +82,7 @@ const CompoundDetails = () => {
 
   return (
     <>
+    <ScrollTopBtn/>
       <div className="height_container">
         {isFetching ? (
           <LoadingOne />

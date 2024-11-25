@@ -64,16 +64,16 @@ const SettingOffCanvas = ({ show, handleClose }) => {
                 <FontAwesomeIcon className={styles.list_icons} icon={faGears} />
               </li>
             </Link>
-            <Link>
+            <Link to={"/about"}>
               <li className={styles.contact_list_item} onClick={handleClose}>
                 {key("about")}
                 <FontAwesomeIcon
                   className={styles.list_icons}
-                  icon={faEnvelope}
+                  icon={faCircleInfo}
                 />
               </li>
             </Link>
-            <Link>
+            <Link to={"/contact"}>
               <li className={styles.contact_list_item} onClick={handleClose}>
                 {key("contact")}
                 <FontAwesomeIcon

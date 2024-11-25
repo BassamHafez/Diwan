@@ -88,18 +88,14 @@
   color: var(--dark_white);
 }
 
+@media screen and (max-width:800px) {
+    .content_header {
+        flex-direction: column;
+        align-items: start;
+      }
+}
 @media screen and (max-width:570px) {
     .content_header {
         padding-inline:2px;
-      }
-}
-@media screen and (max-width:510px) {
-    .content_header {
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-      }
-      .content_header .search_field{
-        margin-bottom:10px;
       }
 }

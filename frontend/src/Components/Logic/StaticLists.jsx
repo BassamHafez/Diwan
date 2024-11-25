@@ -399,6 +399,36 @@ export const revenueTypeOptions = {
   ],
 };
 
+export const revenueFilterTypeOptions = {
+  en: [
+    { label: "Dues", value: "dues" },
+    { label: "Add-due", value: "add-due" },
+    { label: "Extra-Fee", value: "extra-fee" },
+    { label: "Commission", value: "commission" },
+    { label: "Other", value: "other" },
+  ],
+  ar: [
+    { label: "مستحقات", value: "dues" },
+    { label: "مستحقات اضافية", value: "add-due" },
+    { label: "رسوم إضافية", value: "extra-fee" },
+    { label: "عمولة", value: "commission" },
+    { label: "أخرى", value: "other" },
+  ],
+};
+
+export const revenuesStatus = {
+  en: [
+    {label:"pending",value:"pending"},
+    {label:"canceled",value:"canceled"},
+    {label:"paid",value:"paid"},
+  ],
+  ar: [
+    {label:"معلق",value:"pending"},
+    {label:"ملغي",value:"canceled"},
+    {label:"مدفوع",value:"paid"},
+  ],
+};
+
 export const paymentMethodOptions = {
   en: [
     { label: "Cash", value: "cash" },

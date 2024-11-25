@@ -22,6 +22,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
 import AOS from "aos";
+import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 
 const PropertyDetails = () => {
   const { t: key } = useTranslation();
@@ -111,211 +112,213 @@ const PropertyDetails = () => {
   };
 
   return (
-    <div className="height_container">
-      {isFetching ? (
-        <LoadingOne />
-      ) : data ? (
-        <div className={styles.detials_content}>
-          <header className={styles.header}>
-            <Row>
-              <div
-                className="d-flex justify-content-between align-items-center"
-                data-aos="fade-in"
-                data-aos-duration="1000"
-              >
-                <h3 className="my-4 mx-1">{data.data?.name}</h3>
-                <div className="d-flex align-items-center justify-content-center flex-wrap">
-                  <div
-                    className={`${styles.controller_btn} ${styles.delete_btn}`}
-                    onClick={() => setShowDeleteModal(true)}
-                    title={key("delete")}
-                  >
-                    <FontAwesomeIcon icon={faTrashCan} />
-                  </div>
-                  <div
-                    className={
-                      isMarked ? styles.bookmarked : styles.no_bookmark
-                    }
-                    onClick={bookMarkEstate}
-                    title={`${
-                      isMarked ? key("removeBookMark") : key("bookmarked")
-                    }`}
-                  >
-                    <FontAwesomeIcon icon={isMarked ? solidHeart : faHeart} />
+    <>
+      <ScrollTopBtn />
+      <div className="height_container">
+        {isFetching ? (
+          <LoadingOne />
+        ) : data ? (
+          <div className={styles.detials_content}>
+            <header className={styles.header}>
+              <Row>
+                <div
+                  className="d-flex justify-content-between align-items-center"
+                  data-aos="fade-in"
+                  data-aos-duration="1000"
+                >
+                  <h3 className="my-4 mx-1">{data.data?.name}</h3>
+                  <div className="d-flex align-items-center justify-content-center flex-wrap">
+                    <div
+                      className={`${styles.controller_btn} ${styles.delete_btn}`}
+                      onClick={() => setShowDeleteModal(true)}
+                      title={key("delete")}
+                    >
+                      <FontAwesomeIcon icon={faTrashCan} />
+                    </div>
+                    <div
+                      className={
+                        isMarked ? styles.bookmarked : styles.no_bookmark
+                      }
+                      onClick={bookMarkEstate}
+                      title={`${
+                        isMarked ? key("removeBookMark") : key("bookmarked")
+                      }`}
+                    >
+                      <FontAwesomeIcon icon={isMarked ? solidHeart : faHeart} />
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <Col
-                md={6}
-                className="d-flex justify-content-center align-items-center"
-              >
-                <div
-                  className={styles.estate_img}
-                  data-aos="fade-in"
-                  data-aos-duration="1000"
+                <Col
+                  md={6}
+                  className="d-flex justify-content-center align-items-center"
                 >
-                  <img
-                    src={`${import.meta.env.VITE_Host}${data.data?.image}`}
-                    alt="unit_img"
-                  />
-                </div>
-              </Col>
-              <Col md={6}>
-                <div
-                  className={styles.estate_main_details}
-                  data-aos="fade-in"
-                  data-aos-duration="1000"
-                >
-                  <Row
-                    className={`${styles.estate_main_details_row} g-4 justify-content-evenly`}
+                  <div
+                    className={styles.estate_img}
+                    data-aos="fade-in"
+                    data-aos-duration="1000"
                   >
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("totalIncome")}</span>
-                        <p>600,000 {key("sar")}</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("totalCosts")}</span>
-                        <p>20 {key("sar")}</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("collectionRatio")}</span>
-                        <p>70%</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("grandReturns")}</span>
-                        <p>8.2%</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("netReturns")}</span>
-                        <p>8.2%</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("area")}</span>
-                        <p>
-                          {data.data?.area} {key("areaUnit")}
-                        </p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("rentPerSqm")}</span>
-                        <p>30 {key("sar")}</p>
-                      </div>
-                    </Col>
-                    <Col
-                      xs={6}
-                      sm={4}
-                      md={6}
-                      className="d-flex justify-content-center align-items-center"
-                    >
-                      <div className={styles.main_details}>
-                        <span>{key("uncollectedAmount")}</span>
-                        <p>200 {key("sar")}</p>
-                      </div>
-                    </Col>
-                  </Row>
-                </div>
-              </Col>
-            </Row>
-            <div className={styles.header_footer}>
-              <Row className="justify-content-around g-2">
-                <Col
-                  sm={4}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <div className={styles.header_footerItem}>
-                    <span>{key("nextPaymentDue")}</span>
-                    <p>4/10/2025</p>
+                    <img
+                      src={`${import.meta.env.VITE_Host}${data.data?.image}`}
+                      alt="unit_img"
+                    />
                   </div>
                 </Col>
-                <Col
-                  sm={4}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <div className={styles.header_footerItem}>
-                    <span>{key("nextPaymentAmount")}</span>
-                    <p>3000 {key("sar")}</p>
-                  </div>
-                </Col>
-                <Col
-                  sm={4}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <div className={styles.header_footerItem}>
-                    <span>{key("endOfContract")}</span>
-                    <p>8/12/2027</p>
+                <Col md={6}>
+                  <div
+                    className={styles.estate_main_details}
+                    data-aos="fade-in"
+                    data-aos-duration="1000"
+                  >
+                    <Row
+                      className={`${styles.estate_main_details_row} g-4 justify-content-evenly`}
+                    >
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("totalIncome")}</span>
+                          <p>600,000 {key("sar")}</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("totalCosts")}</span>
+                          <p>20 {key("sar")}</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("collectionRatio")}</span>
+                          <p>70%</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("grandReturns")}</span>
+                          <p>8.2%</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("netReturns")}</span>
+                          <p>8.2%</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("area")}</span>
+                          <p>
+                            {data.data?.area} {key("areaUnit")}
+                          </p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("rentPerSqm")}</span>
+                          <p>30 {key("sar")}</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("uncollectedAmount")}</span>
+                          <p>200 {key("sar")}</p>
+                        </div>
+                      </Col>
+                    </Row>
                   </div>
                 </Col>
               </Row>
-            </div>
-          </header>
-          <section className={styles.tabs_section}>
-            <Tabs defaultActiveKey="general" className="my-3" fill>
-              <Tab eventKey="general" title={key("general")}>
-                <GeneralDetails details={data?.data} refetch={refetch} />
-              </Tab>
+              <div className={styles.header_footer}>
+                <Row className="justify-content-around g-2">
+                  <Col
+                    sm={4}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <div className={styles.header_footerItem}>
+                      <span>{key("nextPaymentDue")}</span>
+                      <p>4/10/2025</p>
+                    </div>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <div className={styles.header_footerItem}>
+                      <span>{key("nextPaymentAmount")}</span>
+                      <p>3000 {key("sar")}</p>
+                    </div>
+                  </Col>
+                  <Col
+                    sm={4}
+                    className="d-flex justify-content-center align-items-center"
+                  >
+                    <div className={styles.header_footerItem}>
+                      <span>{key("endOfContract")}</span>
+                      <p>8/12/2027</p>
+                    </div>
+                  </Col>
+                </Row>
+              </div>
+            </header>
+            <section className={styles.tabs_section}>
+              <Tabs defaultActiveKey="general" className="my-3" fill>
+                <Tab eventKey="general" title={key("general")}>
+                  <GeneralDetails details={data?.data} refetch={refetch} />
+                </Tab>
 
-              <Tab eventKey="tasks" title={key("tasks")}>
-                tasks here
-              </Tab>
+                <Tab eventKey="tasks" title={key("tasks")}>
+                  tasks here
+                </Tab>
 
-              <Tab eventKey="docs" title={key("docs")}>
-                docs here
-              </Tab>
-            </Tabs>
-          </section>
-        </div>
-      ) : (
-        <NoData text={key("noDetails")} />
-      )}
-
+                <Tab eventKey="docs" title={key("docs")}>
+                  docs here
+                </Tab>
+              </Tabs>
+            </section>
+          </div>
+        ) : (
+          <NoData text={key("noDetails")} />
+        )}
+      </div>
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
@@ -327,7 +330,7 @@ const PropertyDetails = () => {
           <h5>{key("deleteText")}</h5>
         </MainModal>
       )}
-    </div>
+    </>
   );
 };
 
