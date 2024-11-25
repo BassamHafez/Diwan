@@ -10,6 +10,8 @@ import circles from "../../assets/svg/circles.svg";
 import dash from "../../assets/svg/dash.svg";
 import AOS from "aos";
 import { useEffect } from "react";
+import ImgComponent from "../Img/ImgComponent";
+import { imgHash } from "../Logic/StaticLists";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -53,7 +55,13 @@ const Hero = () => {
           >
             <div className={styles.header1_img}>
               <div className={styles.overlay}></div>
-              <img src={header1} alt="buildings1" />
+              <ImgComponent
+                src={header1}
+                width="250px"
+                height="21.875rem"
+                hash={imgHash.hero1}
+                alt="heroBuilding"
+              />
             </div>
           </div>
 
@@ -64,7 +72,13 @@ const Hero = () => {
           >
             <div className={styles.header2_img}>
               <div className={styles.overlay}></div>
-              <img src={header2} alt="buildings2" />
+              <ImgComponent
+                src={header2}
+                width="350px"
+                height="12.3125rem"
+                hash={imgHash.hero2}
+                alt="heroBuilding2"
+              />
             </div>
           </div>
         </Col>

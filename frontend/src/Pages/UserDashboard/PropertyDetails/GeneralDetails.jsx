@@ -25,6 +25,7 @@ import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateCompound from "../PropertyForms/UpdateCompound";
 import propDetailsImage from "../../../assets/propDetails.png";
+import propDetailsImage2 from "../../../assets/propDetails2.png";
 import { faBuilding } from "@fortawesome/free-regular-svg-icons";
 import UpdateEstate from "../PropertyForms/UpdateEstate";
 import AOS from "aos";
@@ -246,6 +247,26 @@ const GeneralDetails = ({
             </ul>
           </div>
         </Col>
+
+        <Col
+          md={6}
+          className="d-flex justify-content-center align-items-center"
+        >
+          <div
+            className={styles.prop_details_img}
+            data-aos="zoom-in-up"
+            data-aos-duration="1000"
+          >
+            <img
+              className="w-100"
+              src={propDetailsImage2}
+              alt="propDetailsImage2"
+            />
+          </div>
+        </Col>
+      </Row>
+
+      <Row className="mt-5 py-5">
         <Col
           md={6}
           className="d-flex justify-content-center align-items-center"
@@ -262,45 +283,48 @@ const GeneralDetails = ({
             />
           </div>
         </Col>
-      </Row>
-      <div
-        className={`${styles.information} px-5 `}
-        data-aos="zoom-in-up"
-        data-aos-duration="1000"
-      >
-        <div className="text-center mb-1">
-          <h6 className="m-0 fw-bold">{key("description")}</h6>
-          <FontAwesomeIcon className="color-main" icon={faCaretDown} />
-        </div>
-        <div className={styles.desc_content}>
-          <p className="m-0">{details.description}</p>
-        </div>
-      </div>
-      <div
-        className={styles.information}
-        data-aos="zoom-in-up"
-        data-aos-duration="1000"
-      >
-        <div className="text-center mb-2">
-          <h6 className="m-0 fw-bold">{key("tag")}</h6>
-          <FontAwesomeIcon className="color-main" icon={faCaretDown} />
-        </div>
-        <Row>
-          {details.tags?.length > 0 ? (
-            details.tags.map((tag, index) => (
-              <Col key={`${tag}_${index}`} sm={2}>
-                <div className={styles.tag}>
-                  <span>{tag}</span>
-                </div>
-              </Col>
-            ))
-          ) : (
-            <div className="text-center">
-              <span className="text-secondary">{key("noTags")}</span>
+        <Col md={6} className="d-flex flex-column justify-content-center">
+          <div
+            className={styles.information}
+            data-aos="zoom-in-up"
+            data-aos-duration="1000"
+          >
+            <div className="text-center mb-1">
+              <h6 className="m-0 fw-bold">{key("description")}</h6>
+              <FontAwesomeIcon className="color-main" icon={faCaretDown} />
             </div>
-          )}
-        </Row>
-      </div>
+            <div className={styles.desc_content}>
+              <p className="m-0">{details.description}</p>
+            </div>
+          </div>
+          <div
+            className={styles.information}
+            data-aos="zoom-in-up"
+            data-aos-duration="1000"
+          >
+            <div className="text-center mb-2">
+              <h6 className="m-0 fw-bold">{key("tag")}</h6>
+              <FontAwesomeIcon className="color-main" icon={faCaretDown} />
+            </div>
+            <Row>
+              {details.tags?.length > 0 ? (
+                details.tags.map((tag, index) => (
+                  <Col key={`${tag}_${index}`} sm={2}>
+                    <div className={styles.tag}>
+                      <span>{tag}</span>
+                    </div>
+                  </Col>
+                ))
+              ) : (
+                <div className="text-center">
+                  <span className="text-secondary">{key("noTags")}</span>
+                </div>
+              )}
+            </Row>
+          </div>
+        </Col>
+      </Row>
+
       {isCompound ? (
         <CompoundEstates
           compoundEstates={compoundEstates}

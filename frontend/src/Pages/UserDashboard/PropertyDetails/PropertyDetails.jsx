@@ -111,7 +111,7 @@ const PropertyDetails = () => {
   };
 
   return (
-    <div>
+    <div className="height_container">
       {isFetching ? (
         <LoadingOne />
       ) : data ? (

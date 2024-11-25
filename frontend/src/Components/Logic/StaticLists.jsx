@@ -648,3 +648,13 @@ export const districtsByCityAr = {
     { label: "الصفا", value: "الصفا" },
   ],
 };
+
+
+
+export const imgHash={
+  hero1:"LwLg@SIpofof?wM|WBj[IrogofWB",
+  hero2:"LMGAOxt7.9R:A#ogIToL9aWAn~oI",
+  about1:"LXFZ7-D%xs%2uPM|%LNHt-M{V@bc",
+  about2:"LD9@9W%MAbS4*JpIsoxC%~xujFWC",
+  defaultImg:"LSMZ?q9Ge.WB?w%1xvRj-:aeM{t7"
+}

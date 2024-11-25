@@ -32,7 +32,7 @@ const MainNav = () => {
 
   return (
     <>
-      <Navbar  expand="lg" className="bg-body-tertiary">
+      <Navbar  expand="lg" className="bg-body-tertiary main_navbar" >
         <Container fluid>
           <Navbar.Brand href="/">
             <img src={logo} className={styles.logo} alt="logo" />

@@ -21,7 +21,7 @@ const MainFooter = () => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} >
       <div className="container pb-4">
         <Row>
           <Col lg={4}>

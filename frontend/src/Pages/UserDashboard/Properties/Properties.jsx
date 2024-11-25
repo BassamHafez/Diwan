@@ -23,8 +23,9 @@ import AddCompound from "../PropertyForms/AddCompound";
 import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import AddEstate from "../PropertyForms/AddEstate";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
+// import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
+import PropertyPlaceholder from "../../../Components/Property/PropertyPlaceholder";
 
 const Properties = () => {
   const { t: key } = useTranslation();
@@ -124,25 +125,32 @@ const Properties = () => {
     <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
   );
 
-  const renderProperties = (data, isFetching, type, hideCompound = false,hideStatus=false) => {
+  const renderProperties = (data, isFetching, type, hideCompound = false, hideStatus = false) => {
     if (isFetching) {
-      return <LoadingOne />;
+      return Array(6)
+        .fill(0)
+        .map((_, index) => (
+          <PropertyPlaceholder
+            key={`placeholder-${index}`}
+          />
+        ));
     }
-
+  
     if (data?.length > 0) {
       return data.map((item) => (
         <Property
           key={item._id}
-          hideStatus={hideStatus}
           hideCompound={hideCompound}
+          hideStatus={hideStatus}
           property={item}
           type={type}
         />
       ));
     }
-
+  
     return <NoData text={key("noItemsFound")} />;
   };
+  
 
   return (
     <div className={styles.main_body}>
