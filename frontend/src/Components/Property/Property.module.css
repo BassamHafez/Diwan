@@ -7,7 +7,7 @@
     box-shadow: 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.174);
     overflow: hidden;
     border-radius: 0.625rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.25rem;
     min-height: 18.75rem;
     background-color: white;
 }
@@ -34,7 +34,7 @@
 .card_caption{
     position:relative;
     width: 100%;
-    padding: 1.875rem 0.5rem 0.9375rem 0.5rem;
+    padding:0.625rem 0.5rem 0.9375rem 0.5rem;
 }
 .status_badge{
     background-color: var(--main_color_light);
@@ -45,7 +45,7 @@
     border-radius:0.9375rem;
     min-width: 3.125rem;
     text-align: center;
-    top:1.25rem;
+    top:0.625rem;
 
 }
 .status_badge_ar{
