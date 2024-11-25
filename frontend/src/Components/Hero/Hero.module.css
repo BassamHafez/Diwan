@@ -48,10 +48,12 @@
 
 .header1_img{
     width: 15.625rem;
+    overflow: hidden;
     animation-name: img1Transition;
 }
 .header2_img{
     width:21.875rem;
+    overflow: hidden;
     animation-name: img2Transition;
 }
 
@@ -67,6 +69,7 @@
 
 .header1_img img,.header2_img img{
     width: 100%;
+    height: 100%;
     border-radius:0.9375rem;
 }
 

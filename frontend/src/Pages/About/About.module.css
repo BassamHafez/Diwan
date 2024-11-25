@@ -10,6 +10,7 @@
     position: absolute;
     top: 1.25rem;
     left: 15%;
+    overflow: hidden;
 }
 
 .section1_img2{
@@ -19,6 +20,7 @@
     position: absolute;
     bottom: 4.375rem;
     right:10%;
+    overflow: hidden;
     z-index: 2;
 }
 

@@ -11,6 +11,8 @@ import {
   calculateRentedPercentage,
   renamedEstateStatus,
 } from "../Logic/LogicFun";
+import ImgComponent from "../Img/ImgComponent";
+import { imgHash } from "../Logic/StaticLists";
 
 const Property = ({
   property,
@@ -19,7 +21,6 @@ const Property = ({
   type,
   isCompoundDetailsPage,
 }) => {
-  // console.log(property);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
   const navigate = useNavigate();
@@ -79,13 +80,17 @@ const Property = ({
         data-aos-duration="1000"
       >
         <div className={styles.card_img} onClick={navigateToDetails}>
-          <img
+          <ImgComponent
+            width="23.75rem"
+            height="16.25rem"
             src={
               property.image
                 ? `${import.meta.env.VITE_Host}${property?.image}`
                 : b1
             }
-            alt="propertyImage"
+            lazyLoad={true}
+            hash={imgHash.defaultImg}
+            alt={"propertyImage"}
           />
         </div>
 
@@ -102,7 +107,6 @@ const Property = ({
             </span>
           )}
           <div className={styles.caption_header}>
-            <h4>{property.name}</h4>
             <span>
               <FontAwesomeIcon
                 icon={faLocationDot}
@@ -112,6 +116,7 @@ const Property = ({
               <span className="mini_word">{property.city}</span>)
             </span>
           </div>
+
           <p className={styles.desc}>{property.description}</p>
 
           {!isCompoundDetailsPage && (

@@ -192,7 +192,12 @@ button:disabled {
 .small_filter label:hover{
   transform: translateY(-0.3125rem);
 }
-
+.height_container{
+  min-height: 84vh;
+}
+.main_navbar{
+  z-index: 30;
+}
 
 @media screen and (max-width:768px) {
   body,html{
