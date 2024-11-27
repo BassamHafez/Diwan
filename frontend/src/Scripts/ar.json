@@ -256,5 +256,24 @@
   "pending":"معلقة",
   "rentedCompounds":"المؤجرة بالكامل",
   "partialRentedCompounds":"المؤجرة جزئياً",
-  "availableCompounds":"الشاغرة بالكامل"
+  "availableCompounds":"الشاغرة بالكامل",
+
+  "task":"مهمة",
+  "allTasks":"كل المهام",
+  "underway":"جارية",
+  "postponed":"مؤجلة",
+  "finished":"منتهية",
+  "low":"أولوية منخفضة",
+  "mid":"أولوية متوسطة",
+  "high":"أولوية عالية",
+  "maintenance":"صيانة",
+  "purchase":"مشتريات",
+  "reminder":"تذكير",
+  "time":"التوقيت",
+  "default":"الوضع الافتراضي",
+  "sarSmall":"ر.س",
+  "cost":"التكلفة",
+  "title":"العنوان",
+  "taskDate":"تاريخ المهمة",
+  "taskType":"نوع المهمة"
 }

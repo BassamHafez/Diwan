@@ -171,19 +171,6 @@ const Contacts = () => {
 
   return (
     <div className={styles.contacts_body}>
-      <div className="d-flex justify-content-between align-items-center flex-wrap my-5 px-3">
-        <div>
-          <SearchField text={key("searchContacts")} />
-        </div>
-
-        <div>
-          <ButtonOne
-            onClick={showAddModal}
-            text={`${key("add")} ${key(selectedFilter)}`}
-          />
-        </div>
-      </div>
-
       <Row style={{ minHeight: "65vh" }}>
         <Col sm={4} lg={3} className="p-0">
           <div className={styles.filter_side}>
@@ -468,6 +455,19 @@ const Contacts = () => {
 
         <Col sm={8} lg={9}>
           <Row className={styles.contacts_side}>
+            <div className="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-2 px-3">
+              <div>
+                <SearchField text={key("searchContacts")} />
+              </div>
+
+              <div>
+                <ButtonOne
+                  onClick={showAddModal}
+                  text={`${key("add")} ${key(selectedFilter)}`}
+                  borderd={true}
+                />
+              </div>
+            </div>
             {selectedFilter === "contacts" && allContacts
               ? renderContacts(allContacts, "contact", isFetchingContacts)
               : selectedFilter === "landlord" && landlords
