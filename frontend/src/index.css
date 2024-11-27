@@ -43,6 +43,9 @@ input:disabled {
 button:disabled {
   opacity: .5; 
 }
+p{
+  word-break: break-all;
+}
 
 /* bootstrap */
 .dropdown-toggle::after {

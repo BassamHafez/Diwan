@@ -259,5 +259,25 @@
   "pending": "Pending",
   "rentedCompounds": "Fully Rented",
   "partialRentedCompounds": "Partially Rented",
-  "availableCompounds": "Fully Available"
+  "availableCompounds": "Fully Available",
+
+  "task":"Task",
+  "allTasks":"All Tasks",
+  "underway":"Underway",
+  "postponed":"Postponed",
+  "finished":"Finished",
+  "low":"Low Priority",
+  "mid":"Mid Priority",
+  "high":"High Priority",
+  "maintenance":"Maintenance",
+  "purchase":"Purchase",
+  "reminder":"Reminder",
+  "other":"Other",
+  "time":"Time",
+  "default":"Default",
+  "sarSmall":"SAR",
+  "cost":"Cost",
+  "title":"Title",
+  "taskDate":"Task Date",
+  "taskType":"Task Type"
 }

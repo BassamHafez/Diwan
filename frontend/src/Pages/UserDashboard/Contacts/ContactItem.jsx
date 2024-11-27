@@ -5,7 +5,7 @@ import styles from "./Contacts.module.css";
 import {
   formatPhoneNumber,
   formatWhatsAppLink,
-  renameContactType
+  renameContactType,
 } from "../../../Components/Logic/LogicFun";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,6 +23,7 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import { mainDeleteFunHandler } from "../../../util/Http";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateContactForm from "./ContactForms/UpdateContactForm";
+import AOS from "aos";
 
 const ContactItem = ({
   contact,
@@ -52,11 +53,14 @@ const ContactItem = ({
     ? formatWhatsAppLink(contact.phone2)
     : null;
 
+  useEffect(() => {
+    AOS.init();
+  }, []);
 
   useEffect(() => {
     const myType = type === "contact" ? contact.contactType : type;
     const language = isArLang ? "ar" : "en";
-  
+
     setRenamedType(renameContactType(myType, language));
   }, [isArLang, type, contact]);
 
@@ -82,14 +86,18 @@ const ContactItem = ({
       notifyError(key("deleteWrong"));
     }
   };
-  
+
   const gridXXLSystem = isListView ? 12 : 4;
   const gridLgSystem = isListView ? 12 : 6;
 
   return (
     <>
       <Col lg={gridLgSystem} xxl={gridXXLSystem}>
-        <div className={styles.contact_item}>
+        <div
+          className={styles.contact_item}
+          data-aos="fade-in"
+          data-aos-duration="1000"
+        >
           <div className={styles.contact_header}>
             <div className={styles.img_side}>
               <img
@@ -125,7 +133,11 @@ const ContactItem = ({
                 icon={faTrash}
                 onClick={() => setShowDeleteModal(true)}
               />
-              <FontAwesomeIcon onClick={()=>setShowUpdateContactModal(true)} title={key("ediet")} icon={faPenToSquare} />
+              <FontAwesomeIcon
+                onClick={() => setShowUpdateContactModal(true)}
+                title={key("ediet")}
+                icon={faPenToSquare}
+              />
             </div>
           </div>
           <hr />
@@ -242,7 +254,7 @@ const ContactItem = ({
         >
           <UpdateContactForm
             hideModal={() => setShowUpdateContactModal(false)}
-            contactType={type==="contact"?contact.contactType:type}
+            contactType={type === "contact" ? contact.contactType : type}
             refetch={refetch}
             refetchAllContacts={refetchAllContacts}
             contact={contact}

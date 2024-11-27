@@ -1,5 +1,5 @@
 .contacts_body {
-  background: rgb(233, 233, 233);
+  background: var(--sub_white);
   padding: 20px;
   min-height: 84vh;
   margin: 0;

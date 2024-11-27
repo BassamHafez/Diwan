@@ -418,14 +418,14 @@ export const revenueFilterTypeOptions = {
 
 export const revenuesStatus = {
   en: [
-    {label:"pending",value:"pending"},
-    {label:"canceled",value:"canceled"},
-    {label:"paid",value:"paid"},
+    { label: "pending", value: "pending" },
+    { label: "canceled", value: "canceled" },
+    { label: "paid", value: "paid" },
   ],
   ar: [
-    {label:"معلق",value:"pending"},
-    {label:"ملغي",value:"canceled"},
-    {label:"مدفوع",value:"paid"},
+    { label: "معلق", value: "pending" },
+    { label: "ملغي", value: "canceled" },
+    { label: "مدفوع", value: "paid" },
   ],
 };
 
@@ -442,19 +442,47 @@ export const paymentMethodOptions = {
   ],
 };
 
-export const estateStatus={
-en:[
-  {label:"Available",value:"available"},
-  {label:"Pending",value:"pending"},
-  {label:"Rented",value:"rented"},
-],
-ar:[
-  {label:"شاغرة",value:"available"},
-  {label:"معلقة",value:"pending"},
-  {label:"مؤجرة",value:"rented"},
-]
-}
+export const estateStatus = {
+  en: [
+    { label: "Available", value: "available" },
+    { label: "Pending", value: "pending" },
+    { label: "Rented", value: "rented" },
+  ],
+  ar: [
+    { label: "شاغرة", value: "available" },
+    { label: "معلقة", value: "pending" },
+    { label: "مؤجرة", value: "rented" },
+  ],
+};
 
+//tasks
+
+export const taskTypeOptions={
+  en:[
+    {label:"Maintenance",value:"maintenance"},
+    {label:"Purchase",value:"purchase"},
+    {label:"Reminder",value:"reminder"},
+    {label:"Other",value:"other"},
+  ],
+  ar:[
+    {label:"صيانة",value:"maintenance"},
+    {label:"مشتريات",value:"purchase"},
+    {label:"تذكير",value:"reminder"},
+    {label:"أخري",value:"other"},
+  ]
+}
+export const prioritysOptions={
+  en:[
+    {label:"Low",value:"low"},
+    {label:"Mid",value:"mid"},
+    {label:"High",value:"high"},
+  ],
+  ar:[
+    {label:"منخفضة",value:"low"},
+    {label:"متوسطة",value:"mid"},
+    {label:"عالية",value:"high"}
+  ]
+}
 
 // ----------------------------------------------------------Saudi Arabia----------------------------
 //saudi arabia En
@@ -679,12 +707,77 @@ export const districtsByCityAr = {
   ],
 };
 
+export const imgHash = {
+  hero1: "LwLg@SIpofof?wM|WBj[IrogofWB",
+  hero2: "LMGAOxt7.9R:A#ogIToL9aWAn~oI",
+  about1: "LXFZ7-D%xs%2uPM|%LNHt-M{V@bc",
+  about2: "LD9@9W%MAbS4*JpIsoxC%~xujFWC",
+  defaultImg: "LSMZ?q9Ge.WB?w%1xvRj-:aeM{t7",
+};
+
+// demo for test
+
+export const tasksData = [
+  {
+    _id: "1",
+    title: "إصلاح التكييف",
+    description: "إصلاح التكييف في الشقة رقم 12.",
+    taskDate: "2024-11-30",
+    compound: "شقة في المعادي",
+    contact: "محمد أحمد",
+    taskType: "maintenance",
+    cost: "500",
+    user: "حسين حمادة",
+    priority: "high",
+  },
+  {
+    _id: "2",
+    title: "شراء أثاث جديد",
+    description: "شراء أثاث لغرفة المعيشة في العقار رقم 8.",
+    taskDate: "2024-12-05",
+    compound: "فيلا في التجمع الخامس",
+    contact: "فاطمة حسين",
+    taskType: "purchase",
+    cost: "3000",
+    user: "حسين حمادة",
+    priority: "mid",
+  },
+  {
+    _id: "3",
+    title: "تذكير بتجديد العقد",
+    description: "تذكير بتجديد عقد الإيجار في الشقة رقم 3.",
+    taskDate: "2024-12-10",
+    compound: "شقة في مدينة نصر",
+    contact: "سامي عبد الله",
+    taskType: "reminder",
+    cost: "0",
+    user: "حسين حمادة",
+    priority: "low",
+  },
+  {
+    _id: "4",
+    title: "فحص الخزان",
+    description: "فحص حالة الخزان في العقار رقم 15.",
+    taskDate: "2024-12-15",
+    compound: "شقة في المهندسين",
+    contact: "أحمد مصطفى",
+    taskType: "maintenance",
+    cost: "200",
+    user: "حسين حمادة",
+    priority: "low",
+  },
+  {
+    _id: "5",
+    title: "استشارة قانونية",
+    description: "استشارة محامي بشأن تحديث عقد الإيجار.",
+    taskDate: "2024-12-20",
+    compound: "شقة في الزمالك",
+    contact: "مريم علي",
+    taskType: "other",
+    cost: "400",
+    user: "حسين حمادة",
+    priority: "high",
+  },
+];
 
 
-export const imgHash={
-  hero1:"LwLg@SIpofof?wM|WBj[IrogofWB",
-  hero2:"LMGAOxt7.9R:A#ogIToL9aWAn~oI",
-  about1:"LXFZ7-D%xs%2uPM|%LNHt-M{V@bc",
-  about2:"LD9@9W%MAbS4*JpIsoxC%~xujFWC",
-  defaultImg:"LSMZ?q9Ge.WB?w%1xvRj-:aeM{t7"
-}
