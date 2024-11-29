@@ -33,4 +33,10 @@ router
     compoundController.deleteCompound
   );
 
+router.get(
+  "/:id/current-contracts",
+  compoundValidator.getCompoundValidator,
+  compoundController.getCurrentContracts
+);
+
 module.exports = router;
