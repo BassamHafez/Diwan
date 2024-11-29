@@ -35,10 +35,14 @@ const contractSchema = new mongoose.Schema(
       enum: ["day", "week", "month", "year"],
       required: true,
     },
-    status: {
-      type: String,
-      enum: ["active", "completed", "canceled", "upcoming"],
-      default: "upcoming",
+    // status: {
+    //   type: String,
+    //   enum: ["active", "completed", "canceled", "upcoming"],
+    //   default: "upcoming",
+    // },
+    isCanceled: {
+      type: Boolean,
+      default: false,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
