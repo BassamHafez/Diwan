@@ -26,7 +26,6 @@ export const renamedEstateStatus = (type, language) => {
 };
 
 //compounds
-
 export const calculateRentedPercentage = (rented, total) => {
   if(total===0||rented===0){
     return 0

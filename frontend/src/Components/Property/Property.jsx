@@ -7,10 +7,20 @@ import { useEffect } from "react";
 import AOS from "aos";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { calculateRentedPercentage, renamedEstateStatus } from "../Logic/LogicFun";
+import {
+  calculateRentedPercentage,
+  renamedEstateStatus,
+} from "../Logic/LogicFun";
+import ImgComponent from "../Img/ImgComponent";
+import { imgHash } from "../Logic/StaticLists";
 
-const Property = ({ property, hideStatus, hideCompound, type }) => {
-  // console.log(property);
+const Property = ({
+  property,
+  hideStatus,
+  hideCompound,
+  type,
+  isCompoundDetailsPage,
+}) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
   const navigate = useNavigate();
@@ -18,7 +28,7 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
   const navigateToDetails = () => {
     if (type === "estate") {
       navigate(`/estate-unit-details/${property._id}`);
-    }else{
+    } else {
       navigate(`/estate-details/${property._id}`);
     }
   };
@@ -47,7 +57,7 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
     if (property.estatesCount === 0) {
       return key("noEstates");
     }
- 
+
     const rentedPercentage = calculateRentedPercentage(
       property.rentedEstatesCount,
       property.estatesCount
@@ -57,8 +67,6 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
       property.estatesCount
     } ${key("unit")} (${rentedPercentage}%)`;
   };
-
-
 
   return (
     <Col
@@ -72,17 +80,22 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
         data-aos-duration="1000"
       >
         <div className={styles.card_img} onClick={navigateToDetails}>
-          <img
+          <ImgComponent
+            width="23.75rem"
+            height="16.25rem"
             src={
               property.image
                 ? `${import.meta.env.VITE_Host}${property?.image}`
                 : b1
             }
-            alt="propertyImage"
+            lazyLoad={true}
+            hash={imgHash.defaultImg}
+            alt={"propertyImage"}
           />
         </div>
 
         <div className={styles.card_caption}>
+          <h4>{property.name}</h4>
           {!hideStatus && (
             <span
               className={`${styles.status_badge} ${
@@ -95,7 +108,6 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
             </span>
           )}
           <div className={styles.caption_header}>
-            <h4>{property.name}</h4>
             <span>
               <FontAwesomeIcon
                 icon={faLocationDot}
@@ -105,19 +117,22 @@ const Property = ({ property, hideStatus, hideCompound, type }) => {
               <span className="mini_word">{property.city}</span>)
             </span>
           </div>
+
           <p className={styles.desc}>{property.description}</p>
 
-          <div className={isArLang ? "text-start" : "text-end"}>
-            <span
-              className={`${styles.compound_badge} ${
-                hideCompound ? styles.percent_estate_badge : ""
-              }`}
-            >
-              {hideCompound
-                ? renderEstateInfo(property)
-                : renderCompoundName(property)}
-            </span>
-          </div>
+          {!isCompoundDetailsPage && (
+            <div className={isArLang ? "text-start" : "text-end"}>
+              <span
+                className={`${styles.compound_badge} ${
+                  hideCompound ? styles.percent_estate_badge : ""
+                }`}
+              >
+                {hideCompound
+                  ? renderEstateInfo(property)
+                  : renderCompoundName(property)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </Col>

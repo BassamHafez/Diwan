@@ -1,8 +1,8 @@
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./SearchField.module.css";
-
+import AOS from "aos";
 const SearchField = ({ onSearch, text }) => {
   const [searchInput, setSearchInput] = useState("");
 
@@ -12,12 +12,18 @@ const SearchField = ({ onSearch, text }) => {
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
+  useEffect(() => {
+    AOS.init();
+  }, []);
+
   return (
     <form
       onSubmit={(e) => onSearch(e, searchInput)}
       className={`${styles.search_container}  ${
         isArLang ? "me-auto" : "ms-auto"
       }`}
+      data-aos="fade-in"
+      data-aos-duration="1000"
     >
       <input onChange={saveSearchData} type="search" placeholder={text} />
       <button
