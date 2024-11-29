@@ -215,3 +215,21 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     data: updatedContract,
   });
 });
+
+exports.getCurrentContract = catchAsync(async (req, res, next) => {
+  const { estateId } = req.params;
+
+  const contract = await Contract.findOne({
+    estate: estateId,
+    startDate: { $lte: new Date() },
+    endDate: { $gte: new Date() },
+    isCanceled: false,
+  })
+    .populate(contractPopOptions)
+    .lean();
+
+  res.status(200).json({
+    status: "success",
+    data: contract,
+  });
+});

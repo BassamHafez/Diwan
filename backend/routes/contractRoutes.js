@@ -22,6 +22,12 @@ router
     contractController.createContract
   );
 
+router.get(
+  "/current",
+  contractValidator.getContractsValidator,
+  contractController.getCurrentContract
+);
+
 // /api/v1/estates/:estateId/contracts/:id
 router
   .route("/:id")
