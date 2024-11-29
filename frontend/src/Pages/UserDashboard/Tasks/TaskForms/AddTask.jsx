@@ -94,7 +94,6 @@ const AddTask = ({ hideModal, refetch }) => {
           console.log(data);
           if (data?.status === "success") {
             refetch();
-
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();
@@ -117,7 +116,7 @@ const AddTask = ({ hideModal, refetch }) => {
     compound: string().required(key("fieldReq")),
     contact: string().required(key("fieldReq")),
     taskType: string().required(key("fieldReq")),
-    cost: number().required(key("fieldReq")),
+    cost: number().min(0,key("positiveOnlyValidation")).required(key("fieldReq")),
     priority: string().required(key("fieldReq")),
   });
 

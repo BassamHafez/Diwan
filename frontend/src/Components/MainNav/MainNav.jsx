@@ -202,7 +202,7 @@ const MainNav = () => {
             <div
               className={`${styles.nav_controller} d-flex align-items-center justify-content-center`}
             >
-              <Dropdown>
+              <Dropdown className={styles.language_icon}>
                 <Dropdown.Toggle
                   className={`${styles.lang_btn} bg-transparent text-dark`}
                   id="dropdown-basic"

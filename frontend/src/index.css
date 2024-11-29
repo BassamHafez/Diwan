@@ -201,7 +201,10 @@ p{
 .main_navbar{
   z-index: 30;
 }
-
+.mini_word{
+  font-size: 14px;
+  color: var(--dark_white);
+}
 @media screen and (max-width:768px) {
   body,html{
     font-size: 14px;
