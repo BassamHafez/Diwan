@@ -25,6 +25,7 @@ import Tasks from "./Pages/UserDashboard/Tasks/Tasks";
 import Contacts from "./Pages/UserDashboard/Contacts/Contacts";
 import PropertyDetails from "./Pages/UserDashboard/PropertyDetails/PropertyDetails";
 import CompoundDetails from "./Pages/UserDashboard/PropertyDetails/CompoundDetails";
+import UserProfile from "./Pages/UserDashboard/UserProfile/UserProfile";
 
 const router = createBrowserRouter(
   [
@@ -46,6 +47,7 @@ const router = createBrowserRouter(
         { path: "estate-details/:compId", element: <CompoundDetails /> },
         { path: "contacts", element: <Contacts /> },
         { path: "tasks", element: <Tasks /> },
+        { path: "profile/:userId", element: <UserProfile /> },
       ],
     },
   ],

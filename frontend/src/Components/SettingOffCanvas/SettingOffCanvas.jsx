@@ -1,7 +1,7 @@
 import Offcanvas from "react-bootstrap/Offcanvas";
 import styles from "./SettingOffCanvas.module.css";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightFromBracket,
@@ -24,11 +24,12 @@ const SettingOffCanvas = ({ show, handleClose }) => {
 
   const navigate = useNavigate();
 
-  const profileData = useSelector((state) => state.profileInfo.data);
+  // const profileData = useSelector((state) => state.profileInfo.data);
 
   const navigateToProfilePage = () => {
     handleClose();
-    navigate(`user-profile/${profileData?.UserId}`);
+    navigate(`profile/1`);
+    // navigate(`profile/${profileData?.UserId}`);
   };
 
   return (

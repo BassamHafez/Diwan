@@ -25,10 +25,15 @@
 .nav_list a.active:hover{
     scale: 1;
 }
-
+.language_icon{
+    background-color:transparent;
+    border-radius: 40px;
+    border: 1px solid var(--dark_white);
+    margin-inline: 1.5625rem;
+}
 .lang_btn{
     border: none !important;
-    font-weight: 600 !important;
+    font-weight: 550 !important;
     font-size: 1rem !important;
     transition: all .4s;
 }

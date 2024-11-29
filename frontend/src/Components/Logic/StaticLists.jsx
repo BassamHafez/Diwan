@@ -471,6 +471,7 @@ export const taskTypeOptions={
     {label:"أخري",value:"other"},
   ]
 }
+
 export const prioritysOptions={
   en:[
     {label:"Low",value:"low"},

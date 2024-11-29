@@ -1,5 +1,3 @@
-
-
 const UserHome = () => {
   return (
     <div>
