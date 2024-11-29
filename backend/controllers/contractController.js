@@ -53,7 +53,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
     estate: estateId,
     startDate: { $lte: newEndDate },
     endDate: { $gte: newStartDate },
-    status: { $nin: ["canceled", "completed"] },
+    isCanceled: false,
   })
     .select("_id")
     .lean();
@@ -107,19 +107,21 @@ exports.createContract = catchAsync(async (req, res, next) => {
 });
 
 exports.cancelContract = catchAsync(async (req, res, next) => {
-  const contract = await Contract.findById(req.params.id);
+  const contract = await Contract.findById(req.params.id)
+    .select("endDate isCanceled")
+    .lean();
 
   if (!contract) {
     return next(new ApiError("No contract found with that ID", 404));
   }
 
-  if (contract.status === "completed") {
+  if (contract.endDate <= Date.now() && !contract.isCanceled) {
     return next(new ApiError("Cannot cancel a completed contract", 400));
   }
 
   const updatedContract = await Contract.findByIdAndUpdate(
     req.params.id,
-    { status: "canceled" },
+    { isCanceled: true },
     { new: true }
   );
 
@@ -149,7 +151,7 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     estate: estateId,
     startDate: { $lte: newEndDate },
     endDate: { $gte: newStartDate },
-    status: { $nin: ["canceled", "completed"] },
+    isCanceled: false,
   })
     .select("_id")
     .lean();
