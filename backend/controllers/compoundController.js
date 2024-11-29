@@ -3,6 +3,7 @@ const sharp = require("sharp");
 
 const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
+const Contract = require("../models/contractModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -138,5 +139,41 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     data: compound,
+  });
+});
+
+exports.getCurrentContracts = catchAsync(async (req, res, next) => {
+  const compoundId = req.params.id;
+
+  const [compound, estates] = await Promise.all([
+    Compound.findById(compoundId).select("_id user").lean(),
+    Estate.find({ compound: compoundId }).select("_id").lean(),
+  ]);
+
+  if (!compound) {
+    return next(new ApiError("No compound found with that ID", 404));
+  }
+
+  if (!estates.length) {
+    return res.status(200).json({
+      status: "success",
+      results: 0,
+      data: [],
+    });
+  }
+
+  const estateIds = estates.map((estate) => estate._id);
+
+  const contracts = await Contract.find({
+    estate: { $in: estateIds },
+    startDate: { $lte: new Date() },
+    endDate: { $gte: new Date() },
+    isCanceled: false,
+  }).lean();
+
+  res.status(200).json({
+    status: "success",
+    results: contracts.length,
+    data: contracts,
   });
 });
