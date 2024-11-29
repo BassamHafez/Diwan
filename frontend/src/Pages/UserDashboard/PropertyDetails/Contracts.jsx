@@ -34,6 +34,8 @@ const Contracts = () => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [contractDetails, setContractDetails] = useState({});
   const [contractId, setContractId] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
@@ -56,11 +58,10 @@ const Contracts = () => {
     staleTime: Infinity,
   });
 
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
-  useEffect(()=>{
-    refetch()
-  },[refetch]);
-  
   const getStatusBgColor = (status) => {
     switch (status) {
       case "active":
@@ -95,6 +96,18 @@ const Contracts = () => {
     }
   };
 
+  const filterChangeHandler = (val, type) => {
+    if (type === "status") {
+      setStatusFilter(val ? val : "");
+    }
+  };
+
+  const filteredRevenues = contractsData
+    ? contractsData.data?.filter(
+        (rev) => statusFilter === "" || rev.status === statusFilter
+      )
+    : [];
+
   return (
     <div className={styles.contracts_body}>
       <div className={styles.header}>
@@ -126,10 +139,15 @@ const Contracts = () => {
                 ? contractStatusOptions["ar"]
                 : contractStatusOptions["en"]
             }
-            // onChange={(val) => setFieldValue("lessor", val.value)}
-            className={`${isArLang ? "text-end" : "text-start"}`}
+            onChange={(val) =>
+              filterChangeHandler(val ? val.value : null, "status")
+            }
+            className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+              styles.select_type
+            } my-3`}
             isRtl={isArLang ? false : true}
             placeholder={key("contractStaus")}
+            isClearable
           />
         </div>
 
@@ -149,7 +167,7 @@ const Contracts = () => {
                 </thead>
 
                 <tbody className={styles.table_body}>
-                  {contractsData.data.map((contract) => (
+                  {filteredRevenues.map((contract) => (
                     <tr key={contract._id}>
                       <td>{contract.tenant?.name}</td>
                       <td>{formattedDate(contract.startDate)}</td>

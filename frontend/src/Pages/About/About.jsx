@@ -11,6 +11,8 @@ import { useEffect } from "react";
 import AOS from "aos";
 import ScrollTopBtn from "../../Components/UI/Buttons/ScrollTopBtn";
 import AccordionContent from "../../Components/UI/Tools/AccordionContent";
+import ImgComponent from "../../Components/Img/ImgComponent";
+import { imgHash } from "../../Components/Logic/StaticLists";
 
 const About = () => {
   const { t: key } = useTranslation();
@@ -82,10 +84,22 @@ const About = () => {
                 data-aos-duration="1000"
               >
                 <div className={styles.section1_img2}>
-                  <img src={managmentImg} alt="managmentImg" />
+                  <ImgComponent
+                    src={managmentImg}
+                    width="280px"
+                    height="11.6875rem"
+                    hash={imgHash.about1}
+                    alt="managmentImg"
+                  />
                 </div>
                 <div className={styles.section1_img}>
-                  <img src={cityImg} alt="cityImg" />
+                  <ImgComponent
+                    src={cityImg}
+                    width="380px"
+                    height="15.8125rem"
+                    hash={imgHash.about2}
+                    alt="cityImg"
+                  />
                 </div>
               </div>
             </Col>

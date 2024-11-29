@@ -98,7 +98,6 @@ const UpdateContract = ({ contract, hideModal, refetch }) => {
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
     const updatedValues = {
-      tenant: contract.tenant?._id,
       startDate: values.startDate,
       endDate: values.endDate,
       totalAmount: values.totalAmount,

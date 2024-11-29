@@ -3,7 +3,10 @@ import styles from "./Contracts.module.css";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
-import { revenueTypeOptions } from "../../../Components/Logic/StaticLists";
+import {
+  revenueFilterTypeOptions,
+  revenuesStatus
+} from "../../../Components/Logic/StaticLists";
 import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
@@ -34,6 +37,8 @@ const Revenue = () => {
   const [revDetails, setRevDetails] = useState({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
   const [revenueId, setRevenueId] = useState("");
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -120,6 +125,22 @@ const Revenue = () => {
     }
   };
 
+  const filterChangeHandler = (val, type) => {
+    if (type === "status") {
+      setStatusFilter(val?val:"");
+    } else if (type === "type") {
+      setTypeFilter(val?val:"");
+    }
+  };
+
+  const filteredRevenues = revenuesData
+    ? revenuesData.data?.filter(
+        (rev) =>
+          (statusFilter==="" || rev.status === statusFilter) &&
+          (typeFilter === "" || rev.type === typeFilter)
+      )
+    : [];
+
   return (
     <div className={styles.contracts_body}>
       <div className={styles.header}>
@@ -145,17 +166,30 @@ const Revenue = () => {
           <div className={styles.search_field}>
             <SearchField text={key("searchRevenue")} />
           </div>
-          <Select
-            options={
-              isArLang ? revenueTypeOptions["ar"] : revenueTypeOptions["en"]
-            }
-            // onChange={(val) => setFieldValue("lessor", val.value)}
-            className={`${isArLang ? "text-end" : "text-start"} ${
-              styles.select_type
-            }`}
-            isRtl={isArLang ? false : true}
-            placeholder={key("type")}
-          />
+          <div className="d-flex flex-wrap">
+            <Select
+              options={
+                isArLang ? revenueFilterTypeOptions["ar"] : revenueFilterTypeOptions["en"]
+              }
+              onChange={(val) => filterChangeHandler(val?val.value: null,"type")}
+              className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
+                styles.select_type
+              } my-3`}
+              isRtl={isArLang ? false : true}
+              placeholder={key("type")}
+              isClearable
+            />
+            <Select
+              options={isArLang ? revenuesStatus["ar"] : revenuesStatus["en"]}
+              onChange={(val) => filterChangeHandler(val?val.value: null,"status")}
+              className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                styles.select_type
+              } my-3`}
+              isRtl={isArLang ? false : true}
+              placeholder={key("status")}
+              isClearable
+            />
+          </div>
         </div>
 
         <div className="my-4">
@@ -174,7 +208,7 @@ const Revenue = () => {
                 </thead>
 
                 <tbody className={styles.table_body}>
-                  {revenuesData.data.map((rev) => (
+                  {filteredRevenues.map((rev) => (
                     <tr key={rev._id}>
                       <td>{rev.tenant?.name}</td>
                       <td>{key(rev.type)}</td>

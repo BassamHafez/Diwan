@@ -43,6 +43,9 @@ input:disabled {
 button:disabled {
   opacity: .5; 
 }
+p{
+  word-break: break-all;
+}
 
 /* bootstrap */
 .dropdown-toggle::after {
@@ -67,7 +70,11 @@ button:disabled {
   margin-left: 0;
   margin-right: auto;
 }
-
+.accordion-header .accordion-button::after{
+  background-size: cover;
+  width: 0.875rem;
+  height: 0.875rem;
+}
 .nav-tabs li button{
   color: black;
   font-weight: 550;
@@ -188,7 +195,12 @@ button:disabled {
 .small_filter label:hover{
   transform: translateY(-0.3125rem);
 }
-
+.height_container{
+  min-height: 84vh;
+}
+.main_navbar{
+  z-index: 30;
+}
 
 @media screen and (max-width:768px) {
   body,html{
