@@ -275,5 +275,21 @@
   "cost":"التكلفة",
   "title":"العنوان",
   "taskDate":"تاريخ المهمة",
-  "taskType":"نوع المهمة"
+  "taskType":"نوع المهمة",
+  "positiveOnlyValidation":"مسموح بالرقم الموجب فقط",
+  "priority":"الأولوية",
+
+  "myProfile":"حسابي الشخصي",
+  "main":"الرئيسية",
+  "subscription":"الاشتراك",
+  "admins":"المشرفين",
+  "security":"الأمان",
+  "deleteAcc":"حذف الحساب",
+  "country":"البلد",
+  "personalInfo":"المعلومات الشخصية",
+  "searchTasks":"ابحث عن مهمة",
+  "currentContract":"العقد الحالي",
+  "currentContracts":"العقود الحالية",
+  "view":"عرض",
+  "noCurrentContracts":"لا يوجد عقود حالية"
 }

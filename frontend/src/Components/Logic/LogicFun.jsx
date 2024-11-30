@@ -153,6 +153,24 @@ export const renamedContractStatus = (type, language) => {
   return mappings?.[type] || "";
 };
 
+export const getContractStatus = (isCanceled, startDate, endDate) => {
+  if (isCanceled) return "canceled";
+
+  const currentDate = new Date();
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  if (currentDate < start) {
+    return "upcoming";
+  } else if (currentDate >= start && currentDate <= end) {
+    return "active";
+  } else if (currentDate > end) {
+    return "completed";
+  }
+
+  return "unknown";
+};
+
 // revenues
 
 export const calculateRevenues = (totalAmount,paymentPeriodValue,paymentPeriodUnit,startDate,endDate) => {

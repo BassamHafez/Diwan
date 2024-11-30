@@ -164,7 +164,7 @@ const Tasks = () => {
                 style={{ height: "fit-content" }}
               >
                 <div>
-                  <SearchField text={key("searchContacts")} />
+                  <SearchField text={key("searchTasks")} />
                 </div>
 
                 <div>
