@@ -208,3 +208,62 @@ exports.getEstateValidator = [
 
   validatorMiddleware,
 ];
+
+// Estate expenses
+
+exports.createEstateExpenseValidator = [
+  check("id")
+    .exists()
+    .withMessage("Estate ID is required")
+    .isMongoId()
+    .withMessage("Invalid estate ID"),
+
+  check("note")
+    .optional()
+    .isString()
+    .withMessage("Note must be a string")
+    .trim(),
+
+  check("amount")
+    .exists()
+    .withMessage("Amount is required")
+    .isFloat({ min: 0 })
+    .withMessage("Amount must be a positive number"),
+
+  check("dueDate")
+    .exists()
+    .withMessage("Due date is required")
+    .isDate()
+    .withMessage("Due date must be a valid date"),
+
+  check("type")
+    .exists()
+    .withMessage("Type is required")
+    .isIn(["purchases", "maintenance", "other"])
+    .withMessage("Invalid type"),
+
+  // NOT ALLOWED
+
+  check("user").not().exists().withMessage("User cannot be set"),
+
+  check("status").not().exists().withMessage("Status cannot be set"),
+
+  check("paidAt").not().exists().withMessage("Paid at cannot be set"),
+
+  check("paymentMethod")
+    .not()
+    .exists()
+    .withMessage("Payment method cannot be set"),
+
+  check("estate")
+    .not()
+    .exists()
+    .withMessage("Estate cannot be set manually in compound expense"),
+
+  check("compound")
+    .not()
+    .exists()
+    .withMessage("Compound cannot be set manually in compound expense"),
+
+  validatorMiddleware,
+];

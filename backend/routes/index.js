@@ -9,7 +9,7 @@ const tenantContactRoutes = require("../routes/tenantContactRoutes");
 const tagRoutes = require("../routes/tagRoutes");
 const contractRoutes = require("../routes/contractRoutes");
 const revenueRoutes = require("../routes/revenueRoutes");
-// const expenseRoutes = require("../routes/expenseRoutes");
+const expenseRoutes = require("../routes/expenseRoutes");
 const taskRoutes = require("../routes/taskRoutes");
 
 const mountRoutes = (app) => {
@@ -24,7 +24,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/contacts/services", serviceContactRoutes);
   app.use("/api/v1/contacts/tenants", tenantContactRoutes);
   app.use("/api/v1/tags", tagRoutes);
-  // app.use("/api/v1/expenses", expenseRoutes);
+  app.use("/api/v1/expenses", expenseRoutes);
   app.use("/api/v1/tasks", taskRoutes);
 };
 

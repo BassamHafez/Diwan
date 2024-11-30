@@ -39,4 +39,18 @@ router.get(
   compoundController.getCurrentContracts
 );
 
+// Compound expenses
+
+router
+  .route("/:id/expenses")
+  .get(
+    compoundValidator.getCompoundValidator,
+    compoundController.getCompoundExpenses
+  )
+  .post(
+    compoundValidator.createCompoundExpenseValidator,
+    setUserId,
+    compoundController.createCompoundExpense
+  );
+
 module.exports = router;

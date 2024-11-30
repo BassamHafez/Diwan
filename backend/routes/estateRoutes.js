@@ -44,4 +44,15 @@ router
   )
   .delete(estateValidator.getEstateValidator, estateController.deleteEstate);
 
+// Estate expenses
+
+router
+  .route("/:id/expenses")
+  .get(estateValidator.getEstateValidator, estateController.getEstateExpenses)
+  .post(
+    estateValidator.createEstateExpenseValidator,
+    setUserId,
+    estateController.createEstateExpense
+  );
+
 module.exports = router;

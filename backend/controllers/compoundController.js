@@ -4,6 +4,7 @@ const sharp = require("sharp");
 const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
 const Contract = require("../models/contractModel");
+const Expense = require("../models/expenseModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -175,5 +176,51 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
     status: "success",
     results: contracts.length,
     data: contracts,
+  });
+});
+
+// Compound Expenses
+
+exports.getCompoundExpenses = catchAsync(async (req, res, next) => {
+  const compoundId = req.params.id;
+
+  const compoundPromise = Compound.findById(compoundId).select("_id").lean();
+  const expensesPromise = Expense.find({ compound: compoundId })
+    .select("note amount dueDate type status paidAt paymentMethod")
+    .sort("dueDate")
+    .lean();
+
+  const [compound, expenses] = await Promise.all([
+    compoundPromise,
+    expensesPromise,
+  ]);
+
+  if (!compound) {
+    return next(new ApiError("No compound found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    results: expenses.length,
+    data: expenses,
+  });
+});
+
+exports.createCompoundExpense = catchAsync(async (req, res, next) => {
+  const compoundId = req.params.id;
+
+  const compound = await Compound.findById(compoundId).select("_id").lean();
+
+  if (!compound) {
+    return next(new ApiError("No compound found with that ID", 404));
+  }
+
+  req.body.compound = compoundId;
+
+  const expense = await Expense.create(req.body);
+
+  res.status(201).json({
+    status: "success",
+    data: expense,
   });
 });
