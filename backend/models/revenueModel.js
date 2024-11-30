@@ -2,13 +2,10 @@ const mongoose = require("mongoose");
 
 const revenueSchema = new mongoose.Schema(
   {
-    note: {
-      type: String,
-      trim: true,
-    },
+    note: String,
     amount: {
       type: Number,
-      min: 1,
+      min: 0,
       required: true,
     },
     dueDate: {
