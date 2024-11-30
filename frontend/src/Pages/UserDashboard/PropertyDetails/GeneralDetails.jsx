@@ -29,6 +29,8 @@ import propDetailsImage2 from "../../../assets/propDetails2.png";
 import { faBuilding } from "@fortawesome/free-regular-svg-icons";
 import UpdateEstate from "../PropertyForms/UpdateEstate";
 import AOS from "aos";
+import CurrentContract from "./CurrentContract";
+import CompoundContracts from "./CompoundContracts";
 
 const GeneralDetails = ({
   details,
@@ -108,7 +110,7 @@ const GeneralDetails = ({
               <li>
                 <span className={styles.title}>
                   <FontAwesomeIcon
-                    className={`${isArLang ? "ms-2" : "me-2"} color-main`}
+                    className={`${isArLang ? "ms-2" : "me-2"} text-primary`}
                     icon={faLocationDot}
                   />
                   {key("address")}
@@ -186,7 +188,9 @@ const GeneralDetails = ({
               <li>
                 <span className={styles.title}>
                   <FontAwesomeIcon
-                    className={`${isArLang ? "ms-2" : "me-2"}`}
+                    className={`${
+                      isArLang ? "ms-2" : "me-2"
+                    } text-primary-emphasis`}
                     icon={faBuildingUser}
                   />
                   {key("agent")}
@@ -309,7 +313,7 @@ const GeneralDetails = ({
             <Row>
               {details.tags?.length > 0 ? (
                 details.tags.map((tag, index) => (
-                  <Col key={`${tag}_${index}`} sm={2}>
+                  <Col key={`${tag}_${index}`} sm={3}>
                     <div className={styles.tag}>
                       <span>{tag}</span>
                     </div>
@@ -326,12 +330,16 @@ const GeneralDetails = ({
       </Row>
 
       {isCompound ? (
-        <CompoundEstates
-          compoundEstates={compoundEstates}
-          showAddEstatesModal={showAddEstatesModal}
-        />
+        <>
+          <CompoundEstates
+            compoundEstates={compoundEstates}
+            showAddEstatesModal={showAddEstatesModal}
+          />
+          <CompoundContracts compoundEstates={compoundEstates} />
+        </>
       ) : (
         <>
+          <CurrentContract />
           <Contracts />
           <Revenue />
         </>

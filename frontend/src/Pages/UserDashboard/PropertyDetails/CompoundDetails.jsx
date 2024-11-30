@@ -51,6 +51,7 @@ const CompoundDetails = () => {
 
   useEffect(() => {
     AOS.init();
+    window.scrollTo(0, 0)
   }, []);
 
   const deleteCompound = async () => {
