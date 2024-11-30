@@ -291,5 +291,9 @@
   "deleteAcc":"Delete Account",
   "country":"Country",
   "personalInfo":"Personal Information",
-  "searchTasks":"Search For Task"
+  "searchTasks":"Search For Task",
+  "currentContract":"Current Contract",
+  "currentContracts":"Current Contracts",
+  "view":"View",
+  "noCurrentContracts":"there is no current contracts"
 }

@@ -23,8 +23,11 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
 import AOS from "aos";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
+import { formattedDate } from "../../../Components/Logic/LogicFun";
 
 const PropertyDetails = () => {
+
+  const [isLoading,setIsLoading]=useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
   const { propId } = useParams();
@@ -37,6 +40,7 @@ const PropertyDetails = () => {
 
   useEffect(() => {
     AOS.init();
+    window.scrollTo(0, 0)
   }, []);
 
   const { data, isFetching, refetch } = useQuery({
@@ -47,6 +51,23 @@ const PropertyDetails = () => {
     enabled: propId && !!token,
   });
 
+  const { data: currentContract, refetch: refetchCurrentContract } = useQuery({
+    queryKey: ["currentContract", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: `estates/${propId}/contracts/current`,
+        token: token,
+      }),
+    enabled: propId && !!token,
+    staleTime: Infinity,
+  });
+
+  useEffect(()=>{
+    setIsLoading(true)
+    refetchCurrentContract()
+    setIsLoading(false)
+  },[refetchCurrentContract])
+
   useEffect(() => {
     if (data?.data?.inFavorites) {
       setIsMarked(true);
@@ -54,6 +75,7 @@ const PropertyDetails = () => {
       setIsMarked(false);
     }
   }, [data]);
+
 
   useEffect(() => {
     return () => refetch();
@@ -115,7 +137,7 @@ const PropertyDetails = () => {
     <>
       <ScrollTopBtn />
       <div className="height_container">
-        {isFetching ? (
+        {isFetching||isLoading ? (
           <LoadingOne />
         ) : data ? (
           <div className={styles.detials_content}>
@@ -267,37 +289,39 @@ const PropertyDetails = () => {
                   </div>
                 </Col>
               </Row>
-              <div className={styles.header_footer}>
-                <Row className="justify-content-around g-2">
-                  <Col
-                    sm={4}
-                    className="d-flex justify-content-center align-items-center"
-                  >
-                    <div className={styles.header_footerItem}>
-                      <span>{key("nextPaymentDue")}</span>
-                      <p>4/10/2025</p>
-                    </div>
-                  </Col>
-                  <Col
-                    sm={4}
-                    className="d-flex justify-content-center align-items-center"
-                  >
-                    <div className={styles.header_footerItem}>
-                      <span>{key("nextPaymentAmount")}</span>
-                      <p>3000 {key("sar")}</p>
-                    </div>
-                  </Col>
-                  <Col
-                    sm={4}
-                    className="d-flex justify-content-center align-items-center"
-                  >
-                    <div className={styles.header_footerItem}>
-                      <span>{key("endOfContract")}</span>
-                      <p>8/12/2027</p>
-                    </div>
-                  </Col>
-                </Row>
-              </div>
+              {currentContract?.data && (
+                <div className={styles.header_footer}>
+                  <Row className="justify-content-around g-2">
+                    <Col
+                      sm={4}
+                      className="d-flex justify-content-center align-items-center"
+                    >
+                      <div className={styles.header_footerItem}>
+                        <span>{key("nextPaymentDue")}</span>
+                        <p>4/10/2025</p>
+                      </div>
+                    </Col>
+                    <Col
+                      sm={4}
+                      className="d-flex justify-content-center align-items-center"
+                    >
+                      <div className={styles.header_footerItem}>
+                        <span>{key("nextPaymentAmount")}</span>
+                        <p>3000 {key("sar")}</p>
+                      </div>
+                    </Col>
+                    <Col
+                      sm={4}
+                      className="d-flex justify-content-center align-items-center"
+                    >
+                      <div className={styles.header_footerItem}>
+                        <span>{key("endOfContract")}</span>
+                        <p>{formattedDate(currentContract?.data?.endDate)}</p>
+                      </div>
+                    </Col>
+                  </Row>
+                </div>
+              )}
             </header>
             <section className={styles.tabs_section}>
               <Tabs defaultActiveKey="general" className="my-3" fill>

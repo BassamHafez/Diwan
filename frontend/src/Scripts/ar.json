@@ -287,5 +287,9 @@
   "deleteAcc":"حذف الحساب",
   "country":"البلد",
   "personalInfo":"المعلومات الشخصية",
-  "searchTasks":"ابحث عن مهمة"
+  "searchTasks":"ابحث عن مهمة",
+  "currentContract":"العقد الحالي",
+  "currentContracts":"العقود الحالية",
+  "view":"عرض",
+  "noCurrentContracts":"لا يوجد عقود حالية"
 }
