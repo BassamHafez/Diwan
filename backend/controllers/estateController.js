@@ -3,6 +3,7 @@ const sharp = require("sharp");
 
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
+const Expense = require("../models/expenseModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -204,5 +205,51 @@ exports.unfavoriteEstate = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: "success",
     message: "Estate removed from favorites",
+  });
+});
+
+// Estate expenses
+
+exports.getEstateExpenses = catchAsync(async (req, res, next) => {
+  const estateId = req.params.id;
+
+  const estatePromise = Estate.findById(estateId).select("_id").lean();
+  const expensesPromise = Expense.find({ estate: estateId })
+    .select("note amount dueDate type status paidAt paymentMethod")
+    .sort("dueDate")
+    .lean();
+
+  const [estate, expenses] = await Promise.all([
+    estatePromise,
+    expensesPromise,
+  ]);
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    results: expenses.length,
+    data: expenses,
+  });
+});
+
+exports.createEstateExpense = catchAsync(async (req, res, next) => {
+  const estateId = req.params.id;
+
+  const estate = await Estate.findById(estateId).select("_id").lean();
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  req.body.estate = estateId;
+
+  const expense = await Expense.create(req.body);
+
+  res.status(201).json({
+    status: "success",
+    data: expense,
   });
 });

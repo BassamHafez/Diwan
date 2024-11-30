@@ -1,5 +1,5 @@
 const Task = require("../models/taskModel");
-// const Expense = require("../models/expenseModel");
+const Expense = require("../models/expenseModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -64,21 +64,21 @@ exports.createTask = catchAsync(async (req, res, next) => {
     );
   }
 
-  // if (estate || compound) {
-  //   const expenseData = {
-  //     amount: cost,
-  //     dueDate: date,
-  //     type,
-  //     estate,
-  //     compound,
-  //     user: req.user.id,
-  //   };
+  if (estate || compound) {
+    const expenseData = {
+      amount: cost,
+      dueDate: date,
+      type,
+      estate,
+      compound,
+      user: req.user.id,
+    };
 
-  //   [task] = await Promise.all([
-  //     Task.create(req.body),
-  //     Expense.create(expenseData),
-  //   ]);
-  // }
+    [task] = await Promise.all([
+      Task.create(req.body),
+      Expense.create(expenseData),
+    ]);
+  }
 
   if (!task) {
     task = await Task.create(req.body);
