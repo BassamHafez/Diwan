@@ -279,5 +279,21 @@
   "cost":"Cost",
   "title":"Title",
   "taskDate":"Task Date",
-  "taskType":"Task Type"
+  "taskType":"Task Type",
+  "positiveOnlyValidation":"only positive numbers allowed",
+  "priority":"Priority",
+
+  "myProfile":"My Profile",
+  "main":"Main",
+  "subscription":"Subscription",
+  "admins":"Admins",
+  "security":"Security",
+  "deleteAcc":"Delete Account",
+  "country":"Country",
+  "personalInfo":"Personal Information",
+  "searchTasks":"Search For Task",
+  "currentContract":"Current Contract",
+  "currentContracts":"Current Contracts",
+  "view":"View",
+  "noCurrentContracts":"there is no current contracts"
 }

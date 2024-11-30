@@ -63,8 +63,10 @@ const Revenue = () => {
   });
 
   useEffect(() => {
-    refetch();
-  }, [refetch]);
+    if (token && propId) {
+      refetch();
+    }
+  }, [refetch,token,propId]);
 
   const getStatusBgColor = (status) => {
     switch (status) {

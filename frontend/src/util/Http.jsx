@@ -46,6 +46,10 @@ export const mainFormsHandlerTypeFormData = async ({
         },
       });
     } else {
+      if (!token) {
+        console.log("Unauthorized");
+        return null;
+      }
       response = await axios.get(`${baseServerUrl}${type}`, {
         headers: {
           Authorization: `Bearer ${token}`,
