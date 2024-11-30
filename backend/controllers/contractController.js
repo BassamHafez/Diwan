@@ -226,10 +226,28 @@ exports.getCurrentContract = catchAsync(async (req, res, next) => {
     isCanceled: false,
   })
     .populate(contractPopOptions)
+    .select(
+      "startDate endDate tenant totalAmount paymentPeriodValue paymentPeriodUnit isCanceled"
+    )
+    .lean();
+
+  if (!contract) {
+    return next(new ApiError("No current contract found", 404));
+  }
+
+  const nextRevenue = await Revenue.findOne({
+    contract: contract._id,
+    status: "pending",
+  })
+    .sort("dueDate")
+    .select("amount dueDate type status")
     .lean();
 
   res.status(200).json({
     status: "success",
-    data: contract,
+    data: {
+      contract,
+      nextRevenue,
+    },
   });
 });
