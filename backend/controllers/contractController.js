@@ -107,7 +107,9 @@ exports.createContract = catchAsync(async (req, res, next) => {
 });
 
 exports.cancelContract = catchAsync(async (req, res, next) => {
-  const contract = await Contract.findById(req.params.id)
+  const { id } = req.params;
+
+  const contract = await Contract.findById(id)
     .select("endDate isCanceled")
     .lean();
 
@@ -119,13 +121,23 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Cannot cancel a completed contract", 400));
   }
 
-  const updatedContract = await Contract.findByIdAndUpdate(
-    req.params.id,
+  const updateContractPromise = Contract.findByIdAndUpdate(
+    id,
     { isCanceled: true },
     { new: true }
   );
 
-  return res.status(200).json({
+  const cancelOldRevenuesPromise = Revenue.updateMany(
+    { contract: id, status: { $ne: "paid" } },
+    { status: "canceled" }
+  );
+
+  const [updatedContract] = await Promise.all([
+    updateContractPromise,
+    cancelOldRevenuesPromise,
+  ]);
+
+  res.status(200).json({
     status: "success",
     data: updatedContract,
   });
