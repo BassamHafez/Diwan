@@ -60,3 +60,22 @@ exports.cancelExpense = catchAsync(async (req, res, next) => {
     data: updatedExpense,
   });
 });
+
+exports.unpayExpense = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const updatedExpense = await Expense.findByIdAndUpdate(
+    id,
+    { status: "pending", paidAt: null, paymentMethod: null },
+    { new: true }
+  );
+
+  if (!updatedExpense) {
+    return next(new ApiError("No expense found with that ID", 404));
+  }
+
+  res.status(200).json({
+    status: "success",
+    data: updatedExpense,
+  });
+});
