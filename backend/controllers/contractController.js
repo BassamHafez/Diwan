@@ -244,7 +244,10 @@ exports.getCurrentContract = catchAsync(async (req, res, next) => {
     .lean();
 
   if (!contract) {
-    return next(new ApiError("No current contract found", 404));
+    return res.status(200).json({
+      status: "success",
+      data: null,
+    });
   }
 
   const nextRevenue = await Revenue.findOne({
