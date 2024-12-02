@@ -215,11 +215,11 @@ const Expenses = ({ isCompound }) => {
               <table className={`${styles.contract_table} table`}>
                 <thead className={styles.table_head}>
                   <tr>
-                    <th>{key("title")}</th>
                     <th>{key("type")}</th>
                     <th>{key("amount")}</th>
                     <th>{key("dueDate")}</th>
                     <th>{key("status")}</th>
+                    <th>{key("notes")}</th>
                     <th>{key("actions")}</th>
                   </tr>
                 </thead>
@@ -227,7 +227,6 @@ const Expenses = ({ isCompound }) => {
                 <tbody className={styles.table_body}>
                   {filteredExpenses.map((ex) => (
                     <tr key={ex._id}>
-                      <td>{ex.title ? ex.title : "-"}</td>
                       <td>{key(ex.type)}</td>
                       <td>{ex.amount}</td>
                       <td>{formattedDate(ex.dueDate)}</td>
@@ -242,6 +241,7 @@ const Expenses = ({ isCompound }) => {
                             : renamedExpensesStatusMethod(ex.status, "en")}
                         </span>
                       </td>
+                      <td className={styles.note_td}>{ex.note ? ex.note : "-"}</td>
                       <td>
                         <Dropdown>
                           <Dropdown.Toggle

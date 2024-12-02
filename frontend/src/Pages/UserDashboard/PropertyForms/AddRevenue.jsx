@@ -16,6 +16,7 @@ import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { revenueTypeOptions } from "../../../Components/Logic/StaticLists";
+import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const AddRevenue = ({ hideModal, refetch }) => {
   const [tenantsOption, setTenantOption] = useState([]);
@@ -40,10 +41,7 @@ const AddRevenue = ({ hideModal, refetch }) => {
   });
 
   useEffect(() => {
-    let myTenants = tenants?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant._id };
-    });
-    setTenantOption(myTenants);
+    setTenantOption(convertTpOptionsFormate(tenants?.data));
   }, [tenants]);
 
   const initialValues = {
@@ -61,12 +59,12 @@ const AddRevenue = ({ hideModal, refetch }) => {
       dueDate: values.dueDate,
       type: values.type,
     };
-    console.log(values)
+    console.log(values);
     if (values.note) {
       updatedValues.note = values.note;
     }
 
-    console.log(updatedValues)
+    console.log(updatedValues);
     mutate(
       {
         formData: updatedValues,
@@ -156,7 +154,11 @@ const AddRevenue = ({ hideModal, refetch }) => {
                 <Select
                   id="type"
                   name="type"
-                  options={isArLang?revenueTypeOptions["ar"]:revenueTypeOptions["en"]}
+                  options={
+                    isArLang
+                      ? revenueTypeOptions["ar"]
+                      : revenueTypeOptions["en"]
+                  }
                   onChange={(val) => setFieldValue("type", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}

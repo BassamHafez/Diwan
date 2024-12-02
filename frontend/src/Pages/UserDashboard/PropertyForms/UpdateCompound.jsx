@@ -24,6 +24,7 @@ import {
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
 import CreatableSelect from "react-select/creatable";
+import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -75,17 +76,11 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   }, [tags]);
 
   useEffect(() => {
-    let myLandlords = landlords?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant._id };
-    });
-    setlandlordOptions(myLandlords);
+    setlandlordOptions(convertTpOptionsFormate(landlords?.data));
   }, [landlords]);
 
   useEffect(() => {
-    let myBrokers = brokers?.data?.map((broker) => {
-      return { label: broker.name, value: broker._id };
-    });
-    setBrokersOptions(myBrokers);
+    setBrokersOptions(convertTpOptionsFormate(brokers?.data));
   }, [brokers]);
 
   const { mutate, isPending } = useMutation({
