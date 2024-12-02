@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {
   formattedDate,
+  getContractStatus,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
 import styles from "./Details.module.css";
@@ -16,7 +17,15 @@ import {
 const ContractDetails = ({ contract }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-    
+
+  const contractStatus = getContractStatus(
+    contract.contract?.isCanceled,
+    contract.contract?.startDate,
+    contract.contract?.endDate
+  );
+
+  const language = isArLang ? "ar" : "en";
+
   return (
     <div>
       <ul className={styles.details_list}>
@@ -29,7 +38,7 @@ const ContractDetails = ({ contract }) => {
             {key("amount")}
           </span>
           <span>
-            {contract.totalAmount} {key("sar")}
+            {contract.contract?.totalAmount} {key("sar")}
           </span>
         </li>
         <li>
@@ -40,7 +49,7 @@ const ContractDetails = ({ contract }) => {
             />
             {key("startContract")}
           </span>
-          <span>{formattedDate(contract.startDate)}</span>
+          <span>{formattedDate(contract.contract?.startDate)}</span>
         </li>
         <li>
           <span>
@@ -50,7 +59,7 @@ const ContractDetails = ({ contract }) => {
             />
             {key("endContract")}
           </span>
-          <span>{formattedDate(contract.endDate)}</span>
+          <span>{formattedDate(contract.contract?.endDate)}</span>
         </li>
         <li>
           <span>
@@ -60,7 +69,7 @@ const ContractDetails = ({ contract }) => {
             />
             {key("theTenant")}
           </span>
-          <span>{contract.tenant?.name}</span>
+          <span>{contract.contract?.tenant?.name}</span>
         </li>
         <li>
           <span>
@@ -70,7 +79,7 @@ const ContractDetails = ({ contract }) => {
             />
             {key("phone")}
           </span>
-          <span>{contract.tenant?.phone}</span>
+          <span>{contract.contract?.tenant?.phone}</span>
         </li>
         <li>
           <span>
@@ -80,7 +89,7 @@ const ContractDetails = ({ contract }) => {
             />
             {key("phone2")}
           </span>
-          <span>{contract.tenant?.phone2}</span>
+          <span>{contract.contract?.tenant?.phone2}</span>
         </li>
         <li>
           <span>
@@ -90,11 +99,7 @@ const ContractDetails = ({ contract }) => {
             />
             {key("status")}
           </span>
-          <span>
-            {isArLang
-              ? renamedContractStatus(contract.status, "ar")
-              : renamedContractStatus(contract.status, "en")}
-          </span>
+          <span>{renamedContractStatus(contractStatus, language)}</span>
         </li>
       </ul>
     </div>

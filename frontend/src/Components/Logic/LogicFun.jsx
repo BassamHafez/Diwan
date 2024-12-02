@@ -1,10 +1,11 @@
 // main fun
 export const formattedDate=(date)=>{
+  if(!date){
+    return "-";
+  }
   const formattedDate=new Date(date).toISOString().split("T")[0]
   return formattedDate
 }
-
-
 
 // estates
 const estateStatus = {
@@ -250,5 +251,23 @@ const paymentMethod = {
 
 export const renamedPaymentMethod = (type, language) => {
   const mappings = paymentMethod[language];
+  return mappings?.[type] || "";
+};
+
+
+//expenses
+export const expensesStatusOptions={
+  en:{
+    pending: "Pending",
+    paid: "Paid",
+  },
+  ar:{
+    pending: "معلقة",
+    paid: "مدفوعة",
+  }
+}
+
+export const renamedExpensesStatusMethod = (type, language) => {
+  const mappings = expensesStatusOptions[language];
   return mappings?.[type] || "";
 };

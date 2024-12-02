@@ -47,7 +47,7 @@ const AddNewContract = ({ hideModal, refetch }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
-  const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
 
   const { data: tenants, refetch: refetchTenants } = useQuery({
     queryKey: ["tenant", token],
@@ -127,14 +127,17 @@ const AddNewContract = ({ hideModal, refetch }) => {
       {
         onSuccess: (data) => {
           console.log(data);
-          if(data.response?.data?.message==="There is an contract overlapping with the selected dates"){
+          if (
+            data.response?.data?.message ===
+            "There is an contract overlapping with the selected dates"
+          ) {
             notifyError(key("contractOverlapping"));
             return;
           }
           if (data?.status === "success") {
             notifySuccess(key("addedSuccess"));
             refetch();
-            queryClient.invalidateQueries(["revenuesData", token])
+            queryClient.invalidateQueries(["revenuesData", token]);
             resetForm();
             hideModal();
           } else {
@@ -151,18 +154,7 @@ const AddNewContract = ({ hideModal, refetch }) => {
 
   const validationSchema = object({
     tenant: string().required(key("fieldReq")),
-    startDate: date()
-      .required(key("fieldReq"))
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      ),
+    startDate: date().required(key("fieldReq")),
     endDate: date()
       .required(key("fieldReq"))
       .test("is-greater", key("endDateValidation"), function (value) {

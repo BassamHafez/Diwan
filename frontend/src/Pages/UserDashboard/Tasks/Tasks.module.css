@@ -17,9 +17,8 @@
   background-color: white;
   height: 100%;
   margin-inline: 0.625rem !important;
-  padding: 1.25rem 0.625rem;
+  padding: 1.25rem 0.9375rem;
   border-radius: 1.25rem;
-  position: relative;
   overflow: hidden;
 }
 
@@ -115,11 +114,10 @@
   margin-inline: 8px;
   cursor: pointer;
   font-size: 17px;
-  transition: all .4s;
+  transition: scale .5s;
 }
 .controller div:last-child svg:hover{
-  transform: translateY(-5px);
-  scale:1.1
+  scale:1.2
 }
 @media screen and (max-width: 576px) {
   .filter_side {
