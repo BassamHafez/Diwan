@@ -36,6 +36,12 @@ router.patch(
 );
 
 router.patch(
+  "/:id/unpay",
+  expenseValidator.getExpenseValidator,
+  expenseController.unpayExpense
+);
+
+router.patch(
   "/:id/cancel",
   expenseValidator.getExpenseValidator,
   expenseController.cancelExpense
