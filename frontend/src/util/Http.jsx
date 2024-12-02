@@ -112,12 +112,12 @@ export const mainDeleteFunHandler = async ({ id, token, type }) => {
   }
 };
 
-export const mainEmptyBodyFun = async ({ id, token, type, method }) => {
+export const mainEmptyBodyFun = async ({ token, type, method }) => {
   let response;
   try {
     if (method === "post") {
       response = await axios.post(
-        `${import.meta.env.VITE_Base_API_URL}estates/${id}/${type}`,
+        `${import.meta.env.VITE_Base_API_URL}${type}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -125,7 +125,7 @@ export const mainEmptyBodyFun = async ({ id, token, type, method }) => {
       );
     } else if (method === "patch") {
       response = await axios.patch(
-        `${import.meta.env.VITE_Base_API_URL}estates/${id}/${type}`,
+        `${import.meta.env.VITE_Base_API_URL}${type}`,
         {},
         {
           headers: { Authorization: `Bearer ${token}` },

@@ -8,101 +8,100 @@ import styles from "./Details.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRotateForward,
-  faClock,
   faCoins,
   faPhone,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { faClock } from "@fortawesome/free-regular-svg-icons";
 
-const ContractDetails = ({ contract }) => {
+const ContractDetails = ({ contract, type }) => {
+  const contractData =
+    type !== "currentContract" ? contract : contract.contract;
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const contractStatus = getContractStatus(
-    contract.contract?.isCanceled,
-    contract.contract?.startDate,
-    contract.contract?.endDate
+    contractData?.isCanceled,
+    contractData?.startDate,
+    contractData?.endDate
   );
 
   const language = isArLang ? "ar" : "en";
+  const iconMarginClass=isArLang ? "ms-2" : "me-2";
 
   return (
-    <div>
+    <>
       <ul className={styles.details_list}>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faCoins}
-            />
-            {key("amount")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faCoins} />
+            </span>
+            <span>{key("amount")}</span>
           </span>
           <span>
-            {contract.contract?.totalAmount} {key("sar")}
+            {contractData?.totalAmount} {key("sar")}
           </span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faClock}
-            />
-            {key("startContract")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faClock} />
+            </span>
+            <span>{key("startContract")}</span>
           </span>
-          <span>{formattedDate(contract.contract?.startDate)}</span>
+          <span>{formattedDate(contractData?.startDate)}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faClock}
-            />
-            {key("endContract")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faClock} />
+            </span>
+            <span>{key("endContract")}</span>
           </span>
-          <span>{formattedDate(contract.contract?.endDate)}</span>
+          <span>{formattedDate(contractData?.endDate)}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faUser}
-            />
-            {key("theTenant")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faUser} />
+            </span>
+            <span>{key("theTenant")}</span>
           </span>
-          <span>{contract.contract?.tenant?.name}</span>
+          <span>{contractData?.tenant?.name}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faPhone}
-            />
-            {key("phone")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
+            </span>
+            <span>{key("phone")}</span>
           </span>
-          <span>{contract.contract?.tenant?.phone}</span>
+          <span>{contractData?.tenant?.phone}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faPhone}
-            />
-            {key("phone2")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
+            </span>
+            <span>{key("phone2")}</span>
           </span>
-          <span>{contract.contract?.tenant?.phone2}</span>
+          <span>{contractData?.tenant?.phone2}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faArrowRotateForward}
-            />
-            {key("status")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon
+                className={`color-main fs-5`}
+                icon={faArrowRotateForward}
+              />
+            </span>
+            <span>{key("status")}</span>
           </span>
           <span>{renamedContractStatus(contractStatus, language)}</span>
         </li>
       </ul>
-    </div>
+    </>
   );
 };
 

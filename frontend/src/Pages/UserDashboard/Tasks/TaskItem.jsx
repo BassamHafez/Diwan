@@ -144,7 +144,7 @@ const TaskItem = ({ task, refetch }) => {
             <FontAwesomeIcon icon={task?.compound?faBuilding:faCouch} className="text-secondary" />{" "}
             {task.compound ? task.compound.name :task.estate?.name||"---"}
           </h6>
-          <p className={styles.desc}>{task.description}</p>
+          <p className={styles.desc}>{task.description?task.description:"---"}</p>
           <hr className="w-50" />
           <div className={styles.controller}>
             <div>
