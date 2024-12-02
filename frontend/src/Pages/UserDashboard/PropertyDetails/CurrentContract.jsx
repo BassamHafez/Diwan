@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +12,7 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
+  generatePDF,
   getContractStatus,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
@@ -105,14 +105,6 @@ const CurrentContract = () => {
     <div className={styles.contracts_body}>
       <div className={styles.header}>
         <h4>{key("currentContract")}</h4>
-        <div>
-          <ButtonOne
-            classes="m-2"
-            borderd
-            color="white"
-            text={key("exportCsv")}
-          />
-        </div>
       </div>
 
       <div className={styles.contract_content}>
@@ -198,7 +190,7 @@ const CurrentContract = () => {
                 </tbody>
               </table>
             ) : (
-              <NoData text={key("noContracts")} />
+              <NoData text={key("noCurrentContracts")} />
             )
           ) : (
             <LoadingOne />
@@ -234,12 +226,25 @@ const CurrentContract = () => {
           show={showDetailsModal}
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
-          okBtn={key("print")}
-          // confirmFun={deleteRevenue}
+          okBtn={key("download")}
+          confirmFun={() =>
+            generatePDF(contractDetails.contract?._id, "CurrentContractDetails")
+          }
           title={key("contractDetails")}
           modalSize={"lg"}
         >
-          <ContractDetails contract={contractDetails} />
+          <ContractDetails contract={contractDetails} type="currentContract" />
+          <div className="d-none">
+            <div
+              id={`${contractDetails.contract?._id}`}
+              className="d-flex justify-content-center align-items-center flex-column"
+            >
+              <ContractDetails
+                contract={contractDetails}
+                type="currentContract"
+              />
+            </div>
+          </div>
         </MainModal>
       )}
     </div>

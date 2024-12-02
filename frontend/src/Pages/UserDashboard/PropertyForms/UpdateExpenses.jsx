@@ -1,9 +1,186 @@
-const UpdateExpenses = () => {
-  return (
-    <div>
-      update ex
-    </div>
-  )
-}
+import { useMutation } from "@tanstack/react-query";
+import { ErrorMessage, Field, Form, Formik } from "formik";
+import { date, number, object, string } from "yup";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Select from "react-select";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
+import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
+import { formattedDate } from "../../../Components/Logic/LogicFun";
 
-export default UpdateExpenses
+const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
+  const token = JSON.parse(localStorage.getItem("token"));
+  const { t: key } = useTranslation();
+  const requiredLabel = <span className="text-danger">*</span>;
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: mainFormsHandlerTypeRaw,
+  });
+
+  const initialValues = {
+    title: exDetails.title || "",
+    amount: exDetails.amount || "",
+    dueDate: formattedDate(exDetails.dueDate) || "",
+    note: exDetails.note || "",
+    type: isArLang
+      ? expensesTypeOptions["ar"]?.find((type) => type.value === exDetails.type)
+      : expensesTypeOptions["en"]?.find(
+          (type) => type.value === exDetails.type
+        ) || "",
+  };
+
+  const onSubmit = (values, { resetForm }) => {
+    const updatedValues = {
+      title: values.title,
+      amount: values.amount,
+      dueDate: values.dueDate,
+      type: values.type?.value,
+    };
+
+    if (values.note) {
+      updatedValues.note = values.note;
+    }
+
+    console.log(updatedValues);
+    mutate(
+      {
+        formData: updatedValues,
+        token: token,
+        method: "patch",
+        type: `expenses/${exDetails._id}`,
+      },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          if (data?.status === "success") {
+            refetch();
+            notifySuccess(key("updatedSucc"));
+            resetForm();
+            hideModal();
+          } else {
+            notifyError(key("wrong"));
+          }
+        },
+        onError: (error) => {
+          console.log(error);
+          notifyError(key("wrong"));
+        },
+      }
+    );
+  };
+
+  const validationSchema = object({
+    title: string().required(key("fieldReq")),
+    amount: number().required(key("fieldReq")),
+    dueDate: date().required(key("fieldReq")),
+    type: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .required(key("fieldReq")),
+    note: string(),
+  });
+
+  return (
+    <Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
+      enableReinitialize
+    >
+      {({ setFieldValue, values }) => (
+        <Form>
+          <Row>
+            <Col sm={12}>
+              <div className="field">
+                <label htmlFor="title">
+                  {key("title")} {requiredLabel}
+                </label>
+                <Field type="text" id="title" name="title" />
+                <ErrorMessage name="title" component={InputErrorMessage} />
+              </div>
+            </Col>
+
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="amount">
+                  {key("amount")} ({key("sarSmall")}) {requiredLabel}
+                </label>
+                <Field type="number" id="amount" name="amount" />
+                <ErrorMessage name="amount" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="type">
+                  {key("type")} {requiredLabel}
+                </label>
+                <Select
+                  id="type"
+                  name="type"
+                  value={values.type}
+                  options={
+                    isArLang
+                      ? expensesTypeOptions["ar"]
+                      : expensesTypeOptions["en"]
+                  }
+                  onChange={(val) => setFieldValue("type", val)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                />
+                <ErrorMessage name="type" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="dueDate">
+                  {key("dueDate2")}
+                  {requiredLabel}
+                </label>
+                <Field type="date" id="dueDate" name="dueDate" />
+                <ErrorMessage name="dueDate" component={InputErrorMessage} />
+              </div>
+            </Col>
+
+            <div className="field">
+              <label htmlFor="notes">{key("notes")}</label>
+              <Field
+                as="textarea"
+                className="text_area"
+                id="notes"
+                name="note"
+              />
+              <ErrorMessage name="note" component={InputErrorMessage} />
+            </div>
+
+            <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
+              <button onClick={hideModal} className="cancel_btn my-2">
+                {key("cancel")}
+              </button>
+
+              <button className="submit_btn my-2" type="submit">
+                {isPending ? (
+                  <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
+                ) : (
+                  key("update")
+                )}
+              </button>
+            </div>
+          </Row>
+        </Form>
+      )}
+    </Formik>
+  );
+};
+
+export default UpdateExpenses;

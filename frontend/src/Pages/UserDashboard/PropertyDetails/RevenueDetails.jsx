@@ -8,80 +8,79 @@ import styles from "./Details.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRotateForward,
-  faCalendar,
-  faClock,
   faCoins,
   faMoneyBill,
   faPhone,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faClock } from "@fortawesome/free-regular-svg-icons";
 
 const RevenueDetails = ({ revDetails }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const iconMarginClass=isArLang ? "ms-2" : "me-2";
 
   return (
-    <div>
+    <>
       <ul className={styles.details_list}>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faCoins}
-            />
-            {key("amount")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faCoins} />
+            </span>
+            <span> {key("amount")}</span>
           </span>
+
           <span>
             {revDetails.amount} {key("sar")}
           </span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faClock}
-            />
-            {key("dueDate")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faClock} />
+            </span>
+            <span>{key("dueDate")}</span>
           </span>
+
           <span>{formattedDate(revDetails.dueDate)}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faUser}
-            />
-            {key("tenant")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faUser} />
+            </span>
+            <span>{key("tenant")}</span>
           </span>
           <span>{revDetails.tenant?.name}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faPhone}
-            />
-            {key("phone")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
+            </span>
+            <span>{key("phone")}</span>
           </span>
           <span>{revDetails.tenant?.phone}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faPhone}
-            />
-            {key("phone2")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
+            </span>
+            <span>{key("phone2")}</span>
           </span>
           <span>{revDetails.tenant?.phone2}</span>
         </li>
         <li>
           <span>
-            <FontAwesomeIcon
-              className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-              icon={faArrowRotateForward}
-            />
-            {key("status")}
+            <span className={iconMarginClass}>
+              <FontAwesomeIcon
+                className={`color-main fs-5`}
+                icon={faArrowRotateForward}
+              />
+            </span>
+            <span>{key("status")}</span>
           </span>
           <span>
             {isArLang
@@ -92,11 +91,13 @@ const RevenueDetails = ({ revDetails }) => {
         {revDetails.paymentMethod && (
           <li>
             <span>
-              <FontAwesomeIcon
-                className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-                icon={faMoneyBill}
-              />
-              {key("paymentMethod")}
+              <span className={iconMarginClass}>
+                <FontAwesomeIcon
+                  className={`color-main fs-5`}
+                  icon={faMoneyBill}
+                />
+              </span>
+              <span>{key("paymentMethod")}</span>
             </span>
             <span>
               {isArLang
@@ -108,23 +109,26 @@ const RevenueDetails = ({ revDetails }) => {
         {revDetails.paidAt && (
           <li>
             <span>
-              <FontAwesomeIcon
-                className={`${isArLang ? "ms-2" : "me-2"} color-main fs-5`}
-                icon={faCalendar}
-              />
-              {key("paidAt")}
+              <span className={iconMarginClass}>
+                <FontAwesomeIcon
+                  className={`color-main fs-5`}
+                  icon={faCalendar}
+                />
+              </span>
+              <span>{key("paidAt")}</span>
             </span>
             <span>{formattedDate(revDetails.paidAt)}</span>
           </li>
         )}
       </ul>
+
       <div className={styles.notes}>
         <h5>{key("notes")}</h5>
         <div>
           <p>{revDetails.note ? revDetails.note : "-"}</p>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

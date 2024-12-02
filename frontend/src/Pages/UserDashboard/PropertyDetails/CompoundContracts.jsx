@@ -11,6 +11,7 @@ import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
   getContractStatus,
+  handleDownloadExcelSheet,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -75,14 +76,23 @@ const CompoundContracts = ({ compoundEstates }) => {
     <div className={styles.contracts_body}>
       <div className={styles.header}>
         <h4>{key("currentContracts")}</h4>
-        <div>
-          <ButtonOne
-            classes="m-2"
-            borderd
-            color="white"
-            text={key("exportCsv")}
-          />
-        </div>
+        {contractsData && contractsData?.data?.length > 0 && (
+          <div>
+            <ButtonOne
+              classes="m-2"
+              borderd
+              color="white"
+              text={key("exportCsv")}
+              onClick={() =>
+                handleDownloadExcelSheet(
+                  contractsData?.data,
+                  "CurrentContracts.xlsx",
+                  "CurrentContracts"
+                )
+              }
+            />
+          </div>
+        )}
       </div>
 
       <div className={styles.contract_content}>
@@ -156,7 +166,11 @@ const CompoundContracts = ({ compoundEstates }) => {
 
                           <Dropdown.Menu>
                             <Dropdown.Item
-                              onClick={() => navigate(`/estate-unit-details/${contract.estate}`)}
+                              onClick={() =>
+                                navigate(
+                                  `/estate-unit-details/${contract.estate}`
+                                )
+                              }
                               className="text-center"
                             >
                               {key("view")}
@@ -191,7 +205,7 @@ const CompoundContracts = ({ compoundEstates }) => {
           show={showDetailsModal}
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
-          okBtn={key("print")}
+          okBtn={key("download")}
           // confirmFun={deleteRevenue}
           title={key("contractDetails")}
           modalSize={"lg"}

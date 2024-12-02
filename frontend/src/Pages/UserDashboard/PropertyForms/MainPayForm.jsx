@@ -12,14 +12,16 @@ import { formattedDate } from "../../../Components/Logic/LogicFun";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 
-const PayRevenue = ({ hideModal, refetch, revId }) => {
+const MainPayForm = ({ hideModal, refetch, type,Id }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const { propId } = useParams();
+  const param = useParams();
+  
+  const endPoint= type==="rev"?`estates/${param.propId}/revenues/${Id}/pay`:`expenses/${Id}/pay`
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -36,7 +38,7 @@ const PayRevenue = ({ hideModal, refetch, revId }) => {
         formData: values,
         token: token,
         method: "patch",
-        type: `estates/${propId}/revenues/${revId}/pay`,
+        type: endPoint,
       },
       {
         onSuccess: (data) => {
@@ -58,7 +60,7 @@ const PayRevenue = ({ hideModal, refetch, revId }) => {
     );
   };
 
-  const validationSchema = object().shape({
+  const validationSchema = object({
     paymentMethod: string().required(key("fieldReq")),
     paidAt: date(),
   });
@@ -70,7 +72,7 @@ const PayRevenue = ({ hideModal, refetch, revId }) => {
       validationSchema={validationSchema}
       enableReinitialize
     >
-      {({ setFieldValue}) => (
+      {({ setFieldValue }) => (
         <Form>
           <div className="field mb-1">
             <label htmlFor="paymentMethod">
@@ -79,7 +81,11 @@ const PayRevenue = ({ hideModal, refetch, revId }) => {
             <Select
               id="paymentMethod"
               name="paymentMethod"
-              options={isArLang?paymentMethodOptions["ar"]:paymentMethodOptions["en"]}
+              options={
+                isArLang
+                  ? paymentMethodOptions["ar"]
+                  : paymentMethodOptions["en"]
+              }
               onChange={(val) => setFieldValue("paymentMethod", val.value)}
               className={`${isArLang ? "text-end" : "text-start"}`}
               isRtl={isArLang ? false : true}
@@ -114,4 +120,4 @@ const PayRevenue = ({ hideModal, refetch, revId }) => {
   );
 };
 
-export default PayRevenue;
+export default MainPayForm;
