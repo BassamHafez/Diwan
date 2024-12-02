@@ -41,6 +41,9 @@
   background-color: transparent;
   padding: 10px 0;
 }
+.note_td{
+  font-size: 14px;
+}
 .table_head tr th {
   background-color: #f8f9fd;
   text-align: center;

@@ -19,6 +19,7 @@ import { unitOptions } from "../../../Components/Logic/StaticLists";
 import {
   calculateDaysDifference,
   calculateRevenues,
+  convertTpOptionsFormate,
   filterTimeUnitDpendsOnDaysDifference,
   generatePeriodOptions,
 } from "../../../Components/Logic/LogicFun";
@@ -61,10 +62,7 @@ const AddNewContract = ({ hideModal, refetch }) => {
   });
 
   useEffect(() => {
-    let myTenants = tenants?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant._id };
-    });
-    setTenantsOptions(myTenants);
+    setTenantsOptions(convertTpOptionsFormate(tenants?.data));
   }, [tenants]);
 
   useEffect(() => {

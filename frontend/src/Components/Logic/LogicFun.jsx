@@ -9,8 +9,8 @@ export const formattedDate = (date) => {
 
 export const convertTpOptionsFormate = (arr) => {
   let arrOptions = [];
-  if (arr.length > 0) {
-    arrOptions = arr.find((val) => {
+  if (arr?.length > 0) {
+    arrOptions = arr.map((val) => {
       return { label: val.name, value: val._id };
     });
   }

@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { date, number, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -7,14 +7,19 @@ import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 import { useParams } from "react-router-dom";
-import { mainFormsHandlerTypeRaw } from "../../../util/Http";
+import {
+  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
+} from "../../../util/Http";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
+import { useEffect, useState } from "react";
+import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const AddExpenses = ({ hideModal, refetch, isCompound }) => {
-
+  const [contactServicesOptions, setContactServicesOptions] = useState([]);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -25,21 +30,35 @@ const AddExpenses = ({ hideModal, refetch, isCompound }) => {
 
   const myParam = isCompound ? params.compId : params.propId;
 
+  const { data: services } = useQuery({
+    queryKey: ["service", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "contacts/services",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    setContactServicesOptions(convertTpOptionsFormate(services?.data));
+  }, [services]);
+
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
   const initialValues = {
-    title: "",
     amount: "",
     dueDate: "",
     note: "",
     type: "",
+    contact: "",
   };
 
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = {
-      title: values.title,
       amount: values.amount,
       dueDate: values.dueDate,
       type: values.type,
@@ -52,6 +71,9 @@ const AddExpenses = ({ hideModal, refetch, isCompound }) => {
       updatedValues.estate = myParam;
     } else {
       updatedValues.compound = myParam;
+    }
+    if (values.contact) {
+      updatedValues.contact = values.contact;
     }
 
     console.log(updatedValues);
@@ -83,11 +105,11 @@ const AddExpenses = ({ hideModal, refetch, isCompound }) => {
   };
 
   const validationSchema = object({
-    title: string().required(key("fieldReq")),
     amount: number().required(key("fieldReq")),
     dueDate: date().required(key("fieldReq")),
     type: string().required(key("fieldReq")),
     note: string(),
+    contact: string().nullable(),
   });
 
   return (
@@ -99,16 +121,6 @@ const AddExpenses = ({ hideModal, refetch, isCompound }) => {
       {({ setFieldValue }) => (
         <Form>
           <Row>
-            <Col sm={12}>
-              <div className="field">
-                <label htmlFor="title">
-                  {key("title")} {requiredLabel}
-                </label>
-                <Field type="text" id="title" name="title" />
-                <ErrorMessage name="title" component={InputErrorMessage} />
-              </div>
-            </Col>
-
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="amount">
@@ -149,7 +161,24 @@ const AddExpenses = ({ hideModal, refetch, isCompound }) => {
                 <ErrorMessage name="dueDate" component={InputErrorMessage} />
               </div>
             </Col>
-
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="contact">{key("singleContactType")}</label>
+                <Select
+                  id="contact"
+                  name="contact"
+                  options={contactServicesOptions}
+                  onChange={(val) =>
+                    setFieldValue("contact", val ? val.value : null)
+                  }
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                  isClearable
+                />
+                <ErrorMessage name="contact" component={InputErrorMessage} />
+              </div>
+            </Col>
             <div className="field">
               <label htmlFor="notes">{key("notes")}</label>
               <Field
