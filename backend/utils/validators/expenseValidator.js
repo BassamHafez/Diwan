@@ -20,6 +20,8 @@ exports.createExpenseValidator = [
     .isDate()
     .withMessage("Due date must be a valid date"),
 
+  check("contact").optional().isMongoId().withMessage("Invalid contact id"),
+
   check("type")
     .exists()
     .withMessage("Type is required")
@@ -85,6 +87,8 @@ exports.updateExpenseValidator = [
     .optional()
     .isDate()
     .withMessage("Due date must be a valid date"),
+
+  check("contact").optional().isMongoId().withMessage("Invalid contact id"),
 
   check("type")
     .optional()

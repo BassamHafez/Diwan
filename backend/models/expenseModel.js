@@ -15,6 +15,10 @@ const expenseSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    contact: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ServiceContact",
+    },
     type: {
       type: String,
       enum: ["purchases", "maintenance", "other"],
