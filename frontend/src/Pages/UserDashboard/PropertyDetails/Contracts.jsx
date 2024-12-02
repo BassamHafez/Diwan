@@ -17,7 +17,9 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
+  generatePDF,
   getContractStatus,
+  handleDownloadExcelSheet,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -63,14 +65,14 @@ const Contracts = () => {
     if (token && propId) {
       refetch();
     }
-  }, [refetch,token,propId]);
+  }, [refetch, token, propId]);
 
   const getStatusBgColor = (status) => {
     switch (status) {
       case "active":
         return styles.green;
-      case "pending":
-        return styles.orange;
+      case "completed":
+        return styles.blue;
       case "canceled":
         return styles.red;
       case "upcoming":
@@ -116,12 +118,21 @@ const Contracts = () => {
       <div className={styles.header}>
         <h4>{key("contracts")}</h4>
         <div>
-          <ButtonOne
-            classes="m-2"
-            borderd
-            color="white"
-            text={key("exportCsv")}
-          />
+          {contractsData && contractsData?.data?.length > 0 && (
+            <ButtonOne
+              classes="m-2"
+              borderd
+              color="white"
+              text={key("exportCsv")}
+              onClick={() =>
+                handleDownloadExcelSheet(
+                  contractsData?.data,
+                  "Contracts.xlsx",
+                  "Contracts"
+                )
+              }
+            />
+          )}
           <ButtonOne
             onClick={() => setShowAddContractModal(true)}
             classes="m-2 bg-navy"
@@ -297,12 +308,20 @@ const Contracts = () => {
           show={showDetailsModal}
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
-          okBtn={key("print")}
-          // confirmFun={deleteRevenue}
+          okBtn={key("download")}
+          confirmFun={() => generatePDF(contractDetails._id,"contractDetails")}
           title={key("contractDetails")}
           modalSize={"lg"}
         >
           <ContractDetails contract={contractDetails} />
+          <div className="d-none">
+            <div
+              id={`${contractDetails._id}`}
+              className="d-flex justify-content-center align-items-center flex-column"
+            >
+              <ContractDetails contract={contractDetails} />
+            </div>
+          </div>
         </MainModal>
       )}
     </div>

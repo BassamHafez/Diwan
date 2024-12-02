@@ -23,6 +23,7 @@ import {
   taskTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
 import styles from "./TaskForms.module.css";
+import { convertTpOptionsFormate } from "../../../../Components/Logic/LogicFun";
 
 const AddTask = ({ hideModal, refetch }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
@@ -64,34 +65,10 @@ const AddTask = ({ hideModal, refetch }) => {
   });
 
   useEffect(() => {
-    let estateOptions;
-    if (estates) {
-      estateOptions = estates.data?.map((estate) => {
-        return { label: estate.name, value: estate._id };
-      });
-      setEstatesOptions(estateOptions);
-    }
-  }, [estates]);
-
-  useEffect(() => {
-    let compoundOptions;
-    if (compounds) {
-      compoundOptions = compounds.data?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-      setCompoundsOptions(compoundOptions);
-    }
-  }, [compounds]);
-
-  useEffect(() => {
-    let contactOptions;
-    if (services) {
-      contactOptions = services.data?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    setContactsOptions(contactOptions);
-  }, [services]);
+    setEstatesOptions(convertTpOptionsFormate(estates?.data));
+    setCompoundsOptions(convertTpOptionsFormate(compounds?.data));
+    setContactsOptions(convertTpOptionsFormate(services.data));
+  }, [estates, compounds,services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -101,9 +78,9 @@ const AddTask = ({ hideModal, refetch }) => {
     title: "",
     description: "",
     date: "",
-    estate: "", //estate or compount
+    estate: "",
     compound: "",
-    contact: "", //optional
+    contact: "",
     type: "",
     cost: "",
     priority: "",
@@ -112,7 +89,6 @@ const AddTask = ({ hideModal, refetch }) => {
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = {
       title: values.title,
-      description: values.description,
       date: values.date,
       type: values.type,
       cost: values.cost,
@@ -127,6 +103,9 @@ const AddTask = ({ hideModal, refetch }) => {
 
     if (values.contact) {
       updatedValues.contact = values.contact;
+    }
+    if (values.description) {
+      updatedValues.description = values.description;
     }
 
     console.log(updatedValues);
@@ -159,22 +138,26 @@ const AddTask = ({ hideModal, refetch }) => {
 
   const validationSchema = object({
     title: string().required(key("fieldReq")),
-    description: string().required(key("fieldReq")),
     date: date().required(key("fieldReq")),
-    estate: object().shape({
-      label: string(),
-      value: string(),
-    }).nullable(),
-    compound: object().shape({
-      label: string(),
-      value: string(),
-    }).nullable(),
+    estate: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .nullable(),
+    compound: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .nullable(),
     contact: string().nullable(),
     type: string().required(key("fieldReq")),
     cost: number()
       .min(0, key("positiveOnlyValidation"))
       .required(key("fieldReq")),
     priority: string().required(key("fieldReq")),
+    description: string(),
   });
 
   return (
@@ -230,7 +213,9 @@ const AddTask = ({ hideModal, refetch }) => {
                   id="contact"
                   name="contact"
                   options={contactsOptions}
-                  onChange={(val) => setFieldValue("contact", val?val.value:null)}
+                  onChange={(val) =>
+                    setFieldValue("contact", val ? val.value : null)
+                  }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
@@ -276,7 +261,9 @@ const AddTask = ({ hideModal, refetch }) => {
                     name="estate"
                     options={estatesOptions}
                     value={values.estate}
-                    onChange={(val) => setFieldValue("estate", val?val:null)}
+                    onChange={(val) =>
+                      setFieldValue("estate", val ? val : null)
+                    }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? false : true}
                     placeholder={isArLang ? "" : "select"}
@@ -292,7 +279,9 @@ const AddTask = ({ hideModal, refetch }) => {
                     name="compound"
                     options={compoundsOptions}
                     value={values.compound}
-                    onChange={(val) => setFieldValue("compound", val?val:null)}
+                    onChange={(val) =>
+                      setFieldValue("compound", val ? val : null)
+                    }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? false : true}
                     placeholder={isArLang ? "" : "select"}

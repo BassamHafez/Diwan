@@ -1,11 +1,42 @@
 // main fun
-export const formattedDate=(date)=>{
-  if(!date){
+export const formattedDate = (date) => {
+  if (!date) {
     return "-";
   }
-  const formattedDate=new Date(date).toISOString().split("T")[0]
-  return formattedDate
-}
+  const formattedDate = new Date(date).toISOString().split("T")[0];
+  return formattedDate;
+};
+
+export const convertTpOptionsFormate = (arr) => {
+  let arrOptions = [];
+  if (arr.length > 0) {
+    arrOptions = arr.find((val) => {
+      return { label: val.name, value: val._id };
+    });
+  }
+  return arrOptions;
+};
+
+import * as XLSX from "xlsx";
+export const handleDownloadExcelSheet = (data, name, title) => {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(data);
+  XLSX.utils.book_append_sheet(wb, ws, `${title}`);
+
+  XLSX.writeFile(wb, `${name}`);
+};
+
+import html2pdf from "html2pdf.js";
+export const generatePDF = (id, name) => {
+  const element = document.getElementById(`${id}`);
+  const options = {
+    margin: 10,
+    filename: name?name:"file",
+    html2canvas: { scale: 4 },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+  };
+  html2pdf(element, options);
+};
 
 // estates
 const estateStatus = {
@@ -28,8 +59,8 @@ export const renamedEstateStatus = (type, language) => {
 
 //compounds
 export const calculateRentedPercentage = (rented, total) => {
-  if(total===0||rented===0){
-    return 0
+  if (total === 0 || rented === 0) {
+    return 0;
   }
   const percentage = (rented / total) * 100;
   return Number.isInteger(percentage) ? percentage : percentage.toFixed(1);
@@ -133,7 +164,6 @@ export const filterTimeUnitDpendsOnDaysDifference = (
   return filteredUnits;
 };
 
-
 const contractStatus = {
   en: {
     active: "Active",
@@ -145,7 +175,7 @@ const contractStatus = {
     active: "ساري",
     upcoming: "قادم",
     canceled: "ملغي",
-    completed: "اكتمل",
+    completed: "مكتمل",
   },
 };
 
@@ -174,15 +204,21 @@ export const getContractStatus = (isCanceled, startDate, endDate) => {
 
 // revenues
 
-export const calculateRevenues = (totalAmount,paymentPeriodValue,paymentPeriodUnit,startDate,endDate) => {
+export const calculateRevenues = (
+  totalAmount,
+  paymentPeriodValue,
+  paymentPeriodUnit,
+  startDate,
+  endDate
+) => {
   const revenues = [];
   const start = new Date(startDate);
   const end = new Date(endDate);
   const unitMultipliers = {
     day: 1,
     week: 7,
-    month: 30, 
-    year: 365, 
+    month: 30,
+    year: 365,
   };
 
   if (!unitMultipliers[paymentPeriodUnit]) {
@@ -254,18 +290,19 @@ export const renamedPaymentMethod = (type, language) => {
   return mappings?.[type] || "";
 };
 
-
 //expenses
-export const expensesStatusOptions={
-  en:{
+export const expensesStatusOptions = {
+  en: {
     pending: "Pending",
     paid: "Paid",
+    cancelled: "Cancelled",
   },
-  ar:{
+  ar: {
     pending: "معلقة",
     paid: "مدفوعة",
-  }
-}
+    cancelled: "ملغية",
+  },
+};
 
 export const renamedExpensesStatusMethod = (type, language) => {
   const mappings = expensesStatusOptions[language];

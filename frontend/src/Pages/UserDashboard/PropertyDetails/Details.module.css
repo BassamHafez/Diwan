@@ -1,11 +1,13 @@
 .details_list {
+    width: 100%;
     margin: 0.625rem 0;
 }
 .details_list li{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 5px;
+    padding: 1.25rem 0;
+    margin-inline: 0.3125rem;
     border-bottom: 0.0625rem solid rgb(223, 223, 223);
 }
 .details_list li span:first-child{
@@ -18,8 +20,8 @@
 }
 .notes{
     text-align: start;
-    margin-top: 20px;
-    
+    margin: 1.25rem 0.625rem 0.3125rem 0.625rem;
+    width: 100%;
 }
 .notes div{
     background-color: var(--sky);

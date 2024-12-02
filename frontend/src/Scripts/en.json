@@ -296,12 +296,18 @@
   "currentContracts":"Current Contracts",
   "view":"View",
   "noCurrentContracts":"there is no current contracts",
-  "noTasks":"No Tasks today!",
+  "noTasks":"No Tasks right now!",
   "done":"Done",
   "unFinished":"Un Finished",
   "finishedSucc":"Finished Task",
   "unFinishedSucc":"Unfinished Task",
   "expenses":"Expenses",
   "addExpenses":"Add Expenses",
-  "searchExpenses":"Search For Expenses"
+  "searchExpenses":"Search For Expenses",
+  "noExpenses":"No Expenses on you right now",
+  "dueDate2":"Due Date",
+  "fullyDelete":"Delete permanently",
+  "canceledSucc":"Canceled successfully",
+  "expensesDetails":"Expenses Details",
+  "download":"Download"
 }

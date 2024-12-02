@@ -71,6 +71,10 @@
   background-color: rgb(247, 247, 212);
   color: rgb(157, 162, 8);
 }
+.blue{
+  background-color: rgba(0, 98, 255, 0.232);
+  color:rgb(5, 70, 126)
+}
 .dropdown_menu{
   background-color: transparent !important;
   border: none !important;

@@ -292,12 +292,18 @@
   "currentContracts": "العقود الحالية",
   "view": "عرض",
   "noCurrentContracts": "لا يوجد عقود حالية",
-  "noTasks": "لا توجد مهام اليوم",
+  "noTasks": "لا توجد مهام في الوقت الحالي",
   "done": "انتهت",
   "unFinished": "غير منتهية",
   "finishedSucc":"مهمة منتهية",
   "unFinishedSucc":"مهمة غير منتهية",
   "expenses":"المصروفات",
   "addExpenses":"إضافة مصروفات",
-  "searchExpenses":"ابحث عن المصروفات"
+  "searchExpenses":"ابحث عن المصروفات",
+  "noExpenses":"لا مصروفات عليك في الوقت الحالي",
+  "dueDate2":"تاريخ الدفعة",
+  "fullyDelete":"حذف نهائي",
+  "canceledSucc":"تم الإلغاء بنجاح",
+  "expensesDetails":"تفاصيل المصروفات",
+  "download":"تحميل"
 }
