@@ -460,13 +460,13 @@ export const estateStatus = {
 export const taskTypeOptions={
   en:[
     {label:"Maintenance",value:"maintenance"},
-    {label:"Purchase",value:"purchase"},
+    {label:"Purchases",value:"purchases"},
     {label:"Reminder",value:"reminder"},
     {label:"Other",value:"other"},
   ],
   ar:[
     {label:"صيانة",value:"maintenance"},
-    {label:"مشتريات",value:"purchase"},
+    {label:"مشتريات",value:"purchases"},
     {label:"تذكير",value:"reminder"},
     {label:"أخري",value:"other"},
   ]
@@ -475,13 +475,25 @@ export const taskTypeOptions={
 export const prioritysOptions={
   en:[
     {label:"Low",value:"low"},
-    {label:"Mid",value:"mid"},
+    {label:"Medium",value:"medium"},
     {label:"High",value:"high"},
-  ],
+  ],  
   ar:[
     {label:"منخفضة",value:"low"},
-    {label:"متوسطة",value:"mid"},
+    {label:"متوسطة",value:"medium"},
     {label:"عالية",value:"high"}
+  ]
+}
+
+//expenses
+export const expensesStatusOptions={
+  en:[
+    {label:"Pending",value:"pending"},
+    {label:"Paid",value:"paid"},
+  ],
+  ar:[
+    {label:"معلقة",value:"pending"},
+    {label:"مدفوعة",value:"paid"},
   ]
 }
 
@@ -716,69 +728,6 @@ export const imgHash = {
   defaultImg: "LSMZ?q9Ge.WB?w%1xvRj-:aeM{t7",
 };
 
-// demo for test
 
-export const tasksData = [
-  {
-    _id: "1",
-    title: "إصلاح التكييف",
-    description: "إصلاح التكييف في الشقة رقم 12.",
-    taskDate: "2024-11-30",
-    compound: "شقة في المعادي",
-    contact: "محمد أحمد",
-    taskType: "maintenance",
-    cost: "500",
-    user: "حسين حمادة",
-    priority: "high",
-  },
-  {
-    _id: "2",
-    title: "شراء أثاث جديد",
-    description: "شراء أثاث لغرفة المعيشة في العقار رقم 8.",
-    taskDate: "2024-12-05",
-    compound: "فيلا في التجمع الخامس",
-    contact: "فاطمة حسين",
-    taskType: "purchase",
-    cost: "3000",
-    user: "حسين حمادة",
-    priority: "mid",
-  },
-  {
-    _id: "3",
-    title: "تذكير بتجديد العقد",
-    description: "تذكير بتجديد عقد الإيجار في الشقة رقم 3.",
-    taskDate: "2024-12-10",
-    compound: "شقة في مدينة نصر",
-    contact: "سامي عبد الله",
-    taskType: "reminder",
-    cost: "0",
-    user: "حسين حمادة",
-    priority: "low",
-  },
-  {
-    _id: "4",
-    title: "فحص الخزان",
-    description: "فحص حالة الخزان في العقار رقم 15.",
-    taskDate: "2024-12-15",
-    compound: "شقة في المهندسين",
-    contact: "أحمد مصطفى",
-    taskType: "maintenance",
-    cost: "200",
-    user: "حسين حمادة",
-    priority: "low",
-  },
-  {
-    _id: "5",
-    title: "استشارة قانونية",
-    description: "استشارة محامي بشأن تحديث عقد الإيجار.",
-    taskDate: "2024-12-20",
-    compound: "شقة في الزمالك",
-    contact: "مريم علي",
-    taskType: "other",
-    cost: "400",
-    user: "حسين حمادة",
-    priority: "high",
-  },
-];
 
 

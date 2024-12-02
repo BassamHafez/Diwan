@@ -270,7 +270,7 @@
   "mid":"Mid Priority",
   "high":"High Priority",
   "maintenance":"Maintenance",
-  "purchase":"Purchase",
+  "purchases":"Purchases",
   "reminder":"Reminder",
   "other":"Other",
   "time":"Time",
@@ -295,5 +295,13 @@
   "currentContract":"Current Contract",
   "currentContracts":"Current Contracts",
   "view":"View",
-  "noCurrentContracts":"there is no current contracts"
+  "noCurrentContracts":"there is no current contracts",
+  "noTasks":"No Tasks today!",
+  "done":"Done",
+  "unFinished":"Un Finished",
+  "finishedSucc":"Finished Task",
+  "unFinishedSucc":"Unfinished Task",
+  "expenses":"Expenses",
+  "addExpenses":"Add Expenses",
+  "searchExpenses":"Search For Expenses"
 }

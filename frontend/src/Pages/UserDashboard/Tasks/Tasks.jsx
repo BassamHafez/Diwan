@@ -22,10 +22,13 @@ import {
   faWrench,
 } from "@fortawesome/free-solid-svg-icons";
 import TaskItem from "./TaskItem";
-import { tasksData } from "../../../Components/Logic/StaticLists";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useState } from "react";
 import AddTask from "./TaskForms/AddTask";
+import { useQuery } from "@tanstack/react-query";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import NoData from "../../../Components/UI/Blocks/NoData";
+import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 
 const Tasks = () => {
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
@@ -33,6 +36,19 @@ const Tasks = () => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   let iconClass = isArLang ? "ms-2" : "me-2";
+  const token = JSON.parse(localStorage.getItem("token"));
+
+  const { data: tasks, refetch } = useQuery({
+    queryKey: ["tasks", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "tasks",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
+
   return (
     <>
       <div className={`${styles.main_container} height_container`}>
@@ -158,7 +174,7 @@ const Tasks = () => {
           </Col>
 
           <Col sm={8} lg={9} xl={10}>
-            <Row className={`${styles.tasks_content} gy-3`}>
+            <div className={`${styles.tasks_content} `}>
               <div
                 className="d-flex justify-content-between align-items-center flex-wrap"
                 style={{ height: "fit-content" }}
@@ -175,10 +191,20 @@ const Tasks = () => {
                   />
                 </div>
               </div>
-              {tasksData.map((task) => (
-                <TaskItem key={task._id} task={task} />
-              ))}
-            </Row>
+              <Row className="mt-3 gy-3 position-relative" style={{minHeight:"50vh"}}>
+                {tasks ? (
+                  tasks.data.length > 0 ? (
+                    tasks.data?.map((task) => (
+                      <TaskItem key={task._id} task={task} refetch={refetch} />
+                    ))
+                  ) : (
+                    <NoData type="tasks" text={key("noTasks")} />
+                  )
+                ) : (
+                  <LoadingOne />
+                )}
+              </Row>
+            </div>
           </Col>
         </Row>
       </div>
@@ -190,7 +216,7 @@ const Tasks = () => {
         >
           <AddTask
             hideModal={() => setShowAddTaskModal(false)}
-            // refetch={refetch}
+            refetch={refetch}
           />
         </ModalForm>
       )}

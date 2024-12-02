@@ -37,7 +37,7 @@ const CurrentContract = () => {
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  
+
   const {
     data: currentContract,
     isFetching,
@@ -58,7 +58,6 @@ const CurrentContract = () => {
       refetch();
     }
   }, [refetch, token, propId]);
-
 
   const getStatusBgColor = (status) => {
     switch (status) {
@@ -94,6 +93,14 @@ const CurrentContract = () => {
     }
   };
 
+  const contractStatus = getContractStatus(
+    currentContract?.data?.contract?.isCanceled,
+    currentContract?.data?.contract?.startDate,
+    currentContract?.data?.contract?.endDate
+  );
+
+  const language = isArLang ? "ar" : "en";
+
   return (
     <div className={styles.contracts_body}>
       <div className={styles.header}>
@@ -125,38 +132,24 @@ const CurrentContract = () => {
                 </thead>
 
                 <tbody className={styles.table_body}>
-                  <tr key={currentContract?.data._id}>
-                    <td>{currentContract?.data.tenant?.name}</td>
-                    <td>{formattedDate(currentContract?.data.startDate)}</td>
-                    <td>{formattedDate(currentContract?.data.endDate)}</td>
-                    <td>{currentContract?.data.totalAmount}</td>
+                  <tr key={currentContract?.data?.contract?._id}>
+                    <td>{currentContract?.data.contract?.tenant?.name}</td>
+                    <td>
+                      {formattedDate(
+                        currentContract?.data?.contract?.startDate
+                      )}
+                    </td>
+                    <td>
+                      {formattedDate(currentContract?.data?.contract?.endDate)}
+                    </td>
+                    <td>{currentContract?.data?.contract?.totalAmount}</td>
                     <td>
                       <span
-                        className={`${getStatusBgColor(
-                          getContractStatus(
-                            currentContract?.data.isCanceled,
-                            currentContract?.data.startDate,
-                            currentContract?.data.endDate
-                          )
-                        )} ${styles.status_span}`}
+                        className={`${getStatusBgColor(contractStatus)} ${
+                          styles.status_span
+                        }`}
                       >
-                        {isArLang
-                          ? renamedContractStatus(
-                              getContractStatus(
-                                currentContract?.data.isCanceled,
-                                currentContract?.data.startDate,
-                                currentContract?.data.endDate
-                              ),
-                              "ar"
-                            )
-                          : renamedContractStatus(
-                              getContractStatus(
-                                currentContract?.data.isCanceled,
-                                currentContract?.data.startDate,
-                                currentContract?.data.endDate
-                              ),
-                              "en"
-                            )}
+                        {renamedContractStatus(contractStatus, language)}
                       </span>
                     </td>
                     <td>
@@ -180,7 +173,9 @@ const CurrentContract = () => {
                           </Dropdown.Item>
                           <Dropdown.Item
                             onClick={() => {
-                              setContractId(currentContract?.data._id);
+                              setContractId(
+                                currentContract?.data?.contract?._id
+                              );
                               setShowDeleteModal(true);
                             }}
                             className="text-center"
@@ -219,7 +214,7 @@ const CurrentContract = () => {
           <UpdateContract
             hideModal={() => setShowUpdateContractModal(false)}
             refetch={refetch}
-            contract={contractDetails}
+            contract={contractDetails.contract}
           />
         </ModalForm>
       )}

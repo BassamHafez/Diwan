@@ -18,10 +18,13 @@ import {
   prioritysOptions,
   taskTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
+import { formattedDate } from "../../../../Components/Logic/LogicFun";
 
 const UpdateTask = ({ hideModal, refetch, task }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [contactsOptions, setContactsOptions] = useState([]);
+  const [estatesOptions, setEstatesOptions] = useState([]);
+
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -37,11 +40,19 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
     staleTime: Infinity,
   });
 
-  const { data: contacts } = useQuery({
-    queryKey: ["contacts", token],
+  const { data: estates } = useQuery({
+    queryKey: ["estates", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({ type: "estates", token: token }),
+    enabled: !!token,
+    staleTime: Infinity,
+  });
+
+  const { data: services } = useQuery({
+    queryKey: ["service", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: "contacts",
+        type: "contacts/services",
         token: token,
       }),
     staleTime: Infinity,
@@ -49,24 +60,34 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
   });
 
   useEffect(() => {
+    let estateOptions;
+    if (estates) {
+      estateOptions = estates.data?.map((estate) => {
+        return { label: estate.name, value: estate._id };
+      });
+      setEstatesOptions(estateOptions);
+    }
+  }, [estates]);
+
+  useEffect(() => {
     let compoundOptions;
     if (compounds) {
       compoundOptions = compounds.data?.map((compound) => {
         return { label: compound.name, value: compound._id };
       });
+      setCompoundsOptions(compoundOptions);
     }
-    setCompoundsOptions(compoundOptions);
   }, [compounds]);
 
   useEffect(() => {
     let contactOptions;
-    if (contacts) {
-      contactOptions = contacts.data?.map((compound) => {
+    if (services) {
+      contactOptions = services.data?.map((compound) => {
         return { label: compound.name, value: compound._id };
       });
     }
     setContactsOptions(contactOptions);
-  }, [contacts]);
+  }, [services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -75,12 +96,25 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
   const initialValues = {
     title: task.title || "",
     description: task.description || "",
-    taskDate: task.taskDate || "",
-    compound:
-      compoundsOptions?.find((comp) => comp.value === task.compound) || "",
-    contact:
-      contactsOptions?.find((contact) => contact.value === task.contact) || "",
-    taskType: task.taskType || "",
+    date: formattedDate(task.date) || "",
+    compound: task.compound
+      ? compoundsOptions?.find((comp) => comp.value === task.compound._id) || ""
+      : "",
+    estate: task.estate
+      ? estatesOptions?.find((estate) => estate.value === task.estate._id) || ""
+      : "",
+    contact: task.contact
+      ? contactsOptions?.find(
+          (contact) => contact.value === task.contact._id
+        ) || ""
+      : "",
+    type: isArLang
+      ? taskTypeOptions["ar"]?.find(
+          (taskOption) => taskOption.value === task.type?.trim()
+        )
+      : taskTypeOptions["en"]?.find(
+          (taskOption) => taskOption.value === task.type?.trim()
+        ) || "",
     cost: task.cost || "",
     priority: isArLang
       ? prioritysOptions["ar"]?.find((pri) => pri.value === task.priority)
@@ -89,14 +123,31 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-    values.cost = values.cost.toString();
-    values.compound=values.compound.value
-    values.taskType=values.taskType.value
-    values.priority=values.priority.value
-    console.log(values);
+      // console.log("val",values)
+    const updatedValues = {
+      title: values.title,
+      description: values.description,
+      date: values.date,
+      type: values.type.value,
+      cost: values.cost.toString(),
+      priority: values.priority.value,
+    };
+
+    if (task.estate && values.estate) {
+      updatedValues.estate = values.estate.value;
+    }
+    if (task.compound && values.compound) {
+      updatedValues.compound = values.compound.value;
+    }
+
+    if (values.contact) {
+      updatedValues.contact = values.contact.value;
+    }
+
+    console.log(updatedValues);
     mutate(
       {
-        formData: values,
+        formData: updatedValues,
         token: token,
         method: "patch",
         type: `tasks/${task._id}`,
@@ -124,14 +175,40 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
   const validationSchema = object({
     title: string().required(key("fieldReq")),
     description: string().required(key("fieldReq")),
-    taskDate: date().required(key("fieldReq")),
-    compound: string().required(key("fieldReq")),
-    contact: string().required(key("fieldReq")),
-    taskType: string().required(key("fieldReq")),
+    date: date().required(key("fieldReq")),
+    estate: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .nullable(),
+    compound: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .nullable(),
+    contact: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .nullable(),
+    type: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .required(key("fieldReq")),
     cost: number()
       .min(0, key("positiveOnlyValidation"))
       .required(key("fieldReq")),
-    priority: string().required(key("fieldReq")),
+    priority: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .required(key("fieldReq")),
   });
 
   return (
@@ -153,25 +230,49 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                 <ErrorMessage name="title" component={InputErrorMessage} />
               </div>
             </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="compound">
-                  {key("compound")} {requiredLabel}
+            <Col sm={12}>
+              <div className="field">
+                <label htmlFor="taskDate">
+                  {key("taskDate")} {requiredLabel}
                 </label>
-                <Select
-                  id="compound"
-                  name="compound"
-                  value={values.compound}
-                  options={compoundsOptions}
-                  onChange={(val) =>
-                    setFieldValue("compound", val || null)
-                  }
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="compound" component={InputErrorMessage} />
+                <Field type="date" id="taskDate" name="date" />
+                <ErrorMessage name="date" component={InputErrorMessage} />
               </div>
+            </Col>
+            <Col sm={6}>
+              {task.compound ? (
+                <div className="field mb-1">
+                  <label htmlFor="compound">
+                    {key("compound")} {requiredLabel}
+                  </label>
+                  <Select
+                    id="compound"
+                    name="compound"
+                    value={values.compound}
+                    options={compoundsOptions}
+                    onChange={(val) => setFieldValue("compound", val || null)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                  />
+                  <ErrorMessage name="compound" component={InputErrorMessage} />
+                </div>
+              ) : (
+                <div className="field mb-1">
+                  <label htmlFor="estate">{key("theUnit")}</label>
+                  <Select
+                    id="estate"
+                    name="estate"
+                    options={estatesOptions}
+                    value={values.estate}
+                    onChange={(val) => setFieldValue("estate", val || null)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                  />
+                  <ErrorMessage name="estate" component={InputErrorMessage} />
+                </div>
+              )}
             </Col>
             <Col sm={6}>
               <div className="field mb-1">
@@ -183,21 +284,12 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                   name="contact"
                   value={values.contact}
                   options={contactsOptions}
-                  onChange={(val) => setFieldValue("contact", val||null)}
+                  onChange={(val) => setFieldValue("contact", val ? val : null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="contact" component={InputErrorMessage} />
-              </div>
-            </Col>
-            <Col sm={12}>
-              <div className="field">
-                <label htmlFor="taskDate">
-                  {key("taskDate")} {requiredLabel}
-                </label>
-                <Field type="datetime-local" id="taskDate" name="taskDate" />
-                <ErrorMessage name="taskDate" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
@@ -207,17 +299,17 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                 </label>
                 <Select
                   id="taskType"
-                  name="taskType"
-                  value={values.taskType}
+                  name="type"
+                  value={values.type}
                   options={
                     isArLang ? taskTypeOptions["ar"] : taskTypeOptions["en"]
                   }
-                  onChange={(val) => setFieldValue("taskType", val||null)}
+                  onChange={(val) => setFieldValue("type", val || null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
                 />
-                <ErrorMessage name="taskType" component={InputErrorMessage} />
+                <ErrorMessage name="type" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
@@ -227,6 +319,26 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                 </label>
                 <Field type="number" id="cost" name="cost" />
                 <ErrorMessage name="cost" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="priority">
+                  {key("priority")} {requiredLabel}
+                </label>
+                <Select
+                  id="priority"
+                  name="priority"
+                  value={values.priority}
+                  options={
+                    isArLang ? prioritysOptions["ar"] : prioritysOptions["en"]
+                  }
+                  onChange={(val) => setFieldValue("priority", val || null)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                />
+                <ErrorMessage name="priority" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={12}>
@@ -244,27 +356,6 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                 />
               </div>
             </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="priority">
-                  {key("priority")} {requiredLabel}
-                </label>
-                <Select
-                  id="priority"
-                  name="priority"
-                  value={values.priority}
-                  options={
-                    isArLang ? prioritysOptions["ar"] : prioritysOptions["en"]
-                  }
-                  onChange={(val) => setFieldValue("priority", val||null)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="priority" component={InputErrorMessage} />
-              </div>
-            </Col>
-
             <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
               <button onClick={hideModal} className="cancel_btn my-2">
                 {key("cancel")}
