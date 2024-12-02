@@ -56,7 +56,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
       data: task,
     });
   }
-  const { estate, compound, cost, date } = req.body;
+  const { estate, compound, cost, date, contact } = req.body;
 
   if (estate && compound) {
     return next(
@@ -68,6 +68,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
     const expenseData = {
       amount: cost,
       dueDate: date,
+      contact,
       type,
       estate,
       compound,
