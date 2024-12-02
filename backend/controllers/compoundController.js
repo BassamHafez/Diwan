@@ -170,7 +170,9 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
     startDate: { $lte: new Date() },
     endDate: { $gte: new Date() },
     isCanceled: false,
-  }).lean();
+  })
+    .populate("tenant", "name")
+    .lean();
 
   res.status(200).json({
     status: "success",
