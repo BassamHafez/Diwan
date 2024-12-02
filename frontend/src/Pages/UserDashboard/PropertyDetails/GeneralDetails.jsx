@@ -31,6 +31,7 @@ import UpdateEstate from "../PropertyForms/UpdateEstate";
 import AOS from "aos";
 import CurrentContract from "./CurrentContract";
 import CompoundContracts from "./CompoundContracts";
+import Expenses from "./Expenses";
 
 const GeneralDetails = ({
   details,
@@ -344,6 +345,8 @@ const GeneralDetails = ({
           <Revenue />
         </>
       )}
+
+      <Expenses isCompound={isCompound}/>
 
       {showUpdateDetailsModal && (
         <ModalForm

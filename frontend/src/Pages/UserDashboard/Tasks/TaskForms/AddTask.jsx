@@ -1,7 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { date, number, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBuilding,
+  faCouch,
+  faSpinner,
+} from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,11 +18,17 @@ import Select from "react-select";
 import { useEffect, useState } from "react";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import { prioritysOptions, taskTypeOptions } from "../../../../Components/Logic/StaticLists";
+import {
+  prioritysOptions,
+  taskTypeOptions,
+} from "../../../../Components/Logic/StaticLists";
+import styles from "./TaskForms.module.css";
 
 const AddTask = ({ hideModal, refetch }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
+  const [estatesOptions, setEstatesOptions] = useState([]);
   const [contactsOptions, setContactsOptions] = useState([]);
+  const [isCompound, setIsCompound] = useState(false);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -33,11 +43,20 @@ const AddTask = ({ hideModal, refetch }) => {
     enabled: !!token,
     staleTime: Infinity,
   });
-  const { data: contacts } = useQuery({
-    queryKey: ["contacts", token],
+
+  const { data: estates } = useQuery({
+    queryKey: ["estates", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({ type: "estates", token: token }),
+    enabled: !!token,
+    staleTime: Infinity,
+  });
+
+  const { data: services } = useQuery({
+    queryKey: ["service", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: "contacts",
+        type: "contacts/services",
         token: token,
       }),
     staleTime: Infinity,
@@ -45,24 +64,34 @@ const AddTask = ({ hideModal, refetch }) => {
   });
 
   useEffect(() => {
+    let estateOptions;
+    if (estates) {
+      estateOptions = estates.data?.map((estate) => {
+        return { label: estate.name, value: estate._id };
+      });
+      setEstatesOptions(estateOptions);
+    }
+  }, [estates]);
+
+  useEffect(() => {
     let compoundOptions;
     if (compounds) {
       compoundOptions = compounds.data?.map((compound) => {
         return { label: compound.name, value: compound._id };
       });
+      setCompoundsOptions(compoundOptions);
     }
-    setCompoundsOptions(compoundOptions);
   }, [compounds]);
 
   useEffect(() => {
     let contactOptions;
-    if (contacts) {
-      contactOptions = contacts.data?.map((compound) => {
+    if (services) {
+      contactOptions = services.data?.map((compound) => {
         return { label: compound.name, value: compound._id };
       });
     }
     setContactsOptions(contactOptions);
-  }, [contacts]);
+  }, [services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -71,20 +100,39 @@ const AddTask = ({ hideModal, refetch }) => {
   const initialValues = {
     title: "",
     description: "",
-    taskDate: "",
+    date: "",
+    estate: "", //estate or compount
     compound: "",
-    contact: "",
-    taskType: "",
+    contact: "", //optional
+    type: "",
     cost: "",
     priority: "",
   };
 
   const onSubmit = (values, { resetForm }) => {
-    values.cost =(values.cost).toString();
-    console.log(values);
+    const updatedValues = {
+      title: values.title,
+      description: values.description,
+      date: values.date,
+      type: values.type,
+      cost: values.cost,
+      priority: values.priority,
+    };
+
+    if (!isCompound && values.estate) {
+      updatedValues.estate = values.estate.value;
+    } else if (isCompound && values.compound) {
+      updatedValues.compound = values.compound.value;
+    }
+
+    if (values.contact) {
+      updatedValues.contact = values.contact;
+    }
+
+    console.log(updatedValues);
     mutate(
       {
-        formData: values,
+        formData: updatedValues,
         token: token,
         method: "add",
         type: `tasks`,
@@ -112,11 +160,20 @@ const AddTask = ({ hideModal, refetch }) => {
   const validationSchema = object({
     title: string().required(key("fieldReq")),
     description: string().required(key("fieldReq")),
-    taskDate: date().required(key("fieldReq")),
-    compound: string().required(key("fieldReq")),
-    contact: string().required(key("fieldReq")),
-    taskType: string().required(key("fieldReq")),
-    cost: number().min(0,key("positiveOnlyValidation")).required(key("fieldReq")),
+    date: date().required(key("fieldReq")),
+    estate: object().shape({
+      label: string(),
+      value: string(),
+    }).nullable(),
+    compound: object().shape({
+      label: string(),
+      value: string(),
+    }).nullable(),
+    contact: string().nullable(),
+    type: string().required(key("fieldReq")),
+    cost: number()
+      .min(0, key("positiveOnlyValidation"))
+      .required(key("fieldReq")),
     priority: string().required(key("fieldReq")),
   });
 
@@ -126,7 +183,7 @@ const AddTask = ({ hideModal, refetch }) => {
       onSubmit={onSubmit}
       validationSchema={validationSchema}
     >
-      {({ setFieldValue }) => (
+      {({ setFieldValue, values }) => (
         <Form>
           <Row>
             <Col sm={12}>
@@ -138,47 +195,13 @@ const AddTask = ({ hideModal, refetch }) => {
                 <ErrorMessage name="title" component={InputErrorMessage} />
               </div>
             </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="compound">
-                  {key("compound")} {requiredLabel}
-                </label>
-                <Select
-                  id="compound"
-                  name="compound"
-                  options={compoundsOptions}
-                  onChange={(val) => setFieldValue("compound", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="compound" component={InputErrorMessage} />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="contact">
-                  {key("singleContactType")} {requiredLabel}
-                </label>
-                <Select
-                  id="contact"
-                  name="contact"
-                  options={contactsOptions}
-                  onChange={(val) => setFieldValue("contact", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="contact" component={InputErrorMessage} />
-              </div>
-            </Col>
             <Col sm={12}>
               <div className="field">
                 <label htmlFor="taskDate">
                   {key("taskDate")} {requiredLabel}
                 </label>
-                <Field type="datetime-local" id="taskDate" name="taskDate" />
-                <ErrorMessage name="taskDate" component={InputErrorMessage} />
+                <Field type="date" id="taskDate" name="date" />
+                <ErrorMessage name="date" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
@@ -188,16 +211,51 @@ const AddTask = ({ hideModal, refetch }) => {
                 </label>
                 <Select
                   id="taskType"
-                  name="taskType"
+                  name="type"
                   options={
                     isArLang ? taskTypeOptions["ar"] : taskTypeOptions["en"]
                   }
-                  onChange={(val) => setFieldValue("taskType", val.value)}
+                  onChange={(val) => setFieldValue("type", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
                 />
-                <ErrorMessage name="taskType" component={InputErrorMessage} />
+                <ErrorMessage name="type" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="contact">{key("singleContactType")}</label>
+                <Select
+                  id="contact"
+                  name="contact"
+                  options={contactsOptions}
+                  onChange={(val) => setFieldValue("contact", val?val.value:null)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                  isClearable
+                />
+                <ErrorMessage name="contact" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="priority">
+                  {key("priority")} {requiredLabel}
+                </label>
+                <Select
+                  id="priority"
+                  name="priority"
+                  options={
+                    isArLang ? prioritysOptions["ar"] : prioritysOptions["en"]
+                  }
+                  onChange={(val) => setFieldValue("priority", val.value)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                />
+                <ErrorMessage name="priority" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
@@ -209,9 +267,74 @@ const AddTask = ({ hideModal, refetch }) => {
                 <ErrorMessage name="cost" component={InputErrorMessage} />
               </div>
             </Col>
+            <Col sm={6}>
+              {!isCompound ? (
+                <div className="field mb-1">
+                  <label htmlFor="estate">{key("theUnit")}</label>
+                  <Select
+                    id="estate"
+                    name="estate"
+                    options={estatesOptions}
+                    value={values.estate}
+                    onChange={(val) => setFieldValue("estate", val?val:null)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                    isClearable
+                  />
+                  <ErrorMessage name="estate" component={InputErrorMessage} />
+                </div>
+              ) : (
+                <div className="field mb-1">
+                  <label htmlFor="compound">{key("compound")}</label>
+                  <Select
+                    id="compound"
+                    name="compound"
+                    options={compoundsOptions}
+                    value={values.compound}
+                    onChange={(val) => setFieldValue("compound", val?val:null)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                    isClearable
+                  />
+                  <ErrorMessage name="compound" component={InputErrorMessage} />
+                </div>
+              )}
+            </Col>
+            <Col md={6} className="d-flex align-items-center">
+              <ul className="h-100 d-flex flex-column justify-content-end">
+                <li
+                  onClick={() => setIsCompound(true)}
+                  className={`my-1 ${
+                    isCompound ? styles.active : styles.unActive_choice
+                  }`}
+                >
+                  <FontAwesomeIcon
+                    icon={faBuilding}
+                    className={isArLang ? "ms-1" : "me-1"}
+                  />
+                  {key("compound")}
+                </li>
+                <li
+                  onClick={() => setIsCompound(false)}
+                  className={`my-1 ${
+                    !isCompound ? styles.active : styles.unActive_choice
+                  }`}
+                >
+                  <FontAwesomeIcon
+                    icon={faCouch}
+                    className={isArLang ? "ms-1" : "me-1"}
+                  />
+                  {key("theUnit")}
+                </li>
+              </ul>
+            </Col>
             <Col sm={12}>
               <div className="field">
-                <label htmlFor="description">{key("description")}</label>
+                <label htmlFor="description">
+                  {key("description")} {requiredLabel}
+                </label>
                 <Field
                   as="textarea"
                   className="text_area"
@@ -222,23 +345,6 @@ const AddTask = ({ hideModal, refetch }) => {
                   name="description"
                   component={InputErrorMessage}
                 />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="priority">
-                  {key("priority")} {requiredLabel}
-                </label>
-                <Select
-                  id="priority"
-                  name="priority"
-                  options={isArLang?prioritysOptions["ar"]:prioritysOptions["en"]}
-                  onChange={(val) => setFieldValue("priority", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="priority" component={InputErrorMessage} />
               </div>
             </Col>
 
