@@ -5,7 +5,7 @@ import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
 import {
   revenueFilterTypeOptions,
-  revenuesStatus
+  revenuesStatus,
 } from "../../../Components/Logic/StaticLists";
 import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
@@ -20,6 +20,8 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
+  generatePDF,
+  handleDownloadExcelSheet,
   renamedRevenuesStatus,
 } from "../../../Components/Logic/LogicFun";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -28,8 +30,8 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import AddRevenue from "../PropertyForms/AddRevenue";
-import PayRevenue from "../PropertyForms/PayRevenue";
 import RevenueDetails from "./RevenueDetails";
+import MainPayForm from "../PropertyForms/MainPayForm";
 
 const Revenue = () => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
@@ -66,7 +68,7 @@ const Revenue = () => {
     if (token && propId) {
       refetch();
     }
-  }, [refetch,token,propId]);
+  }, [refetch, token, propId]);
 
   const getStatusBgColor = (status) => {
     switch (status) {
@@ -102,10 +104,9 @@ const Revenue = () => {
 
   const unPayRevenue = async (revId) => {
     const res = await mainEmptyBodyFun({
-      id: propId,
       method: "patch",
       token: token,
-      type: `revenues/${revId}/unpay`,
+      type: `estates/${propId}/revenues/${revId}/unpay`,
     });
     if (res.status === "success") {
       refetch();
@@ -129,16 +130,16 @@ const Revenue = () => {
 
   const filterChangeHandler = (val, type) => {
     if (type === "status") {
-      setStatusFilter(val?val:"");
+      setStatusFilter(val ? val : "");
     } else if (type === "type") {
-      setTypeFilter(val?val:"");
+      setTypeFilter(val ? val : "");
     }
   };
 
   const filteredRevenues = revenuesData
     ? revenuesData.data?.filter(
         (rev) =>
-          (statusFilter==="" || rev.status === statusFilter) &&
+          (statusFilter === "" || rev.status === statusFilter) &&
           (typeFilter === "" || rev.type === typeFilter)
       )
     : [];
@@ -148,12 +149,21 @@ const Revenue = () => {
       <div className={styles.header}>
         <h4>{key("revenues")}</h4>
         <div>
-          <ButtonOne
-            classes="m-2"
-            borderd
-            color="white"
-            text={key("exportCsv")}
-          />
+          {revenuesData && revenuesData?.data?.length > 0 && (
+            <ButtonOne
+              classes="m-2"
+              borderd
+              color="white"
+              text={key("exportCsv")}
+              onClick={() =>
+                handleDownloadExcelSheet(
+                  revenuesData?.data,
+                  "Revenues.xlsx",
+                  "Revenuse"
+                )
+              }
+            />
+          )}
           <ButtonOne
             onClick={() => setShowAddRevenueModal(true)}
             classes="m-2 bg-navy"
@@ -171,9 +181,13 @@ const Revenue = () => {
           <div className="d-flex flex-wrap">
             <Select
               options={
-                isArLang ? revenueFilterTypeOptions["ar"] : revenueFilterTypeOptions["en"]
+                isArLang
+                  ? revenueFilterTypeOptions["ar"]
+                  : revenueFilterTypeOptions["en"]
               }
-              onChange={(val) => filterChangeHandler(val?val.value: null,"type")}
+              onChange={(val) =>
+                filterChangeHandler(val ? val.value : null, "type")
+              }
               className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
                 styles.select_type
               } my-3`}
@@ -183,7 +197,9 @@ const Revenue = () => {
             />
             <Select
               options={isArLang ? revenuesStatus["ar"] : revenuesStatus["en"]}
-              onChange={(val) => filterChangeHandler(val?val.value: null,"status")}
+              onChange={(val) =>
+                filterChangeHandler(val ? val.value : null, "status")
+              }
               className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
                 styles.select_type
               } my-3`}
@@ -306,10 +322,11 @@ const Revenue = () => {
           onHide={() => setShowPayRevenueModal(false)}
           modalSize="md"
         >
-          <PayRevenue
+          <MainPayForm
             hideModal={() => setShowPayRevenueModal(false)}
             refetch={refetch}
-            revId={revenueId}
+            Id={revenueId}
+            type="rev"
           />
         </ModalForm>
       )}
@@ -329,12 +346,20 @@ const Revenue = () => {
           show={showDetailsModal}
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
-          okBtn={key("print")}
-          // confirmFun={deleteRevenue}
+          okBtn={key("download")}
+          confirmFun={() => generatePDF(revDetails._id,"revenueDetails")}
           title={key("revenueDetails")}
           modalSize={"lg"}
         >
           <RevenueDetails revDetails={revDetails} />
+          <div className="d-none">
+            <div
+              id={`${revDetails._id}`}
+              className="d-flex justify-content-center align-items-center flex-column"
+            >
+              <RevenueDetails revDetails={revDetails} />
+            </div>
+          </div>
         </MainModal>
       )}
     </div>

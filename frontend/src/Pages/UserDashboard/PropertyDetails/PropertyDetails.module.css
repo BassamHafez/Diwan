@@ -4,6 +4,7 @@
   overflow: hidden;
   padding: 0.625rem;
   position: relative;
+  z-index: 5;
 }
 .estate_img {
   width: 37.5rem;

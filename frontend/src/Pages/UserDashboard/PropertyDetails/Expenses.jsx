@@ -17,6 +17,8 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
+  generatePDF,
+  handleDownloadExcelSheet,
   renamedExpensesStatusMethod,
 } from "../../../Components/Logic/LogicFun";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -27,7 +29,7 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import AddExpenses from "../PropertyForms/AddExpenses";
 import UpdateExpenses from "../PropertyForms/UpdateExpenses";
 import ExpensesDetails from "./ExpensesDetails";
-import PayExpenses from "../PropertyForms/PayExpenses";
+import MainPayForm from "../PropertyForms/MainPayForm";
 
 const Expenses = ({ isCompound }) => {
   const [showAddExModal, setShowAddExModal] = useState(false);
@@ -77,6 +79,8 @@ const Expenses = ({ isCompound }) => {
         return styles.green;
       case "pending":
         return styles.orange;
+      case "cancelled":
+        return styles.red;
       default:
         return "";
     }
@@ -84,11 +88,11 @@ const Expenses = ({ isCompound }) => {
 
   const deleteEx = async () => {
     setShowDeleteModal(false);
-    if (myParam && exID && token) {
+    if (exID && token) {
       const res = await mainDeleteFunHandler({
         id: exID,
         token: token,
-        type: `estates/${myParam}/contracts`,
+        type: `expenses`,
       });
       if (res.status === 204 || res.status === 200) {
         refetch();
@@ -101,9 +105,21 @@ const Expenses = ({ isCompound }) => {
     }
   };
 
+  const cancelEx = async (exId) => {
+    const res = await mainEmptyBodyFun({
+      method: "patch",
+      token: token,
+      type: `expenses/${exId}/cancel`,
+    });
+    if (res.status === "success") {
+      refetch();
+      notifySuccess(key("canceledSucc"));
+    } else {
+      notifyError(key("wrong"));
+    }
+  };
   const unPayEx = async (exId) => {
     const res = await mainEmptyBodyFun({
-      id: myParam,
       method: "patch",
       token: token,
       type: `expenses/${exId}/unpay`,
@@ -120,8 +136,11 @@ const Expenses = ({ isCompound }) => {
     setExID(exId);
     if (type === "pay") {
       setShowPayExpensesModal(true);
-    } else if (type === "cancel") {
+    } else if (type === "delete") {
       setShowDeleteModal(true);
+    } else if (type === "cancel") {
+      setExID("");
+      cancelEx(exId);
     } else if (type === "unPay") {
       setExID("");
       unPayEx(exId);
@@ -143,12 +162,21 @@ const Expenses = ({ isCompound }) => {
       <div className={styles.header}>
         <h4>{key("expenses")}</h4>
         <div>
-          <ButtonOne
-            classes="m-2"
-            borderd
-            color="white"
-            text={key("exportCsv")}
-          />
+          {expenses && expenses?.data?.length > 0 && (
+            <ButtonOne
+              classes="m-2"
+              borderd
+              color="white"
+              text={key("exportCsv")}
+              onClick={() =>
+                handleDownloadExcelSheet(
+                  expenses?.data,
+                  "Contracts.xlsx",
+                  "Contracts"
+                )
+              }
+            />
+          )}
           <ButtonOne
             onClick={() => setShowAddExModal(true)}
             classes="m-2 bg-navy"
@@ -199,7 +227,7 @@ const Expenses = ({ isCompound }) => {
                 <tbody className={styles.table_body}>
                   {filteredExpenses.map((ex) => (
                     <tr key={ex._id}>
-                      <td>{ex.title ? ex.title : ""}</td>
+                      <td>{ex.title ? ex.title : "-"}</td>
                       <td>{key(ex.type)}</td>
                       <td>{ex.amount}</td>
                       <td>{formattedDate(ex.dueDate)}</td>
@@ -244,18 +272,6 @@ const Expenses = ({ isCompound }) => {
                                 {key("unPaid")}
                               </Dropdown.Item>
                             )}
-                            {ex.status !== "paid" &&
-                              ex.status !== "canceled" && (
-                                <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateExpenses("cancel", ex._id)
-                                  }
-                                  className="text-center"
-                                >
-                                  {key("canceled")}
-                                </Dropdown.Item>
-                              )}
-
                             <Dropdown.Item
                               onClick={() => {
                                 setExDetails(ex);
@@ -265,6 +281,7 @@ const Expenses = ({ isCompound }) => {
                             >
                               {key("ediet")}
                             </Dropdown.Item>
+
                             <Dropdown.Item
                               onClick={() => {
                                 setExDetails(ex);
@@ -274,6 +291,25 @@ const Expenses = ({ isCompound }) => {
                             >
                               {key("details")}
                             </Dropdown.Item>
+                            {ex.status !== "paid" &&
+                              ex.status !== "cancelled" && (
+                                <Dropdown.Item
+                                  onClick={() =>
+                                    mainpulateExpenses("cancel", ex._id)
+                                  }
+                                  className="text-center"
+                                >
+                                  {key("canceled")}
+                                </Dropdown.Item>
+                              )}
+                            <Dropdown.Item
+                              onClick={() =>
+                                mainpulateExpenses("delete", ex._id)
+                              }
+                              className="text-center text-danger"
+                            >
+                              {key("fullyDelete")}
+                            </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>
@@ -282,7 +318,7 @@ const Expenses = ({ isCompound }) => {
                 </tbody>
               </table>
             ) : (
-              <NoData text={key("noContracts")} />
+              <NoData type="expenses" text={key("noExpenses")} />
             )
           ) : (
             <LoadingOne />
@@ -298,6 +334,7 @@ const Expenses = ({ isCompound }) => {
           <AddExpenses
             hideModal={() => setShowAddExModal(false)}
             refetch={refetch}
+            isCompound={isCompound}
           />
         </ModalForm>
       )}
@@ -329,12 +366,20 @@ const Expenses = ({ isCompound }) => {
           show={showDetailsModal}
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
-          okBtn={key("print")}
-          // confirmFun={deleteRevenue}
-          title={key("contractDetails")}
+          okBtn={key("download")}
+          confirmFun={() => generatePDF(exDetails._id, "ExpenseDetails")}
+          title={key("expensesDetails")}
           modalSize={"lg"}
         >
           <ExpensesDetails exDetails={exDetails} />
+          <div className="d-none">
+            <div
+              id={`${exDetails._id}`}
+              className="d-flex justify-content-center align-items-center flex-column"
+            >
+              <ExpensesDetails exDetails={exDetails} />
+            </div>
+          </div>
         </MainModal>
       )}
 
@@ -344,10 +389,11 @@ const Expenses = ({ isCompound }) => {
           onHide={() => setShowPayExpensesModal(false)}
           modalSize="md"
         >
-          <PayExpenses
+          <MainPayForm
             hideModal={() => setShowPayExpensesModal(false)}
             refetch={refetch}
-            exId={exID}
+            Id={exID}
+            type={"expenses"}
           />
         </ModalForm>
       )}

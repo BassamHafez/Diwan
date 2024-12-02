@@ -490,13 +490,27 @@ export const expensesStatusOptions={
   en:[
     {label:"Pending",value:"pending"},
     {label:"Paid",value:"paid"},
+    {label:"Cancelled",value:"cancelled"},
   ],
   ar:[
     {label:"معلقة",value:"pending"},
     {label:"مدفوعة",value:"paid"},
+    {label:"ملغية",value:"cancelled"},
   ]
 }
 
+export const expensesTypeOptions={
+  en:[
+    {label:"Maintenance",value:"maintenance"},
+    {label:"Purchases",value:"purchases"},
+    {label:"Other",value:"other"},
+  ],
+  ar:[
+    {label:"صيانة",value:"maintenance"},
+    {label:"مشتريات",value:"purchases"},
+    {label:"أخري",value:"other"},
+  ]
+}
 // ----------------------------------------------------------Saudi Arabia----------------------------
 //saudi arabia En
 export const SaudiRegion = [
