@@ -10,22 +10,31 @@ import {
   faCircleQuestion,
   faCoins,
   faUser,
+  faCouch,
 } from "@fortawesome/free-solid-svg-icons";
 import Col from "react-bootstrap/esm/Col";
 import { useTranslation } from "react-i18next";
-import { faBuilding, faBell } from "@fortawesome/free-regular-svg-icons";
+import {
+  faBuilding,
+  faBell,
+  faSquareCheck as regularCheck,
+} from "@fortawesome/free-regular-svg-icons";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateTask from "./TaskForms/UpdateTask";
 import { useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { useSelector } from "react-redux";
-import { mainDeleteFunHandler } from "../../../util/Http";
+import {
+  mainDeleteFunHandler,
+  mainFormsHandlerTypeRaw,
+} from "../../../util/Http";
 import { toast } from "react-toastify";
 
 const TaskItem = ({ task, refetch }) => {
   const [showUpdateTaskModal, setShowUpdateTaskModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [taskData, setTaskData] = useState({});
+  const [taskID, setTaskID] = useState("");
   const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
@@ -35,17 +44,17 @@ const TaskItem = ({ task, refetch }) => {
   let circleColor =
     task.priority === "high"
       ? "text-danger"
-      : task.priority === "mid"
+      : task.priority === "medium"
       ? "text-warning"
       : "text-success";
 
   const getTaskType = () => {
-    let iconType = faCircleQuestion; // Default icon
-    switch (task.taskType) {
+    let iconType = faCircleQuestion;
+    switch (task.type) {
       case "reminder":
         iconType = faBell;
         break;
-      case "purchase":
+      case "purchases":
         iconType = faBagShopping;
         break;
       case "maintenance":
@@ -62,9 +71,9 @@ const TaskItem = ({ task, refetch }) => {
 
   const deleteTask = async () => {
     setShowDeleteModal(false);
-    if (taskData._id && token) {
+    if (taskID&& token) {
       const res = await mainDeleteFunHandler({
-        id: taskData._id,
+        id: taskID,
         token: token,
         type: `tasks`,
       });
@@ -79,13 +88,40 @@ const TaskItem = ({ task, refetch }) => {
     }
   };
 
+  const completeTask = async (taskId, isCompleted) => {
+    const completedTask = isCompleted ? "false" : "true";
+
+    if (taskId && token) {
+      const res = await mainFormsHandlerTypeRaw({
+        method: "patch",
+        token: token,
+        type: `tasks/${taskId}/complete`,
+        formData: {
+          isCompleted: completedTask,
+        },
+      });
+      if (res.status === "success") {
+        refetch();
+        if(isCompleted){
+          notifySuccess(key("unFinishedSucc"));
+        }else{
+          notifySuccess(key("finishedSucc"));
+        }
+      } else {
+        notifyError(key("wrong"));
+      }
+    } else {
+      notifyError(key("wrong"));
+    }
+  };
+
   return (
     <>
       <Col md={6} xl={4}>
         <div className={styles.task_item}>
           <div className={`${isArLang ? styles.flags_ar : styles.flags_en}`}>
             <FontAwesomeIcon
-              title={key(task.taskType)}
+              title={key(task.type)}
               className="mx-2 text-secondary"
               icon={getTaskType()}
             />
@@ -100,13 +136,13 @@ const TaskItem = ({ task, refetch }) => {
             <h5 className="mb-2">{task.title}</h5>
             <span>
               <FontAwesomeIcon icon={faUser} className="text-secondary" />{" "}
-              {task.contact}
+              {task.contact?task.contact.name:"---"}
             </span>
           </div>
           <hr />
           <h6>
-            <FontAwesomeIcon icon={faBuilding} className="text-secondary" />{" "}
-            {task.compound}
+            <FontAwesomeIcon icon={task?.compound?faBuilding:faCouch} className="text-secondary" />{" "}
+            {task.compound ? task.compound.name :task.estate?.name||"---"}
           </h6>
           <p className={styles.desc}>{task.description}</p>
           <hr className="w-50" />
@@ -125,7 +161,7 @@ const TaskItem = ({ task, refetch }) => {
                 title={key("delete")}
                 className="text-danger"
                 icon={faTrashCan}
-                onClick={() => setShowDeleteModal(true)}
+                onClick={() => {setTaskID(task._id);setShowDeleteModal(true)}}
               />
               <FontAwesomeIcon
                 onClick={() => {
@@ -136,9 +172,12 @@ const TaskItem = ({ task, refetch }) => {
                 icon={faEdit}
               />
               <FontAwesomeIcon
-                title={key("finished")}
-                className="text-success"
-                icon={faSquareCheck}
+                onClick={() => completeTask(task._id, task.isCompleted)}
+                title={task.isCompleted ? key("unFinished") : key("done")}
+                className={`${
+                  task.isCompleted ? "text-success" : "text-secondary"
+                }`}
+                icon={task.isCompleted ? faSquareCheck : regularCheck}
               />
             </div>
           </div>
@@ -164,7 +203,7 @@ const TaskItem = ({ task, refetch }) => {
         >
           <UpdateTask
             hideModal={() => setShowUpdateTaskModal(false)}
-            // refetch={refetch}
+            refetch={refetch}
             task={taskData}
           />
         </ModalForm>

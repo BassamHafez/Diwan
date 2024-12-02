@@ -298,7 +298,7 @@ const PropertyDetails = () => {
                     >
                       <div className={styles.header_footerItem}>
                         <span>{key("nextPaymentDue")}</span>
-                        <p>4/10/2025</p>
+                        <p>{formattedDate(currentContract?.data?.nextRevenue?.dueDate)}</p>
                       </div>
                     </Col>
                     <Col
@@ -307,7 +307,7 @@ const PropertyDetails = () => {
                     >
                       <div className={styles.header_footerItem}>
                         <span>{key("nextPaymentAmount")}</span>
-                        <p>3000 {key("sar")}</p>
+                        <p>{currentContract?.data?.nextRevenue?.amount||0} {key("sar")}</p>
                       </div>
                     </Col>
                     <Col
@@ -316,7 +316,7 @@ const PropertyDetails = () => {
                     >
                       <div className={styles.header_footerItem}>
                         <span>{key("endOfContract")}</span>
-                        <p>{formattedDate(currentContract?.data?.endDate)}</p>
+                        <p>{formattedDate(currentContract?.data?.contract?.endDate)}</p>
                       </div>
                     </Col>
                   </Row>
