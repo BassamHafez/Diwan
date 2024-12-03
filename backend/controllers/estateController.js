@@ -1,9 +1,11 @@
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
+const mongoose = require("mongoose");
 
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
 const Expense = require("../models/expenseModel");
+const Revenue = require("../models/revenueModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -33,7 +35,89 @@ const estatePopOptions = [
 ];
 
 exports.getAllEstates = factory.getAll(Estate, estatesPopOptions);
-exports.getEstate = factory.getOne(Estate, estatePopOptions);
+
+exports.getEstate = catchAsync(async (req, res, next) => {
+  const estateId = req.params.id;
+
+  const estatePromise = Estate.findById(estateId)
+    .populate(estatePopOptions)
+    .lean();
+
+  const revenuesAggregatePromise = Revenue.aggregate([
+    {
+      $match: {
+        estate: new mongoose.Types.ObjectId(String(estateId)),
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPaid: {
+          $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0] },
+        },
+        totalPending: {
+          $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
+        },
+      },
+    },
+  ]);
+
+  const expensesAggregatePromise = Expense.aggregate([
+    {
+      $match: {
+        estate: new mongoose.Types.ObjectId(String(estateId)),
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPaid: {
+          $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0] },
+        },
+        totalPending: {
+          $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
+        },
+      },
+    },
+  ]);
+
+  const [estate, revenuesAggregate, expensesAggregate] = await Promise.all([
+    estatePromise,
+    revenuesAggregatePromise,
+    expensesAggregatePromise,
+  ]);
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  const [
+    { totalPaid: totalPaidRevenues, totalPending: totalPendingRevenues } = {
+      totalPaid: 0,
+      totalPending: 0,
+    },
+  ] = revenuesAggregate;
+
+  const [
+    { totalPaid: totalPaidExpenses, totalPending: totalPendingExpenses } = {
+      totalPaid: 0,
+      totalPending: 0,
+    },
+  ] = expensesAggregate;
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      totalRevenue: totalPaidRevenues + totalPendingRevenues,
+      totalPaidRevenues,
+      totalPendingRevenues,
+      totalExpense: totalPaidExpenses + totalPendingExpenses,
+      totalPaidExpenses,
+      totalPendingExpenses,
+      estate,
+    },
+  });
+});
 
 exports.uploadEstateImage = uploadSingleImage("image");
 
