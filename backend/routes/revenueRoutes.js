@@ -19,9 +19,10 @@ router
 // /api/v1/estates/:estateId/revenues/:id
 router
   .route("/:id")
+  .patch(revenueValidator.getRevenueValidator, revenueController.cancelRevenue)
   .delete(
     revenueValidator.getRevenueValidator,
-    revenueController.cancelRevenue
+    revenueController.deleteRevenue
   );
 
 router.patch(

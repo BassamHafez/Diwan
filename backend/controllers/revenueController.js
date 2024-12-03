@@ -1,4 +1,5 @@
 const Revenue = require("../models/revenueModel");
+const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
@@ -42,7 +43,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 exports.cancelRevenue = catchAsync(async (req, res, next) => {
   const updatedRevenue = await Revenue.findByIdAndUpdate(
     req.params.id,
-    { status: "canceled" },
+    { status: "canceled", paidAt: null, paymentMethod: null },
     { new: true }
   );
 
@@ -91,3 +92,5 @@ exports.unpayRevenue = catchAsync(async (req, res, next) => {
     data: updatedRevenue,
   });
 });
+
+exports.deleteRevenue = factory.deleteOne(Revenue);
