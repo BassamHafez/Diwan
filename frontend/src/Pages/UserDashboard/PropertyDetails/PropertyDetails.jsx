@@ -23,11 +23,13 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
 import AOS from "aos";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
-import { formattedDate } from "../../../Components/Logic/LogicFun";
+import {
+  convertNumbersToFixedTwo,
+  formattedDate,
+} from "../../../Components/Logic/LogicFun";
 
 const PropertyDetails = () => {
-
-  const [isLoading,setIsLoading]=useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
   const { propId } = useParams();
@@ -40,11 +42,11 @@ const PropertyDetails = () => {
 
   useEffect(() => {
     AOS.init();
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   }, []);
 
-  const { data, isFetching, refetch } = useQuery({
-    queryKey: ["singleProp", propId],
+  const { data, refetch } = useQuery({
+    queryKey: ["singleProp", token, propId],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
     staleTime: Infinity,
@@ -52,7 +54,7 @@ const PropertyDetails = () => {
   });
 
   const { data: currentContract, refetch: refetchCurrentContract } = useQuery({
-    queryKey: ["currentContract", token],
+    queryKey: ["currentContract", propId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/contracts/current`,
@@ -62,11 +64,13 @@ const PropertyDetails = () => {
     staleTime: Infinity,
   });
 
-  useEffect(()=>{
-    setIsLoading(true)
-    refetchCurrentContract()
-    setIsLoading(false)
-  },[refetchCurrentContract])
+  useEffect(() => {
+    setIsLoading(true);
+    if (token) {
+      refetchCurrentContract();
+    }
+    setIsLoading(false);
+  }, [refetchCurrentContract, token]);
 
   useEffect(() => {
     if (data?.data?.inFavorites) {
@@ -76,10 +80,12 @@ const PropertyDetails = () => {
     }
   }, [data]);
 
-
   useEffect(() => {
-    return () => refetch();
-  }, [refetch]);
+    return () => {
+      refetch();
+      queryClient.invalidateQueries(["bookmarked", token]);
+    };
+  }, [refetch, queryClient, token]);
 
   const deleteEstate = async () => {
     setShowDeleteModal(false);
@@ -118,10 +124,9 @@ const PropertyDetails = () => {
       }
     } else {
       res = await mainEmptyBodyFun({
-        id: propId,
         token: token,
         method: "post",
-        type: "favorites",
+        type: `estates/${propId}/favorites`,
       });
       console.log(res);
       if (res.status === "success") {
@@ -133,11 +138,13 @@ const PropertyDetails = () => {
     }
   };
 
+  const myData = data?.data;
+
   return (
     <>
       <ScrollTopBtn />
       <div className="height_container">
-        {isFetching||isLoading ? (
+        {!data || isLoading ? (
           <LoadingOne />
         ) : data ? (
           <div className={styles.detials_content}>
@@ -148,7 +155,7 @@ const PropertyDetails = () => {
                   data-aos="fade-in"
                   data-aos-duration="1000"
                 >
-                  <h3 className="my-4 mx-1">{data.data?.name}</h3>
+                  <h3 className="my-4 mx-1">{myData?.estate?.name}</h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <div
                       className={`${styles.controller_btn} ${styles.delete_btn}`}
@@ -181,7 +188,9 @@ const PropertyDetails = () => {
                     data-aos-duration="1000"
                   >
                     <img
-                      src={`${import.meta.env.VITE_Host}${data.data?.image}`}
+                      src={`${import.meta.env.VITE_Host}${
+                        myData?.estate?.image
+                      }`}
                       alt="unit_img"
                     />
                   </div>
@@ -203,7 +212,25 @@ const PropertyDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("totalIncome")}</span>
-                          <p>600,000 {key("sar")}</p>
+                          <p>
+                            {convertNumbersToFixedTwo(myData?.totalRevenue)}{" "}
+                            {key("sarSmall")}
+                          </p>
+                        </div>
+                      </Col>
+
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("totalPaidCosts")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(myData?.totalPaidExpenses)}{" "}
+                            {key("sarSmall")}
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -213,8 +240,27 @@ const PropertyDetails = () => {
                         className="d-flex justify-content-center align-items-center"
                       >
                         <div className={styles.main_details}>
-                          <span>{key("totalCosts")}</span>
-                          <p>20 {key("sar")}</p>
+                          <span>{key("totalUnPaidCosts")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(Number(myData?.totalExpense)-Number(myData?.totalPaidExpenses))}{" "}
+                            {key("sarSmall")}
+                          </p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("uncollectedAmount")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(
+                              myData?.totalPendingRevenues
+                            )}{" "}
+                            {key("sarSmall")}
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -225,7 +271,17 @@ const PropertyDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("collectionRatio")}</span>
-                          <p>70%</p>
+                          <p>
+                            {myData?.totalPendingRevenues &&
+                            myData?.totalPendingRevenues !== 0
+                              ? convertNumbersToFixedTwo(
+                                  (Number(myData?.totalPaidRevenues) /
+                                    Number(myData?.totalPendingRevenues)) *
+                                    100
+                                )
+                              : "0.00"}
+                            %
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -236,7 +292,17 @@ const PropertyDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("grandReturns")}</span>
-                          <p>8.2%</p>
+                          <p>
+                            {myData?.estate?.price &&
+                            myData?.estate?.price !== 0
+                              ? convertNumbersToFixedTwo(
+                                  (Number(myData?.totalRevenue) /
+                                    Number(myData?.estate?.price)) *
+                                    100
+                                )
+                              : "0.00"}
+                            %
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -247,7 +313,18 @@ const PropertyDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("netReturns")}</span>
-                          <p>8.2%</p>
+                          <p>
+                            {myData?.estate?.price &&
+                            myData?.estate?.price !== 0
+                              ? convertNumbersToFixedTwo(
+                                  ((Number(myData?.totalRevenue) -
+                                    Number(myData?.totalExpense)) /
+                                    Number(myData?.estate?.price)) *
+                                    100
+                                )
+                              : "0.00"}
+                            %
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -259,11 +336,11 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("area")}</span>
                           <p>
-                            {data.data?.area} {key("areaUnit")}
+                            {myData?.estate?.area} {key("areaUnit")}
                           </p>
                         </div>
                       </Col>
-                      <Col
+                      {/* <Col
                         xs={6}
                         sm={4}
                         md={6}
@@ -271,20 +348,9 @@ const PropertyDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("rentPerSqm")}</span>
-                          <p>30 {key("sar")}</p>
+                          <p>0 {key("sarSmall")}</p>
                         </div>
-                      </Col>
-                      <Col
-                        xs={6}
-                        sm={4}
-                        md={6}
-                        className="d-flex justify-content-center align-items-center"
-                      >
-                        <div className={styles.main_details}>
-                          <span>{key("uncollectedAmount")}</span>
-                          <p>200 {key("sar")}</p>
-                        </div>
-                      </Col>
+                      </Col> */}
                     </Row>
                   </div>
                 </Col>
@@ -298,7 +364,11 @@ const PropertyDetails = () => {
                     >
                       <div className={styles.header_footerItem}>
                         <span>{key("nextPaymentDue")}</span>
-                        <p>{formattedDate(currentContract?.data?.nextRevenue?.dueDate)}</p>
+                        <p>
+                          {formattedDate(
+                            currentContract?.data?.nextRevenue?.dueDate
+                          )}
+                        </p>
                       </div>
                     </Col>
                     <Col
@@ -307,7 +377,10 @@ const PropertyDetails = () => {
                     >
                       <div className={styles.header_footerItem}>
                         <span>{key("nextPaymentAmount")}</span>
-                        <p>{currentContract?.data?.nextRevenue?.amount||0} {key("sar")}</p>
+                        <p>
+                          {currentContract?.data?.nextRevenue?.amount || 0}{" "}
+                          {key("sar")}
+                        </p>
                       </div>
                     </Col>
                     <Col
@@ -316,7 +389,11 @@ const PropertyDetails = () => {
                     >
                       <div className={styles.header_footerItem}>
                         <span>{key("endOfContract")}</span>
-                        <p>{formattedDate(currentContract?.data?.contract?.endDate)}</p>
+                        <p>
+                          {formattedDate(
+                            currentContract?.data?.contract?.endDate
+                          )}
+                        </p>
                       </div>
                     </Col>
                   </Row>
@@ -326,7 +403,7 @@ const PropertyDetails = () => {
             <section className={styles.tabs_section}>
               <Tabs defaultActiveKey="general" className="my-3" fill>
                 <Tab eventKey="general" title={key("general")}>
-                  <GeneralDetails details={data?.data} refetch={refetch} />
+                  <GeneralDetails details={myData?.estate} refetch={refetch} />
                 </Tab>
 
                 <Tab eventKey="tasks" title={key("tasks")}>
