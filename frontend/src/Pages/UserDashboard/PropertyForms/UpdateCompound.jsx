@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +35,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const [brokersOptions, setBrokersOptions] = useState([]);
   const [landlordOptions, setlandlordOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const queryClient=useQueryClient();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -154,6 +155,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
           if (data?.status === "success") {
             refetch();
             refetchTags();
+            queryClient.invalidateQueries(["compounds", token])
             notifySuccess(key("updatedSucc"));
             setSelectedFile(null);
             setImagePreviewUrl(null);

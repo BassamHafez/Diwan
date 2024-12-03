@@ -136,13 +136,13 @@ const TaskItem = ({ task, refetch }) => {
             <h5 className="mb-2">{task.title}</h5>
             <span>
               <FontAwesomeIcon icon={faUser} className="text-secondary" />{" "}
-              {task.contact?task.contact.name:"---"}
+              {task.contact?task.contact.name:key("public")}
             </span>
           </div>
           <hr />
           <h6>
             <FontAwesomeIcon icon={task?.compound?faBuilding:faCouch} className="text-secondary" />{" "}
-            {task.compound ? task.compound.name :task.estate?.name||"---"}
+            {task.compound ? task.compound.name :task.estate?.name||key("public")}
           </h6>
           <p className={styles.desc}>{task.description?task.description:"---"}</p>
           <hr className="w-50" />

@@ -309,5 +309,6 @@
   "fullyDelete":"Delete permanently",
   "canceledSucc":"Canceled successfully",
   "expensesDetails":"Expenses Details",
-  "download":"Download"
+  "download":"Download",
+  "public":"Not customized"
 }

@@ -116,17 +116,36 @@ const Revenue = () => {
     }
   };
 
+  const cancelEx = async (exId) => {
+    const res = await mainEmptyBodyFun({
+      method: "patch",
+      token: token,
+      type: `estates/${propId}/revenues/${exId}`,
+    });
+    if (res.status === "success") {
+      refetch();
+      notifySuccess(key("canceledSucc"));
+    } else {
+      notifyError(key("wrong"));
+    }
+  };
+
   const mainpulateRev = (type, revId) => {
     setRevenueId(revId);
     if (type === "pay") {
       setShowPayRevenueModal(true);
     } else if (type === "cancel") {
+      setRevenueId("");
+      cancelEx(revId);
+    } else if (type === "delete") {
       setShowDeleteModal(true);
     } else if (type === "unPay") {
       setRevenueId("");
       unPayRevenue(revId);
     }
   };
+
+
 
   const filterChangeHandler = (val, type) => {
     if (type === "status") {
@@ -288,6 +307,14 @@ const Revenue = () => {
                               className="text-center"
                             >
                               {key("details")}
+                            </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() =>
+                                mainpulateRev("delete", rev._id)
+                              }
+                              className="text-center text-danger"
+                            >
+                              {key("fullyDelete")}
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>

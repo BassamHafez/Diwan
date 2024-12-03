@@ -305,5 +305,6 @@
   "fullyDelete":"حذف نهائي",
   "canceledSucc":"تم الإلغاء بنجاح",
   "expensesDetails":"تفاصيل المصروفات",
-  "download":"تحميل"
+  "download":"تحميل",
+  "public":"غير مخصصة"
 }
