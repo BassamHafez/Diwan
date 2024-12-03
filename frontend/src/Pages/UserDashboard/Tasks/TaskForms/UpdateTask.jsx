@@ -123,10 +123,8 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-      // console.log("val",values)
     const updatedValues = {
       title: values.title,
-      description: values.description,
       date: values.date,
       type: values.type.value,
       cost: values.cost.toString(),
@@ -142,6 +140,9 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
 
     if (values.contact) {
       updatedValues.contact = values.contact.value;
+    }
+    if (values.description) {
+      updatedValues.description = values.description;
     }
 
     console.log(updatedValues);
@@ -174,7 +175,6 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
 
   const validationSchema = object({
     title: string().required(key("fieldReq")),
-    description: string().required(key("fieldReq")),
     date: date().required(key("fieldReq")),
     estate: object()
       .shape({
@@ -209,6 +209,7 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
         value: string(),
       })
       .required(key("fieldReq")),
+    description: string(),
   });
 
   return (

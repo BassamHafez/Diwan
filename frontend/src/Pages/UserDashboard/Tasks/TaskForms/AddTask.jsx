@@ -67,7 +67,7 @@ const AddTask = ({ hideModal, refetch }) => {
   useEffect(() => {
     setEstatesOptions(convertTpOptionsFormate(estates?.data));
     setCompoundsOptions(convertTpOptionsFormate(compounds?.data));
-    setContactsOptions(convertTpOptionsFormate(services.data));
+    setContactsOptions(convertTpOptionsFormate(services?.data));
   }, [estates, compounds,services]);
 
   const { mutate, isPending } = useMutation({
@@ -322,7 +322,7 @@ const AddTask = ({ hideModal, refetch }) => {
             <Col sm={12}>
               <div className="field">
                 <label htmlFor="description">
-                  {key("description")} {requiredLabel}
+                  {key("description")}
                 </label>
                 <Field
                   as="textarea"

@@ -29,6 +29,7 @@
   font-weight: 400;
   cursor: pointer;
   transition: all 0.4s;
+  margin: 5px 0;
 }
 .cirlce_color{
   font-size: 12px;

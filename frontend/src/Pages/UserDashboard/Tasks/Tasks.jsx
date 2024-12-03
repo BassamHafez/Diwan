@@ -14,7 +14,6 @@ import {
   faBagShopping,
   faCheckDouble,
   faCircle,
-  faCirclePlus,
   faCircleQuestion,
   faClockRotateLeft,
   faCubes,
@@ -32,13 +31,16 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 
 const Tasks = () => {
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
+  const [timeFilter, setTimeFilter] = useState("all");
+  const [tagsFilter, setTagsFilter] = useState("all");
+  const [typesFilter, setTypesFilter] = useState("all");
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   let iconClass = isArLang ? "ms-2" : "me-2";
   const token = JSON.parse(localStorage.getItem("token"));
 
-  const { data: tasks, refetch } = useQuery({
+  const { data: tasks, refetch,isFetching } = useQuery({
     queryKey: ["tasks", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
@@ -48,6 +50,21 @@ const Tasks = () => {
     staleTime: Infinity,
     enabled: !!token,
   });
+
+  const filteredTasks =
+    tasks && Array.isArray(tasks.data)
+      ? tasks.data.filter((task) =>
+          (timeFilter === "all"
+            ? true
+            : timeFilter === "underway"
+            ? !task.isCompleted
+            : task.isCompleted) &&
+          (tagsFilter === "all" ? true : task.priority === tagsFilter) &&
+          typesFilter === "all"
+            ? true
+            : task.type === typesFilter
+        )
+      : [];
 
   return (
     <>
@@ -64,30 +81,32 @@ const Tasks = () => {
                   {key("time")}
                 </h6>
                 <ul className={styles.filter_list}>
-                  <li className={styles.active}>
+                  <li
+                    className={timeFilter === "all" ? styles.active : ""}
+                    onClick={() => setTimeFilter("all")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faClipboard}
                     />
                     {key("all")}
                   </li>
-                  <li>
-                    <FontAwesomeIcon
-                      className={`${iconClass}`}
-                      icon={faCirclePlus}
-                    />
-                    {key("underway")}
-                  </li>
-                  <li>
+                  <li
+                    className={timeFilter === "underway" ? styles.active : ""}
+                    onClick={() => setTimeFilter("underway")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faClock}
                     />
-                    {key("postponed")}
+                    {key("underway")}
                   </li>
-                  <li>
+                  <li
+                    className={timeFilter === "finished" ? styles.active : ""}
+                    onClick={() => setTimeFilter("finished")}
+                  >
                     <FontAwesomeIcon
-                      className={`${iconClass}`}
+                      className={`${iconClass} text-success`}
                       icon={faCheckDouble}
                     />
                     {key("finished")}
@@ -100,28 +119,40 @@ const Tasks = () => {
                   {key("tag")}
                 </h6>
                 <ul className={styles.filter_list}>
-                  <li className={styles.active}>
+                  <li
+                    className={tagsFilter === "all" ? styles.active : ""}
+                    onClick={() => setTagsFilter("all")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faClipboard}
                     />
                     {key("all")}
                   </li>
-                  <li>
+                  <li
+                    className={tagsFilter === "low" ? styles.active : ""}
+                    onClick={() => setTagsFilter("low")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass} text-success ${styles.cirlce_color}`}
                       icon={faCircle}
                     />
                     {key("low")}
                   </li>
-                  <li>
+                  <li
+                    className={tagsFilter === "mid" ? styles.active : ""}
+                    onClick={() => setTagsFilter("medium")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass} text-warning ${styles.cirlce_color}`}
                       icon={faCircle}
                     />
                     {key("mid")}
                   </li>
-                  <li>
+                  <li
+                    className={tagsFilter === "high" ? styles.active : ""}
+                    onClick={() => setTagsFilter("high")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass} text-danger ${styles.cirlce_color}`}
                       icon={faCircle}
@@ -136,32 +167,49 @@ const Tasks = () => {
                   {key("type")}
                 </h6>
                 <ul className={styles.filter_list}>
-                  <li className={styles.active}>
+                  <li
+                    className={typesFilter === "all" ? styles.active : ""}
+                    onClick={() => setTypesFilter("all")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faClipboard}
                     />
                     {key("all")}
                   </li>
-                  <li>
+                  <li
+                    className={
+                      typesFilter === "maintenance" ? styles.active : ""
+                    }
+                    onClick={() => setTypesFilter("maintenance")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faWrench}
                     />
                     {key("maintenance")}
                   </li>
-                  <li>
+                  <li
+                    className={typesFilter === "purchases" ? styles.active : ""}
+                    onClick={() => setTypesFilter("purchases")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faBagShopping}
                     />
-                    {key("purchase")}
+                    {key("purchases")}
                   </li>
-                  <li>
+                  <li
+                    className={typesFilter === "reminder" ? styles.active : ""}
+                    onClick={() => setTypesFilter("reminder")}
+                  >
                     <FontAwesomeIcon className={`${iconClass}`} icon={faBell} />
                     {key("reminder")}
                   </li>
-                  <li>
+                  <li
+                    className={typesFilter === "other" ? styles.active : ""}
+                    onClick={() => setTypesFilter("other")}
+                  >
                     <FontAwesomeIcon
                       className={`${iconClass}`}
                       icon={faCircleQuestion}
@@ -174,7 +222,7 @@ const Tasks = () => {
           </Col>
 
           <Col sm={8} lg={9} xl={10}>
-            <div className={`${styles.tasks_content} `}>
+            <div className={`${styles.tasks_content} position-relative`}>
               <div
                 className="d-flex justify-content-between align-items-center flex-wrap"
                 style={{ height: "fit-content" }}
@@ -191,10 +239,13 @@ const Tasks = () => {
                   />
                 </div>
               </div>
-              <Row className="mt-3 gy-3 position-relative" style={{minHeight:"50vh"}}>
-                {tasks ? (
-                  tasks.data.length > 0 ? (
-                    tasks.data?.map((task) => (
+              <Row
+                className="mt-3 gy-3 position-relative"
+                style={{ minHeight: "50vh" }}
+              >
+                {tasks && !isFetching ? (
+                  filteredTasks?.length > 0 ? (
+                    filteredTasks?.map((task) => (
                       <TaskItem key={task._id} task={task} refetch={refetch} />
                     ))
                   ) : (
