@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -36,6 +36,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
   const [brokersOptions, setBrokersOptions] = useState([]);
   const [landlordOptions, setlandlordOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
+  const queryClient=useQueryClient();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -76,10 +77,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
   }, [landlords]);
 
   useEffect(() => {
-    let myBrokers = brokers?.data?.map((broker) => {
-      return { label: broker.name, value: broker._id };
-    });
-    setBrokersOptions(myBrokers);
+    setBrokersOptions(convertTpOptionsFormate(brokers?.data));
   }, [brokers]);
 
   useEffect(() => {
@@ -144,9 +142,6 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
-    if (values.compound.value !== "not") {
-      formData.append("compound", values.compound.value);
-    }
 
     formData.append("name", values.name);
     formData.append("description", values.description);
@@ -168,6 +163,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
 
     formData.append("price", values.price);
     formData.append("area", values.area);
+
     if (values.landlord) {
         formData.append("landlord", values.landlord);
       }
@@ -199,6 +195,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
           if (data?.status === "success") {
             refetch();
             refetchTags();
+            queryClient.invalidateQueries(["estates", token])
             notifySuccess(key("updatedSucc"));
             setSelectedFile(null);
             setImagePreviewUrl(null);
@@ -337,6 +334,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
                   onChange={(val) => setFieldValue("compound", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
+                  isDisabled={true}
                 />
                 <ErrorMessage name="compound" component={InputErrorMessage} />
               </div>
