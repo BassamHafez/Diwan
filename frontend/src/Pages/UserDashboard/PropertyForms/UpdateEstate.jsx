@@ -25,6 +25,7 @@ import {
 } from "../../../Components/Logic/StaticLists";
 import CreatableSelect from "react-select/creatable";
 import { useParams } from "react-router-dom";
+import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const UpdateEstate = ({ hideModal, refetch, estateData }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -71,10 +72,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
   });
 
   useEffect(() => {
-    let myLandlords = landlords?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant._id };
-    });
-    setlandlordOptions(myLandlords);
+    setlandlordOptions(convertTpOptionsFormate(landlords?.data));
   }, [landlords]);
 
   useEffect(() => {

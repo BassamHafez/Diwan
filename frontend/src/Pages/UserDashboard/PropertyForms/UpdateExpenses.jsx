@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { date, number, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -6,12 +6,19 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
-import { mainFormsHandlerTypeRaw } from "../../../util/Http";
+import {
+  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
+} from "../../../util/Http";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
-import { formattedDate } from "../../../Components/Logic/LogicFun";
+import {
+  convertTpOptionsFormate,
+  formattedDate,
+} from "../../../Components/Logic/LogicFun";
+import { useEffect, useState } from "react";
 
 const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
   const notifySuccess = (message) => toast.success(message);
@@ -20,13 +27,28 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const [contactServicesOptions, setContactServicesOptions] = useState([]);
+
+  const { data: services } = useQuery({
+    queryKey: ["service", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "contacts/services",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    setContactServicesOptions(convertTpOptionsFormate(services?.data));
+  }, [services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
   const initialValues = {
-    title: exDetails.title || "",
     amount: exDetails.amount || "",
     dueDate: formattedDate(exDetails.dueDate) || "",
     note: exDetails.note || "",
@@ -35,11 +57,15 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
       : expensesTypeOptions["en"]?.find(
           (type) => type.value === exDetails.type
         ) || "",
+    contact: exDetails.contact
+      ? contactServicesOptions?.find(
+          (contact) => contact.value === exDetails.contact || ""
+        )
+      : "",
   };
 
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = {
-      title: values.title,
       amount: values.amount,
       dueDate: values.dueDate,
       type: values.type?.value,
@@ -47,6 +73,9 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
 
     if (values.note) {
       updatedValues.note = values.note;
+    }
+    if (values.contact) {
+      updatedValues.contact = values.contact;
     }
 
     console.log(updatedValues);
@@ -88,6 +117,12 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
       })
       .required(key("fieldReq")),
     note: string(),
+    contact: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .nullable(),
   });
 
   return (
@@ -100,16 +135,6 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
-            <Col sm={12}>
-              <div className="field">
-                <label htmlFor="title">
-                  {key("title")} {requiredLabel}
-                </label>
-                <Field type="text" id="title" name="title" />
-                <ErrorMessage name="title" component={InputErrorMessage} />
-              </div>
-            </Col>
-
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="amount">
@@ -149,6 +174,24 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
                 </label>
                 <Field type="date" id="dueDate" name="dueDate" />
                 <ErrorMessage name="dueDate" component={InputErrorMessage} />
+              </div>
+            </Col>
+
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="contact">{key("singleContactType")}</label>
+                <Select
+                  id="contact"
+                  name="contact"
+                  value={values.contact}
+                  options={contactServicesOptions}
+                  onChange={(val) => setFieldValue("contact", val ? val : null)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                  isClearable
+                />
+                <ErrorMessage name="contact" component={InputErrorMessage} />
               </div>
             </Col>
 

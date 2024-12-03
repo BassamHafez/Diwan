@@ -12,11 +12,7 @@ import {
   faMoneyBill,
 } from "@fortawesome/free-solid-svg-icons";
 
-import {
-  faCalendar,
-  faFlag,
-  faClock,
-} from "@fortawesome/free-regular-svg-icons";
+import { faCalendar, faClock } from "@fortawesome/free-regular-svg-icons";
 
 const ExpensesDetails = ({ exDetails }) => {
   const { t: key } = useTranslation();
@@ -26,16 +22,6 @@ const ExpensesDetails = ({ exDetails }) => {
   return (
     <>
       <ul className={styles.details_list}>
-        <li>
-          <span>
-            <span className={iconMarginClass}>
-              <FontAwesomeIcon className={`color-main fs-5`} icon={faFlag} />
-            </span>
-
-            <span>{key("title")}</span>
-          </span>
-          <span>{exDetails.title ? exDetails.title : "-"}</span>
-        </li>
         <li>
           <span>
             <span className={iconMarginClass}>
@@ -77,12 +63,15 @@ const ExpensesDetails = ({ exDetails }) => {
         {exDetails.paymentMethod && (
           <li>
             <span>
-              <FontAwesomeIcon
-                className={`color-main fs-5`}
-                icon={faMoneyBill}
-              />
-              {key("paymentMethod")}
+              <span className={iconMarginClass}>
+                <FontAwesomeIcon
+                  className={`color-main fs-5`}
+                  icon={faMoneyBill}
+                />
+              </span>
+              <span>{key("paymentMethod")}</span>
             </span>
+
             <span>
               {isArLang
                 ? renamedPaymentMethod(exDetails.paymentMethod, "ar")
@@ -93,12 +82,15 @@ const ExpensesDetails = ({ exDetails }) => {
         {exDetails.paidAt && (
           <li>
             <span>
-              <FontAwesomeIcon
-                className={`color-main fs-5`}
-                icon={faCalendar}
-              />
-              {key("paidAt")}
+              <span className={iconMarginClass}>
+                <FontAwesomeIcon
+                  className={`color-main fs-5`}
+                  icon={faCalendar}
+                />
+              </span>
+              <span>{key("paidAt")}</span>
             </span>
+
             <span>{formattedDate(exDetails.paidAt)}</span>
           </li>
         )}
