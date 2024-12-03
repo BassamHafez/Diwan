@@ -51,6 +51,12 @@ const CompoundContracts = ({ compoundEstates }) => {
     }
   }, [refetch, token, compId]);
 
+  const findTenant = (tenantId) => {
+    return contractsData?.data?.tenants.find(
+      (tenant) => tenant._id === tenantId
+    );
+  };
+
   const getStatusBgColor = (status) => {
     switch (status) {
       case "active":
@@ -76,7 +82,7 @@ const CompoundContracts = ({ compoundEstates }) => {
     <div className={styles.contracts_body}>
       <div className={styles.header}>
         <h4>{key("currentContracts")}</h4>
-        {contractsData && contractsData?.data?.length > 0 && (
+        {contractsData && contractsData?.data?.contracts?.length > 0 && (
           <div>
             <ButtonOne
               classes="m-2"
@@ -104,7 +110,7 @@ const CompoundContracts = ({ compoundEstates }) => {
 
         <div className="my-4">
           {contractsData || !isFetching ? (
-            contractsData.data?.length > 0 ? (
+            contractsData.data?.contracts?.length > 0 ? (
               <table className={`${styles.contract_table} table`}>
                 <thead className={styles.table_head}>
                   <tr>
@@ -119,10 +125,10 @@ const CompoundContracts = ({ compoundEstates }) => {
                 </thead>
 
                 <tbody className={styles.table_body}>
-                  {contractsData.data.map((contract) => (
+                  {contractsData.data?.contracts.map((contract) => (
                     <tr key={contract._id}>
                       <td>{getEstateName(contract?.estate)}</td>
-                      <td>{contract.tenant?.name}</td>
+                      <td>{findTenant(contract.tenant)?.name}</td>
                       <td>{formattedDate(contract.startDate)}</td>
                       <td>{formattedDate(contract.endDate)}</td>
                       <td>{contract.totalAmount}</td>
@@ -210,7 +216,7 @@ const CompoundContracts = ({ compoundEstates }) => {
           title={key("contractDetails")}
           modalSize={"lg"}
         >
-          <ContractDetails contract={contractDetails} />
+          <ContractDetails contract={contractDetails} findTenant={findTenant} />
         </MainModal>
       )}
     </div>
