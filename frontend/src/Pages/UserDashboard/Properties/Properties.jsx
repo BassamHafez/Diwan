@@ -25,6 +25,7 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import AddEstate from "../PropertyForms/AddEstate";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import PropertyPlaceholder from "../../../Components/Property/PropertyPlaceholder";
+import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const Properties = () => {
   const { t: key } = useTranslation();
@@ -55,14 +56,8 @@ const Properties = () => {
   });
 
   useEffect(() => {
-    let compoundOptions;
-    if (compounds) {
-      compoundOptions = compounds.data?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    setCompoundsOptions(compoundOptions);
-  }, [compounds, key]);
+    setCompoundsOptions(convertTpOptionsFormate(compounds?.data));
+  }, [compounds]);
 
   const {
     data: estates,

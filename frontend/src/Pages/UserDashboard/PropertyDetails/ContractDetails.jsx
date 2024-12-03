@@ -14,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
-const ContractDetails = ({ contract, type }) => {
+const ContractDetails = ({ contract, type, findTenant }) => {
   const contractData =
     type !== "currentContract" ? contract : contract.contract;
   const { t: key } = useTranslation();
@@ -27,7 +27,11 @@ const ContractDetails = ({ contract, type }) => {
   );
 
   const language = isArLang ? "ar" : "en";
-  const iconMarginClass=isArLang ? "ms-2" : "me-2";
+  const iconMarginClass = isArLang ? "ms-2" : "me-2";
+  const myTenant =
+    type !== "currentContract" && findTenant
+      ? findTenant(contractData?.tenant)
+      : contractData?.tenant;
 
   return (
     <>
@@ -68,26 +72,36 @@ const ContractDetails = ({ contract, type }) => {
             </span>
             <span>{key("theTenant")}</span>
           </span>
-          <span>{contractData?.tenant?.name}</span>
+          <span>{myTenant?.name}</span>
         </li>
-        <li>
-          <span>
-            <span className={iconMarginClass}>
-              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
-            </span>
-            <span>{key("phone")}</span>
-          </span>
-          <span>{contractData?.tenant?.phone}</span>
-        </li>
-        <li>
-          <span>
-            <span className={iconMarginClass}>
-              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
-            </span>
-            <span>{key("phone2")}</span>
-          </span>
-          <span>{contractData?.tenant?.phone2}</span>
-        </li>
+        {myTenant.phone && (
+          <>
+            <li>
+              <span>
+                <span className={iconMarginClass}>
+                  <FontAwesomeIcon
+                    className={`color-main fs-5`}
+                    icon={faPhone}
+                  />
+                </span>
+                <span>{key("phone")}</span>
+              </span>
+              <span>{myTenant?.phone}</span>
+            </li>
+            <li>
+              <span>
+                <span className={iconMarginClass}>
+                  <FontAwesomeIcon
+                    className={`color-main fs-5`}
+                    icon={faPhone}
+                  />
+                </span>
+                <span>{key("phone2")}</span>
+              </span>
+              <span>{myTenant?.phone2}</span>
+            </li>
+          </>
+        )}
         <li>
           <span>
             <span className={iconMarginClass}>

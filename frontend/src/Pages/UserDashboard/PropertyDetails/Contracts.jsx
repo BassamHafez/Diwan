@@ -107,11 +107,12 @@ const Contracts = () => {
     }
   };
 
-  const filteredContracts = contractsData
-    ? contractsData.data?.filter(
-        (contract) => statusFilter === "" || contract.status === statusFilter
-      )
-    : [];
+  const filteredContracts = contractsData && Array.isArray(contractsData.data)
+  ? contractsData.data.filter(
+      (contract) => statusFilter === "" || contract.status === statusFilter
+    )
+  : [];
+
 
   return (
     <div className={styles.contracts_body}>
@@ -309,7 +310,7 @@ const Contracts = () => {
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
           okBtn={key("download")}
-          confirmFun={() => generatePDF(contractDetails._id,"contractDetails")}
+          confirmFun={() => generatePDF(contractDetails._id, "contractDetails")}
           title={key("contractDetails")}
           modalSize={"lg"}
         >
