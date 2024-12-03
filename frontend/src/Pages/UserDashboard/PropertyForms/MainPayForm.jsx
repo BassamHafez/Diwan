@@ -12,7 +12,7 @@ import { formattedDate } from "../../../Components/Logic/LogicFun";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 
-const MainPayForm = ({ hideModal, refetch, type,Id }) => {
+const MainPayForm = ({ hideModal, refetch, type,Id,refetchDetails }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -45,6 +45,7 @@ const MainPayForm = ({ hideModal, refetch, type,Id }) => {
           console.log(data);
           if (data?.status === "success") {
             refetch();
+            refetchDetails()
             notifySuccess(key("paidSucc"));
             resetForm();
             hideModal();

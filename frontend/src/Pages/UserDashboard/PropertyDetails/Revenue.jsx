@@ -33,7 +33,7 @@ import AddRevenue from "../PropertyForms/AddRevenue";
 import RevenueDetails from "./RevenueDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
 
-const Revenue = () => {
+const Revenue = ({refetchDetails}) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
   const [revDetails, setRevDetails] = useState({});
@@ -93,6 +93,7 @@ const Revenue = () => {
       });
       if (res.status === 204 || res.status === 200) {
         refetch();
+        refetchDetails();
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -110,6 +111,7 @@ const Revenue = () => {
     });
     if (res.status === "success") {
       refetch();
+      refetchDetails()
       notifySuccess(key("unPayedSucc"));
     } else {
       notifyError(key("wrong"));
@@ -124,6 +126,7 @@ const Revenue = () => {
     });
     if (res.status === "success") {
       refetch();
+      refetchDetails()
       notifySuccess(key("canceledSucc"));
     } else {
       notifyError(key("wrong"));
@@ -352,6 +355,7 @@ const Revenue = () => {
           <MainPayForm
             hideModal={() => setShowPayRevenueModal(false)}
             refetch={refetch}
+            refetchDetails={refetchDetails}
             Id={revenueId}
             type="rev"
           />

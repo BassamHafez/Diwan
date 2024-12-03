@@ -39,7 +39,7 @@ const CompoundDetails = () => {
   const notifyError = (message) => toast.error(message);
 
   const { data, isFetching, refetch } = useQuery({
-    queryKey: ["singleCompound", compId],
+    queryKey: ["singleCompound", compId,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `compounds/${compId}`,
