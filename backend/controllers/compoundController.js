@@ -5,6 +5,7 @@ const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
 const Contract = require("../models/contractModel");
 const Expense = require("../models/expenseModel");
+const Tenant = require("../models/tenantContactModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -165,19 +166,28 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
 
   const estateIds = estates.map((estate) => estate._id);
 
-  const contracts = await Contract.find({
+  const currContractsPromise = Contract.find({
     estate: { $in: estateIds },
     startDate: { $lte: new Date() },
     endDate: { $gte: new Date() },
     isCanceled: false,
-  })
-    .populate("tenant", "name")
+  }).lean();
+
+  const tenantsPromise = Tenant.find({ user: req.user.id })
+    .select("_id name")
     .lean();
+
+  const [contracts, tenants] = await Promise.all([
+    currContractsPromise,
+    tenantsPromise,
+  ]);
 
   res.status(200).json({
     status: "success",
-    results: contracts.length,
-    data: contracts,
+    data: {
+      contracts,
+      tenants,
+    },
   });
 });
 
