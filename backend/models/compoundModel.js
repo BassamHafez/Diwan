@@ -53,10 +53,6 @@ const compoundSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    rentedEstatesCount: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true }
 );

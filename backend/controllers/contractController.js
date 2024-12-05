@@ -2,6 +2,7 @@ const Contract = require("../models/contractModel");
 const Estate = require("../models/estateModel");
 const Revenue = require("../models/revenueModel");
 const Compound = require("../models/compoundModel");
+const ScheduledTask = require("../models/scheduledTaskModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const calculateRevenues = require("../utils/calculateRevenues");
@@ -47,7 +48,9 @@ exports.createContract = catchAsync(async (req, res, next) => {
   const isActiveContract =
     newStartDate <= Date.now() && newEndDate >= Date.now();
 
-  const isFutureContract = newStartDate > Date.now();
+  console.log("isActiveContract: ", isActiveContract);
+
+  // const isFutureContract = newStartDate > Date.now();
 
   const overlappingContractPromise = Contract.findOne({
     estate: estateId,
@@ -58,11 +61,15 @@ exports.createContract = catchAsync(async (req, res, next) => {
     .select("_id")
     .lean();
 
+  // const estatePromise = isActiveContract
+  //   ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
+  //   : isFutureContract
+  //   ? Estate.findByIdAndUpdate(estateId, { status: "pending" })
+  //   : Estate.findById(estateId);
+
   const estatePromise = isActiveContract
     ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : isFutureContract
-    ? Estate.findByIdAndUpdate(estateId, { status: "pending" })
-    : Estate.findById(estateId);
+    : Estate.findByIdAndUpdate(estateId, { status: "available" });
 
   const [estate, overlappingContract] = await Promise.all([
     estatePromise,
@@ -89,16 +96,17 @@ exports.createContract = catchAsync(async (req, res, next) => {
     user: req.user.id,
   });
 
-  const updateCompoundEstatesCountPromise = isActiveContract
-    ? Compound.findByIdAndUpdate(estate.compound, {
-        $inc: { rentedEstatesCount: 1 },
-      })
-    : Promise.resolve();
+  const scheduledTaskPromise = ScheduledTask.create({
+    type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
+    scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    estate: estateId,
+    contract: contract._id,
+  });
 
   const calculatedRevenues = calculateRevenues(contract);
   const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
 
-  await Promise.all([insertRevenuesPromise, updateCompoundEstatesCountPromise]);
+  await Promise.all([scheduledTaskPromise, insertRevenuesPromise]);
 
   res.status(201).json({
     status: "success",
@@ -109,21 +117,19 @@ exports.createContract = catchAsync(async (req, res, next) => {
 exports.cancelContract = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const contract = await Contract.findById(id)
-    .select("endDate isCanceled")
-    .lean();
+  const contract = await Contract.findById(id).select("status").lean();
 
   if (!contract) {
     return next(new ApiError("No contract found with that ID", 404));
   }
 
-  if (contract.endDate <= Date.now() && !contract.isCanceled) {
+  if (contract.status === "completed") {
     return next(new ApiError("Cannot cancel a completed contract", 400));
   }
 
   const updateContractPromise = Contract.findByIdAndUpdate(
     id,
-    { isCanceled: true },
+    { isCanceled: true, status: "canceled" },
     { new: true }
   );
 
@@ -132,10 +138,30 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     { status: "canceled" }
   );
 
-  const [updatedContract] = await Promise.all([
+  const oldScheduledTaskPromise = ScheduledTask.findOne({
+    contract: id,
+    isDone: false,
+  });
+
+  const [updatedContract, oldScheduledTask] = await Promise.all([
     updateContractPromise,
+    oldScheduledTaskPromise,
     cancelOldRevenuesPromise,
   ]);
+
+  let updateEstatePromise = Promise.resolve();
+
+  const deleteOldScheduledTaskPromise = ScheduledTask.findByIdAndDelete(
+    oldScheduledTask._id
+  );
+
+  if (contract.status === "active") {
+    updateEstatePromise = Estate.findByIdAndUpdate(updatedContract.estate, {
+      status: "available",
+    });
+  }
+
+  await Promise.all([updateEstatePromise, deleteOldScheduledTaskPromise]);
 
   res.status(200).json({
     status: "success",
@@ -206,21 +232,28 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     { status: "canceled" }
   );
 
+  const deleteOldScheduledTaskPromise = ScheduledTask.findOneAndDelete({
+    contract: id,
+    isDone: false,
+  });
+
   const [updatedContract] = await Promise.all([
     updateContractPromise,
     cancelOldRevenuesPromise,
+    deleteOldScheduledTaskPromise,
   ]);
-
-  const updateCompoundEstatesCountPromise = isActiveContract
-    ? Compound.findByIdAndUpdate(estate.compound, {
-        $inc: { rentedEstatesCount: 1 },
-      })
-    : Promise.resolve();
 
   const calculatedRevenues = calculateRevenues(updatedContract);
   const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
 
-  await Promise.all([insertRevenuesPromise, updateCompoundEstatesCountPromise]);
+  const scheduledTaskPromise = ScheduledTask.create({
+    type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
+    scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    estate: estateId,
+    contract: updatedContract._id,
+  });
+
+  await Promise.all([insertRevenuesPromise, scheduledTaskPromise]);
 
   res.status(201).json({
     status: "success",

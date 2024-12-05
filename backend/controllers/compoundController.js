@@ -9,7 +9,6 @@ const Tenant = require("../models/tenantContactModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
-const factory = require("./handlerFactory");
 const { uploadSingleImage } = require("../utils/uploadImage");
 
 const compoundPopOptions = [
@@ -23,7 +22,42 @@ const compoundPopOptions = [
   },
 ];
 
-exports.getAllCompounds = factory.getAll(Compound);
+exports.getAllCompounds = catchAsync(async (req, res, next) => {
+  const compounds = await Compound.find({ user: req.user.id }).lean();
+
+  const compoundsIds = compounds.map((compound) => compound._id);
+
+  const rentedEstatesCount = await Estate.aggregate([
+    {
+      $match: {
+        compound: { $in: compoundsIds },
+        status: "rented",
+      },
+    },
+    {
+      $group: {
+        _id: "$compound",
+        rentedCount: { $sum: 1 },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        compoundId: "$_id",
+        rentedCount: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    results: compounds.length,
+    data: {
+      compounds,
+      rentedEstatesCount,
+    },
+  });
+});
 
 exports.getCompound = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
