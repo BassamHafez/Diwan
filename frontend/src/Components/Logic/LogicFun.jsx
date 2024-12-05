@@ -17,6 +17,14 @@ export const convertTpOptionsFormate = (arr) => {
   return arrOptions;
 };
 
+export const convertNumbersToFixedTwo = (num) => {
+  if (num !== undefined && num !== null) {
+    return Number.isInteger(num) ? num : num.toFixed(2);
+  }
+  return "0.00";
+};
+
+
 import * as XLSX from "xlsx";
 export const handleDownloadExcelSheet = (data, name, title) => {
   const wb = XLSX.utils.book_new();
@@ -31,7 +39,7 @@ export const generatePDF = (id, name) => {
   const element = document.getElementById(`${id}`);
   const options = {
     margin: 10,
-    filename: name?name:"file",
+    filename: name ? name : "file",
     html2canvas: { scale: 4 },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
   };
