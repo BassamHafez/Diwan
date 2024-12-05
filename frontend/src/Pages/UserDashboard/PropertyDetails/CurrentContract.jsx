@@ -23,14 +23,15 @@ import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import ContractDetails from "./ContractDetails";
 import UpdateContract from "../PropertyForms/UpdateContract";
+import { useSelector } from "react-redux";
 
 const CurrentContract = () => {
+  const token = useSelector((state) => state.userInfo.token);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [contractDetails, setContractDetails] = useState({});
   const [contractId, setContractId] = useState("");
-  const token = JSON.parse(localStorage.getItem("token"));
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -43,18 +44,18 @@ const CurrentContract = () => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["currentContract", token],
+    queryKey: ["currentContract",propId,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
-    enabled: propId && !!token,
+    enabled:!!token,
     staleTime: Infinity,
   });
 
   useEffect(() => {
-    if (!token && propId) {
+    if (token && propId) {
       refetch();
     }
   }, [refetch, token, propId]);
@@ -125,7 +126,7 @@ const CurrentContract = () => {
 
                 <tbody className={styles.table_body}>
                   <tr key={currentContract?.data?.contract?._id}>
-                    <td>{currentContract?.data.contract?.tenant?.name}</td>
+                    <td>{currentContract?.data?.contract?.tenant?.name}</td>
                     <td>
                       {formattedDate(
                         currentContract?.data?.contract?.startDate

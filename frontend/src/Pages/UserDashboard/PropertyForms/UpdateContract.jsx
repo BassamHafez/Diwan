@@ -45,8 +45,8 @@ const UpdateContract = ({ contract, hideModal, refetch }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
-  const queryClient =useQueryClient();
-  
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (startDate && endDate) {
       const daysDifference = calculateDaysDifference(startDate, endDate);
@@ -125,7 +125,7 @@ const UpdateContract = ({ contract, hideModal, refetch }) => {
           if (data?.status === "success") {
             notifySuccess(key("updatedSucc"));
             refetch();
-            queryClient.invalidateQueries(["revenuesData", token])
+            queryClient.invalidateQueries(["revenuesData", token]);
             resetForm();
             hideModal();
           } else {
@@ -142,18 +142,7 @@ const UpdateContract = ({ contract, hideModal, refetch }) => {
 
   const validationSchema = object({
     tenant: string().required(key("fieldReq")),
-    startDate: date()
-      .required(key("fieldReq"))
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      ),
+    startDate: date().required(key("fieldReq")),
     endDate: date()
       .required(key("fieldReq"))
       .test("is-greater", key("endDateValidation"), function (value) {

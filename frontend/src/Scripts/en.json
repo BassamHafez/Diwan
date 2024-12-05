@@ -138,7 +138,8 @@
   "noDetails": "No details right now",
 
   "totalIncome": "Total Income",
-  "totalCosts": "Total Costs",
+  "totalPaidCosts": "Paid Expenses",
+  "totalUnPaidCosts": "Unpaid Expenses",
   "collectionRatio": "Collection Ratio",
   "nextPaymentDue": "Next Payment Due",
   "grandReturns": "Grand Return",
@@ -310,5 +311,6 @@
   "canceledSucc":"Canceled successfully",
   "expensesDetails":"Expenses Details",
   "download":"Download",
-  "public":"Not customized"
+  "public":"Not customized",
+  "pendingExpenses":"Pending Expenses"
 }

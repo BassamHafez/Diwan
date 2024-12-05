@@ -133,7 +133,8 @@
   "noDetails": "لاتوجد تفاصيل في الوقت الحالي",
 
   "totalIncome": "إجمالي الإيرادات",
-  "totalCosts": "إجمالي التكاليف",
+  "totalPaidCosts": "التكاليف المدفوعة",
+  "totalUnPaidCosts": "التكاليف غير المدفوعة",
   "collectionRatio": "نسبة التحصيل",
   "nextPaymentDue": "الدفعة القادمة",
   "grandReturns": "نسبة إجمالي الدخل",
@@ -306,5 +307,6 @@
   "canceledSucc":"تم الإلغاء بنجاح",
   "expensesDetails":"تفاصيل المصروفات",
   "download":"تحميل",
-  "public":"غير مخصصة"
+  "public":"غير مخصصة",
+  "pendingExpenses":"التكاليف المعلقة"
 }

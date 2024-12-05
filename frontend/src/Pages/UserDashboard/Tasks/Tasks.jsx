@@ -40,7 +40,7 @@ const Tasks = () => {
   let iconClass = isArLang ? "ms-2" : "me-2";
   const token = JSON.parse(localStorage.getItem("token"));
 
-  const { data: tasks, refetch,isFetching } = useQuery({
+  const { data: tasks, refetch } = useQuery({
     queryKey: ["tasks", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
@@ -243,7 +243,7 @@ const Tasks = () => {
                 className="mt-3 gy-3 position-relative"
                 style={{ minHeight: "50vh" }}
               >
-                {tasks && !isFetching ? (
+                {tasks ? (
                   filteredTasks?.length > 0 ? (
                     filteredTasks?.map((task) => (
                       <TaskItem key={task._id} task={task} refetch={refetch} />
