@@ -69,7 +69,7 @@ const estateSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["available", "rented", "pending"],
+      enum: ["available", "rented"],
       default: "available",
     },
   },
