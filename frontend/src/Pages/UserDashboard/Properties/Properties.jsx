@@ -56,7 +56,9 @@ const Properties = () => {
   });
 
   useEffect(() => {
-    setCompoundsOptions(convertTpOptionsFormate(compounds?.data));
+    if (compounds) {
+      setCompoundsOptions(convertTpOptionsFormate(compounds?.data?.compounds));
+    }
   }, [compounds]);
 
   const {
@@ -124,33 +126,39 @@ const Properties = () => {
       )
     : [];
 
-    const filteredCompounds = compounds
-    ? compounds.data?.filter((comp) => {
+
+    const getCompoundRentedCount=(compId)=>{
+      let rentedEstate=[];
+      rentedEstate =compounds?.data?.rentedEstatesCount.find((comp)=>comp.compoundId===compId)
+      return rentedEstate?.rentedCount||0
+    }
+
+  const filteredCompounds = compounds
+    ? compounds.data?.compounds?.filter((comp) => {
         switch (compoundStatusFiltering) {
           case "all":
             return true;
           case "noEstates":
             return comp.estatesCount === 0;
           case "available":
-            return comp.estatesCount > 0 && comp.rentedEstatesCount === 0;
+            return comp.estatesCount > 0 && getCompoundRentedCount(comp._id) === 0;
           case "rented":
             return (
-              comp.rentedEstatesCount > 0 &&
+              getCompoundRentedCount(comp._id) > 0 &&
               comp.estatesCount > 0 &&
-              comp.rentedEstatesCount === comp.estatesCount
+              getCompoundRentedCount(comp._id) === comp.estatesCount
             );
           case "partiallyRented":
             return (
               comp.estatesCount > 0 &&
-              comp.rentedEstatesCount > 0 &&
-              comp.rentedEstatesCount < comp.estatesCount
+              getCompoundRentedCount(comp._id) > 0 &&
+              getCompoundRentedCount(comp._id) < comp.estatesCount
             );
           default:
             return false;
         }
       })
     : [];
-  
 
   //statics
   const cubes = <FontAwesomeIcon className={styles.acc_icon} icon={faCubes} />;
@@ -170,7 +178,8 @@ const Properties = () => {
     isFetching,
     type,
     hideCompound = false,
-    hideStatus = false
+    hideStatus = false,
+    rentedEstatesCount
   ) => {
     if (isFetching) {
       return Array(6)
@@ -180,6 +189,13 @@ const Properties = () => {
         ));
     }
 
+    const getRentedEstate = (itemId) => {
+      if (!rentedEstatesCount) {
+        return undefined;
+      }
+      return rentedEstatesCount.find((comp) => comp.compoundId === itemId);
+    };
+
     if (data?.length > 0) {
       return data.map((item) => (
         <Property
@@ -188,6 +204,7 @@ const Properties = () => {
           hideStatus={hideStatus}
           property={item}
           type={type}
+          rentedEstatesCountObj={getRentedEstate(item._id)}
         />
       ));
     }
@@ -626,14 +643,14 @@ const Properties = () => {
                       className={`${styles.filter_input} form-check-input`}
                       type="radio"
                       name="compoundStatus"
-                      value="partiiallyRented"
-                      id="partiiallyRented"
-                      checked={compoundStatusFiltering === "partiiallyRented"}
+                      value="partiallyRented"
+                      id="partiallyRented"
+                      checked={compoundStatusFiltering === "partiallyRented"}
                       onChange={(e) => handleFilterChange(e, "compoundStatus")}
                     />
                     <label
                       className={`form-check-label ${styles.filter_label}`}
-                      htmlFor="partiiallyRented"
+                      htmlFor="partiallyRented"
                     >
                       {key("partialRentedCompounds")}
                     </label>
@@ -681,7 +698,8 @@ const Properties = () => {
                     fetchingCompounds,
                     "compound",
                     true,
-                    true
+                    true,
+                    compounds?.data?.rentedEstatesCount
                   )
                 : selectedFilter === "estates" && estates
                 ? renderProperties(filteredEstates, fetchingEstates, "estate")

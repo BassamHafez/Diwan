@@ -28,6 +28,7 @@ import AOS from "aos";
 
 const CompoundDetails = () => {
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
+  const [rentedEstateCount, setRentedEstateCount] = useState(false);
 
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
@@ -53,6 +54,16 @@ const CompoundDetails = () => {
     AOS.init();
     window.scrollTo(0, 0)
   }, []);
+
+  useEffect(()=>{
+    let rentedEstates=[];
+    let rentedEstateCount=0;
+    if(data){
+      rentedEstates=data?.data?.estates.filter((estate)=>estate.status==="rented");
+      rentedEstateCount=rentedEstates?.length||0
+    }
+    setRentedEstateCount(rentedEstateCount)
+  },[data])
 
   const deleteCompound = async () => {
     setShowDeleteModal(false);
@@ -80,6 +91,8 @@ const CompoundDetails = () => {
       notifyError(key("deleteWrong"));
     }
   };
+
+
 
   return (
     <>
@@ -160,7 +173,7 @@ const CompoundDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("rentedEstates")}</span>
-                          <p>{data.data?.compound?.rentedEstatesCount}</p>
+                          <p>{rentedEstateCount}</p>
                         </div>
                       </Col>
                       <Col
@@ -173,7 +186,7 @@ const CompoundDetails = () => {
                           <span>{key("totalRentedEstate")}</span>
                           <p>
                             {calculateRentedPercentage(
-                              data.data?.compound?.rentedEstatesCount,
+                              rentedEstateCount,
                               data.data?.estates?.length
                             )}
                             %
@@ -190,7 +203,7 @@ const CompoundDetails = () => {
                           <span>
                             {key("collectionRatio")} {key("forEstates")}
                           </span>
-                          <p>60%</p>
+                          <p>0%</p>
                         </div>
                       </Col>
                       <Col
@@ -203,7 +216,7 @@ const CompoundDetails = () => {
                           <span>
                             {key("netReturns")} {key("forEstates")}
                           </span>
-                          <p>8.2%</p>
+                          <p>0%</p>
                         </div>
                       </Col>
                       <Col
@@ -214,7 +227,18 @@ const CompoundDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("collectionCurrentMonth")}</span>
-                          <p>5%</p>
+                          <p>0%</p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("operatingRatio")}</span>
+                          <p>0%</p>
                         </div>
                       </Col>
                     </Row>
