@@ -218,7 +218,22 @@ const PropertyDetails = () => {
                           </p>
                         </div>
                       </Col>
-
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("uncollectedAmount")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(
+                              myData?.totalPendingRevenues
+                            )}{" "}
+                            {key("sarSmall")}
+                          </p>
+                        </div>
+                      </Col>
                       <Col
                         xs={6}
                         sm={4}
@@ -228,7 +243,9 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("totalPaidCosts")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(myData?.totalPaidExpenses)}{" "}
+                            {convertNumbersToFixedTwo(
+                              myData?.totalPaidExpenses
+                            )}{" "}
                             {key("sarSmall")}
                           </p>
                         </div>
@@ -242,22 +259,9 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("totalUnPaidCosts")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(Number(myData?.totalExpense)-Number(myData?.totalPaidExpenses))}{" "}
-                            {key("sarSmall")}
-                          </p>
-                        </div>
-                      </Col>
-                      <Col
-                        xs={6}
-                        sm={4}
-                        md={6}
-                        className="d-flex justify-content-center align-items-center"
-                      >
-                        <div className={styles.main_details}>
-                          <span>{key("uncollectedAmount")}</span>
-                          <p>
                             {convertNumbersToFixedTwo(
-                              myData?.totalPendingRevenues
+                              Number(myData?.totalExpense) -
+                                Number(myData?.totalPaidExpenses)
                             )}{" "}
                             {key("sarSmall")}
                           </p>

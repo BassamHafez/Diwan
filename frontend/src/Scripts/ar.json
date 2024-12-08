@@ -308,5 +308,6 @@
   "expensesDetails":"تفاصيل المصروفات",
   "download":"تحميل",
   "public":"غير مخصصة",
-  "pendingExpenses":"التكاليف المعلقة"
+  "pendingExpenses":"التكاليف المعلقة",
+  "operatingRatio":"نسبة التشغيل"
 }

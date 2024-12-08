@@ -31,7 +31,7 @@ import UpdateExpenses from "../PropertyForms/UpdateExpenses";
 import ExpensesDetails from "./ExpensesDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
 
-const Expenses = ({ isCompound }) => {
+const Expenses = ({ isCompound,refetchDetails }) => {
   const [showAddExModal, setShowAddExModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -394,6 +394,7 @@ const Expenses = ({ isCompound }) => {
             refetch={refetch}
             Id={exID}
             type={"expenses"}
+            refetchDetails={refetchDetails}
           />
         </ModalForm>
       )}
