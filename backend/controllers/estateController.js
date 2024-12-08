@@ -15,7 +15,7 @@ const { uploadSingleImage } = require("../utils/uploadImage");
 const estatesPopOptions = [
   {
     path: "compound",
-    select: "name address region city neighborhood image",
+    select: "name",
   },
 ];
 
@@ -34,7 +34,14 @@ const estatePopOptions = [
   },
 ];
 
-exports.getAllEstates = factory.getAll(Estate, estatesPopOptions);
+const estatesSelectFields =
+  "compound name description region city image inFavorites status";
+
+exports.getAllEstates = factory.getAll(
+  Estate,
+  estatesPopOptions,
+  estatesSelectFields
+);
 
 exports.getEstate = catchAsync(async (req, res, next) => {
   const estateId = req.params.id;
