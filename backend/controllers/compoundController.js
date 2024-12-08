@@ -4,6 +4,7 @@ const sharp = require("sharp");
 const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
 const Contract = require("../models/contractModel");
+const Revenue = require("../models/revenueModel");
 const Expense = require("../models/expenseModel");
 const Tenant = require("../models/tenantContactModel");
 const Tag = require("../models/tagModel");
@@ -71,9 +72,134 @@ exports.getCompound = catchAsync(async (req, res, next) => {
     return next(new ApiError("No compound found with that ID", 404));
   }
 
+  const estatesIds = estates.map((estate) => estate._id);
+  const monthStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  const monthEnd = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0
+  );
+
+  const revenuesAggregatePromise = Revenue.aggregate([
+    {
+      $match: {
+        estate: { $in: estatesIds },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPaid: {
+          $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0] },
+        },
+        totalPending: {
+          $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
+        },
+        // totalMonthPaid: {
+        //   $sum: {
+        //     $cond: [
+        //       {
+        //         $and: [
+        //           { $eq: ["$status", "paid"] },
+        //           { $gte: ["$dueDate", monthStart] },
+        //           { $lte: ["$dueDate", monthEnd] },
+        //         ],
+        //       },
+        //       "$amount",
+        //       0,
+        //     ],
+        //   },
+        // },
+      },
+    },
+  ]);
+
+  const monthRevenuesAggregatePromise = Revenue.aggregate([
+    {
+      $match: {
+        estate: { $in: estatesIds },
+        dueDate: { $gte: monthStart, $lte: monthEnd },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPaid: {
+          $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0] },
+        },
+        totalPending: {
+          $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
+        },
+      },
+    },
+  ]);
+
+  const expensesAggregatePromise = Expense.aggregate([
+    {
+      $match: {
+        estate: { $in: estatesIds },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalPaid: {
+          $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0] },
+        },
+        totalPending: {
+          $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
+        },
+      },
+    },
+  ]);
+
+  const [revenuesAggregate, monthRevenuesAggregate, expensesAggregate] =
+    await Promise.all([
+      revenuesAggregatePromise,
+      monthRevenuesAggregatePromise,
+      expensesAggregatePromise,
+    ]);
+
+  const [
+    { totalPaid: totalPaidRevenues, totalPending: totalPendingRevenues } = {
+      totalPaid: 0,
+      totalPending: 0,
+    },
+  ] = revenuesAggregate;
+
+  const [
+    {
+      totalPaid: totalMonthPaidRevenues,
+      totalPending: totalMonthPendingRevenues,
+    } = {
+      totalPaid: 0,
+      totalPending: 0,
+    },
+  ] = monthRevenuesAggregate;
+
+  const [
+    { totalPaid: totalPaidExpenses, totalPending: totalPendingExpenses } = {
+      totalPaid: 0,
+      totalPending: 0,
+    },
+  ] = expensesAggregate;
+
   res.status(200).json({
     status: "success",
     data: {
+      totalRevenue: totalPaidRevenues + totalPendingRevenues,
+      totalPaidRevenues,
+      totalPendingRevenues,
+      totalMonthRevenue: totalMonthPaidRevenues + totalMonthPendingRevenues,
+      totalMonthPaidRevenues,
+      totalMonthPendingRevenues,
+      totalExpense: totalPaidExpenses + totalPendingExpenses,
+      totalPaidExpenses,
+      totalPendingExpenses,
       compound,
       estates,
     },
