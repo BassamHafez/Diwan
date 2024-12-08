@@ -194,6 +194,7 @@
   "amount": "المبلغ",
   "endDateValidation": "زمن نهاية العقد يجب أن يكون لاحقًا لزمن بداية العقد",
   "timeUnit": "وحدة الزمن",
+  "paymentPeriod":"مدة الإيجار",
   "paymentPeriodValue": "فترة الدفع",
   "theTenant": "المستأجر",
   "day": "يوم",
@@ -309,5 +310,13 @@
   "download":"تحميل",
   "public":"غير مخصصة",
   "pendingExpenses":"التكاليف المعلقة",
-  "operatingRatio":"نسبة التشغيل"
+  "operatingRatio":"نسبة التشغيل",
+  "partiesContract":"أطراف العقد",
+  "lease":"عقد الإيجار",
+  "printDate":"تاريخ الطباعة",
+  "estateDetails":"تفاصيل الوحدة",
+  "location":"الموقع",
+  "revenueType":"نوع الدفعة",
+  "paymentCount":"عدد الدفعات",
+  "revDetails":"تفاصيل الدفعات"
 }

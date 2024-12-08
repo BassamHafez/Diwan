@@ -313,5 +313,13 @@
   "download":"Download",
   "public":"Not customized",
   "pendingExpenses":"Pending Expenses",
-  "operatingRatio":"Operating Ratio"
+  "operatingRatio":"Operating Ratio",
+  "partiesContract":"Parties to the contract",
+  "lease":"Lease",
+  "printDate":"Print Date",
+  "estateDetails":"Unite Details",
+  "location":"Location",
+  "revenueType":"Revenue Type",
+  "paymentCount":"Payment Count",
+  "revDetails":"Revenue Details"
 }

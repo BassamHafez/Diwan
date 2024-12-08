@@ -340,13 +340,13 @@ const GeneralDetails = ({
         </>
       ) : (
         <>
-          <CurrentContract/>
-          <Contracts/>
-          <Revenue refetchDetails={refetch}/>
+          <CurrentContract details={details} />
+          <Contracts details={details} />
+          <Revenue refetchDetails={refetch} />
         </>
       )}
 
-      <Expenses isCompound={isCompound} refetchDetails={refetch}/>
+      <Expenses isCompound={isCompound} refetchDetails={refetch} />
 
       {showUpdateDetailsModal && (
         <ModalForm

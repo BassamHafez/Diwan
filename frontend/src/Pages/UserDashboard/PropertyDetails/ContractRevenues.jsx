@@ -7,7 +7,7 @@ const ContractRevenues = (props) => {
 
   return (
     <div className="position-relative">
-      <h4>{key("revenues")}</h4>
+      <h4 className={props.classes?props.classes:""}>{key("revenues")}</h4>
       <table className={`${styles.contract_table} table`}>
         <thead className={styles.table_head}>
           <tr>
