@@ -72,7 +72,7 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
   useEffect(() => {
     let compoundOptions;
     if (compounds) {
-      compoundOptions = compounds.data?.map((compound) => {
+      compoundOptions = compounds.data?.compounds?.map((compound) => {
         return { label: compound.name, value: compound._id };
       });
       setCompoundsOptions(compoundOptions);

@@ -20,6 +20,7 @@ const Property = ({
   hideCompound,
   type,
   isCompoundDetailsPage,
+  rentedEstatesCountObj,
 }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
@@ -59,13 +60,15 @@ const Property = ({
     }
 
     const rentedPercentage = calculateRentedPercentage(
-      property.rentedEstatesCount,
+      rentedEstatesCountObj?.rentedCount,
       property.estatesCount
     );
-
-    return `${key("rented")}: ${property.rentedEstatesCount}/${
-      property.estatesCount
-    } ${key("unit")} (${rentedPercentage}%)`;
+    let countNum = isArLang
+      ? `${property.estatesCount}/${rentedEstatesCountObj?.rentedCount}`
+      : `${rentedEstatesCountObj?.rentedCount}/${property.estatesCount}`;
+    return `${key("rented")}: ${countNum} ${key(
+      "unit"
+    )} (${rentedPercentage}%)`;
   };
 
   return (
