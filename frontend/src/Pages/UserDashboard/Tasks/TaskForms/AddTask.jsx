@@ -66,7 +66,7 @@ const AddTask = ({ hideModal, refetch }) => {
 
   useEffect(() => {
     setEstatesOptions(convertTpOptionsFormate(estates?.data));
-    setCompoundsOptions(convertTpOptionsFormate(compounds?.data));
+    setCompoundsOptions(convertTpOptionsFormate(compounds?.data?.compounds));
     setContactsOptions(convertTpOptionsFormate(services?.data));
   }, [estates, compounds,services]);
 

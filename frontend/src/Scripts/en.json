@@ -312,5 +312,6 @@
   "expensesDetails":"Expenses Details",
   "download":"Download",
   "public":"Not customized",
-  "pendingExpenses":"Pending Expenses"
+  "pendingExpenses":"Pending Expenses",
+  "operatingRatio":"Operating Ratio"
 }
