@@ -20,7 +20,10 @@ import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
-import { calculateRentedPercentage } from "../../../Components/Logic/LogicFun";
+import {
+  calculateRentedPercentage,
+  convertNumbersToFixedTwo,
+} from "../../../Components/Logic/LogicFun";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 import AddEstate from "../PropertyForms/AddEstate";
@@ -40,7 +43,7 @@ const CompoundDetails = () => {
   const notifyError = (message) => toast.error(message);
 
   const { data, isFetching, refetch } = useQuery({
-    queryKey: ["singleCompound", compId,token],
+    queryKey: ["singleCompound", compId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `compounds/${compId}`,
@@ -52,18 +55,20 @@ const CompoundDetails = () => {
 
   useEffect(() => {
     AOS.init();
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
   }, []);
 
-  useEffect(()=>{
-    let rentedEstates=[];
-    let rentedEstateCount=0;
-    if(data){
-      rentedEstates=data?.data?.estates.filter((estate)=>estate.status==="rented");
-      rentedEstateCount=rentedEstates?.length||0
+  useEffect(() => {
+    let rentedEstates = [];
+    let rentedEstateCount = 0;
+    if (data) {
+      rentedEstates = data?.data?.estates.filter(
+        (estate) => estate.status === "rented"
+      );
+      rentedEstateCount = rentedEstates?.length || 0;
     }
-    setRentedEstateCount(rentedEstateCount)
-  },[data])
+    setRentedEstateCount(rentedEstateCount);
+  }, [data]);
 
   const deleteCompound = async () => {
     setShowDeleteModal(false);
@@ -73,7 +78,6 @@ const CompoundDetails = () => {
         token: token,
         type: "compounds",
       });
-      console.log(res);
 
       if (res.status === 204) {
         queryClient.invalidateQueries(["compounds", token]);
@@ -92,11 +96,16 @@ const CompoundDetails = () => {
     }
   };
 
-
+  const compDetails = data?.data;
+  const totalRev = Number(compDetails?.totalRevenue);
+  const totalEx = Number(compDetails?.totalExpense);
+  const totalPaidRev = Number(compDetails?.totalPaidRevenues);
+  const totalMonthRev = Number(compDetails?.totalMonthRevenue);
+  const totalMonthPaidRev = Number(compDetails?.totalMonthPaidRevenues);
 
   return (
     <>
-    <ScrollTopBtn/>
+      <ScrollTopBtn />
       <div className="height_container">
         {isFetching ? (
           <LoadingOne />
@@ -109,7 +118,7 @@ const CompoundDetails = () => {
                   data-aos="fade-in"
                   data-aos-duration="1000"
                 >
-                  <h3 className="my-4 mx-1">{data.data?.compound?.name}</h3>
+                  <h3 className="my-4 mx-1">{compDetails?.compound?.name}</h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <div
                       className={`${styles.controller_btn} ${styles.delete_btn}`}
@@ -139,7 +148,7 @@ const CompoundDetails = () => {
                   >
                     <img
                       src={`${import.meta.env.VITE_Host}${
-                        data.data?.compound?.image
+                        compDetails?.compound?.image
                       }`}
                       alt="estate_img"
                     />
@@ -162,7 +171,7 @@ const CompoundDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("totalProperties")}</span>
-                          <p>{data.data?.estates?.length}</p>
+                          <p>{compDetails?.estates?.length}</p>
                         </div>
                       </Col>
                       <Col
@@ -187,7 +196,7 @@ const CompoundDetails = () => {
                           <p>
                             {calculateRentedPercentage(
                               rentedEstateCount,
-                              data.data?.estates?.length
+                              compDetails?.estates?.length
                             )}
                             %
                           </p>
@@ -203,7 +212,12 @@ const CompoundDetails = () => {
                           <span>
                             {key("collectionRatio")} {key("forEstates")}
                           </span>
-                          <p>0%</p>
+                          <p>
+                            {convertNumbersToFixedTwo(
+                              (totalPaidRev / totalRev) * 100
+                            )}
+                            %
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -216,7 +230,12 @@ const CompoundDetails = () => {
                           <span>
                             {key("netReturns")} {key("forEstates")}
                           </span>
-                          <p>0%</p>
+                          <p>
+                            {convertNumbersToFixedTwo(
+                              ((totalRev - totalEx) / totalRev) * 100
+                            )}
+                            %
+                          </p>
                         </div>
                       </Col>
                       <Col
@@ -227,10 +246,15 @@ const CompoundDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("collectionCurrentMonth")}</span>
-                          <p>0%</p>
+                          <p>
+                            {convertNumbersToFixedTwo(
+                              (totalMonthPaidRev / totalMonthRev) * 100
+                            )}
+                            %
+                          </p>
                         </div>
                       </Col>
-                      <Col
+                      {/* <Col
                         xs={6}
                         sm={4}
                         md={6}
@@ -240,7 +264,7 @@ const CompoundDetails = () => {
                           <span>{key("operatingRatio")}</span>
                           <p>0%</p>
                         </div>
-                      </Col>
+                      </Col> */}
                     </Row>
                   </div>
                 </Col>
@@ -251,8 +275,8 @@ const CompoundDetails = () => {
                 <Tab eventKey="general" title={key("general")}>
                   <GeneralDetails
                     isCompound={true}
-                    details={data?.data?.compound}
-                    compoundEstates={data?.data?.estates}
+                    details={compDetails?.compound}
+                    compoundEstates={compDetails?.estates}
                     showAddEstatesModal={() => setShowAddEstateModal(true)}
                     refetch={refetch}
                   />

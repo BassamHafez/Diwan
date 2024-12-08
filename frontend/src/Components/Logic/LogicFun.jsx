@@ -38,7 +38,7 @@ import html2pdf from "html2pdf.js";
 export const generatePDF = (id, name) => {
   const element = document.getElementById(`${id}`);
   const options = {
-    margin: 10,
+    margin: 2,
     filename: name ? name : "file",
     html2canvas: { scale: 4 },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
@@ -298,6 +298,51 @@ export const renamedPaymentMethod = (type, language) => {
   return mappings?.[type] || "";
 };
 
+export const calculatePeriod = (startDate, endDate, isArLang) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  // Calculate differences in years, months, weeks, and days
+  const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
+  const years = Math.floor(totalDays / 365);
+  const remainingDaysAfterYears = totalDays % 365;
+  const months = Math.floor(remainingDaysAfterYears / 30);
+  // const remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+  const weeks = Math.floor(totalDays / 7);
+  const days = totalDays;
+
+  // Determine the most suitable unit
+  if (years >= 1) {
+    return isArLang ? `${years} سنة` : `${years} year${years > 1 ? "s" : ""}`;
+  } else if (months >= 1) {
+    return isArLang ? `${months} شهر` : `${months} month${months > 1 ? "s" : ""}`;
+  } else if (weeks >= 1) {
+    return isArLang ? `${weeks} أسبوع` : `${weeks} week${weeks > 1 ? "s" : ""}`;
+  } else {
+    return isArLang ? `${days} يوم` : `${days} day${days > 1 ? "s" : ""}`;
+  }
+};
+
+
+export const revenueTypes = {
+  en: {
+    day: "daily",
+    week: "weekly",
+    month: "monthly",
+    year: "annual",
+  },
+  ar: {
+    day: "يومي",
+    week: "أسبوعي",
+    month: "شهري",
+    year: "سنوي",
+  }}
+
+  export const renamedRevenuesType = (type, language) => {
+    const mappings = revenueTypes[language];
+    return mappings?.[type] || "";
+  };
+
 //expenses
 export const expensesStatusOptions = {
   en: {
@@ -316,3 +361,4 @@ export const renamedExpensesStatusMethod = (type, language) => {
   const mappings = expensesStatusOptions[language];
   return mappings?.[type] || "";
 };
+

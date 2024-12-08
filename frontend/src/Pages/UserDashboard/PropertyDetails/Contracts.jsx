@@ -27,10 +27,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import ContractDetails from "./ContractDetails";
+// import ContractDetails from "./ContractDetails";
 import UpdateContract from "../PropertyForms/UpdateContract";
+import PrintContract from "../../../Components/Prints/PrintContract";
 
-const Contracts = () => {
+const Contracts = ({ details }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -107,12 +108,12 @@ const Contracts = () => {
     }
   };
 
-  const filteredContracts = contractsData && Array.isArray(contractsData.data)
-  ? contractsData.data.filter(
-      (contract) => statusFilter === "" || contract.status === statusFilter
-    )
-  : [];
-
+  const filteredContracts =
+    contractsData && Array.isArray(contractsData.data)
+      ? contractsData.data.filter(
+          (contract) => statusFilter === "" || contract.status === statusFilter
+        )
+      : [];
 
   return (
     <div className={styles.contracts_body}>
@@ -314,15 +315,20 @@ const Contracts = () => {
           title={key("contractDetails")}
           modalSize={"lg"}
         >
-          <ContractDetails contract={contractDetails} />
-          <div className="d-none">
+          {/* <ContractDetails contract={contractDetails} /> */}
+          <PrintContract
+            contract={contractDetails}
+            details={details}
+            id={`${contractDetails._id}`}
+          />
+          {/* <div className="d-none">
             <div
               id={`${contractDetails._id}`}
               className="d-flex justify-content-center align-items-center flex-column"
             >
-              <ContractDetails contract={contractDetails} />
+              <PrintContract contract={contractDetails} details={details} />
             </div>
-          </div>
+          </div> */}
         </MainModal>
       )}
     </div>

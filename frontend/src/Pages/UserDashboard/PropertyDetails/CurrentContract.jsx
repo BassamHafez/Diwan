@@ -21,11 +21,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import ContractDetails from "./ContractDetails";
+// import ContractDetails from "./ContractDetails";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import { useSelector } from "react-redux";
+import PrintContract from "../../../Components/Prints/PrintContract";
 
-const CurrentContract = () => {
+const CurrentContract = ({details}) => {
   const token = useSelector((state) => state.userInfo.token);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -234,7 +235,13 @@ const CurrentContract = () => {
           title={key("contractDetails")}
           modalSize={"lg"}
         >
-          <ContractDetails contract={contractDetails} type="currentContract" />
+           <PrintContract
+            contract={contractDetails}
+            details={details}
+            id={`${contractDetails.contract?._id}`}
+            type="currentContract"
+          />
+          {/* <ContractDetails contract={contractDetails} type="currentContract" />
           <div className="d-none">
             <div
               id={`${contractDetails.contract?._id}`}
@@ -245,7 +252,7 @@ const CurrentContract = () => {
                 type="currentContract"
               />
             </div>
-          </div>
+          </div> */}
         </MainModal>
       )}
     </div>
