@@ -65,7 +65,9 @@ exports.getCompound = catchAsync(async (req, res, next) => {
 
   const [compound, estates] = await Promise.all([
     Compound.findById(compoundId).populate(compoundPopOptions).lean(),
-    Estate.find({ compound: compoundId }).lean(),
+    Estate.find({ compound: compoundId })
+      .select("name description region city image inFavorites status")
+      .lean(),
   ]);
 
   if (!compound) {
