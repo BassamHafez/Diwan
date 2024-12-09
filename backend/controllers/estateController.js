@@ -2,6 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
 const mongoose = require("mongoose");
 
+const Account = require("../models/accountModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
 const Expense = require("../models/expenseModel");
@@ -39,7 +40,10 @@ exports.getAllEstates = factory.getAll(Estate, estatesPopOptions);
 exports.getEstate = catchAsync(async (req, res, next) => {
   const estateId = req.params.id;
 
-  const estatePromise = Estate.findById(estateId)
+  const estatePromise = Estate.findOne({
+    _id: estateId,
+    account: req.user.account,
+  })
     .populate(estatePopOptions)
     .lean();
 
@@ -187,8 +191,13 @@ exports.createEstate = catchAsync(async (req, res, next) => {
 });
 
 exports.updateEstate = catchAsync(async (req, res, next) => {
-  const estate = await Estate.findById(req.params.id);
+  const estateId = req.params.id;
   const { tags } = req.body;
+
+  const estate = await Estate.findOne({
+    _id: estateId,
+    account: req.user.account,
+  });
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -234,7 +243,12 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteEstate = catchAsync(async (req, res, next) => {
-  const estate = await Estate.findById(req.params.id);
+  const estateId = req.params.id;
+
+  const estate = await Estate.findOne({
+    _id: estateId,
+    account: req.user.account,
+  });
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -261,8 +275,16 @@ exports.deleteEstate = catchAsync(async (req, res, next) => {
 // Favorites
 
 exports.favoriteEstate = catchAsync(async (req, res, next) => {
+  const account = await Account.findById(req.user.account)
+    .select("isFavoriteAllowed")
+    .lean();
+
+  if (!account.isFavoriteAllowed) {
+    return next(new ApiError("Subscribe in favorite feature first", 403));
+  }
+
   const estate = await Estate.findOneAndUpdate(
-    { _id: req.params.id, user: req.user._id },
+    { _id: req.params.id, account: req.user.account },
     { inFavorites: true }
   );
 
@@ -278,7 +300,7 @@ exports.favoriteEstate = catchAsync(async (req, res, next) => {
 
 exports.unfavoriteEstate = catchAsync(async (req, res, next) => {
   const estate = await Estate.findOneAndUpdate(
-    { _id: req.params.id, user: req.user._id },
+    { _id: req.params.id, account: req.user.account },
     { inFavorites: false }
   );
 
@@ -297,7 +319,13 @@ exports.unfavoriteEstate = catchAsync(async (req, res, next) => {
 exports.getEstateExpenses = catchAsync(async (req, res, next) => {
   const estateId = req.params.id;
 
-  const estatePromise = Estate.findById(estateId).select("_id").lean();
+  const estatePromise = Estate.findOne({
+    _id: estateId,
+    account: req.user.account,
+  })
+    .select("_id")
+    .lean();
+
   const expensesPromise = Expense.find({ estate: estateId })
     .select("note amount dueDate type status paidAt paymentMethod")
     .sort("dueDate")
