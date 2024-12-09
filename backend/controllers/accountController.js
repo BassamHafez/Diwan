@@ -16,6 +16,7 @@ const userAccessPermissions = [
   "ADD_CONTRACT",
   "UPDATE_CONTRACT",
   "DELETE_CONTRACT",
+  "CANCEL_CONTRACT",
   "ADD_REVENUE",
   "UPDATE_REVENUE",
   "DELETE_REVENUE",
