@@ -90,7 +90,7 @@ exports.createEstateValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("inFavorites")
     .isEmpty()
@@ -186,7 +186,7 @@ exports.updateEstateValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("compound").isEmpty().withMessage("Compound cannot be edited"),
 
@@ -244,7 +244,7 @@ exports.createEstateExpenseValidator = [
 
   // NOT ALLOWED
 
-  check("user").not().exists().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set"),
 
   check("status").not().exists().withMessage("Status cannot be set"),
 
