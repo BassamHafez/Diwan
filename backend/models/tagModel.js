@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const tagSchema = new mongoose.Schema({
-  user: {
+  account: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: "Account",
     required: true,
     unique: true,
   },

@@ -1,5 +1,7 @@
 const { promisify } = require("util");
+const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Tag = require("../models/tagModel");
 const catchAsync = require("../utils/catchAsync");
@@ -26,16 +28,37 @@ const createSendToken = (user, statusCode, res) => {
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
+  const userId = new mongoose.Types.ObjectId();
+  const accountId = new mongoose.Types.ObjectId();
+
   const userData = {
+    _id: userId,
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
     password: req.body.password,
+    // accounts: [
+    //   {
+    //     account: accountId,
+    //   },
+    // ],
+    account: accountId,
+  };
+
+  const accountData = {
+    _id: accountId,
+    owner: userId,
+    members: [
+      {
+        user: userId,
+      },
+    ],
   };
 
   const [newUser, _] = await Promise.all([
     User.create(userData),
-    Tag.create({ user: newUser._id }),
+    Tag.create({ account: accountId }),
+    Account.create(accountData),
   ]);
 
   createSendToken(newUser, 201, res);
@@ -110,3 +133,17 @@ exports.restrictTo =
 
     next();
   };
+
+exports.checkPermission = (requiredPermission) => (req, res, next) => {
+  const { user } = req;
+
+  if (!user.account) {
+    return next(new ApiError("Access denied: Account not found", 403));
+  }
+
+  if (!user.permissions.includes(requiredPermission)) {
+    return next(new ApiError("Access denied: Missing permission", 403));
+  }
+
+  next();
+};

@@ -1,7 +1,6 @@
 const Contract = require("../models/contractModel");
 const Estate = require("../models/estateModel");
 const Revenue = require("../models/revenueModel");
-const Compound = require("../models/compoundModel");
 const ScheduledTask = require("../models/scheduledTaskModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -17,16 +16,18 @@ const contractPopOptions = [
 exports.getAllContracts = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
-  const estate = await Estate.findById(estateId);
+  const [estate, contracts] = await Promise.all([
+    Estate.findById(estateId).select("_id").lean(),
+
+    Contract.find({ estate: estateId, account: req.user.account })
+      .populate(contractPopOptions)
+      .sort("startDate")
+      .lean(),
+  ]);
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
   }
-
-  const contracts = await Contract.find({ estate: estateId, user: req.user.id })
-    .populate(contractPopOptions)
-    .sort("startDate")
-    .lean();
 
   res.status(200).json({
     status: "success",
@@ -47,8 +48,6 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const isActiveContract =
     newStartDate <= Date.now() && newEndDate >= Date.now();
-
-  console.log("isActiveContract: ", isActiveContract);
 
   // const isFutureContract = newStartDate > Date.now();
 
@@ -93,7 +92,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
     ...req.body,
     status: isActiveContract ? "active" : "upcoming",
     estate: estateId,
-    user: req.user.id,
+    account: req.user.account,
   });
 
   const scheduledTaskPromise = ScheduledTask.create({
@@ -117,7 +116,12 @@ exports.createContract = catchAsync(async (req, res, next) => {
 exports.cancelContract = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const contract = await Contract.findById(id).select("status").lean();
+  const contract = await Contract.findOne({
+    _id: id,
+    account: req.user.account,
+  })
+    .select("status")
+    .lean();
 
   if (!contract) {
     return next(new ApiError("No contract found with that ID", 404));

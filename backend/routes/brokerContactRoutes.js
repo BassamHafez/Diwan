@@ -4,16 +4,17 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const brokerContactController = require("../controllers/brokerContactController");
 const contactValidator = require("../utils/validators/contactValidator");
-const { filterUserResults, setUserId } = require("../utils/requestUtils");
+const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
 router
   .route("/")
-  .get(filterUserResults, brokerContactController.getAllBrokerContacts)
+  .get(filterAccountResults, brokerContactController.getAllBrokerContacts)
   .post(
     contactValidator.createContactValidator,
-    setUserId,
+    setAccountId,
+    authController.checkPermission("ADD_CONTACT"),
     brokerContactController.createBrokerContact
   );
 
@@ -25,10 +26,12 @@ router
   )
   .patch(
     contactValidator.updateContactValidator,
+    authController.checkPermission("UPDATE_CONTACT"),
     brokerContactController.updateBrokerContact
   )
   .delete(
     contactValidator.getContactValidator,
+    authController.checkPermission("DELETE_CONTACT"),
     brokerContactController.deleteBrokerContact
   );
 

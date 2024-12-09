@@ -12,9 +12,9 @@ const brokerContactSchema = new mongoose.Schema(
     },
     phone2: String,
     notes: String,
-    user: {
+    account: {
       type: mongoose.Schema.ObjectId,
-      ref: "User",
+      ref: "Account",
       required: true,
     },
     contactType: {

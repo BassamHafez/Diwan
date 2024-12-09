@@ -41,9 +41,9 @@ const revenueSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Estate",
     },
-    user: {
+    account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Account",
       required: true,
     },
   },

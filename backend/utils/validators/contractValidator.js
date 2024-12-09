@@ -70,7 +70,7 @@ exports.createContractValidator = [
 
   check("status").not().exists().withMessage("Status cannot be set manually"),
 
-  check("user").not().exists().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   validatorMiddleware,
 ];
@@ -168,7 +168,7 @@ exports.updateContractValidator = [
 
   // NOT ALLOWED
 
-  check("user").not().exists().withMessage("User cannot be edited"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("estate").not().exists().withMessage("Estate cannot be set manually"),
 

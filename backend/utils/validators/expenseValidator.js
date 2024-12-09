@@ -51,7 +51,7 @@ exports.createExpenseValidator = [
 
   // NOT ALLOWED
 
-  check("user").not().exists().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set"),
 
   check("status").not().exists().withMessage("Status cannot be set"),
 
@@ -101,7 +101,7 @@ exports.updateExpenseValidator = [
 
   check("compound").not().exists().withMessage("Compound cannot be updated"),
 
-  check("user").not().exists().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set"),
 
   check("status").not().exists().withMessage("Status cannot be set"),
 

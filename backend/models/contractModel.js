@@ -44,9 +44,9 @@ const contractSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    user: {
+    account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Account",
       required: true,
     },
   },
