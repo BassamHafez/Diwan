@@ -72,7 +72,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
       type,
       estate,
       compound,
-      user: req.user.id,
+      account: req.user.account,
     };
 
     [task] = await Promise.all([

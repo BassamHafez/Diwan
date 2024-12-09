@@ -57,7 +57,7 @@ exports.createTaskValidator = [
 
   // NOT ALLOWED
 
-  check("user").not().exists().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("isCompleted")
     .not()
@@ -125,7 +125,7 @@ exports.updateTaskValidator = [
 
   // NOT ALLOWED
 
-  check("user").not().exists().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("isCompleted")
     .not()
