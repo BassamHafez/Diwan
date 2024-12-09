@@ -135,23 +135,9 @@ exports.restrictTo =
   };
 
 exports.checkPermission = (requiredPermission) => (req, res, next) => {
-  // const { accounts } = req.user;
-  // const { accountId } = req.params;
-
-  // const account = accounts.find((a) => a.accountId.toString() === accountId);
-
-  // if (!account) {
-  //   return next(new ApiError("Access denied: Account not found", 403));
-  // }
-
-  // if (!account.permissions.includes(requiredPermission)) {
-  //   return next(new ApiError("Access denied: Missing permission", 403));
-  // }
-
-  const { accountId } = req.params;
   const { user } = req;
 
-  if (!user.account || user.account.toString() !== accountId) {
+  if (!user.account) {
     return next(new ApiError("Access denied: Account not found", 403));
   }
 
