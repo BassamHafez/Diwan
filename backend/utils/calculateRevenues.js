@@ -41,7 +41,7 @@ function calculateRevenues(contract) {
       contract: contract._id,
       tenant: contract.tenant,
       estate: contract.estate,
-      user: contract.user,
+      account: contract.account,
     });
 
     // Move to the next due date
