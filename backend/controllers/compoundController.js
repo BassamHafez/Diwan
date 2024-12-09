@@ -68,7 +68,9 @@ exports.getCompound = catchAsync(async (req, res, next) => {
     Compound.findOne({ _id: compoundId, account: req.user.account })
       .populate(compoundPopOptions)
       .lean(),
-    Estate.find({ compound: compoundId }).lean(),
+    Estate.find({ compound: compoundId })
+      .select("name description region city image inFavorites status")
+      .lean(),
   ]);
 
   if (!compound) {
@@ -102,21 +104,6 @@ exports.getCompound = catchAsync(async (req, res, next) => {
         totalPending: {
           $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
         },
-        // totalMonthPaid: {
-        //   $sum: {
-        //     $cond: [
-        //       {
-        //         $and: [
-        //           { $eq: ["$status", "paid"] },
-        //           { $gte: ["$dueDate", monthStart] },
-        //           { $lte: ["$dueDate", monthEnd] },
-        //         ],
-        //       },
-        //       "$amount",
-        //       0,
-        //     ],
-        //   },
-        // },
       },
     },
   ]);
