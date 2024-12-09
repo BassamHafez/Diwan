@@ -4,7 +4,7 @@ const router = express.Router({ mergeParams: true });
 const authController = require("../controllers/authController");
 const contractController = require("../controllers/contractController");
 const contractValidator = require("../utils/validators/contractValidator");
-const { filterUserResults, setUserId } = require("../utils/requestUtils");
+const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
@@ -13,12 +13,13 @@ router
   .route("/")
   .get(
     contractValidator.getContractsValidator,
-    filterUserResults,
+    filterAccountResults,
     contractController.getAllContracts
   )
   .post(
     contractValidator.createContractValidator,
-    setUserId,
+    authController.checkPermission("ADD_CONTRACT"),
+    setAccountId,
     contractController.createContract
   );
 
@@ -33,10 +34,12 @@ router
   .route("/:id")
   .patch(
     contractValidator.updateContractValidator,
+    authController.checkPermission("UPDATE_CONTRACT"),
     contractController.updateContract
   )
   .delete(
     contractValidator.getContractValidator,
+    authController.checkPermission("CANCEL_CONTRACT"),
     contractController.cancelContract
   );
 
