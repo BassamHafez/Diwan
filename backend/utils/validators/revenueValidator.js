@@ -52,7 +52,7 @@ exports.createRevenueValidator = [
 
   check("status").not().exists().withMessage("Status cannot be set manually"),
 
-  check("user").not().exists().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("paymentMethod")
     .not()
