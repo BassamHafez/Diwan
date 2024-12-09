@@ -35,6 +35,7 @@ const userAccessPermissions = [
   "ADD_TASK",
   "UPDATE_TASK",
   "DELETE_TASK",
+  "COMPLETE_TASK",
 ];
 
 exports.getAllAccounts = factory.getAll(Account);
