@@ -17,9 +17,9 @@ const tenantContactSchema = new mongoose.Schema(
     },
     phone2: String,
     notes: String,
-    user: {
-      type: mongoose.Schema.ObjectId,
-      ref: "User",
+    account: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
       required: true,
     },
     nationalId: String,

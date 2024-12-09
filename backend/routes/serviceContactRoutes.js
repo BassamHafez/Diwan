@@ -4,16 +4,17 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const serviceContactController = require("../controllers/serviceContactController");
 const contactValidator = require("../utils/validators/contactValidator");
-const { filterUserResults, setUserId } = require("../utils/requestUtils");
+const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
 router
   .route("/")
-  .get(filterUserResults, serviceContactController.getAllServiceContacts)
+  .get(filterAccountResults, serviceContactController.getAllServiceContacts)
   .post(
     contactValidator.createContactValidator,
-    setUserId,
+    setAccountId,
+    authController.checkPermission("ADD_CONTACT"),
     serviceContactController.createServiceContact
   );
 
@@ -25,10 +26,12 @@ router
   )
   .patch(
     contactValidator.updateContactValidator,
+    authController.checkPermission("UPDATE_CONTACT"),
     serviceContactController.updateServiceContact
   )
   .delete(
     contactValidator.getContactValidator,
+    authController.checkPermission("DELETE_CONTACT"),
     serviceContactController.deleteServiceContact
   );
 

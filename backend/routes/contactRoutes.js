@@ -3,10 +3,10 @@ const router = express.Router();
 
 const authController = require("../controllers/authController");
 const contactController = require("../controllers/contactController");
-const { filterUserResults } = require("../utils/requestUtils");
+const { filterAccountResults } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
-router.route("/").get(filterUserResults, contactController.getAllContacts);
+router.route("/").get(filterAccountResults, contactController.getAllContacts);
 
 module.exports = router;
