@@ -172,7 +172,7 @@ exports.createEstate = catchAsync(async (req, res, next) => {
 
   const tagUpdatePromise = tags
     ? Tag.findOneAndUpdate(
-        { user: req.user._id },
+        { account: req.user.account },
         { $addToSet: { tags: { $each: tags } } },
         { upsert: true, lean: true }
       )
@@ -221,7 +221,7 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
 
   const tagUpdatePromise = tags
     ? Tag.findOneAndUpdate(
-        { user: req.user._id },
+        { account: req.user.account },
         { $addToSet: { tags: { $each: tags } } },
         { upsert: true, lean: true }
       )

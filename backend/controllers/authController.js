@@ -57,7 +57,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 
   const [newUser, _] = await Promise.all([
     User.create(userData),
-    Tag.create({ user: userId }),
+    Tag.create({ account: accountId }),
     Account.create(accountData),
   ]);
 
