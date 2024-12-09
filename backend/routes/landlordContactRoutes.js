@@ -4,16 +4,17 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const landlordContactController = require("../controllers/landlordContactController");
 const contactValidator = require("../utils/validators/contactValidator");
-const { filterUserResults, setUserId } = require("../utils/requestUtils");
+const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
 router
   .route("/")
-  .get(filterUserResults, landlordContactController.getAllLandlordContacts)
+  .get(filterAccountResults, landlordContactController.getAllLandlordContacts)
   .post(
     contactValidator.createContactValidator,
-    setUserId,
+    setAccountId,
+    authController.checkPermission("ADD_CONTACT"),
     landlordContactController.createLandlordContact
   );
 
@@ -25,10 +26,12 @@ router
   )
   .patch(
     contactValidator.updateContactValidator,
+    authController.checkPermission("UPDATE_CONTACT"),
     landlordContactController.updateLandlordContact
   )
   .delete(
     contactValidator.getContactValidator,
+    authController.checkPermission("DELETE_CONTACT"),
     landlordContactController.deleteLandlordContact
   );
 
