@@ -32,7 +32,7 @@ exports.createContactValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("contactType").isEmpty().withMessage("Contact type cannot be set"),
 
@@ -74,7 +74,7 @@ exports.updateContactValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("contactType").isEmpty().withMessage("Contact type cannot be set"),
 
@@ -155,7 +155,7 @@ exports.createTenantContactValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("contactType").isEmpty().withMessage("Contact type cannot be set"),
 
@@ -222,7 +222,7 @@ exports.updateTenantContactValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be edited"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   check("type").isEmpty().withMessage("Type cannot be edited"),
 

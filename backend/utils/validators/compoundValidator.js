@@ -66,7 +66,7 @@ exports.createCompoundValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   validatorMiddleware,
 ];
@@ -124,7 +124,7 @@ exports.updateCompoundValidator = [
 
   // NOT ALLOWED
 
-  check("user").isEmpty().withMessage("User cannot be set manually"),
+  check("account").not().exists().withMessage("Account cannot be set manually"),
 
   validatorMiddleware,
 ];
@@ -174,7 +174,7 @@ exports.createCompoundExpenseValidator = [
 
   // NOT ALLOWED
 
-  check("user").not().exists().withMessage("User cannot be set"),
+  check("account").not().exists().withMessage("Account cannot be set"),
 
   check("status").not().exists().withMessage("Status cannot be set"),
 

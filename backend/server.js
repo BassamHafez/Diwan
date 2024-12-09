@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 process.on("uncaughtException", (err) => {
   console.log(`Unhandled Exception! 💥 Shutting down...
     Time: ${new Date()}`);
-  console.log(err.name, err.message);
+  console.log(err);
   process.exit(1);
 });
 

@@ -31,7 +31,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
   const revenue = await Revenue.create({
     ...req.body,
     estate: estateId,
-    user: req.user.id,
+    account: req.user.account,
   });
 
   res.status(201).json({
@@ -41,8 +41,8 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 });
 
 exports.cancelRevenue = catchAsync(async (req, res, next) => {
-  const updatedRevenue = await Revenue.findByIdAndUpdate(
-    req.params.id,
+  const updatedRevenue = await Revenue.findOneAndUpdate(
+    { _id: req.params.id, account: req.user.account },
     { status: "canceled", paidAt: null, paymentMethod: null },
     { new: true }
   );
@@ -60,8 +60,8 @@ exports.cancelRevenue = catchAsync(async (req, res, next) => {
 exports.payRevenue = catchAsync(async (req, res, next) => {
   const { paymentMethod, paidAt } = req.body;
 
-  const updatedRevenue = await Revenue.findByIdAndUpdate(
-    req.params.id,
+  const updatedRevenue = await Revenue.findOneAndUpdate(
+    { _id: req.params.id, account: req.user.account },
     { status: "paid", paidAt, paymentMethod },
     { new: true }
   );
@@ -77,8 +77,8 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
 });
 
 exports.unpayRevenue = catchAsync(async (req, res, next) => {
-  const updatedRevenue = await Revenue.findByIdAndUpdate(
-    req.params.id,
+  const updatedRevenue = await Revenue.findOneAndUpdate(
+    { _id: req.params.id, account: req.user.account },
     { status: "pending", paidAt: null, paymentMethod: null },
     { new: true }
   );

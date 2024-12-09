@@ -4,7 +4,7 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const estateController = require("../controllers/estateController");
 const estateValidator = require("../utils/validators/estateValidator");
-const { filterUserResults, setUserId } = require("../utils/requestUtils");
+const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
@@ -14,22 +14,25 @@ router
   .route("/:id/favorites")
   .post(
     estateValidator.getEstateValidator,
-    setUserId,
+    authController.checkPermission("FAVORITES"),
+    setAccountId,
     estateController.favoriteEstate
   )
   .delete(
     estateValidator.getEstateValidator,
+    authController.checkPermission("FAVORITES"),
     estateController.unfavoriteEstate
   );
 
 router
   .route("/")
-  .get(filterUserResults, estateController.getAllEstates)
+  .get(filterAccountResults, estateController.getAllEstates)
   .post(
     estateController.uploadEstateImage,
     estateController.resizeEstateImage,
     estateValidator.createEstateValidator,
-    setUserId,
+    authController.checkPermission("ADD_ESTATE"),
+    setAccountId,
     estateController.createEstate
   );
 
@@ -40,6 +43,7 @@ router
     estateController.uploadEstateImage,
     estateController.resizeEstateImage,
     estateValidator.updateEstateValidator,
+    authController.checkPermission("UPDATE_ESTATE"),
     estateController.updateEstate
   )
   .delete(estateValidator.getEstateValidator, estateController.deleteEstate);
@@ -51,7 +55,8 @@ router
   .get(estateValidator.getEstateValidator, estateController.getEstateExpenses)
   .post(
     estateValidator.createEstateExpenseValidator,
-    setUserId,
+    authController.checkPermission("ADD_EXPENSE"),
+    setAccountId,
     estateController.createEstateExpense
   );
 

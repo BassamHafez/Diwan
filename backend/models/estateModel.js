@@ -50,9 +50,9 @@ const estateSchema = new mongoose.Schema(
       type: String,
       // match: /^\d{10}$/, // 10 digits
     },
-    user: {
+    account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Account",
       required: true,
     },
     broker: {
@@ -75,6 +75,8 @@ const estateSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+estateSchema.index({ account: 1 });
 
 const Estate = mongoose.model("Estate", estateSchema);
 

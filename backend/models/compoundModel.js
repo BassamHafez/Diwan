@@ -36,9 +36,9 @@ const compoundSchema = new mongoose.Schema(
       type: String,
       // match: /^\d{10}$/, // 10 digits
     },
-    user: {
+    account: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "Account",
       required: true,
     },
     broker: {
@@ -56,6 +56,8 @@ const compoundSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+compoundSchema.index({ account: 1 });
 
 const Compound = mongoose.model("Compound", compoundSchema);
 
