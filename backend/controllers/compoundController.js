@@ -1,6 +1,7 @@
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
 
+const Account = require("../models/accountModel");
 const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
 const Contract = require("../models/contractModel");
@@ -23,7 +24,7 @@ const compoundPopOptions = [
 ];
 
 exports.getAllCompounds = catchAsync(async (req, res, next) => {
-  const compounds = await Compound.find({ user: req.user.id }).lean();
+  const compounds = await Compound.find({ account: req.user.account }).lean();
 
   const compoundsIds = compounds.map((compound) => compound._id);
 
@@ -63,7 +64,9 @@ exports.getCompound = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
 
   const [compound, estates] = await Promise.all([
-    Compound.findById(compoundId).populate(compoundPopOptions).lean(),
+    Compound.findOne({ _id: compoundId, account: req.user.account })
+      .populate(compoundPopOptions)
+      .lean(),
     Estate.find({ compound: compoundId }).lean(),
   ]);
 
@@ -101,7 +104,10 @@ exports.resizeCompoundImage = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteCompound = catchAsync(async (req, res, next) => {
-  const compound = await Compound.findById(req.params.id);
+  const compound = await Compound.findOne({
+    _id: req.params.id,
+    account: req.user.account,
+  });
 
   if (!compound) {
     return next(new ApiError("No compound found with that ID", 404));
@@ -124,6 +130,14 @@ exports.deleteCompound = catchAsync(async (req, res, next) => {
 exports.createCompound = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
 
+  const account = await Account.findById(req.user.account)
+    .select("allowedCompounds")
+    .lean();
+
+  if (account.allowedCompounds <= 0) {
+    return next(new ApiError("Subscribe and get more compounds", 403));
+  }
+
   const tagUpdatePromise = tags
     ? Tag.findOneAndUpdate(
         { user: req.user._id },
@@ -134,9 +148,14 @@ exports.createCompound = catchAsync(async (req, res, next) => {
 
   const compoundCreatePromise = Compound.create(req.body);
 
-  const [_, compound] = await Promise.all([
-    tagUpdatePromise,
+  const accountUpdatePromise = Account.findByIdAndUpdate(req.user.account, {
+    $inc: { allowedCompounds: -1 },
+  });
+
+  const [compound] = await Promise.all([
     compoundCreatePromise,
+    tagUpdatePromise,
+    accountUpdatePromise,
   ]);
 
   res.status(201).json({
@@ -157,11 +176,15 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
       )
     : Promise.resolve();
 
-  const compoundUpdatePromise = Compound.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-    populate: compoundPopOptions,
-  });
+  const compoundUpdatePromise = Compound.findOneAndUpdate(
+    { _id: id, account: req.user.account },
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+      populate: compoundPopOptions,
+    }
+  );
 
   const [_, compound] = await Promise.all([
     tagUpdatePromise,
@@ -182,7 +205,7 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
 
   const [compound, estates] = await Promise.all([
-    Compound.findById(compoundId).select("_id user").lean(),
+    Compound.findById(compoundId).select("_id account").lean(),
     Estate.find({ compound: compoundId }).select("_id").lean(),
   ]);
 
@@ -207,7 +230,7 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
     isCanceled: false,
   }).lean();
 
-  const tenantsPromise = Tenant.find({ user: req.user.id })
+  const tenantsPromise = Tenant.find({ account: compound.account })
     .select("_id name")
     .lean();
 
@@ -230,7 +253,13 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
 exports.getCompoundExpenses = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
 
-  const compoundPromise = Compound.findById(compoundId).select("_id").lean();
+  const compoundPromise = Compound.findOne({
+    _id: compoundId,
+    account: req.user.account,
+  })
+    .select("_id")
+    .lean();
+
   const expensesPromise = Expense.find({ compound: compoundId })
     .select("note amount dueDate type status paidAt paymentMethod")
     .sort("dueDate")
