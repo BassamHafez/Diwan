@@ -27,7 +27,6 @@ router
     compoundController.uploadCompoundImage,
     compoundController.resizeCompoundImage,
     compoundValidator.updateCompoundValidator,
-    filterAccountResults,
     authController.checkPermission("UPDATE_COMPOUND"),
     compoundController.updateCompound
   )
