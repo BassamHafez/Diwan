@@ -4,18 +4,19 @@ const router = express.Router();
 const authController = require("../controllers/authController");
 const compoundController = require("../controllers/compoundController");
 const compoundValidator = require("../utils/validators/compoundValidator");
-const { filterUserResults, setUserId } = require("../utils/requestUtils");
+const { filterAccountResults, setAccountId } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
 router
   .route("/")
-  .get(filterUserResults, compoundController.getAllCompounds)
+  .get(filterAccountResults, compoundController.getAllCompounds)
   .post(
     compoundController.uploadCompoundImage,
     compoundController.resizeCompoundImage,
     compoundValidator.createCompoundValidator,
-    setUserId,
+    authController.checkPermission("ADD_COMPOUND"),
+    setAccountId,
     compoundController.createCompound
   );
 
@@ -26,10 +27,13 @@ router
     compoundController.uploadCompoundImage,
     compoundController.resizeCompoundImage,
     compoundValidator.updateCompoundValidator,
+    filterAccountResults,
+    authController.checkPermission("UPDATE_COMPOUND"),
     compoundController.updateCompound
   )
   .delete(
     compoundValidator.getCompoundValidator,
+    authController.checkPermission("DELETE_COMPOUND"),
     compoundController.deleteCompound
   );
 
@@ -49,7 +53,8 @@ router
   )
   .post(
     compoundValidator.createCompoundExpenseValidator,
-    setUserId,
+    authController.checkPermission("ADD_EXPENSE"),
+    setAccountId,
     compoundController.createCompoundExpense
   );
 
