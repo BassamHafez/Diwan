@@ -5,6 +5,31 @@ const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
+const userAccessPermissions = [
+  "FAVORITES",
+  "ADD_COMPOUND",
+  "UPDATE_COMPOUND",
+  "DELETE_COMPOUND",
+  "ADD_ESTATE",
+  "UPDATE_ESTATE",
+  "DELETE_ESTATE",
+  "ADD_CONTRACT",
+  "UPDATE_CONTRACT",
+  "DELETE_CONTRACT",
+  "ADD_REVENUE",
+  "UPDATE_REVENUE",
+  "DELETE_REVENUE",
+  "ADD_EXPENSE",
+  "UPDATE_EXPENSE",
+  "DELETE_EXPENSE",
+  "ADD_CONTACT",
+  "UPDATE_CONTACT",
+  "DELETE_CONTACT",
+  "ADD_TASK",
+  "UPDATE_TASK",
+  "DELETE_TASK",
+];
+
 exports.getAllAccounts = factory.getAll(Account);
 
 exports.getMyAccount = catchAsync(async (req, res, next) => {
@@ -26,7 +51,6 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { usersCount, compoundsCount, isFavoriteAllowed } = req.body;
   let cost = 0;
-  const updatedPermissions = [];
 
   const [account, subscriptions] = await Promise.all([
     Account.findById(id).lean(),
@@ -51,7 +75,6 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += userPrice * usersCount;
-    updatedPermissions.push("ADD_USER");
   }
 
   if (compoundsCount) {
@@ -72,8 +95,6 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += compoundPrice * compoundsCount;
-    updatedPermissions.push("ADD_COMPOUND");
-    updatedPermissions.push("ADD_ESTATE");
   }
 
   if (isFavoriteAllowed) {
@@ -82,7 +103,6 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += favoritePrice;
-    updatedPermissions.push("FAVORITES");
   }
 
   if (!cost) {
@@ -97,14 +117,13 @@ exports.subscribe = catchAsync(async (req, res, next) => {
         allowedCompounds: compoundsCount || 0,
       },
       isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
-      allPermissions: updatedPermissions,
-      members: [{ user: req.user.id, permissions: updatedPermissions }],
+      members: [{ user: req.user.id, permissions: userAccessPermissions }],
     },
     { new: true }
   );
 
   const updateUserPromise = User.findByIdAndUpdate(req.user.id, {
-    permissions: updatedPermissions,
+    permissions: userAccessPermissions,
   });
 
   const [updatedAccount] = await Promise.all([

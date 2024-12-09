@@ -12,10 +12,6 @@ const accountSchema = new mongoose.Schema(
     address: String,
     commercialRecord: String,
     taxNumber: String,
-    allPermissions: {
-      type: [String],
-      default: [],
-    },
     members: [
       {
         user: {
