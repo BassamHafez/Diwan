@@ -5,22 +5,25 @@ const authController = require("../controllers/authController");
 const accountController = require("../controllers/accountController");
 const accountValidator = require("../utils/validators/accountValidator");
 
+router.use(authController.protect);
+
 router.get(
   "/",
-  authController.protect,
   authController.restrictTo("admin"),
   accountController.getAllAccounts
 );
 
-router.get(
-  "/my-account",
-  authController.protect,
-  accountController.getMyAccount
+router.get("/my-account", accountController.getMyAccount);
+
+router.patch(
+  "/:id",
+  accountValidator.updateAccountValidator,
+  authController.checkPermission("UPDATE_ACCOUNT"),
+  accountController.updateAccount
 );
 
 router.post(
   "/:id/subscribe",
-  authController.protect,
   accountValidator.subscribeValidator,
   accountController.subscribe
 );

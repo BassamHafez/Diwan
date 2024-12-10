@@ -36,9 +36,11 @@ const userAccessPermissions = [
   "UPDATE_TASK",
   "DELETE_TASK",
   "COMPLETE_TASK",
+  "UPDATE_ACCOUNT",
 ];
 
 exports.getAllAccounts = factory.getAll(Account);
+exports.updateAccount = factory.updateOne(Account);
 
 exports.getMyAccount = catchAsync(async (req, res, next) => {
   const account = await Account.findOne({ owner: req.user.id });
