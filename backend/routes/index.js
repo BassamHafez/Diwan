@@ -1,7 +1,7 @@
 const authRoutes = require("../routes/authRoutes");
 const subscriptionRoutes = require("../routes/subscriptionRoutes");
 const accountRoutes = require("../routes/accountRoutes");
-// const userRoutes = require("../routes/userRoutes");
+const userRoutes = require("../routes/userRoutes");
 const compoundRoutes = require("../routes/compoundRoutes");
 const estateRoutes = require("../routes/estateRoutes");
 const contactRoutes = require("../routes/contactRoutes");
@@ -19,7 +19,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/subscriptions", subscriptionRoutes);
   app.use("/api/v1/accounts", accountRoutes);
-  // app.use("/api/v1/users", userRoutes);
+  app.use("/api/v1/users", userRoutes);
   app.use("/api/v1/compounds", compoundRoutes);
   app.use("/api/v1/estates", estateRoutes);
   app.use("/api/v1/estates/:estateId/contracts", contractRoutes);
