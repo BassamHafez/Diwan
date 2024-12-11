@@ -10,6 +10,8 @@ const accountSchema = new mongoose.Schema(
     name: String,
     phone: String,
     address: String,
+    region: String,
+    city: String,
     commercialRecord: String,
     taxNumber: String,
     members: [
@@ -24,6 +26,10 @@ const accountSchema = new mongoose.Schema(
         },
       },
     ],
+    features: {
+      type: [String],
+      default: ["allowedUsers", "allowedCompounds", "isFavoriteAllowed"],
+    },
     allowedUsers: {
       type: Number,
       default: 0,

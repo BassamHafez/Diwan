@@ -55,6 +55,18 @@ exports.updateAccountValidator = [
     .isString()
     .withMessage("Address must be a string"),
 
+  check("region")
+    .notEmpty()
+    .withMessage("Region is required")
+    .isString()
+    .withMessage("Region must be a string"),
+
+  check("city")
+    .notEmpty()
+    .withMessage("City is required")
+    .isString()
+    .withMessage("City must be a string"),
+
   check("commercialRecord")
     .optional()
     .isString()
