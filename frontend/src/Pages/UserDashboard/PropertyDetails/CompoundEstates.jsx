@@ -8,6 +8,7 @@ import { estateStatus } from "../../../Components/Logic/StaticLists";
 import Row from "react-bootstrap/esm/Row";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import { useState } from "react";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
   const { t: key } = useTranslation();
@@ -24,14 +25,16 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
       <div className={styles.contracts_body}>
         <div className={styles.header}>
           <h4>{key("properties")}</h4>
-          <div>
-            <ButtonOne
-              onClick={showAddEstatesModal}
-              classes="m-2 bg-navy"
-              borderd
-              text={key("addEstate")}
-            />
-          </div>
+          <CheckPermissions btnActions={["ADD_ESTATE"]}>
+            <div>
+              <ButtonOne
+                onClick={showAddEstatesModal}
+                classes="m-2 bg-navy"
+                borderd
+                text={key("addEstate")}
+              />
+            </div>
+          </CheckPermissions>
         </div>
 
         <div
@@ -45,7 +48,7 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
             </div>
             <Select
               options={isArLang ? estateStatus["ar"] : estateStatus["en"]}
-              onChange={(val) => setStatusFilter(val?val.value:null)}
+              onChange={(val) => setStatusFilter(val ? val.value : null)}
               className={`${isArLang ? "text-end" : "text-start"} ${
                 styles.select_type
               } my-3`}

@@ -252,7 +252,7 @@ const AddCompound = ({ hideModal, refetch }) => {
               </div>
 
               <div className="field mb-1">
-                <label htmlFor="tags">{key("tag")}</label>
+                <label htmlFor="tags">{key("searchKeys")}</label>
                 <CreatableSelect
                   isClearable
                   options={tagsOptions}

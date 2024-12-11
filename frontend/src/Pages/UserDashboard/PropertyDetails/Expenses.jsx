@@ -30,8 +30,9 @@ import AddExpenses from "../PropertyForms/AddExpenses";
 import UpdateExpenses from "../PropertyForms/UpdateExpenses";
 import ExpensesDetails from "./ExpensesDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const Expenses = ({ isCompound,refetchDetails }) => {
+const Expenses = ({ isCompound, refetchDetails }) => {
   const [showAddExModal, setShowAddExModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -177,12 +178,14 @@ const Expenses = ({ isCompound,refetchDetails }) => {
               }
             />
           )}
-          <ButtonOne
-            onClick={() => setShowAddExModal(true)}
-            classes="m-2 bg-navy"
-            borderd
-            text={key("addExpenses")}
-          />
+          <CheckPermissions btnActions={["ADD_EXPENSE"]}>
+            <ButtonOne
+              onClick={() => setShowAddExModal(true)}
+              classes="m-2 bg-navy"
+              borderd
+              text={key("addExpenses")}
+            />
+          </CheckPermissions>
         </div>
       </div>
 
@@ -241,7 +244,9 @@ const Expenses = ({ isCompound,refetchDetails }) => {
                             : renamedExpensesStatusMethod(ex.status, "en")}
                         </span>
                       </td>
-                      <td className={styles.note_td}>{ex.note ? ex.note : "-"}</td>
+                      <td className={styles.note_td}>
+                        {ex.note ? ex.note : "-"}
+                      </td>
                       <td>
                         <Dropdown>
                           <Dropdown.Toggle
@@ -253,34 +258,40 @@ const Expenses = ({ isCompound,refetchDetails }) => {
 
                           <Dropdown.Menu>
                             {ex.status === "pending" && (
-                              <Dropdown.Item
-                                onClick={() =>
-                                  mainpulateExpenses("pay", ex._id)
-                                }
-                                className="text-center"
-                              >
-                                {key("paid")}
-                              </Dropdown.Item>
+                              <CheckPermissions btnActions={["PAY_EXPENSE"]}>
+                                <Dropdown.Item
+                                  onClick={() =>
+                                    mainpulateExpenses("pay", ex._id)
+                                  }
+                                  className="text-center"
+                                >
+                                  {key("paid")}
+                                </Dropdown.Item>
+                              </CheckPermissions>
                             )}
                             {ex.status === "paid" && (
+                              <CheckPermissions btnActions={["UNPAY_EXPENSE"]}>
+                                <Dropdown.Item
+                                  onClick={() =>
+                                    mainpulateExpenses("unPay", ex._id)
+                                  }
+                                  className="text-center"
+                                >
+                                  {key("unPaid")}
+                                </Dropdown.Item>
+                              </CheckPermissions>
+                            )}
+                            <CheckPermissions btnActions={["UPDATE_EXPENSE"]}>
                               <Dropdown.Item
-                                onClick={() =>
-                                  mainpulateExpenses("unPay", ex._id)
-                                }
+                                onClick={() => {
+                                  setExDetails(ex);
+                                  setShowUpdateModal(true);
+                                }}
                                 className="text-center"
                               >
-                                {key("unPaid")}
+                                {key("ediet")}
                               </Dropdown.Item>
-                            )}
-                            <Dropdown.Item
-                              onClick={() => {
-                                setExDetails(ex);
-                                setShowUpdateModal(true);
-                              }}
-                              className="text-center"
-                            >
-                              {key("ediet")}
-                            </Dropdown.Item>
+                            </CheckPermissions>
 
                             <Dropdown.Item
                               onClick={() => {
@@ -291,25 +302,30 @@ const Expenses = ({ isCompound,refetchDetails }) => {
                             >
                               {key("details")}
                             </Dropdown.Item>
+
                             {ex.status !== "paid" &&
                               ex.status !== "cancelled" && (
-                                <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateExpenses("cancel", ex._id)
-                                  }
-                                  className="text-center"
-                                >
-                                  {key("canceled")}
-                                </Dropdown.Item>
+                                <CheckPermissions btnActions={["CANCEL_EXPENSE"]}>
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      mainpulateExpenses("cancel", ex._id)
+                                    }
+                                    className="text-center"
+                                  >
+                                    {key("canceled")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
                               )}
-                            <Dropdown.Item
-                              onClick={() =>
-                                mainpulateExpenses("delete", ex._id)
-                              }
-                              className="text-center text-danger"
-                            >
-                              {key("fullyDelete")}
-                            </Dropdown.Item>
+                            <CheckPermissions btnActions={["DELETE_EXPENSE"]}>
+                              <Dropdown.Item
+                                onClick={() =>
+                                  mainpulateExpenses("delete", ex._id)
+                                }
+                                className="text-center text-danger"
+                              >
+                                {key("fullyDelete")}
+                              </Dropdown.Item>
+                            </CheckPermissions>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>

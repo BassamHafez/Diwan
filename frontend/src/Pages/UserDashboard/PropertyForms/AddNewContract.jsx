@@ -152,7 +152,16 @@ const AddNewContract = ({ hideModal, refetch }) => {
 
   const validationSchema = object({
     tenant: string().required(key("fieldReq")),
-    startDate: date().required(key("fieldReq")),
+    startDate: date().required(key("fieldReq")).test(
+      "is-present-or-future",
+      key("startDateValidation"),
+      function (value) {
+        if (!value) return false;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return new Date(value) >= today;
+      }
+    ),
     endDate: date()
       .required(key("fieldReq"))
       .test("is-greater", key("endDateValidation"), function (value) {

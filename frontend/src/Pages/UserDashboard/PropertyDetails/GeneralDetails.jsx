@@ -32,6 +32,7 @@ import AOS from "aos";
 import CurrentContract from "./CurrentContract";
 import CompoundContracts from "./CompoundContracts";
 import Expenses from "./Expenses";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const GeneralDetails = ({
   details,
@@ -55,17 +56,19 @@ const GeneralDetails = ({
         data-aos-duration="1000"
         className={`${isArLang ? "text-start" : "text-end"} my-4`}
       >
-        <ButtonOne
-          onClick={() => setShowAUpdateDetailsModal(true)}
-          classes="bg-navy"
-          borderd={true}
-        >
-          {key("ediet")}
-          <FontAwesomeIcon
-            className={`${isArLang ? "me-1" : "ms-1"}`}
-            icon={faWrench}
-          />
-        </ButtonOne>
+        <CheckPermissions btnActions={isCompound?["UPDATE_COMPOUND"]:["UPDATE_ESTATE"]}>
+          <ButtonOne
+            onClick={() => setShowAUpdateDetailsModal(true)}
+            classes="bg-navy"
+            borderd={true}
+          >
+            {key("ediet")}
+            <FontAwesomeIcon
+              className={`${isArLang ? "me-1" : "ms-1"}`}
+              icon={faWrench}
+            />
+          </ButtonOne>
+        </CheckPermissions>
       </div>
       <Row>
         <Col md={6}>
@@ -308,7 +311,7 @@ const GeneralDetails = ({
             data-aos-duration="1000"
           >
             <div className="text-center mb-2">
-              <h6 className="m-0 fw-bold">{key("tag")}</h6>
+              <h6 className="m-0 fw-bold">{key("searchKeys")}</h6>
               <FontAwesomeIcon className="color-main" icon={faCaretDown} />
             </div>
             <Row>

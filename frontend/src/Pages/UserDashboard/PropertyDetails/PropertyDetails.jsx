@@ -27,6 +27,8 @@ import {
   convertNumbersToFixedTwo,
   formattedDate,
 } from "../../../Components/Logic/LogicFun";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CheckAccountFeatures from "../../../Components/CheckPermissions/CheckAccountFeatures";
 
 const PropertyDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -157,24 +159,32 @@ const PropertyDetails = () => {
                 >
                   <h3 className="my-4 mx-1">{myData?.estate?.name}</h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
-                    <div
-                      className={`${styles.controller_btn} ${styles.delete_btn}`}
-                      onClick={() => setShowDeleteModal(true)}
-                      title={key("delete")}
-                    >
-                      <FontAwesomeIcon icon={faTrashCan} />
-                    </div>
-                    <div
-                      className={
-                        isMarked ? styles.bookmarked : styles.no_bookmark
-                      }
-                      onClick={bookMarkEstate}
-                      title={`${
-                        isMarked ? key("removeBookMark") : key("bookmarked")
-                      }`}
-                    >
-                      <FontAwesomeIcon icon={isMarked ? solidHeart : faHeart} />
-                    </div>
+                    <CheckPermissions btnActions={["DELETE_ESTATE"]}>
+                      <div
+                        className={`${styles.controller_btn} ${styles.delete_btn}`}
+                        onClick={() => setShowDeleteModal(true)}
+                        title={key("delete")}
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </div>
+                    </CheckPermissions>
+                    <CheckAccountFeatures>
+                      <CheckPermissions btnActions={["FAVORITES"]}>
+                        <div
+                          className={
+                            isMarked ? styles.bookmarked : styles.no_bookmark
+                          }
+                          onClick={bookMarkEstate}
+                          title={`${
+                            isMarked ? key("removeBookMark") : key("bookmarked")
+                          }`}
+                        >
+                          <FontAwesomeIcon
+                            icon={isMarked ? solidHeart : faHeart}
+                          />
+                        </div>
+                      </CheckPermissions>
+                    </CheckAccountFeatures>
                   </div>
                 </div>
 

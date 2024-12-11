@@ -1,7 +1,6 @@
 import Offcanvas from "react-bootstrap/Offcanvas";
 import styles from "./SettingOffCanvas.module.css";
 import { useState } from "react";
-// import { useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightFromBracket,
@@ -12,10 +11,11 @@ import {
 
 import { Link, useNavigate } from "react-router-dom";
 
-import avatar from "../../assets/p1.jpeg";
+import avatar from "../../assets/default.png";
 import ContactsIcon from "../UI/ContactsIcon/ContactsIcon";
 import LogOutModal from "../UI/Modals/LogOutModal";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 const SettingOffCanvas = ({ show, handleClose }) => {
   const [logoutModalShow, setLogoutModalShow] = useState(false);
@@ -23,13 +23,11 @@ const SettingOffCanvas = ({ show, handleClose }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const navigate = useNavigate();
-
-  // const profileData = useSelector((state) => state.profileInfo.data);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
 
   const navigateToProfilePage = () => {
     handleClose();
-    navigate(`profile/1`);
-    // navigate(`profile/${profileData?.UserId}`);
+    navigate(`profile/${profileInfo?._id}`);
   };
 
   return (
@@ -40,18 +38,36 @@ const SettingOffCanvas = ({ show, handleClose }) => {
         placement="end"
         className={styles.side_bar}
       >
-        <Offcanvas.Header className={`${styles.header} ${isArLang?"ar_canvas_header":"canvas_header"}`} closeButton>
+        <Offcanvas.Header
+          className={`${styles.header} ${
+            isArLang ? "ar_canvas_header" : "canvas_header"
+          }`}
+          closeButton
+        >
           <Offcanvas.Title>
             <div
               onClick={navigateToProfilePage}
               className={`${styles.profile_content} d-flex align-items-center`}
               title="view profile"
             >
-              <img src={avatar} className={styles.profile_pic} alt="avatar" />
-              <div className={`${isArLang?"me-3":"ms-3"} d-flex justify-content-center flex-column`}>
-                <span className={styles.profile_name}>Bassam Hafez</span>
+              <img
+                src={
+                  profileInfo?.photo
+                    ? `${import.meta.env.VITE_Host}${profileInfo?.photo}`
+                    : avatar
+                }
+                className={styles.profile_pic}
+                alt="avatar"
+              />
+
+              <div
+                className={`${
+                  isArLang ? "me-3" : "ms-3"
+                } d-flex justify-content-center flex-column`}
+              >
+                <span className={styles.profile_name}>{profileInfo?.name}</span>
                 <span className={styles.user_email}>
-                  bassamhafez790@gmail.com
+                  {profileInfo?.email}
                 </span>
               </div>
             </div>

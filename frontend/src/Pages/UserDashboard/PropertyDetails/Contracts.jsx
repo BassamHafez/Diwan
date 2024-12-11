@@ -30,6 +30,7 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 // import ContractDetails from "./ContractDetails";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const Contracts = ({ details }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
@@ -135,12 +136,14 @@ const Contracts = ({ details }) => {
               }
             />
           )}
-          <ButtonOne
-            onClick={() => setShowAddContractModal(true)}
-            classes="m-2 bg-navy"
-            borderd
-            text={key("addContracts")}
-          />
+          <CheckPermissions btnActions={["ADD_CONTRACT"]}>
+            <ButtonOne
+              onClick={() => setShowAddContractModal(true)}
+              classes="m-2 bg-navy"
+              borderd
+              text={key("addContracts")}
+            />
+          </CheckPermissions>
         </div>
       </div>
 
@@ -228,33 +231,39 @@ const Contracts = ({ details }) => {
                           </Dropdown.Toggle>
 
                           <Dropdown.Menu>
-                            <Dropdown.Item
-                              onClick={() => {
-                                setContractDetails(contract);
-                                setShowUpdateContractModal(true);
-                              }}
-                              className="text-center"
-                            >
-                              {key("ediet")}
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                              onClick={() => {
-                                setContractId(contract._id);
-                                setShowDeleteModal(true);
-                              }}
-                              className="text-center"
-                            >
-                              {key("cancel")}
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                              onClick={() => {
-                                setContractDetails(contract);
-                                setShowDetailsModal(true);
-                              }}
-                              className="text-center"
-                            >
-                              {key("details")}
-                            </Dropdown.Item>
+                            <CheckPermissions btnActions={["UPDATE_CONTRACT"]}>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractDetails(contract);
+                                  setShowUpdateContractModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("ediet")}
+                              </Dropdown.Item>
+                            </CheckPermissions>
+
+                            <CheckPermissions btnActions={["CANCEL_CONTRACT"]}>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractId(contract._id);
+                                  setShowDeleteModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("cancel")}
+                              </Dropdown.Item>
+                            </CheckPermissions>
+
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractDetails(contract);
+                                  setShowDetailsModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("details")}
+                              </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>

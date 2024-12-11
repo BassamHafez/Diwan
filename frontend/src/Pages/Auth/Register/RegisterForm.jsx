@@ -23,6 +23,7 @@ const RegisterForm = () => {
     mutationFn: signFormsHandler,
 
     onSuccess: (response) => {
+      console.log(response)
       if (response.data.status === "success") {
         notifySuccess(key("registeredSuccess"));
         navigate("/login");
@@ -31,6 +32,7 @@ const RegisterForm = () => {
       }
     },
     onError(error) {
+      console.log(error)
       if (error.status === 500) {
         if (
           error.data.message ===

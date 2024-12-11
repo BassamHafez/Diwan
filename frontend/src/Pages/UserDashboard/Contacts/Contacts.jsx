@@ -14,6 +14,7 @@ import AddContactForm from "./ContactForms/AddContactForm";
 import styles from "./Contacts.module.css";
 import Col from "react-bootstrap/esm/Col";
 import MainModal from "../../../Components/UI/Modals/MainModal";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const Contacts = () => {
   const [showAddContactModal, setShowAddContactModal] = useState(false);
@@ -459,14 +460,15 @@ const Contacts = () => {
               <div>
                 <SearchField text={key("searchContacts")} />
               </div>
-
-              <div>
-                <ButtonOne
-                  onClick={showAddModal}
-                  text={`${key("add")} ${key(selectedFilter)}`}
-                  borderd={true}
-                />
-              </div>
+              <CheckPermissions btnActions={["ADD_CONTACT"]}>
+                <div>
+                  <ButtonOne
+                    onClick={showAddModal}
+                    text={`${key("add")} ${key(selectedFilter)}`}
+                    borderd={true}
+                  />
+                </div>
+              </CheckPermissions>
             </div>
             {selectedFilter === "contacts" && allContacts
               ? renderContacts(allContacts, "contact", isFetchingContacts)
