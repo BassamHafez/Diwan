@@ -41,7 +41,7 @@ const userAccessPermissions = [
 
 const memberPopOptions = {
   path: "members.user",
-  select: "name",
+  select: "name email phone photo",
 };
 
 exports.getAllAccounts = factory.getAll(Account);
