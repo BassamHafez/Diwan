@@ -32,8 +32,9 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import AddRevenue from "../PropertyForms/AddRevenue";
 import RevenueDetails from "./RevenueDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const Revenue = ({refetchDetails}) => {
+const Revenue = ({ refetchDetails }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
   const [revDetails, setRevDetails] = useState({});
@@ -111,7 +112,7 @@ const Revenue = ({refetchDetails}) => {
     });
     if (res.status === "success") {
       refetch();
-      refetchDetails()
+      refetchDetails();
       notifySuccess(key("unPayedSucc"));
     } else {
       notifyError(key("wrong"));
@@ -126,7 +127,7 @@ const Revenue = ({refetchDetails}) => {
     });
     if (res.status === "success") {
       refetch();
-      refetchDetails()
+      refetchDetails();
       notifySuccess(key("canceledSucc"));
     } else {
       notifyError(key("wrong"));
@@ -147,8 +148,6 @@ const Revenue = ({refetchDetails}) => {
       unPayRevenue(revId);
     }
   };
-
-
 
   const filterChangeHandler = (val, type) => {
     if (type === "status") {
@@ -186,12 +185,14 @@ const Revenue = ({refetchDetails}) => {
               }
             />
           )}
-          <ButtonOne
-            onClick={() => setShowAddRevenueModal(true)}
-            classes="m-2 bg-navy"
-            borderd
-            text={`${key("addRevenue")}`}
-          />
+          <CheckPermissions btnActions={["ADD_REVENUE"]}>
+            <ButtonOne
+              onClick={() => setShowAddRevenueModal(true)}
+              classes="m-2 bg-navy"
+              borderd
+              text={`${key("addRevenue")}`}
+            />
+          </CheckPermissions>
         </div>
       </div>
 
@@ -274,33 +275,49 @@ const Revenue = ({refetchDetails}) => {
                             <FontAwesomeIcon icon={faEllipsisVertical} />
                           </Dropdown.Toggle>
 
+                          <CheckPermissions
+                            btnActions={[""]}
+                          ></CheckPermissions>
+                          <CheckPermissions
+                            btnActions={[""]}
+                          ></CheckPermissions>
                           <Dropdown.Menu className={styles.dropdown_list}>
                             {rev.status === "pending" && (
-                              <Dropdown.Item
-                                onClick={() => mainpulateRev("pay", rev._id)}
-                                className="text-center"
-                              >
-                                {key("paid")}
-                              </Dropdown.Item>
+                              <CheckPermissions btnActions={["PAY_REVENUE"]}>
+                                <Dropdown.Item
+                                  onClick={() => mainpulateRev("pay", rev._id)}
+                                  className="text-center"
+                                >
+                                  {key("paid")}
+                                </Dropdown.Item>
+                              </CheckPermissions>
                             )}
                             {rev.status === "paid" && (
-                              <Dropdown.Item
-                                onClick={() => mainpulateRev("unPay", rev._id)}
-                                className="text-center"
-                              >
-                                {key("unPaid")}
-                              </Dropdown.Item>
-                            )}
-                            {rev.status !== "paid" &&
-                              rev.status !== "canceled" && (
+                              <CheckPermissions btnActions={["UNPAY_REVENUE"]}>
                                 <Dropdown.Item
                                   onClick={() =>
-                                    mainpulateRev("cancel", rev._id)
+                                    mainpulateRev("unPay", rev._id)
                                   }
                                   className="text-center"
                                 >
-                                  {key("canceled")}
+                                  {key("unPaid")}
                                 </Dropdown.Item>
+                              </CheckPermissions>
+                            )}
+                            {rev.status !== "paid" &&
+                              rev.status !== "canceled" && (
+                                <CheckPermissions
+                                  btnActions={["CANCEL_REVENUE"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      mainpulateRev("cancel", rev._id)
+                                    }
+                                    className="text-center"
+                                  >
+                                    {key("canceled")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
                               )}
                             <Dropdown.Item
                               onClick={() => {
@@ -311,14 +328,14 @@ const Revenue = ({refetchDetails}) => {
                             >
                               {key("details")}
                             </Dropdown.Item>
-                            <Dropdown.Item
-                              onClick={() =>
-                                mainpulateRev("delete", rev._id)
-                              }
-                              className="text-center text-danger"
-                            >
-                              {key("fullyDelete")}
-                            </Dropdown.Item>
+                            <CheckPermissions btnActions={["DELETE_REVENUE"]}>
+                              <Dropdown.Item
+                                onClick={() => mainpulateRev("delete", rev._id)}
+                                className="text-center text-danger"
+                              >
+                                {key("fullyDelete")}
+                              </Dropdown.Item>
+                            </CheckPermissions>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>
@@ -378,7 +395,7 @@ const Revenue = ({refetchDetails}) => {
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
           okBtn={key("download")}
-          confirmFun={() => generatePDF(revDetails._id,"revenueDetails")}
+          confirmFun={() => generatePDF(revDetails._id, "revenueDetails")}
           title={key("revenueDetails")}
           modalSize={"lg"}
         >

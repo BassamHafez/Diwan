@@ -28,6 +28,7 @@ import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const Tasks = () => {
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
@@ -116,7 +117,7 @@ const Tasks = () => {
                 <hr />
                 <h6>
                   <FontAwesomeIcon className={`${iconClass}`} icon={faTag} />
-                  {key("tag")}
+                  {key("priority")}
                 </h6>
                 <ul className={styles.filter_list}>
                   <li
@@ -230,14 +231,15 @@ const Tasks = () => {
                 <div>
                   <SearchField text={key("searchTasks")} />
                 </div>
-
-                <div>
-                  <ButtonOne
-                    onClick={() => setShowAddTaskModal(true)}
-                    text={`${key("add")} ${key("task")}`}
-                    borderd={true}
-                  />
-                </div>
+                <CheckPermissions btnActions={["ADD_TASK"]}>
+                  <div>
+                    <ButtonOne
+                      onClick={() => setShowAddTaskModal(true)}
+                      text={`${key("add")} ${key("task")}`}
+                      borderd={true}
+                    />
+                  </div>
+                </CheckPermissions>
               </div>
               <Row
                 className="mt-3 gy-3 position-relative"

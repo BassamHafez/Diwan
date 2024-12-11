@@ -11,7 +11,7 @@ import Register from "./Pages/Auth/Register/Register";
 import About from "./Pages/About/About";
 import Contact from "./Pages/Contact/Contact";
 import Packages from "./Pages/Packages/Packages";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   getisLoginState,
   getRoleState,
@@ -19,13 +19,15 @@ import {
   getUserInfoFromLocalStorage,
 } from "./Store/userInfo-actions";
 import UserHome from "./Pages/UserDashboard/UserHome/UserHome";
-// import fetchProfileData from "./Store/profileInfo-actions";
+import fetchProfileData from "./Store/profileInfo-actions";
 import Properties from "./Pages/UserDashboard/Properties/Properties";
 import Tasks from "./Pages/UserDashboard/Tasks/Tasks";
 import Contacts from "./Pages/UserDashboard/Contacts/Contacts";
 import PropertyDetails from "./Pages/UserDashboard/PropertyDetails/PropertyDetails";
 import CompoundDetails from "./Pages/UserDashboard/PropertyDetails/CompoundDetails";
 import UserProfile from "./Pages/UserDashboard/UserProfile/UserProfile";
+import fetchAccountData from "./Store/accountInfo-actions";
+import CustomPackages from "./Pages/Packages/CustomPackages";
 
 const router = createBrowserRouter(
   [
@@ -38,6 +40,7 @@ const router = createBrowserRouter(
         { path: "about", element: <About /> },
         { path: "contact", element: <Contact /> },
         { path: "packages", element: <Packages /> },
+        { path: "custom-package", element: <CustomPackages /> },
         { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
         //userDashboard
@@ -64,8 +67,7 @@ function App() {
   const dispatch = useDispatch();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
-  // const token = useSelector((state) => state.userInfo.token);
-  // const role = useSelector((state) => state.userInfo.role);
+  const token = useSelector((state) => state.userInfo.token);
 
   useEffect(() => {
     const updateFontFamily = () => {
@@ -87,11 +89,18 @@ function App() {
   }, [control]);
 
   // get profile data from api
-  // useEffect(() => {
-  //   if (token) {
-  //     dispatch(fetchProfileData(token));
-  //   }
-  // }, [dispatch, token, role]);
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchProfileData(token));
+    }
+  }, [dispatch, token]);
+
+  // get account data from api
+  useEffect(() => {
+    if (token) {
+      dispatch(fetchAccountData(token));
+    }
+  }, [dispatch, token]);
 
   // recieve user data from localStorage with login and role states
   useEffect(() => {

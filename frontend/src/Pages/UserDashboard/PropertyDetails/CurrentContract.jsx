@@ -25,8 +25,9 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import { useSelector } from "react-redux";
 import PrintContract from "../../../Components/Prints/PrintContract";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const CurrentContract = ({details}) => {
+const CurrentContract = ({ details }) => {
   const token = useSelector((state) => state.userInfo.token);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -45,13 +46,13 @@ const CurrentContract = ({details}) => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["currentContract",propId,token],
+    queryKey: ["currentContract", propId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
-    enabled:!!token,
+    enabled: !!token,
     staleTime: Infinity,
   });
 
@@ -156,26 +157,31 @@ const CurrentContract = ({details}) => {
                         </Dropdown.Toggle>
 
                         <Dropdown.Menu>
-                          <Dropdown.Item
-                            onClick={() => {
-                              setContractDetails(currentContract?.data);
-                              setShowUpdateContractModal(true);
-                            }}
-                            className="text-center"
-                          >
-                            {key("ediet")}
-                          </Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() => {
-                              setContractId(
-                                currentContract?.data?.contract?._id
-                              );
-                              setShowDeleteModal(true);
-                            }}
-                            className="text-center"
-                          >
-                            {key("cancel")}
-                          </Dropdown.Item>
+                          <CheckPermissions btnActions={["UPDATE_CONTRACT"]}>
+                            <Dropdown.Item
+                              onClick={() => {
+                                setContractDetails(currentContract?.data);
+                                setShowUpdateContractModal(true);
+                              }}
+                              className="text-center"
+                            >
+                              {key("ediet")}
+                            </Dropdown.Item>
+                          </CheckPermissions>
+                          <CheckPermissions btnActions={["CANCEL_CONTRACT"]}>
+                            <Dropdown.Item
+                              onClick={() => {
+                                setContractId(
+                                  currentContract?.data?.contract?._id
+                                );
+                                setShowDeleteModal(true);
+                              }}
+                              className="text-center"
+                            >
+                              {key("cancel")}
+                            </Dropdown.Item>
+                          </CheckPermissions>
+
                           <Dropdown.Item
                             onClick={() => {
                               setContractDetails(currentContract?.data);
@@ -235,7 +241,7 @@ const CurrentContract = ({details}) => {
           title={key("contractDetails")}
           modalSize={"lg"}
         >
-           <PrintContract
+          <PrintContract
             contract={contractDetails}
             details={details}
             id={`${contractDetails.contract?._id}`}

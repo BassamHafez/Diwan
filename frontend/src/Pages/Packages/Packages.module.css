@@ -7,6 +7,10 @@
     border: 0.0625rem solid rgb(222, 222, 222);
     border-top: 0.3125rem solid black;
     box-shadow: 0 1px 5px rgba(0, 0, 0, 0.314);
+    background-color: white;
+}
+.custom_border{
+    border-top: 0.3125rem solid var(--main_color);
 }
 .package_type h3{
     font-size: 3.125rem;
@@ -62,7 +66,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: block;
-    cursor: pointer;
     transition: all .4s;
 }
 
@@ -113,6 +116,14 @@
     color: var(--main_color);
 }
 
+.package_side{
+    height: 100%;
+    padding: 20px;
+    background-color:var(--sub_white);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.279);
+    border-radius:0  0 20px 0;
+}
+
 @media screen and (min-width:770px) and (max-width:1158px) {
     .features ul{
       min-height: 350px;
@@ -129,6 +140,12 @@
 @media screen and (max-width:768px) {
     .container{
         padding-inline:3.125rem;
+    }
+}
+@media screen and (max-width:573px) {
+    .package_side{
+        background-color:transparent;
+        box-shadow: none;
     }
 }
 @media screen and (max-width:450px) {

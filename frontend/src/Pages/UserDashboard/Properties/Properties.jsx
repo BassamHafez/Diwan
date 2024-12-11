@@ -26,6 +26,8 @@ import AddEstate from "../PropertyForms/AddEstate";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import PropertyPlaceholder from "../../../Components/Property/PropertyPlaceholder";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CheckAccountFeatures from "../../../Components/CheckPermissions/CheckAccountFeatures";
 
 const Properties = () => {
   const { t: key } = useTranslation();
@@ -126,12 +128,13 @@ const Properties = () => {
       )
     : [];
 
-
-    const getCompoundRentedCount=(compId)=>{
-      let rentedEstate=[];
-      rentedEstate =compounds?.data?.rentedEstatesCount.find((comp)=>comp.compoundId===compId)
-      return rentedEstate?.rentedCount||0
-    }
+  const getCompoundRentedCount = (compId) => {
+    let rentedEstate = [];
+    rentedEstate = compounds?.data?.rentedEstatesCount.find(
+      (comp) => comp.compoundId === compId
+    );
+    return rentedEstate?.rentedCount || 0;
+  };
 
   const filteredCompounds = compounds
     ? compounds.data?.compounds?.filter((comp) => {
@@ -141,7 +144,9 @@ const Properties = () => {
           case "noEstates":
             return comp.estatesCount === 0;
           case "available":
-            return comp.estatesCount > 0 && getCompoundRentedCount(comp._id) === 0;
+            return (
+              comp.estatesCount > 0 && getCompoundRentedCount(comp._id) === 0
+            );
           case "rented":
             return (
               getCompoundRentedCount(comp._id) > 0 &&
@@ -255,25 +260,26 @@ const Properties = () => {
             >
               {key("compounds")}
             </label>
-
-            <input
-              type="radio"
-              className="btn-check"
-              name="types"
-              id="bookmarkedSmall"
-              value="bookmarked"
-              autoComplete="off"
-              checked={selectedFilter === "bookmarked"}
-              onChange={handleFilterChange}
-            />
-            <label
-              className={`${
-                selectedFilter === "bookmarked" && styles.label_checked
-              } btn`}
-              htmlFor="bookmarkedSmall"
-            >
-              {key("bookmarked")}
-            </label>
+            <CheckAccountFeatures>
+              <input
+                type="radio"
+                className="btn-check"
+                name="types"
+                id="bookmarkedSmall"
+                value="bookmarked"
+                autoComplete="off"
+                checked={selectedFilter === "bookmarked"}
+                onChange={handleFilterChange}
+              />
+              <label
+                className={`${
+                  selectedFilter === "bookmarked" && styles.label_checked
+                } btn`}
+                htmlFor="bookmarkedSmall"
+              >
+                {key("bookmarked")}
+              </label>
+            </CheckAccountFeatures>
           </div>
 
           {selectedFilter !== "compounds" && (
@@ -684,11 +690,13 @@ const Properties = () => {
                 <SearchField text={key("search")} />
               </div>
               <div className="my-2">
-                <ButtonOne
-                  onClick={() => setShowModal(true)}
-                  borderd={true}
-                  text={key("addEstateUnit")}
-                />
+                <CheckPermissions btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}>
+                  <ButtonOne
+                    onClick={() => setShowModal(true)}
+                    borderd={true}
+                    text={key("addEstateUnit")}
+                  />
+                </CheckPermissions>
               </div>
             </div>
             <Row className={styles.properties_row}>
@@ -719,24 +727,29 @@ const Properties = () => {
         <MainModal
           show={showModal}
           onHide={() => setShowModal(false)}
-          title={key("createProp")}
+          title={key("createPropOrCompound")}
           modalSize="lg"
         >
           <div className="d-flex justify-content-center align-items-center p-1 p-md-4">
-            <div
-              className={styles.add_prop_div}
-              onClick={() => showNextModal("estate")}
-            >
-              <h5>{key("createProp")}</h5>
-              <p>{key("exProp")}</p>
-            </div>
-            <div
-              className={styles.add_prop_div}
-              onClick={() => showNextModal("compound")}
-            >
-              <h5>{key("addCompound")}</h5>
-              <p>{key("exCompound")}</p>
-            </div>
+            <CheckPermissions btnActions={["ADD_ESTATE"]}>
+              <div
+                className={styles.add_prop_div}
+                onClick={() => showNextModal("estate")}
+              >
+                <h5>{key("createProp")}</h5>
+                <p>{key("exProp")}</p>
+              </div>
+            </CheckPermissions>
+
+            <CheckPermissions btnActions={["ADD_COMPOUND"]}>
+              <div
+                className={styles.add_prop_div}
+                onClick={() => showNextModal("compound")}
+              >
+                <h5>{key("addCompound")}</h5>
+                <p>{key("exCompound")}</p>
+              </div>
+            </CheckPermissions>
           </div>
         </MainModal>
       )}

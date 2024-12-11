@@ -28,6 +28,7 @@ import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 import AddEstate from "../PropertyForms/AddEstate";
 import AOS from "aos";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const CompoundDetails = () => {
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
@@ -120,20 +121,24 @@ const CompoundDetails = () => {
                 >
                   <h3 className="my-4 mx-1">{compDetails?.compound?.name}</h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
-                    <div
-                      className={`${styles.controller_btn} ${styles.delete_btn}`}
-                      onClick={() => setShowDeleteModal(true)}
-                      title={key("delete")}
-                    >
-                      <FontAwesomeIcon icon={faTrashCan} />
-                    </div>
-                    <div
-                      className={styles.bookmarked}
-                      onClick={() => setShowAddEstateModal(true)}
-                      title={key("addEstate")}
-                    >
-                      <FontAwesomeIcon icon={faPlus} />
-                    </div>
+                    <CheckPermissions btnActions={["DELETE_COMPOUND"]}>
+                      <div
+                        className={`${styles.controller_btn} ${styles.delete_btn}`}
+                        onClick={() => setShowDeleteModal(true)}
+                        title={key("delete")}
+                      >
+                        <FontAwesomeIcon icon={faTrashCan} />
+                      </div>
+                    </CheckPermissions>
+                    <CheckPermissions btnActions={["ADD_ESTATE"]}>
+                      <div
+                        className={styles.bookmarked}
+                        onClick={() => setShowAddEstateModal(true)}
+                        title={key("addEstate")}
+                      >
+                        <FontAwesomeIcon icon={faPlus} />
+                      </div>
+                    </CheckPermissions>
                   </div>
                 </div>
 

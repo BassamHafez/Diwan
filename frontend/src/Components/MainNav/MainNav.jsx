@@ -19,9 +19,9 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import avatar from "../../assets/p1.jpeg";
 import { useState } from "react";
 import SettingOffCanvas from "../SettingOffCanvas/SettingOffCanvas";
+import avatar from "../../assets/default.png";
 
 const MainNav = () => {
   const [showSetting, setShowSetting] = useState(false);
@@ -29,10 +29,11 @@ const MainNav = () => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
   const isLogin = useSelector((state) => state.userInfo.isLogin);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
 
   return (
     <>
-      <Navbar  expand="lg" className="bg-body-tertiary main_navbar" >
+      <Navbar expand="lg" className="bg-body-tertiary main_navbar">
         <Container fluid>
           <Navbar.Brand href="/">
             <img src={logo} className={styles.logo} alt="logo" />
@@ -239,7 +240,12 @@ const MainNav = () => {
                   className={styles.avatar}
                   onClick={() => setShowSetting(true)}
                 >
-                  <img src={avatar} alt="profile" />
+                  <img
+                    src={profileInfo?.photo?`${import.meta.env.VITE_Host}${
+                      profileInfo?.photo
+                    }`:avatar}
+                    alt="profile_pic"
+                  />
                 </div>
               )}
             </div>

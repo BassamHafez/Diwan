@@ -1,0 +1,136 @@
+import { useTranslation } from "react-i18next";
+import ButtonThree from "../../Components/UI/Buttons/ButtonThree";
+import styles from "./Packages.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleChevronLeft,
+  faCircleChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import MainModal from "../../Components/UI/Modals/MainModal";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { mainFormsHandlerTypeRaw } from "../../util/Http";
+import { toast } from "react-toastify";
+
+const CustomPackageItem = ({ features, title, btnText,chooseActiveActive }) => {
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showPackageData, setShowPackageData] = useState(false);
+  const [subCost, setSubCost] = useState(0);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const navigate = useNavigate();
+  const token = JSON.parse(localStorage.getItem("token"));
+  const { t: key } = useTranslation();
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
+
+  const buttonText = btnText
+    ? btnText
+    : accountInfo?.account?.allowedUsers > 1 ||
+      accountInfo?.account?.allowedCompounds > 1
+    ? key("addToYourPackage")
+    : key("orderPackage");
+
+  const sendPackageData = async () => {
+    if(btnText&&chooseActiveActive){
+      chooseActiveActive("subscription")
+      return;
+    }
+    if (accountInfo && accountInfo?.account?._id) {
+      const formData = {};
+      features?.forEach((feature) => {
+        formData[feature.label] = feature.value;
+      });
+      const myType = `accounts/${accountInfo?.account?._id}/subscribe`;
+      const res = await mainFormsHandlerTypeRaw({
+        token: token,
+        formData: formData,
+        method: "add",
+        type: myType,
+      });
+      console.log(res);
+      if (res.status === "success") {
+        notifySuccess(key("addedSuccess"));
+        setSubCost(res.data?.subscriptionCost);
+        setShowPackageData(true);
+      } else {
+        notifyError(key("wrong"));
+      }
+    } else {
+      setShowLoginModal(true);
+    }
+  };
+
+  const paymentMethods = () => {
+    navigate(`/profile/${accountInfo?.account?.owner}`);
+  };
+
+  return (
+    <div className={`${styles.package_side}`}>
+      <div className={`${styles.package} ${styles.custom_border}`}>
+        <div className={styles.package_type}>
+          <h4 className="text-center fw-bold">
+            {title ? title : key("customPackage")}
+          </h4>
+        </div>
+        <div className={styles.features}>
+          <ul>
+            {features?.map(
+              (feature, index) =>
+                feature.value !== false && (
+                  <li key={index}>
+                    <FontAwesomeIcon
+                      className={`${styles.list_icon}`}
+                      icon={
+                        isArLang ? faCircleChevronLeft : faCircleChevronRight
+                      }
+                    />
+                    {key(feature.label)}{" "}
+                    {feature.value && feature.value !== true
+                      ? `(${feature.value})`
+                      : ""}
+                  </li>
+                )
+            )}
+          </ul>
+        </div>
+        <div className="text-center pt-4 pb-2">
+          <ButtonThree
+            onClick={sendPackageData}
+            color="white"
+            text={buttonText}
+          />
+        </div>
+      </div>
+      {showLoginModal && (
+        <MainModal
+          show={showLoginModal}
+          onHide={() => setShowLoginModal(false)}
+          confirmFun={() => navigate("/login")}
+          okBtn={key("confirm")}
+          cancelBtn={key("cancel")}
+        >
+          {key("loginFirst")}
+        </MainModal>
+      )}
+      {showPackageData && (
+        <MainModal
+          show={showPackageData}
+          onHide={() => setShowPackageData(false)}
+          confirmFun={paymentMethods}
+          okBtn={key("continue")}
+          cancelBtn={key("cancel")}
+        >
+          <h5 style={{ lineHeight: 2 }}>
+            {` 💵 ${key("subscriptionCost")} [${subCost} ${key("sar")}] 
+            `}{" "}
+            <br /> {key("reviewPackage")}
+          </h5>
+        </MainModal>
+      )}
+    </div>
+  );
+};
+
+export default CustomPackageItem;

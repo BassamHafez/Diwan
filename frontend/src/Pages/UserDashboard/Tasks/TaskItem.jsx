@@ -29,6 +29,7 @@ import {
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
 import { toast } from "react-toastify";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const TaskItem = ({ task, refetch }) => {
   const [showUpdateTaskModal, setShowUpdateTaskModal] = useState(false);
@@ -71,7 +72,7 @@ const TaskItem = ({ task, refetch }) => {
 
   const deleteTask = async () => {
     setShowDeleteModal(false);
-    if (taskID&& token) {
+    if (taskID && token) {
       const res = await mainDeleteFunHandler({
         id: taskID,
         token: token,
@@ -102,9 +103,9 @@ const TaskItem = ({ task, refetch }) => {
       });
       if (res.status === "success") {
         refetch();
-        if(isCompleted){
+        if (isCompleted) {
           notifySuccess(key("unFinishedSucc"));
-        }else{
+        } else {
           notifySuccess(key("finishedSucc"));
         }
       } else {
@@ -136,15 +137,22 @@ const TaskItem = ({ task, refetch }) => {
             <h5 className="mb-2">{task.title}</h5>
             <span>
               <FontAwesomeIcon icon={faUser} className="text-secondary" />{" "}
-              {task.contact?task.contact.name:key("public")}
+              {task.contact ? task.contact.name : key("public")}
             </span>
           </div>
           <hr />
           <h6>
-            <FontAwesomeIcon icon={task?.compound?faBuilding:faCouch} className="text-secondary" />{" "}
-            {task.compound ? task.compound.name :task.estate?.name||key("public")}
+            <FontAwesomeIcon
+              icon={task?.compound ? faBuilding : faCouch}
+              className="text-secondary"
+            />{" "}
+            {task.compound
+              ? task.compound.name
+              : task.estate?.name || key("public")}
           </h6>
-          <p className={styles.desc}>{task.description?task.description:"---"}</p>
+          <p className={styles.desc}>
+            {task.description ? task.description : "---"}
+          </p>
           <hr className="w-50" />
           <div className={styles.controller}>
             <div>
@@ -157,28 +165,37 @@ const TaskItem = ({ task, refetch }) => {
               </span>
             </div>
             <div>
-              <FontAwesomeIcon
-                title={key("delete")}
-                className="text-danger"
-                icon={faTrashCan}
-                onClick={() => {setTaskID(task._id);setShowDeleteModal(true)}}
-              />
-              <FontAwesomeIcon
-                onClick={() => {
-                  setTaskData(task);
-                  setShowUpdateTaskModal(true);
-                }}
-                title={key("ediet")}
-                icon={faEdit}
-              />
-              <FontAwesomeIcon
-                onClick={() => completeTask(task._id, task.isCompleted)}
-                title={task.isCompleted ? key("unFinished") : key("done")}
-                className={`${
-                  task.isCompleted ? "text-success" : "text-secondary"
-                }`}
-                icon={task.isCompleted ? faSquareCheck : regularCheck}
-              />
+              <CheckPermissions btnActions={["DELETE_TASK"]}>
+                <FontAwesomeIcon
+                  title={key("delete")}
+                  className="text-danger"
+                  icon={faTrashCan}
+                  onClick={() => {
+                    setTaskID(task._id);
+                    setShowDeleteModal(true);
+                  }}
+                />
+              </CheckPermissions>
+              <CheckPermissions btnActions={["UPDATE_TASK"]}>
+                <FontAwesomeIcon
+                  onClick={() => {
+                    setTaskData(task);
+                    setShowUpdateTaskModal(true);
+                  }}
+                  title={key("ediet")}
+                  icon={faEdit}
+                />
+              </CheckPermissions>
+              <CheckPermissions btnActions={["COMPLETE_TASK"]}>
+                <FontAwesomeIcon
+                  onClick={() => completeTask(task._id, task.isCompleted)}
+                  title={task.isCompleted ? key("unFinished") : key("done")}
+                  className={`${
+                    task.isCompleted ? "text-success" : "text-secondary"
+                  }`}
+                  icon={task.isCompleted ? faSquareCheck : regularCheck}
+                />
+              </CheckPermissions>
             </div>
           </div>
         </div>

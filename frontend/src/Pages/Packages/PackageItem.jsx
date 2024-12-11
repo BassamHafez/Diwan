@@ -7,9 +7,11 @@ import {
   faCircleChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import ButtonThree from "../../Components/UI/Buttons/ButtonThree";
+import { useTranslation } from "react-i18next";
 
 const PackageItem = ({ pack }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const { t: key } = useTranslation();
 
   return (
     <Col key={pack._id} md={6} xl={4} className="my-5">
@@ -59,7 +61,7 @@ const PackageItem = ({ pack }) => {
                 ? undefined
                 : "white"
             }
-            text="Order Package"
+            text={key("orderPackage")}
           />
         </div>
       </div>

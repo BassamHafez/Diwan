@@ -24,6 +24,7 @@ import { mainDeleteFunHandler } from "../../../util/Http";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateContactForm from "./ContactForms/UpdateContactForm";
 import AOS from "aos";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const ContactItem = ({
   contact,
@@ -127,17 +128,21 @@ const ContactItem = ({
                   : styles.controller_icons_en
               }`}
             >
-              <FontAwesomeIcon
-                title={key("delete")}
-                className="text-danger"
-                icon={faTrash}
-                onClick={() => setShowDeleteModal(true)}
-              />
-              <FontAwesomeIcon
-                onClick={() => setShowUpdateContactModal(true)}
-                title={key("ediet")}
-                icon={faPenToSquare}
-              />
+              <CheckPermissions btnActions={["DELETE_CONTACT"]}>
+                <FontAwesomeIcon
+                  title={key("delete")}
+                  className="text-danger"
+                  icon={faTrash}
+                  onClick={() => setShowDeleteModal(true)}
+                />
+              </CheckPermissions>
+              <CheckPermissions btnActions={["UPDATE_CONTACT"]}>
+                <FontAwesomeIcon
+                  onClick={() => setShowUpdateContactModal(true)}
+                  title={key("ediet")}
+                  icon={faPenToSquare}
+                />
+              </CheckPermissions>
             </div>
           </div>
           <hr />
