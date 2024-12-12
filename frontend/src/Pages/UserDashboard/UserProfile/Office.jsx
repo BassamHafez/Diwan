@@ -15,16 +15,18 @@ const Office = () => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const accountInfo = useSelector((state) => state.accountInfo.data);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
+
+  let myAccount = accountInfo?.account;
 
   return (
     <>
       <div className={`${styles.container} d-flex align-items-center`}>
         <div className={styles.office_icon}>
-          <FontAwesomeIcon icon={faBuildingColumns}/>
+          <FontAwesomeIcon icon={faBuildingColumns} />
         </div>
         <div className={isArLang ? "me-3" : "ms-3"}>
-          <h5 className="m-0 fw-bold">مكتب المهندسين</h5>
-          <span className="mini_word">المالك / بسام حافظ</span>
+          <h5 className="m-0 fw-bold">{myAccount?.name}</h5>
         </div>
       </div>
 
@@ -35,32 +37,47 @@ const Office = () => {
           <Col md={4}>
             <div className={styles.info}>
               <span>{key("name")}</span>
-              <h6>مكتب المهندسين</h6>
+              <h6>{myAccount?.name || key("notExist")}</h6>
             </div>
           </Col>
           <Col md={6}>
             <div className={styles.info}>
               <span>{key("phone")}</span>
-              <h6>0589752452</h6>
+              <h6>{myAccount?.phone || key("notExist")}</h6>
             </div>
           </Col>
-
           <Col md={4}>
             <div className={styles.info}>
-              <span>{key("owner")}</span>
-              <h6>بسام حافظ</h6>
+              <span>{key("region")}</span>
+              <h6>{profileInfo?.region || key("notExist")}</h6>
+            </div>
+          </Col>
+          <Col md={6}>
+            <div className={styles.info}>
+              <span>{key("city")}</span>
+              <h6>{profileInfo?.city || key("notExist")}</h6>
+            </div>
+          </Col>
+          <Col md={4}>
+            <div className={styles.info}>
+              <span>{key("address")}</span>
+              <h6>{profileInfo?.address || key("notExist")}</h6>
             </div>
           </Col>
           <Col md={6}>
             <div className={styles.info}>
               <span>{key("taxNumber")}</span>
-              <h6>129439948</h6>
+              <h6>{myAccount?.taxNumber || key("notExist")}</h6>
             </div>
           </Col>
-          <Col md={6}>
+          <Col md={4}>
             <div className={styles.info}>
               <span>{key("commercialRecord")}</span>
-              <h6>129439948</h6>
+              <h6>
+                {myAccount?.commercialRecord
+                  ? myAccount?.commercialRecord
+                  : key("notExist")}
+              </h6>
             </div>
           </Col>
         </Row>
@@ -78,7 +95,6 @@ const Office = () => {
           />
         </ModalForm>
       )}
-
     </>
   );
 };
