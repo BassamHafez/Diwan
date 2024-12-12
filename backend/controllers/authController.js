@@ -27,6 +27,40 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+const userAccessPermissions = [
+  "FAVORITES",
+  "ADD_COMPOUND",
+  "UPDATE_COMPOUND",
+  "DELETE_COMPOUND",
+  "ADD_ESTATE",
+  "UPDATE_ESTATE",
+  "DELETE_ESTATE",
+  "ADD_CONTRACT",
+  "UPDATE_CONTRACT",
+  "DELETE_CONTRACT",
+  "CANCEL_CONTRACT",
+  "ADD_REVENUE",
+  "UPDATE_REVENUE",
+  "DELETE_REVENUE",
+  "CANCEL_REVENUE",
+  "PAY_REVENUE",
+  "UNPAY_REVENUE",
+  "ADD_EXPENSE",
+  "UPDATE_EXPENSE",
+  "DELETE_EXPENSE",
+  "CANCEL_EXPENSE",
+  "PAY_EXPENSE",
+  "UNPAY_EXPENSE",
+  "ADD_CONTACT",
+  "UPDATE_CONTACT",
+  "DELETE_CONTACT",
+  "ADD_TASK",
+  "UPDATE_TASK",
+  "DELETE_TASK",
+  "COMPLETE_TASK",
+  "UPDATE_ACCOUNT",
+];
+
 exports.signup = catchAsync(async (req, res, next) => {
   const userId = new mongoose.Types.ObjectId();
   const accountId = new mongoose.Types.ObjectId();
@@ -37,12 +71,8 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     phone: req.body.phone,
     password: req.body.password,
-    // accounts: [
-    //   {
-    //     account: accountId,
-    //   },
-    // ],
     account: accountId,
+    permissions: userAccessPermissions,
   };
 
   const accountData = {
@@ -51,6 +81,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     members: [
       {
         user: userId,
+        permissions: userAccessPermissions,
       },
     ],
   };

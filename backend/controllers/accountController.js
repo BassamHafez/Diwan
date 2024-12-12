@@ -7,40 +7,6 @@ const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
-const userAccessPermissions = [
-  "FAVORITES",
-  "ADD_COMPOUND",
-  "UPDATE_COMPOUND",
-  "DELETE_COMPOUND",
-  "ADD_ESTATE",
-  "UPDATE_ESTATE",
-  "DELETE_ESTATE",
-  "ADD_CONTRACT",
-  "UPDATE_CONTRACT",
-  "DELETE_CONTRACT",
-  "CANCEL_CONTRACT",
-  "ADD_REVENUE",
-  "UPDATE_REVENUE",
-  "DELETE_REVENUE",
-  "CANCEL_REVENUE",
-  "PAY_REVENUE",
-  "UNPAY_REVENUE",
-  "ADD_EXPENSE",
-  "UPDATE_EXPENSE",
-  "DELETE_EXPENSE",
-  "CANCEL_EXPENSE",
-  "PAY_EXPENSE",
-  "UNPAY_EXPENSE",
-  "ADD_CONTACT",
-  "UPDATE_CONTACT",
-  "DELETE_CONTACT",
-  "ADD_TASK",
-  "UPDATE_TASK",
-  "DELETE_TASK",
-  "COMPLETE_TASK",
-  "UPDATE_ACCOUNT",
-];
-
 const memberPopOptions = {
   path: "members.user",
   select: "name email phone photo",
@@ -128,33 +94,18 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     return next(new ApiError("Invalid subscription", 400));
   }
 
-  const updateAccountPromise = Account.findByIdAndUpdate(
-    id,
-    {
-      $inc: {
-        allowedUsers: usersCount || 0,
-        allowedCompounds: compoundsCount || 0,
-      },
-      isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
-      members: [{ user: req.user.id, permissions: userAccessPermissions }],
+  await Account.findByIdAndUpdate(id, {
+    $inc: {
+      allowedUsers: usersCount || 0,
+      allowedCompounds: compoundsCount || 0,
     },
-    { new: true }
-  );
-
-  const updateUserPromise = User.findByIdAndUpdate(req.user.id, {
-    permissions: userAccessPermissions,
+    isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
   });
-
-  const [updatedAccount] = await Promise.all([
-    updateAccountPromise,
-    updateUserPromise,
-  ]);
 
   res.status(200).json({
     status: "success",
     data: {
       subscriptionCost: cost,
-      account: updatedAccount,
     },
   });
 });
