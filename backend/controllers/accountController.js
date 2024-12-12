@@ -206,3 +206,69 @@ exports.addMember = catchAsync(async (req, res, next) => {
     message: "Member added successfully",
   });
 });
+
+exports.updateMember = catchAsync(async (req, res, next) => {
+  const { id, userId } = req.params;
+
+  const account = await Account.findById(id).select("owner").lean();
+
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (account.owner.toString() !== req.user.id) {
+    return next(
+      new ApiError("Owner of the account can only update members", 403)
+    );
+  }
+
+  if (userId === account.owner.toString()) {
+    return next(new ApiError("Owner of the account can't be updated", 403));
+  }
+
+  await Promise.all([
+    User.findByIdAndUpdate(userId, {
+      permissions: req.body.permissions,
+    }),
+
+    Account.updateOne(
+      { _id: id, "members.user": userId },
+      { "members.$.permissions": req.body.permissions }
+    ),
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    message: "Member updated successfully",
+  });
+});
+
+exports.deleteMember = catchAsync(async (req, res, next) => {
+  const { id, userId } = req.params;
+
+  const account = await Account.findById(id).select("owner").lean();
+
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (account.owner.toString() !== req.user.id) {
+    return next(
+      new ApiError("Owner of the account can only delete members", 403)
+    );
+  }
+
+  await Promise.all([
+    User.findByIdAndDelete(userId),
+
+    Account.findByIdAndUpdate(id, {
+      $pull: { members: { user: userId } },
+      $inc: { allowedUsers: 1 },
+    }),
+  ]);
+
+  res.status(204).json({
+    status: "success",
+    message: "Member deleted successfully",
+  });
+});
