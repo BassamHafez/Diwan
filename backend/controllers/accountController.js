@@ -177,16 +177,21 @@ exports.updateMember = catchAsync(async (req, res, next) => {
     return next(new ApiError("Owner of the account can't be updated", 403));
   }
 
-  await Promise.all([
-    User.findByIdAndUpdate(userId, {
-      permissions: req.body.permissions,
-    }),
+  const [user] = await Promise.all([
+    User.findOneAndUpdate(
+      { _id: userId, account: id },
+      { permissions: req.body.permissions }
+    ),
 
     Account.updateOne(
       { _id: id, "members.user": userId },
       { "members.$.permissions": req.body.permissions }
     ),
   ]);
+
+  if (!user) {
+    return next(new ApiError("Member not found", 404));
+  }
 
   res.status(200).json({
     status: "success",
@@ -209,14 +214,22 @@ exports.deleteMember = catchAsync(async (req, res, next) => {
     );
   }
 
-  await Promise.all([
-    User.findByIdAndDelete(userId),
+  if (userId === account.owner.toString()) {
+    return next(new ApiError("Owner of the account can't be deleted", 403));
+  }
+
+  const [user] = await Promise.all([
+    User.findOneAndDelete({ _id: userId, account: id }),
 
     Account.findByIdAndUpdate(id, {
       $pull: { members: { user: userId } },
       $inc: { allowedUsers: 1 },
     }),
   ]);
+
+  if (!user) {
+    return next(new ApiError("Member not found", 404));
+  }
 
   res.status(204).json({
     status: "success",
