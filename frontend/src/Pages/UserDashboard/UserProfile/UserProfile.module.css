@@ -100,6 +100,10 @@
     
 }
 
+.officeImg{
+    width: 300px;
+}
+
 /* security */
 .passImage{
     width: 400px;
@@ -156,5 +160,8 @@
     }
     .list_links{
        justify-content: center;
+    }
+    .officeImg{
+        width: 99%;
     }
 }

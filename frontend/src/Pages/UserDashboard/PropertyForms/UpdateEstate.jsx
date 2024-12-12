@@ -379,7 +379,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
               </div>
 
               <div className="field mb-1">
-                <label htmlFor="landlord">{key("landlord")}</label>
+                <label htmlFor="landlord">{key("theLandlord")}</label>
                 <Select
                   id="landlord"
                   name="landlord"
@@ -391,6 +391,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
+                  isDisabled={values.compound&&values.compound?.value!=="not"}
                 />
                 <ErrorMessage name="landlord" component={InputErrorMessage} />
               </div>
@@ -522,6 +523,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
+                  isDisabled={values.compound&&values.compound?.value!=="not"}
                 />
                 <ErrorMessage name="broker" component={InputErrorMessage} />
               </div>

@@ -1,3 +1,6 @@
+import html2pdf from "html2pdf.js";
+import * as XLSX from "xlsx";
+
 // main fun
 export const formattedDate = (date) => {
   if (!date) {
@@ -18,14 +21,18 @@ export const convertTpOptionsFormate = (arr) => {
 };
 
 export const convertNumbersToFixedTwo = (num) => {
-  if (num !== undefined && num !== null) {
+  if (num) {
     return Number.isInteger(num) ? num : num.toFixed(2);
   }
-  return "0.00";
+  return "0";
+};
+
+export const checkAccountFeatures = (accInfo, value) => {
+  const feature = accInfo[value];
+  return typeof feature === "number" ? feature > 0 : Boolean(feature);
 };
 
 
-import * as XLSX from "xlsx";
 export const handleDownloadExcelSheet = (data, name, title) => {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(data);
@@ -34,7 +41,7 @@ export const handleDownloadExcelSheet = (data, name, title) => {
   XLSX.writeFile(wb, `${name}`);
 };
 
-import html2pdf from "html2pdf.js";
+
 export const generatePDF = (id, name) => {
   const element = document.getElementById(`${id}`);
   const options = {
@@ -67,7 +74,7 @@ export const renamedEstateStatus = (type, language) => {
 
 //compounds
 export const calculateRentedPercentage = (rented, total) => {
-  if (total === 0 || rented === 0) {
+  if (!rented|| total === 0 || rented === 0) {
     return 0;
   }
   const percentage = (rented / total) * 100;
@@ -315,14 +322,15 @@ export const calculatePeriod = (startDate, endDate, isArLang) => {
   if (years >= 1) {
     return isArLang ? `${years} سنة` : `${years} year${years > 1 ? "s" : ""}`;
   } else if (months >= 1) {
-    return isArLang ? `${months} شهر` : `${months} month${months > 1 ? "s" : ""}`;
+    return isArLang
+      ? `${months} شهر`
+      : `${months} month${months > 1 ? "s" : ""}`;
   } else if (weeks >= 1) {
     return isArLang ? `${weeks} أسبوع` : `${weeks} week${weeks > 1 ? "s" : ""}`;
   } else {
     return isArLang ? `${days} يوم` : `${days} day${days > 1 ? "s" : ""}`;
   }
 };
-
 
 export const revenueTypes = {
   en: {
@@ -336,12 +344,13 @@ export const revenueTypes = {
     week: "أسبوعي",
     month: "شهري",
     year: "سنوي",
-  }}
+  },
+};
 
-  export const renamedRevenuesType = (type, language) => {
-    const mappings = revenueTypes[language];
-    return mappings?.[type] || "";
-  };
+export const renamedRevenuesType = (type, language) => {
+  const mappings = revenueTypes[language];
+  return mappings?.[type] || "";
+};
 
 //expenses
 export const expensesStatusOptions = {
@@ -361,4 +370,3 @@ export const renamedExpensesStatusMethod = (type, language) => {
   const mappings = expensesStatusOptions[language];
   return mappings?.[type] || "";
 };
-

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import {useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import CustomPackageItem from "./CustomPackageItem";
@@ -11,6 +11,7 @@ const CustomPackages = () => {
     compoundsCount: 1,
     isFavoriteAllowed: false,
   });
+
   const { t: key } = useTranslation();
 
   const handleFeatureChange = (e) => {
@@ -74,7 +75,7 @@ const CustomPackages = () => {
             </Col>
           </Row>
         </Col>
-        <Col sm={6} xl={4}> 
+        <Col sm={6} xl={4}>
           <CustomPackageItem
             features={Object.entries(features).map(([key, value]) => ({
               label: key,

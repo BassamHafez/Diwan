@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import logo from "../../assets/whiteLogo.png";
 import styles from "./PrintContract.module.css";
 import {
   calculatePeriod,
@@ -8,6 +7,7 @@ import {
   renamedRevenuesType,
 } from "../Logic/LogicFun";
 import ContractRevenues from "../../Pages/UserDashboard/PropertyDetails/ContractRevenues";
+import PrintHeader from "./PrintHeader";
 
 const PrintContract = ({ contract, details, id, type }) => {
   const { t: key } = useTranslation();
@@ -24,86 +24,12 @@ const PrintContract = ({ contract, details, id, type }) => {
       contractData?.endDate
     ) || [];
 
-  const currentDate = new Date();
-
   const mainColClass = "d-flex justify-content-center align-items-center mx-3";
 
   return (
     <div className={styles.container_body} id={id}>
-      <div className={styles.header}>
-        <img src={logo} alt="logo" />
-        <h2>{key("lease")}</h2>
-        <div className="text-center">
-          <span style={{ fontSize: "12px" }}>{key("printDate")}</span>
-          <p>{formattedDate(currentDate)}</p>
-        </div>
-      </div>
-      <div className={styles.information}>
-        <h5>{key("estateDetails")}</h5>
-        <div className="d-flex flex-wrap justify-content-evenly">
-          <div className={mainColClass}>
-            <div className={styles.details_content}>
-              <div className={styles.title}>
-                <span>{key("theUnit")}</span>
-              </div>
-              <p>{details?.name}</p>
-            </div>
-          </div>
-          <div className={mainColClass}>
-            <div className={styles.details_content}>
-              <div className={styles.title}>
-                <span>{key("compound")}</span>
-              </div>
-              <p>
-                {details?.compound ? details.compound?.name : key("noCompound")}
-              </p>
-            </div>
-          </div>
-          <div className={mainColClass}>
-            <div className={styles.details_content}>
-              <div className={styles.title}>
-                <span>{key("location")}</span>
-              </div>
-              <p>
-                {details?.region} ({details?.city})
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PrintHeader title={key("lease")} details={details} tenant={contractData?.tenant} partiesTitle={key("partiesContract")} />
 
-      <div className={styles.information}>
-        <h5>{key("partiesContract")}</h5>
-        <table className={`${styles.contract_table} table`}>
-          <thead className={styles.table_head}>
-            <tr>
-              <th>
-                {key("type")}
-              </th>
-              <th>
-                {key("theLandlord")}
-              </th>
-              <th>{key("agent")}</th>
-              <th>{key("theTenant")}</th>
-            </tr>
-          </thead>
-          <tbody className={styles.table_body}>
-            <tr>
-              <td>{key("name")}</td>
-              <td>{contractData?.tenant?.name}</td>
-              <td>{details?.broker?.name}</td>
-              <td>{details?.landlord?.name}</td>
-            </tr>
-            <tr>
-              <td>{key("phone")}</td>
-              <td>{details?.landlord?.phone}</td>
-              <td>{details?.broker?.phone}</td>
-              <td>{contractData?.tenant?.phone}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      
       <div className={styles.information}>
         <h5>{key("contractDetails")}</h5>
         <table className={`${styles.contract_table} table`}>

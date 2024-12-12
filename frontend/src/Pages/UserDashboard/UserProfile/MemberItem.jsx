@@ -149,6 +149,7 @@ const MemberItem = ({
           <UpdatePermissionsForm
             allPermissions={allPermissions}
             userPermissions={userPermissions}
+            userId={userData._id}
             hideModal={() => setShowUpdatePermissionModal(false)}
           />
         </ModalForm>

@@ -84,7 +84,8 @@ const CustomPackageItem = ({
           <ul>
             {features?.map(
               (feature, index) =>
-                feature.value !== false && (
+                feature.value !== false &&
+                feature.value !== undefined && (
                   <li key={index}>
                     <FontAwesomeIcon
                       className={`${styles.list_icon}`}
@@ -93,8 +94,10 @@ const CustomPackageItem = ({
                       }
                     />
                     {key(feature.label)}{" "}
-                    {feature.value && feature.value !== true
-                      ? `(${feature.value})`
+                    {typeof feature.value === "number"
+                      ? `(${feature.value>0?feature.value:0})`
+                      : feature.value === true
+                      ? ""
                       : ""}
                   </li>
                 )

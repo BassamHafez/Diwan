@@ -209,7 +209,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
 
           <div className="field">
             <label htmlFor="commercialRecord">
-              {key("commercialRecord")} {requiredLabel}
+              {key("commercialRecord")}
             </label>
             <Field
               type="number"
@@ -224,7 +224,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
           </div>
           <div className="field">
             <label htmlFor="taxNumber">
-              {key("taxNumber")} {requiredLabel}
+              {key("taxNumber")}
             </label>
             <Field
               type="number"

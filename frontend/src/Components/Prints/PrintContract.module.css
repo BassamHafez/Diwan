@@ -81,6 +81,22 @@
   padding: 0.625rem 0;
 }
 
+
+.notes{
+  text-align: start;
+  margin: 1.25rem 0.625rem 0.3125rem 0.625rem;
+  width: 100%;
+}
+.notes div{
+  background-color: var(--sky);
+  padding: 20px;
+  border-radius: 10px
+}
+.notes div p{
+  color: var(--dark_white);
+  margin: 0;
+}
+
 @media screen and (max-width: 1180px) {
   .details_content,
   .details_content2 {

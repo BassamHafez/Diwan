@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useState } from "react";
 import AddMemberForm from "./ProfileForms/AddMemberForm";
+import { checkAccountFeatures } from "../../../Components/Logic/LogicFun";
+import { toast } from "react-toastify";
 
 const Members = () => {
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -13,6 +15,19 @@ const Members = () => {
   const profileInfo = useSelector((state) => state.profileInfo.data);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
+  const notifyError = (message) => toast.error(message);
+
+  const checkPackage = () => {
+    const isAllowed = checkAccountFeatures(
+      accountInfo?.account,
+      "allowedUsers"
+    );
+    if (!isAllowed) {
+      notifyError(key("featureEnded"));
+      return;
+    }
+    setShowAddMemberModal(true)
+  };
 
   return (
     <div className="p-4">
@@ -20,11 +35,11 @@ const Members = () => {
         <ButtonOne
           borderd={true}
           text={`${key("add")} ${key("member")}`}
-          onClick={() => setShowAddMemberModal(true)}
+          onClick={checkPackage}
         />
       </div>
       <Row>
-        {accountInfo?.account?.members?.map((member,index) => (
+        {accountInfo?.account?.members?.map((member, index) => (
           <MemberItem
             key={`${member._id}_${index}`}
             accountId={accountInfo?.account?._id}

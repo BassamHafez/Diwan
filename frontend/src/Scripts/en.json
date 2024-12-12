@@ -391,5 +391,19 @@
   "UPDATE_TASK": "Update Task",
   "DELETE_TASK": "Delete Task",
   "COMPLETE_TASK": "Complete Task",
-  "UPDATE_ACCOUNT": "Update Account"
+  "UPDATE_ACCOUNT": "Update Account",
+  "updateYourOffice":"Start Updating Your Office Data",
+  "upgradeSubscription":"Upgrade Subscription",
+  "featureEnded":"sorry!, your reached the limit of your package, please renew your package to continue",
+  "unAvailableFeature":"sorry!, this feature is not available in your current package",
+  "employee":"Employee",
+  "unitNum":"Unit Number",
+  "employeePhone":"Employee Phone",
+  "cashReceipt":"Cash Receipt",
+  "cashRecDetails":"Cash Receipt Details",
+  "partiesCashReceipt":"Parties Cash Receipt",
+  "startDate":"Start Date",
+  "endDate":"End Date",
+  "payDate":"Payment date"
+  
 }

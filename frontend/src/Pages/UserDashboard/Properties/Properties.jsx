@@ -25,9 +25,13 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import AddEstate from "../PropertyForms/AddEstate";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import PropertyPlaceholder from "../../../Components/Property/PropertyPlaceholder";
-import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
+import {
+  checkAccountFeatures,
+  convertTpOptionsFormate,
+} from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
-import CheckAccountFeatures from "../../../Components/CheckPermissions/CheckAccountFeatures";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 const Properties = () => {
   const { t: key } = useTranslation();
@@ -44,6 +48,8 @@ const Properties = () => {
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const notifyError = (message) => toast.error(message);
 
   const {
     data: compounds,
@@ -104,6 +110,14 @@ const Properties = () => {
   const showNextModal = (selectedModal) => {
     setShowModal(false);
     if (selectedModal === "compound") {
+      const isAllowed = checkAccountFeatures(
+        accountInfo?.account,
+        "allowedCompounds"
+      );
+      if (!isAllowed) {
+        notifyError(key("featureEnded"));
+        return;
+      }
       setShowAddCompoundModal(true);
     } else if (selectedModal === "estate") {
       setShowAddEstateModal(true);
@@ -260,26 +274,25 @@ const Properties = () => {
             >
               {key("compounds")}
             </label>
-            <CheckAccountFeatures>
-              <input
-                type="radio"
-                className="btn-check"
-                name="types"
-                id="bookmarkedSmall"
-                value="bookmarked"
-                autoComplete="off"
-                checked={selectedFilter === "bookmarked"}
-                onChange={handleFilterChange}
-              />
-              <label
-                className={`${
-                  selectedFilter === "bookmarked" && styles.label_checked
-                } btn`}
-                htmlFor="bookmarkedSmall"
-              >
-                {key("bookmarked")}
-              </label>
-            </CheckAccountFeatures>
+
+            <input
+              type="radio"
+              className="btn-check"
+              name="types"
+              id="bookmarkedSmall"
+              value="bookmarked"
+              autoComplete="off"
+              checked={selectedFilter === "bookmarked"}
+              onChange={handleFilterChange}
+            />
+            <label
+              className={`${
+                selectedFilter === "bookmarked" && styles.label_checked
+              } btn`}
+              htmlFor="bookmarkedSmall"
+            >
+              {key("bookmarked")}
+            </label>
           </div>
 
           {selectedFilter !== "compounds" && (

@@ -64,8 +64,8 @@ const Property = ({
       property.estatesCount
     );
     let countNum = isArLang
-      ? `${property.estatesCount}/${rentedEstatesCountObj?.rentedCount}`
-      : `${rentedEstatesCountObj?.rentedCount}/${property.estatesCount}`;
+      ? `${property.estatesCount}/${rentedEstatesCountObj?.rentedCount || 0}`
+      : `${rentedEstatesCountObj?.rentedCount || 0}/${property.estatesCount}`;
     return `${key("rented")}: ${countNum} ${key(
       "unit"
     )} (${rentedPercentage}%)`;
