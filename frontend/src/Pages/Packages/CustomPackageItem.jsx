@@ -12,8 +12,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { toast } from "react-toastify";
+import CheckPermissions from "../../Components/CheckPermissions/CheckPermissions";
 
-const CustomPackageItem = ({ features, title, btnText,chooseActiveActive }) => {
+const CustomPackageItem = ({
+  features,
+  title,
+  btnText,
+  chooseActiveActive,
+}) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
   const [subCost, setSubCost] = useState(0);
@@ -33,8 +39,8 @@ const CustomPackageItem = ({ features, title, btnText,chooseActiveActive }) => {
     : key("orderPackage");
 
   const sendPackageData = async () => {
-    if(btnText&&chooseActiveActive){
-      chooseActiveActive("subscription")
+    if (btnText && chooseActiveActive) {
+      chooseActiveActive("subscription");
       return;
     }
     if (accountInfo && accountInfo?.account?._id) {
@@ -95,13 +101,15 @@ const CustomPackageItem = ({ features, title, btnText,chooseActiveActive }) => {
             )}
           </ul>
         </div>
-        <div className="text-center pt-4 pb-2">
-          <ButtonThree
-            onClick={sendPackageData}
-            color="white"
-            text={buttonText}
-          />
-        </div>
+        <CheckPermissions btnActions={["UPDATE_ACCOUNT"]}>
+          <div className="text-center pt-4 pb-2">
+            <ButtonThree
+              onClick={sendPackageData}
+              color="white"
+              text={buttonText}
+            />
+          </div>
+        </CheckPermissions>
       </div>
       {showLoginModal && (
         <MainModal

@@ -75,7 +75,7 @@ const SettingOffCanvas = ({ show, handleClose }) => {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <ul className={styles.contact_list}>
-            <Link>
+            <Link to={`profile/${profileInfo?._id}`}>
               <li className={styles.contact_list_item} onClick={handleClose}>
                 {key("accSetting")}
                 <FontAwesomeIcon className={styles.list_icons} icon={faGears} />

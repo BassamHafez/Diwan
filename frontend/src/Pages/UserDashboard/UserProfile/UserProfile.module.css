@@ -53,6 +53,7 @@
     background-color: white;
     margin:1.25rem;
     padding: 1.25rem;
+    padding-bottom: 0.5rem;
     border-radius: 0.625rem;
     box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.146);
     position: relative;
@@ -112,6 +113,28 @@
     align-items: center;
     justify-content: center;
     padding: 10px;
+}
+
+
+/* memebers */
+
+.delete_icon,.show_icon{
+    padding: 10px;
+    border-radius: 50%;
+    background-color: var(--deep_navy);
+    color: rgb(228, 228, 228);
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.207);
+    margin-inline: 8px;
+    cursor: pointer;
+    transition: all .4s;
+}
+.delete_icon:hover,.show_icon:hover{
+    scale: 1.1;
+}
+
+.delete_icon{
+    padding: 10px 12px;
+    background-color: rgb(206, 6, 6);
 }
 @media screen and (max-width:768px) {
     .list_links{

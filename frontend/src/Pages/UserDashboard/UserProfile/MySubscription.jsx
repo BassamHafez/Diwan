@@ -9,10 +9,12 @@ import invoiceImage from "../../../assets/invoice.jpg";
 const MySubscription = ({chooseActiveActive}) => {
   const { t: key } = useTranslation();
   const accountInfo = useSelector((state) => state.accountInfo.data);
+  const myAccount=accountInfo?.account
+  
   const currentFeatures = {
-    usersCount: accountInfo?.account?.allowedUsers,
-    compoundsCount: accountInfo?.account?.allowedCompounds,
-    isFavoriteAllowed: accountInfo?.account?.isFavoriteAllowed,
+    usersCount: myAccount?.allowedUsers,
+    compoundsCount: myAccount?.allowedCompounds,
+    isFavoriteAllowed: myAccount?.isFavoriteAllowed,
   };
 
   return (
