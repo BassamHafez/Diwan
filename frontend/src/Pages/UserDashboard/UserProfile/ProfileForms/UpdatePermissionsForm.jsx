@@ -17,13 +17,13 @@ const UpdatePermissionsForm = ({
   hideModal,
   allPermissions,
   userPermissions,
+  userId,
 }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
-  const profileInfo = useSelector((state) => state.profileInfo.data);
- 
+
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
@@ -32,9 +32,10 @@ const UpdatePermissionsForm = ({
   useEffect(() => {
     if (allPermissions) {
       setPermissionsOptions(
-        allPermissions.map((perm) => {
-          return { label: key(perm), value: perm };
-        })
+        Array.from(new Set(allPermissions)).map((perm, index) => ({
+          label: key(perm) || index,
+          value: perm,
+        }))
       );
     }
   }, [allPermissions, key]);
@@ -45,22 +46,22 @@ const UpdatePermissionsForm = ({
 
   const initialValues = {
     permissions:
-      userPermissions?.map((perm) => {
-        return { label: key(perm), value: perm };
-      }) || [],
+      userPermissions?.map((perm, index) => ({
+        label: key(perm) || index,
+        value: perm,
+      })) || [],
   };
 
-  const onSubmit = (values, { resetForm }) => {
-    if (values.permissions) {
-      values.permissions = values.permissions.map((perm) => perm.value);
-    }
-    console.log(values);
+  const onSubmit = (values) => {
+    const updatedValues = {
+      permissions: values.permissions.map((perm) => `${perm.value}`),
+    };
     mutate(
       {
-        formData: values,
+        formData: updatedValues,
         token: token,
         method: "patch",
-        type: `accounts/${accountInfo?.account?._id}/members/${profileInfo?._id}`,
+        type: `accounts/${accountInfo?.account?._id}/members/${userId}`,
       },
       {
         onSuccess: (data) => {
@@ -68,7 +69,6 @@ const UpdatePermissionsForm = ({
           if (data?.status === "success") {
             dispatch(fetchAccountData(token));
             notifySuccess(key("updatedSucc"));
-            resetForm();
             hideModal();
           } else {
             notifyError(key("wrong"));
@@ -101,7 +101,7 @@ const UpdatePermissionsForm = ({
       validationSchema={validationSchema}
       enableReinitialize
     >
-      {({ setFieldValue,values }) => (
+      {({ setFieldValue, values }) => (
         <Form>
           <Row>
             <div className="field">

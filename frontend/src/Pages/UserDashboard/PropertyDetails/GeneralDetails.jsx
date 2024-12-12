@@ -345,7 +345,7 @@ const GeneralDetails = ({
         <>
           <CurrentContract details={details} />
           <Contracts details={details} />
-          <Revenue refetchDetails={refetch} />
+          <Revenue refetchDetails={refetch} details={details} />
         </>
       )}
 

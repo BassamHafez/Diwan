@@ -24,11 +24,11 @@ import { faTrashCan, faHeart } from "@fortawesome/free-regular-svg-icons";
 import AOS from "aos";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 import {
+  checkAccountFeatures,
   convertNumbersToFixedTwo,
   formattedDate,
 } from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
-import CheckAccountFeatures from "../../../Components/CheckPermissions/CheckAccountFeatures";
 
 const PropertyDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +41,7 @@ const PropertyDetails = () => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const [isMarked, setIsMarked] = useState(false);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
 
   useEffect(() => {
     AOS.init();
@@ -110,6 +111,14 @@ const PropertyDetails = () => {
   };
 
   const bookMarkEstate = async () => {
+    const isAllowed = checkAccountFeatures(
+      accountInfo?.account,
+      "isFavoriteAllowed"
+    );
+    if (!isAllowed) {
+      notifyError(key("unAvailableFeature"));
+      return;
+    }
     let res;
     if (isMarked) {
       res = await mainDeleteFunHandler({
@@ -157,7 +166,12 @@ const PropertyDetails = () => {
                   data-aos="fade-in"
                   data-aos-duration="1000"
                 >
-                  <h3 className="my-4 mx-1">{myData?.estate?.name}</h3>
+                  <h3 className="my-4 mx-1">
+                    {myData?.estate?.name}{" "}
+                    {myData?.estate?.unitNumber
+                      ? `(${myData?.estate?.unitNumber})`
+                      : ""}
+                  </h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <CheckPermissions btnActions={["DELETE_ESTATE"]}>
                       <div
@@ -168,23 +182,22 @@ const PropertyDetails = () => {
                         <FontAwesomeIcon icon={faTrashCan} />
                       </div>
                     </CheckPermissions>
-                    <CheckAccountFeatures>
-                      <CheckPermissions btnActions={["FAVORITES"]}>
-                        <div
-                          className={
-                            isMarked ? styles.bookmarked : styles.no_bookmark
-                          }
-                          onClick={bookMarkEstate}
-                          title={`${
-                            isMarked ? key("removeBookMark") : key("bookmarked")
-                          }`}
-                        >
-                          <FontAwesomeIcon
-                            icon={isMarked ? solidHeart : faHeart}
-                          />
-                        </div>
-                      </CheckPermissions>
-                    </CheckAccountFeatures>
+
+                    <CheckPermissions btnActions={["FAVORITES"]}>
+                      <div
+                        className={
+                          isMarked ? styles.bookmarked : styles.no_bookmark
+                        }
+                        onClick={bookMarkEstate}
+                        title={`${
+                          isMarked ? key("removeBookMark") : key("bookmarked")
+                        }`}
+                      >
+                        <FontAwesomeIcon
+                          icon={isMarked ? solidHeart : faHeart}
+                        />
+                      </div>
+                    </CheckPermissions>
                   </div>
                 </div>
 
@@ -293,7 +306,7 @@ const PropertyDetails = () => {
                                     Number(myData?.totalPendingRevenues)) *
                                     100
                                 )
-                              : "0.00"}
+                              : "0"}
                             %
                           </p>
                         </div>
@@ -314,7 +327,7 @@ const PropertyDetails = () => {
                                     Number(myData?.estate?.price)) *
                                     100
                                 )
-                              : "0.00"}
+                              : "0"}
                             %
                           </p>
                         </div>
@@ -336,7 +349,7 @@ const PropertyDetails = () => {
                                     Number(myData?.estate?.price)) *
                                     100
                                 )
-                              : "0.00"}
+                              : "0"}
                             %
                           </p>
                         </div>

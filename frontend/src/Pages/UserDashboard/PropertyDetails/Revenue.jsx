@@ -33,10 +33,12 @@ import AddRevenue from "../PropertyForms/AddRevenue";
 import RevenueDetails from "./RevenueDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import PrintCashReceipt from "../../../Components/Prints/PrintCashReceipt";
 
-const Revenue = ({ refetchDetails }) => {
+const Revenue = ({ refetchDetails, details }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
+  const [showCashReceiptModal, setShowCashReceiptModal] = useState(false);
   const [revDetails, setRevDetails] = useState({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -49,7 +51,6 @@ const Revenue = ({ refetchDetails }) => {
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-
   const {
     data: revenuesData,
     isFetching,
@@ -293,16 +294,26 @@ const Revenue = ({ refetchDetails }) => {
                               </CheckPermissions>
                             )}
                             {rev.status === "paid" && (
-                              <CheckPermissions btnActions={["UNPAY_REVENUE"]}>
+                              <>
+                                <CheckPermissions
+                                  btnActions={["UNPAY_REVENUE"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      mainpulateRev("unPay", rev._id)
+                                    }
+                                    className="text-center"
+                                  >
+                                    {key("unPaid")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
                                 <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateRev("unPay", rev._id)
-                                  }
+                                  onClick={() => setShowCashReceiptModal(true)}
                                   className="text-center"
                                 >
-                                  {key("unPaid")}
+                                  {key("cashReceipt")}
                                 </Dropdown.Item>
-                              </CheckPermissions>
+                              </>
                             )}
                             {rev.status !== "paid" &&
                               rev.status !== "canceled" && (
@@ -408,6 +419,31 @@ const Revenue = ({ refetchDetails }) => {
               <RevenueDetails revDetails={revDetails} />
             </div>
           </div>
+        </MainModal>
+      )}
+
+      {showCashReceiptModal && (
+        <MainModal
+          show={showCashReceiptModal}
+          onHide={() => setShowCashReceiptModal(false)}
+          cancelBtn={key("cancel")}
+          okBtn={key("download")}
+          confirmFun={() =>
+            generatePDF(
+              revDetails._id,
+              `${key("cashReceipt")}_${details?.name}(${
+                details?.compound?.name
+              })_${revDetails?.tenant?.name}`
+            )
+          }
+          title={key("cashReceipt")}
+          modalSize={"lg"}
+        >
+          <PrintCashReceipt
+            revDetails={revDetails}
+            details={details}
+            id={`${revDetails._id}`}
+          />
         </MainModal>
       )}
     </div>

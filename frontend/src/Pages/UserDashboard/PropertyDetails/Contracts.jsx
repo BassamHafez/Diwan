@@ -255,15 +255,15 @@ const Contracts = ({ details }) => {
                               </Dropdown.Item>
                             </CheckPermissions>
 
-                              <Dropdown.Item
-                                onClick={() => {
-                                  setContractDetails(contract);
-                                  setShowDetailsModal(true);
-                                }}
-                                className="text-center"
-                              >
-                                {key("details")}
-                              </Dropdown.Item>
+                            <Dropdown.Item
+                              onClick={() => {
+                                setContractDetails(contract);
+                                setShowDetailsModal(true);
+                              }}
+                              className="text-center"
+                            >
+                              {key("details")}
+                            </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>
@@ -320,7 +320,14 @@ const Contracts = ({ details }) => {
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
           okBtn={key("download")}
-          confirmFun={() => generatePDF(contractDetails._id, "contractDetails")}
+          confirmFun={() =>
+            generatePDF(
+              contractDetails?._id,
+              `${key("contract")}_${details?.name}(${
+                details?.compound?.name
+              })_${contractDetails?.tenant?.name}`
+            )
+          }
           title={key("contractDetails")}
           modalSize={"lg"}
         >
@@ -330,14 +337,6 @@ const Contracts = ({ details }) => {
             details={details}
             id={`${contractDetails._id}`}
           />
-          {/* <div className="d-none">
-            <div
-              id={`${contractDetails._id}`}
-              className="d-flex justify-content-center align-items-center flex-column"
-            >
-              <PrintContract contract={contractDetails} details={details} />
-            </div>
-          </div> */}
         </MainModal>
       )}
     </div>

@@ -52,14 +52,14 @@ const ProfileMain = () => {
 
           <Col md={4}>
             <div className={styles.info}>
-              <span>{key("email")}</span>
-              <h6>{profileInfo?.email}</h6>
-            </div>
-          </Col>
-          <Col md={4}>
-            <div className={styles.info}>
               <span>{key("tag")}</span>
               <h6>Estate Manager</h6>
+            </div>
+          </Col>
+          <Col md={6}>
+            <div className={styles.info}>
+              <span>{key("email")}</span>
+              <h6>{profileInfo?.email}</h6>
             </div>
           </Col>
         </Row>
