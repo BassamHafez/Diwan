@@ -92,6 +92,8 @@ exports.createEstateValidator = [
 
   check("account").not().exists().withMessage("Account cannot be set manually"),
 
+  check("unitNumber").not().exists().withMessage("Unit number cannot be set"),
+
   check("inFavorites")
     .isEmpty()
     .withMessage("To add to favorites, use favorites endpoints"),
@@ -190,6 +192,8 @@ exports.updateEstateValidator = [
 
   check("compound").isEmpty().withMessage("Compound cannot be edited"),
 
+  check("unitNumber").isEmpty().withMessage("Unit number cannot be edited"),
+
   check("inFavorites")
     .isEmpty()
     .withMessage("To add to favorites, use favorites endpoints"),
@@ -245,6 +249,8 @@ exports.createEstateExpenseValidator = [
   // NOT ALLOWED
 
   check("account").not().exists().withMessage("Account cannot be set"),
+
+  check("unitNumber").not().exists().withMessage("Unit number cannot be set"),
 
   check("status").not().exists().withMessage("Status cannot be set"),
 
