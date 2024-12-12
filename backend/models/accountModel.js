@@ -26,17 +26,13 @@ const accountSchema = new mongoose.Schema(
         },
       },
     ],
-    features: {
-      type: [String],
-      default: ["allowedUsers", "allowedCompounds", "isFavoriteAllowed"],
-    },
     allowedUsers: {
       type: Number,
       default: 0,
     },
     allowedCompounds: {
       type: Number,
-      default: 0,
+      default: 2,
     },
     isFavoriteAllowed: {
       type: Boolean,

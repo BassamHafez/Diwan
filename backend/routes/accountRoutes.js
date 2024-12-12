@@ -28,6 +28,14 @@ router.post(
   accountController.addMember
 );
 
+router
+  .route("/:id/members/:userId")
+  .patch(accountValidator.updateMemberValidator, accountController.updateMember)
+  .delete(
+    accountValidator.deleteMemberValidator,
+    accountController.deleteMember
+  );
+
 router.post(
   "/:id/subscribe",
   accountValidator.subscribeValidator,

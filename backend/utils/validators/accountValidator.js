@@ -190,3 +190,49 @@ exports.addMemberValidator = [
 
   validatorMiddleware,
 ];
+
+exports.updateMemberValidator = [
+  check("id")
+    .exists()
+    .withMessage("Account ID is required")
+    .isMongoId()
+    .withMessage("Invalid account ID"),
+
+  check("userId")
+    .exists()
+    .withMessage("User ID is required")
+    .isMongoId()
+    .withMessage("Invalid user ID"),
+
+  check("permissions")
+    .exists()
+    .withMessage("Permissions required")
+    .isArray({ min: 1 })
+    .withMessage("Permissions must be an array with at least one permission"),
+
+  check("permissions.*")
+    .isString()
+    .withMessage("Permission must be a string")
+    .notEmpty()
+    .withMessage("Permission cannot be empty")
+    .isIn(userAccessPermissions)
+    .withMessage((value) => `Invalid permission: ${value}`),
+
+  validatorMiddleware,
+];
+
+exports.deleteMemberValidator = [
+  check("id")
+    .exists()
+    .withMessage("Account ID is required")
+    .isMongoId()
+    .withMessage("Invalid account ID"),
+
+  check("userId")
+    .exists()
+    .withMessage("User ID is required")
+    .isMongoId()
+    .withMessage("Invalid user ID"),
+
+  validatorMiddleware,
+];
