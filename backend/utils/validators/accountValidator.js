@@ -1,6 +1,40 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("./validatorMiddleware");
 
+const userAccessPermissions = [
+  "FAVORITES",
+  "ADD_COMPOUND",
+  "UPDATE_COMPOUND",
+  "DELETE_COMPOUND",
+  "ADD_ESTATE",
+  "UPDATE_ESTATE",
+  "DELETE_ESTATE",
+  "ADD_CONTRACT",
+  "UPDATE_CONTRACT",
+  "DELETE_CONTRACT",
+  "CANCEL_CONTRACT",
+  "ADD_REVENUE",
+  "UPDATE_REVENUE",
+  "DELETE_REVENUE",
+  "CANCEL_REVENUE",
+  "PAY_REVENUE",
+  "UNPAY_REVENUE",
+  "ADD_EXPENSE",
+  "UPDATE_EXPENSE",
+  "DELETE_EXPENSE",
+  "CANCEL_EXPENSE",
+  "PAY_EXPENSE",
+  "UNPAY_EXPENSE",
+  "ADD_CONTACT",
+  "UPDATE_CONTACT",
+  "DELETE_CONTACT",
+  "ADD_TASK",
+  "UPDATE_TASK",
+  "DELETE_TASK",
+  "COMPLETE_TASK",
+  "UPDATE_ACCOUNT",
+];
+
 exports.subscribeValidator = [
   check("id")
     .exists()
@@ -101,6 +135,58 @@ exports.updateAccountValidator = [
     .not()
     .exists()
     .withMessage("Favorite allowed is not allowed"),
+
+  validatorMiddleware,
+];
+
+exports.addMemberValidator = [
+  check("id")
+    .exists()
+    .withMessage("Account ID is required")
+    .isMongoId()
+    .withMessage("Invalid account ID"),
+
+  check("name")
+    .notEmpty()
+    .withMessage("User name required")
+    .isString()
+    .withMessage("Invalid user name")
+    .isLength({ min: 3 })
+    .withMessage("Too short User name"),
+
+  check("email")
+    .notEmpty()
+    .withMessage("Email required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+
+  check("phone")
+    .notEmpty()
+    .withMessage("Phone number required")
+    .isLength({ min: 10 })
+    .withMessage("Invalid phone number")
+    .isMobilePhone("ar-SA")
+    .withMessage("Invalid Saudi phone number"),
+
+  check("password")
+    .notEmpty()
+    .withMessage("Password required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+
+  check("permissions")
+    .exists()
+    .withMessage("Permissions required")
+    .isArray({ min: 1 })
+    .withMessage("Permissions must be an array with at least one permission"),
+
+  check("permissions.*")
+    .isString()
+    .withMessage("Permission must be a string")
+    .notEmpty()
+    .withMessage("Permission cannot be empty")
+    .isIn(userAccessPermissions)
+    .withMessage((value) => `Invalid permission: ${value}`),
 
   validatorMiddleware,
 ];

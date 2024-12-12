@@ -23,6 +23,12 @@ router.patch(
 );
 
 router.post(
+  "/:id/members",
+  accountValidator.addMemberValidator,
+  accountController.addMember
+);
+
+router.post(
   "/:id/subscribe",
   accountValidator.subscribeValidator,
   accountController.subscribe

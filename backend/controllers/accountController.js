@@ -1,5 +1,7 @@
+const mongoose = require("mongoose");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
+const Tag = require("../models/tagModel");
 const Subscription = require("../models/subscriptionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
@@ -154,5 +156,53 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       subscriptionCost: cost,
       account: updatedAccount,
     },
+  });
+});
+
+exports.addMember = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const account = await Account.findById(id)
+    .select("allowedUsers owner")
+    .lean();
+
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (account.owner.toString() !== req.user.id) {
+    return next(new ApiError("Owner of the account can only add members", 403));
+  }
+
+  if (account.allowedUsers <= 0) {
+    return next(new ApiError("Subscribe and get more users", 403));
+  }
+
+  const userId = new mongoose.Types.ObjectId();
+
+  const userData = {
+    _id: userId,
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+    password: req.body.password,
+    account: id,
+    permissions: req.body.permissions,
+  };
+
+  await Promise.all([
+    User.create(userData),
+
+    Account.findByIdAndUpdate(id, {
+      $push: {
+        members: { user: userId, permissions: req.body.permissions },
+      },
+      $inc: { allowedUsers: -1 },
+    }),
+  ]);
+
+  res.status(201).json({
+    status: "success",
+    message: "Member added successfully",
   });
 });
