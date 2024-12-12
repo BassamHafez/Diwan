@@ -5,7 +5,7 @@ const TenantContact = require("../models/tenantContactModel");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getAllContacts = catchAsync(async (req, res, next) => {
-  const userId = req.user.id;
+  const accountId = req.user.account;
   const collections = [
     BrokerContact,
     ServiceContact,
@@ -14,7 +14,7 @@ exports.getAllContacts = catchAsync(async (req, res, next) => {
   ];
 
   const contactPromises = collections.map((collection) =>
-    collection.find({ user: userId }).lean()
+    collection.find({ account: accountId }).lean()
   );
 
   const contacts = await Promise.all(contactPromises);
