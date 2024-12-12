@@ -351,5 +351,6 @@
   "currentPassword": "Current Password",
   "changePassword": "Change Password",
   "deleteAccWarning": "This action is permanent and cannot be undone. Deactivating your account will result in the loss of all your data and access to the platform",
-  "deActivateConfirmMessage":"Are You Sure You want to Deactivate your Account?"
+  "deActivateConfirmMessage":"Are You Sure You want to Deactivate your Account?",
+  "notExist":"not exist"
 }

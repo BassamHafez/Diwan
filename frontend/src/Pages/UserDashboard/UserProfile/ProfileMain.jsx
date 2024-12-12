@@ -5,7 +5,6 @@ import avatar from "../../../assets/default.png";
 import { useTranslation } from "react-i18next";
 import EdietPenIcon from "../../../Components/UI/Buttons/EdietPenIcon";
 import { useSelector } from "react-redux";
-import Office from "./Office";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useState } from "react";
 import UpdateUserData from "./ProfileForms/UpdateUserData";
@@ -65,8 +64,6 @@ const ProfileMain = () => {
           </Col>
         </Row>
       </div>
-
-      <Office />
 
       {/* <div className={styles.container}>
       <EdietPenIcon onClick={() => console.log("hello")} />
