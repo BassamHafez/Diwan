@@ -455,7 +455,7 @@ const Contacts = () => {
         </Col>
 
         <Col sm={8} lg={9}>
-          <Row className={styles.contacts_side}>
+          <div className={styles.contacts_side}>
             <div className="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-2 px-3">
               <div>
                 <SearchField text={key("searchContacts")} />
@@ -470,18 +470,20 @@ const Contacts = () => {
                 </div>
               </CheckPermissions>
             </div>
-            {selectedFilter === "contacts" && allContacts
-              ? renderContacts(allContacts, "contact", isFetchingContacts)
-              : selectedFilter === "landlord" && landlords
-              ? renderContacts(landlords, "landlord", isFetchingLandlords)
-              : selectedFilter === "service" && services
-              ? renderContacts(services, "service", isFetchingServices)
-              : selectedFilter === "broker" && brokers
-              ? renderContacts(brokers, "broker", isFetchingBrokers)
-              : selectedFilter === "tenant" && tenants
-              ? renderContacts(tenants, "tenant", isFetchingTenants)
-              : null}
-          </Row>
+            <Row>
+              {selectedFilter === "contacts" && allContacts
+                ? renderContacts(allContacts, "contact", isFetchingContacts)
+                : selectedFilter === "landlord" && landlords
+                ? renderContacts(landlords, "landlord", isFetchingLandlords)
+                : selectedFilter === "service" && services
+                ? renderContacts(services, "service", isFetchingServices)
+                : selectedFilter === "broker" && brokers
+                ? renderContacts(brokers, "broker", isFetchingBrokers)
+                : selectedFilter === "tenant" && tenants
+                ? renderContacts(tenants, "tenant", isFetchingTenants)
+                : null}
+            </Row>
+          </div>
         </Col>
       </Row>
 

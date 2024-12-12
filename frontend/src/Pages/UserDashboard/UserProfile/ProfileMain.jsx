@@ -65,38 +65,6 @@ const ProfileMain = () => {
         </Row>
       </div>
 
-      {/* <div className={styles.container}>
-      <EdietPenIcon onClick={() => console.log("hello")} />
-      <h4>{key("address")}</h4>
-      <Row>
-        <Col md={4}>
-          <div className={styles.info}>
-            <span>{key("country")}</span>
-            <h6>Saudi Arabia</h6>
-          </div>
-        </Col>
-        <Col md={6}>
-          <div className={styles.info}>
-            <span>{key("region")}</span>
-            <h6>Riyadh</h6>
-          </div>
-        </Col>
-
-        <Col md={4}>
-          <div className={styles.info}>
-            <span>{key("city")}</span>
-            <h6>Olya</h6>
-          </div>
-        </Col>
-        <Col md={6}>
-          <div className={styles.info}>
-            <span>{key("taxNumber")}</span>
-            <h6>129439948</h6>
-          </div>
-        </Col>
-      </Row>
-    </div> */}
-
       {showUpdateModal && (
         <ModalForm
           show={showUpdateModal}
