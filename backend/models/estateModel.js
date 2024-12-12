@@ -6,6 +6,7 @@ const estateSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Compound",
     },
+    unitNumber: Number,
     name: {
       type: String,
       required: true,

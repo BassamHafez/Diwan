@@ -160,6 +160,7 @@ exports.createEstate = catchAsync(async (req, res, next) => {
       return next(new ApiError("No compound found with that ID", 404));
     }
 
+    req.body.unitNumber = +compound.estatesCount + 1;
     req.body.region = compound.region;
     req.body.city = compound.city;
     if (compound.neighborhood) req.body.neighborhood = compound.neighborhood;
