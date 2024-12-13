@@ -1,34 +1,41 @@
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from "./SearchField.module.css";
 
-const SearchField = ({ onSearch, text }) => {
+const SearchField = ({ onSearch = () => {}, text }) => {
   const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const saveSearchData = (e) => {
-    setSearchInput(e.target.value);
-  };
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchInput);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInput]);
+
+  useEffect(() => {
+    if (typeof onSearch === "function") {
+      onSearch(debouncedSearch);
+    }
+  }, [debouncedSearch, onSearch]);
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   return (
-    <form
-      onSubmit={(e) => onSearch(e, searchInput)}
-      className={`${styles.search_container}  ${
+    <div
+      className={`${styles.search_container} ${
         isArLang ? "me-auto" : "ms-auto"
       }`}
     >
-      <input onChange={saveSearchData} type="search" placeholder={text} />
-      <button
-        type="submit"
-        className={`${styles.search_icon} ${
-          isArLang ? styles.search_icon_ar : styles.search_icon_en
-        }`}
-      >
-        <FontAwesomeIcon title="search" icon={faSearch} />
-      </button>
-    </form>
+      <input
+        onChange={(e) => setSearchInput(e.target.value)}
+        type="search"
+        placeholder={text}
+        value={searchInput}
+      />
+    </div>
   );
 };
 

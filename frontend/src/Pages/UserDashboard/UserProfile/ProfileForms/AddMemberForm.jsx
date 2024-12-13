@@ -68,13 +68,21 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();
+          } else if (
+            data?.response?.data?.message?.split(" ")[0] === "Duplicate"
+          ) {
+            notifyError("duplicateError");
           } else {
             notifyError(key("wrong"));
           }
         },
         onError: (error) => {
           console.log(error);
-          notifyError(key("wrong"));
+          if (error?.response?.data?.message?.split(" ")[0] === "Duplicate") {
+            notifyError("duplicateError");
+          } else {
+            notifyError(key("wrong"));
+          }
         },
       }
     );

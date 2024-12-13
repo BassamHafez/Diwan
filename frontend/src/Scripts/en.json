@@ -161,7 +161,7 @@
   "addInfo": "Additional Information",
   "deleteText": "Are you sure you want to delete?",
   "deletedSucc": "Deleted successfully",
-  "deleteWrong": "The Unit you want to delete is no longer exist",
+  "deleteWrong": "Data you want to delete is no longer exist",
   "addEstateUnit": "Add Estate/Unit",
   "noTags": "No tags added yet!",
   "bookmarkedSucc": "bookmarked successfully",
@@ -292,7 +292,7 @@
   "deleteAcc": "Deactivate Account",
   "country": "Country",
   "personalInfo": "Personal Information",
-  "searchTasks": "Search For Task",
+  "searchTasks": "search by (title- estate - unit)",
   "currentContract": "Current Contract",
   "currentContracts": "Current Contracts",
   "view": "View",
@@ -325,9 +325,6 @@
   "office": "Office",
   "customPackage": "Custom Package",
   "orderPackage": "Order Package",
-  "usersCount": "Number of Account Users",
-  "compoundsCount": "Number of Estates Managed",
-  "isFavoriteAllowed": "Add Estate Units Into Favorite List",
   "loginFirst": "Please log in to continue",
   "subscriptionCost": "Subscription Cost",
   "reviewPackage": "Feel free to review the details before continuing",
@@ -415,5 +412,16 @@
   "customPackageMSg2":"Enjoy flexibility and convenience with our custom options",
   "customPackageMSg3":"Tailor every detail to match your preferences",
   "VariablePrice":"Variable price",
-  "cust":"Custom"
+  "cust":"Custom",
+  "helpMsg":"Need assistance? Our support team is here to help, Contact us",
+
+  "usersCount": "Number of Account Users",
+  "compoundsCount": "Number of Estates Managed",
+  "isFavoriteAllowed": "Add Estate Units Into Favorite List",
+
+  "allowedUsers":"Number of Account Users",
+  "allowedCompounds":"Number of Estates Managed",
+
+  "upgradeAnyTime":"The package is upgradable at any time",
+  "duplicateError":"This email or phone number is already in use by another user"
 }

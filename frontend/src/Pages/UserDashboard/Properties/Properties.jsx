@@ -216,7 +216,7 @@ const Properties = () => {
     };
 
     if (data?.length > 0) {
-      return data.map((item) => (
+      return data?.map((item) => (
         <Property
           key={item._id}
           hideCompound={hideCompound}
