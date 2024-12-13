@@ -24,6 +24,8 @@ import {
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
 import CreatableSelect from "react-select/creatable";
+import { useDispatch } from "react-redux";
+import fetchAccountData from "../../../Store/accountInfo-actions";
 
 const AddCompound = ({ hideModal, refetch }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -40,6 +42,7 @@ const AddCompound = ({ hideModal, refetch }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
+  const dispatch=useDispatch();
 
   const { data: tags, refetch: refetchTags } = useQuery({
     queryKey: ["tags", token],
@@ -144,6 +147,7 @@ const AddCompound = ({ hideModal, refetch }) => {
           if (data?.status === "success") {
             refetch();
             refetchTags();
+            dispatch(fetchAccountData(token));
             notifySuccess(key("addedSuccess"));
             setSelectedFile(null);
             setImagePreviewUrl(null);
