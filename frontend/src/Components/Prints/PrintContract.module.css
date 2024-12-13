@@ -68,7 +68,7 @@
 .table_body tr td {
   text-align: center;
   background-color: transparent;
-  padding: 0.625rem 0;
+  padding: 0.625rem;
 }
 .note_td {
   font-size: 0.875rem;
@@ -78,7 +78,7 @@
   text-align: center;
   color: var(--dark_white);
   font-weight: 500;
-  padding: 0.625rem 0;
+  padding: 0.625rem;
 }
 
 

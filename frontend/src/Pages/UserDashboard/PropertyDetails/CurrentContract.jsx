@@ -114,89 +114,93 @@ const CurrentContract = ({ details }) => {
         <div className="my-4">
           {currentContract || !isFetching ? (
             currentContract?.data ? (
-              <table className={`${styles.contract_table} table`}>
-                <thead className={styles.table_head}>
-                  <tr>
-                    <th>{key("tenant")}</th>
-                    <th>{key("startContract")}</th>
-                    <th>{key("endContract")}</th>
-                    <th>{key("price")}</th>
-                    <th>{key("status")}</th>
-                    <th>{key("actions")}</th>
-                  </tr>
-                </thead>
+              <div className="scrollableTable">
+                <table className={`${styles.contract_table} table`}>
+                  <thead className={styles.table_head}>
+                    <tr>
+                      <th>{key("tenant")}</th>
+                      <th>{key("startContract")}</th>
+                      <th>{key("endContract")}</th>
+                      <th>{key("price")}</th>
+                      <th>{key("status")}</th>
+                      <th>{key("actions")}</th>
+                    </tr>
+                  </thead>
 
-                <tbody className={styles.table_body}>
-                  <tr key={currentContract?.data?.contract?._id}>
-                    <td>{currentContract?.data?.contract?.tenant?.name}</td>
-                    <td>
-                      {formattedDate(
-                        currentContract?.data?.contract?.startDate
-                      )}
-                    </td>
-                    <td>
-                      {formattedDate(currentContract?.data?.contract?.endDate)}
-                    </td>
-                    <td>{currentContract?.data?.contract?.totalAmount}</td>
-                    <td>
-                      <span
-                        className={`${getStatusBgColor(contractStatus)} ${
-                          styles.status_span
-                        }`}
-                      >
-                        {renamedContractStatus(contractStatus, language)}
-                      </span>
-                    </td>
-                    <td>
-                      <Dropdown>
-                        <Dropdown.Toggle
-                          id="dropdown-basic"
-                          className={styles.dropdown_menu}
+                  <tbody className={styles.table_body}>
+                    <tr key={currentContract?.data?.contract?._id}>
+                      <td>{currentContract?.data?.contract?.tenant?.name}</td>
+                      <td>
+                        {formattedDate(
+                          currentContract?.data?.contract?.startDate
+                        )}
+                      </td>
+                      <td>
+                        {formattedDate(
+                          currentContract?.data?.contract?.endDate
+                        )}
+                      </td>
+                      <td>{currentContract?.data?.contract?.totalAmount}</td>
+                      <td>
+                        <span
+                          className={`${getStatusBgColor(contractStatus)} ${
+                            styles.status_span
+                          }`}
                         >
-                          <FontAwesomeIcon icon={faEllipsisVertical} />
-                        </Dropdown.Toggle>
+                          {renamedContractStatus(contractStatus, language)}
+                        </span>
+                      </td>
+                      <td>
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            id="dropdown-basic"
+                            className={styles.dropdown_menu}
+                          >
+                            <FontAwesomeIcon icon={faEllipsisVertical} />
+                          </Dropdown.Toggle>
 
-                        <Dropdown.Menu>
-                          <CheckPermissions btnActions={["UPDATE_CONTRACT"]}>
+                          <Dropdown.Menu>
+                            <CheckPermissions btnActions={["UPDATE_CONTRACT"]}>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractDetails(currentContract?.data);
+                                  setShowUpdateContractModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("ediet")}
+                              </Dropdown.Item>
+                            </CheckPermissions>
+                            <CheckPermissions btnActions={["CANCEL_CONTRACT"]}>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractId(
+                                    currentContract?.data?.contract?._id
+                                  );
+                                  setShowDeleteModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("cancel")}
+                              </Dropdown.Item>
+                            </CheckPermissions>
+
                             <Dropdown.Item
                               onClick={() => {
                                 setContractDetails(currentContract?.data);
-                                setShowUpdateContractModal(true);
+                                setShowDetailsModal(true);
                               }}
                               className="text-center"
                             >
-                              {key("ediet")}
+                              {key("details")}
                             </Dropdown.Item>
-                          </CheckPermissions>
-                          <CheckPermissions btnActions={["CANCEL_CONTRACT"]}>
-                            <Dropdown.Item
-                              onClick={() => {
-                                setContractId(
-                                  currentContract?.data?.contract?._id
-                                );
-                                setShowDeleteModal(true);
-                              }}
-                              className="text-center"
-                            >
-                              {key("cancel")}
-                            </Dropdown.Item>
-                          </CheckPermissions>
-
-                          <Dropdown.Item
-                            onClick={() => {
-                              setContractDetails(currentContract?.data);
-                              setShowDetailsModal(true);
-                            }}
-                            className="text-center"
-                          >
-                            {key("details")}
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <NoData text={key("noCurrentContracts")} />
             )

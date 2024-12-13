@@ -1,9 +1,9 @@
 .contracts_body {
   background-color: white;
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 30px;
-  box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.12);
+  margin-top: 1.875rem;
+  padding: 1.25rem;
+  border-radius: 1.875rem;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
 }
 .header {
   display: flex;
@@ -13,21 +13,21 @@
 }
 
 .contract_content {
-  padding: 20px;
-  border-radius: 20px;
-  box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.12);
-  margin-top: 15px;
+  padding: 1.25rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.12);
+  margin-top: 0.9375rem;
   position: relative;
 }
 .estates_content{
-  border-radius: 10px;
+  border-radius: 0.625rem;
   background-color: var(--sub_white);
 }
 .content_header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline: 30px;
+  padding-inline: 1.875rem;
 }
 
 .contract_table {
@@ -37,23 +37,23 @@
 .table_body tr td {
   text-align: center;
   background-color: transparent;
-  padding: 10px 0;
+  padding: 0.625rem;
 }
 .note_td{
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .table_head tr th {
   background-color: #f8f9fd;
   text-align: center;
   color: var(--dark_white);
   font-weight: 500;
-  padding: 10px 0;
+  padding: 0.625rem;
 }
 
 .status_span{
-  padding: 1px 12px;
-  border-radius:15px;
-  font-size: 12px;
+  padding: 0.0625rem 0.75rem;
+  border-radius:0.9375rem;
+  font-size: 0.75rem;
 }
 
 .green{

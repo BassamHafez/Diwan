@@ -28,28 +28,35 @@ const PrintContract = ({ contract, details, id, type }) => {
 
   return (
     <div className={styles.container_body} id={id}>
-      <PrintHeader title={key("lease")} details={details} tenant={contractData?.tenant} partiesTitle={key("partiesContract")} />
+      <PrintHeader
+        title={key("lease")}
+        details={details}
+        tenant={contractData?.tenant}
+        partiesTitle={key("partiesContract")}
+      />
 
       <div className={styles.information}>
         <h5>{key("contractDetails")}</h5>
-        <table className={`${styles.contract_table} table`}>
-          <thead className={styles.table_head}>
-            <tr>
-              <th>
-                {key("amount")} ({key("sarSmall")})
-              </th>
-              <th>{key("startContract")}</th>
-              <th>{key("endContract")}</th>
-            </tr>
-          </thead>
-          <tbody className={styles.table_body}>
-            <tr>
-              <td>{contractData?.totalAmount}</td>
-              <td>{formattedDate(contractData?.startDate)}</td>
-              <td>{formattedDate(contractData?.endDate)}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="scrollableTable">
+          <table className={`${styles.contract_table} table`}>
+            <thead className={styles.table_head}>
+              <tr>
+                <th>
+                  {key("amount")} ({key("sarSmall")})
+                </th>
+                <th>{key("startContract")}</th>
+                <th>{key("endContract")}</th>
+              </tr>
+            </thead>
+            <tbody className={styles.table_body}>
+              <tr>
+                <td>{contractData?.totalAmount}</td>
+                <td>{formattedDate(contractData?.startDate)}</td>
+                <td>{formattedDate(contractData?.endDate)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className={styles.information}>
