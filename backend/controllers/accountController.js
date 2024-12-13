@@ -88,7 +88,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     cost += compoundPrice * compoundsCount;
   }
 
-  if (isFavoriteAllowed) {
+  if (!account.isFavoriteAllowed && isFavoriteAllowed) {
     const favoritePrice = subscriptions.find(
       (sub) => sub.feature === "FAVORITES"
     ).price;
