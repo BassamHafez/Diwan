@@ -20,6 +20,7 @@ const CustomPackageItem = ({
   btnText,
   chooseActiveActive,
 }) => {
+
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
   const [subCost, setSubCost] = useState(0);
@@ -94,8 +95,8 @@ const CustomPackageItem = ({
                       }
                     />
                     {key(feature.label)}{" "}
-                    {typeof feature.value === "number"
-                      ? `(${feature.value>0?feature.value:0})`
+                    {typeof feature.value !== "boolean"
+                      ? `(${Number(feature.value)>0?feature.value:0})`
                       : feature.value === true
                       ? ""
                       : ""}
