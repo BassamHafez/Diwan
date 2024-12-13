@@ -21,7 +21,7 @@ import dislike_emotion from "../../assets/emotion_dislike.png";
 const HomeTestimonalsSlider = () => {
     
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   });
 
   return (

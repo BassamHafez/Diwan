@@ -34,7 +34,7 @@ const Property = ({
     }
   };
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   }, []);
 
   const getStatusBgColor = (status) => {

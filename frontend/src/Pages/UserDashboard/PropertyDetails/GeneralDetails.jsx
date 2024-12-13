@@ -46,7 +46,7 @@ const GeneralDetails = ({
   const [showUpdateDetailsModal, setShowAUpdateDetailsModal] = useState(false);
 
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   }, []);
 
   return (

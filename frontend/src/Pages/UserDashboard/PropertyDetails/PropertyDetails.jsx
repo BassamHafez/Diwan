@@ -44,7 +44,7 @@ const PropertyDetails = () => {
   const accountInfo = useSelector((state) => state.accountInfo.data);
 
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});
     window.scrollTo(0, 0);
   }, []);
 
