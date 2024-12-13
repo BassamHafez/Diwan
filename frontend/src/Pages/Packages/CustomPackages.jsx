@@ -1,9 +1,10 @@
-import {useState } from "react";
+import { useEffect, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import CustomPackageItem from "./CustomPackageItem";
 import { useTranslation } from "react-i18next";
 import styles from "./Packages.module.css";
+import { useSelector } from "react-redux";
 
 const CustomPackages = () => {
   const [features, setFeatures] = useState({
@@ -13,7 +14,12 @@ const CustomPackages = () => {
   });
 
   const { t: key } = useTranslation();
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const myAccount = accountInfo?.account;
 
+  useEffect(()=>{
+    scrollTo(0, 0)
+  },[])
   const handleFeatureChange = (e) => {
     const { id, value, type, checked } = e.target;
 
@@ -26,6 +32,7 @@ const CustomPackages = () => {
   };
 
   const centerClass = "d-flex justify-content-center align-items-center";
+
   return (
     <div className="height_container">
       <Row>
@@ -55,24 +62,26 @@ const CustomPackages = () => {
               </div>
             </Col>
 
-            <Col sm={6} className={centerClass}>
-              <div className="form-check form-switch p-0 m-0 mt-3 d-flex justify-content-between align-items-center ">
-                <label
-                  className="form-check-label m-0 fs-sm-5 mx-2"
-                  htmlFor="isFavoriteAllowed"
-                >
-                  {key("add")} {key("bookmarked")}
-                </label>
-                <input
-                  className="form-check-input fs-3 m-0"
-                  style={{ cursor: "pointer" }}
-                  type="checkbox"
-                  id="isFavoriteAllowed"
-                  checked={features.isFavoriteAllowed}
-                  onChange={handleFeatureChange}
-                />
-              </div>
-            </Col>
+            {!myAccount?.isFavoriteAllowed && (
+              <Col sm={6} className={centerClass}>
+                <div className="form-check form-switch p-0 m-0 mt-3 d-flex justify-content-between align-items-center ">
+                  <label
+                    className="form-check-label m-0 fs-sm-5 mx-2"
+                    htmlFor="isFavoriteAllowed"
+                  >
+                    {key("add")} {key("bookmarked")}
+                  </label>
+                  <input
+                    className="form-check-input fs-3 m-0"
+                    style={{ cursor: "pointer" }}
+                    type="checkbox"
+                    id="isFavoriteAllowed"
+                    checked={features.isFavoriteAllowed}
+                    onChange={handleFeatureChange}
+                  />
+                </div>
+              </Col>
+            )}
           </Row>
         </Col>
         <Col sm={6} xl={4}>

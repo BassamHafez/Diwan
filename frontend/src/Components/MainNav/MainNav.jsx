@@ -117,16 +117,16 @@ const MainNav = () => {
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
-                    to={"/contact"}
+                    to={"/packages"}
                   >
                     <span>
                       <FontAwesomeIcon
                         className={`${styles.nav_icon} ${
                           isArLang ? styles.ar_icon : styles.en_icon
                         }`}
-                        icon={faEnvelope}
+                        icon={faLayerGroup}
                       />
-                      {t("contact")}
+                      {t("packages")}
                     </span>
                   </NavLink>
                 </>
