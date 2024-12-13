@@ -57,7 +57,7 @@ const Hero = () => {
               <div className={styles.overlay}></div>
               <ImgComponent
                 src={header1}
-                width="250px"
+                width="300px"
                 height="21.875rem"
                 hash={imgHash.hero1}
                 alt="heroBuilding"

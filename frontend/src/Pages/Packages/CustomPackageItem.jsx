@@ -6,13 +6,15 @@ import {
   faCircleChevronLeft,
   faCircleChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MainModal from "../../Components/UI/Modals/MainModal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { toast } from "react-toastify";
 import CheckPermissions from "../../Components/CheckPermissions/CheckPermissions";
+import fetchAccountData from "../../Store/accountInfo-actions";
+import fire from "../../assets/svg/fire.svg";
 
 const CustomPackageItem = ({
   features,
@@ -31,6 +33,7 @@ const CustomPackageItem = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const dispatch=useDispatch();
 
   const buttonText = btnText
     ? btnText
@@ -60,6 +63,7 @@ const CustomPackageItem = ({
       if (res.status === "success") {
         notifySuccess(key("addedSuccess"));
         setSubCost(res.data?.subscriptionCost);
+        dispatch(fetchAccountData(token));
         setShowPackageData(true);
       } else {
         notifyError(key("wrong"));
@@ -70,13 +74,15 @@ const CustomPackageItem = ({
   };
 
   const paymentMethods = () => {
-    navigate(`/profile/${accountInfo?.account?.owner}`);
+    setShowPackageData(false)
+    // navigate(`/profile/${accountInfo?.account?.owner}`);
   };
 
   return (
     <div className={`${styles.package_side}`}>
       <div className={`${styles.package} ${styles.custom_border}`}>
         <div className={styles.package_type}>
+          <img src={fire} alt="fire" />
           <h4 className="text-center fw-bold">
             {title ? title : key("customPackage")}
           </h4>
@@ -123,7 +129,7 @@ const CustomPackageItem = ({
           okBtn={key("confirm")}
           cancelBtn={key("cancel")}
         >
-          {key("loginFirst")}
+          <h5>{key("loginFirst")}</h5>
         </MainModal>
       )}
       {showPackageData && (

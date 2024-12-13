@@ -743,5 +743,39 @@ export const imgHash = {
 };
 
 
+//demo data
 
+export const package1={
+  _id:"1",
+  title:"باقة ديوان",
+  price:200,
+  originalPrice:300,
+  features:[
+    {label:"usersCount",value:1},
+    {label:"compoundsCount",value:1},
+    {label:"isFavoriteAllowed",value:false},
+  ]
+}
+export const package2={
+  _id:"1",
+  title:"الباقة الذهبية",
+  price:400,
+  originalPrice:800,
+  features:[
+    {label:"usersCount",value:1},
+    {label:"compoundsCount",value:1},
+    {label:"isFavoriteAllowed",value:false},
+  ]
+}
 
+export const package3={
+  _id:"1",
+  title:"باقة مخصصة",
+  price:400,
+  originalPrice:600,
+  features:[
+    {label:"customPackageMSg1",value:false},
+    {label:"customPackageMSg2",value:false},
+    {label:"customPackageMSg3",value:false},
+  ]
+}

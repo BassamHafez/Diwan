@@ -407,6 +407,13 @@
   "payDate":"Payment date",
   "notFoundMsg":"Oops! The page you're looking for doesn't exist",
   "mainErrorMsg":"Something went wrong! We're working to fix it. Please try again later.",
-  "contactSupport":"If the problem persists, please contact our support team"
-  
+  "contactSupport":"If the problem persists, please contact our support team",
+  "mostPopular":"Most popular",
+  "deal":"Best Offer",
+  "off":"off",
+  "customPackageMSg1":"build your own custom package with the features that suit your needs",
+  "customPackageMSg2":"Enjoy flexibility and convenience with our custom options",
+  "customPackageMSg3":"Tailor every detail to match your preferences",
+  "VariablePrice":"Variable price",
+  "cust":"Custom"
 }
