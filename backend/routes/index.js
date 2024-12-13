@@ -1,5 +1,6 @@
 const authRoutes = require("../routes/authRoutes");
 const subscriptionRoutes = require("../routes/subscriptionRoutes");
+const packageRoutes = require("../routes/packageRoutes");
 const accountRoutes = require("../routes/accountRoutes");
 const userRoutes = require("../routes/userRoutes");
 const compoundRoutes = require("../routes/compoundRoutes");
@@ -18,6 +19,7 @@ const taskRoutes = require("../routes/taskRoutes");
 const mountRoutes = (app) => {
   app.use("/api/v1/auth", authRoutes);
   app.use("/api/v1/subscriptions", subscriptionRoutes);
+  app.use("/api/v1/packages", packageRoutes);
   app.use("/api/v1/accounts", accountRoutes);
   app.use("/api/v1/users", userRoutes);
   app.use("/api/v1/compounds", compoundRoutes);

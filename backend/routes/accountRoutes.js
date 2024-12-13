@@ -42,4 +42,10 @@ router.post(
   accountController.subscribe
 );
 
+router.post(
+  "/:id/subscribe-package",
+  accountValidator.subscribeInPackageValidator,
+  accountController.subscribeInPackage
+);
+
 module.exports = router;
