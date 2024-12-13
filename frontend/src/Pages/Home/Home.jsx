@@ -21,7 +21,7 @@ const Home = () => {
   const navigate=useNavigate();
 
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   }, []);
 
   useEffect(()=>{

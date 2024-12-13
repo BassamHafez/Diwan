@@ -18,7 +18,7 @@ const About = () => {
   const { t: key } = useTranslation();
 
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   }, []);
 
   return (

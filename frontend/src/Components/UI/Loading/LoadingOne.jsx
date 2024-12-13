@@ -5,7 +5,7 @@ import { useEffect } from "react";
 
 const LoadingOne = () => {
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   }, []);
 
   return (

@@ -55,7 +55,7 @@ const ContactItem = ({
     : null;
 
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
   }, []);
 
   useEffect(() => {

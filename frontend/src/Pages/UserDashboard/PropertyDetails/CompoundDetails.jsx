@@ -55,7 +55,7 @@ const CompoundDetails = () => {
   });
 
   useEffect(() => {
-    AOS.init();
+    AOS.init({disable: 'mobile'});;
     window.scrollTo(0, 0);
   }, []);
 
