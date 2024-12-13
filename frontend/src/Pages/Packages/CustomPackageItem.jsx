@@ -6,13 +6,14 @@ import {
   faCircleChevronLeft,
   faCircleChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MainModal from "../../Components/UI/Modals/MainModal";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { toast } from "react-toastify";
 import CheckPermissions from "../../Components/CheckPermissions/CheckPermissions";
+import fetchAccountData from "../../Store/accountInfo-actions";
 
 const CustomPackageItem = ({
   features,
@@ -31,6 +32,7 @@ const CustomPackageItem = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const dispatch=useDispatch();
 
   const buttonText = btnText
     ? btnText
@@ -60,6 +62,7 @@ const CustomPackageItem = ({
       if (res.status === "success") {
         notifySuccess(key("addedSuccess"));
         setSubCost(res.data?.subscriptionCost);
+        dispatch(fetchAccountData(token));
         setShowPackageData(true);
       } else {
         notifyError(key("wrong"));
@@ -70,7 +73,8 @@ const CustomPackageItem = ({
   };
 
   const paymentMethods = () => {
-    navigate(`/profile/${accountInfo?.account?.owner}`);
+    setShowPackageData(false)
+    // navigate(`/profile/${accountInfo?.account?.owner}`);
   };
 
   return (
