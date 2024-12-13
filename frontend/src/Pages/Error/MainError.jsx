@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import notFoundImg from "../../assets/mainError.png";
-import styles from "./Error.module.css";
 import { Link, useNavigate } from "react-router-dom";
 
 const MainError = () => {
@@ -10,7 +9,7 @@ const MainError = () => {
   return (
     <div style={{minHeight:"100vh"}} className="d-flex flex-column justify-content-center align-items-center p-2">
       <img
-        className={styles.error_img}
+        className="standard_img"
         src={notFoundImg}
         alt="unexpected_error"
       />

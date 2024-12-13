@@ -8,18 +8,30 @@ import triangle from "../../assets/svg/triangles.svg";
 import shape from "../../assets/svg/shape.svg";
 import fire from "../../assets/svg/fire.svg";
 import chooseFeatures from "../../assets/chooseFeatures.png";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MainModal from "../../Components/UI/Modals/MainModal";
+import { mainFormsHandlerTypeRaw } from "../../util/Http";
+import { toast } from "react-toastify";
+import fetchAccountData from "../../Store/accountInfo-actions";
 
 const PackageItem = ({ pack, type }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const token = JSON.parse(localStorage.getItem("token"));
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
+  const isLogin = useSelector((state) => state.userInfo.isLogin);
+  const [showPackageData, setShowPackageData] = useState(false);
+  const [subCost, setSubCost] = useState(0);
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const isLogin = useSelector((state) => state.userInfo.isLogin);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
 
   const discount =
     Number(pack.originalPrice) !== 0
@@ -30,6 +42,24 @@ const PackageItem = ({ pack, type }) => {
         )
       : "0";
 
+  const getReadyPackage = async () => {
+    const values = { packageId: pack._id };
+    const res = await mainFormsHandlerTypeRaw({
+      formData: values,
+      token: token,
+      method: "add",
+      type: `accounts/${accountInfo?.account?._id}/subscribe-package`,
+    });
+    if (res.status === "success") {
+      notifySuccess(key("addedSuccess"));
+      setSubCost(res.data?.subscriptionCost);
+      dispatch(fetchAccountData(token));
+      setShowPackageData(true);
+    } else {
+      notifyError(key("wrong"));
+    }
+  };
+
   const subscribtionHandler = () => {
     if (!isLogin) {
       setShowLoginModal(true);
@@ -39,7 +69,13 @@ const PackageItem = ({ pack, type }) => {
       navigate("/custom-package");
       return;
     }
-    //do sub
+    getReadyPackage();
+  };
+
+  const paymentMethods = () => {
+    setShowPackageData(false);
+    //must be payment methods
+    navigate(`/profile/${profileInfo?._id}`);
   };
 
   return (
@@ -47,15 +83,15 @@ const PackageItem = ({ pack, type }) => {
       <Col md={6} xl={4} className="my-5">
         <div className={styles.package}>
           <div className="d-flex justify-content-between align-items-center flex-wrap">
-          <div className={styles.package_type}>
-            <img
-              src={
-                type === "pack1" ? triangle : type === "pack2" ? shape : fire
-              }
-              alt="svgShape"
-            />
-            <h3>{pack.title}</h3>
-          </div>
+            <div className={styles.package_type}>
+              <img
+                src={
+                  type === "pack1" ? triangle : type === "pack2" ? shape : fire
+                }
+                alt="svgShape"
+              />
+              <h3>{isArLang ? pack.arTitle : pack.enTitle}</h3>
+            </div>
             <div
               className={`${styles.badge} ${
                 type === "pack1"
@@ -63,18 +99,17 @@ const PackageItem = ({ pack, type }) => {
                   : type === "pack2"
                   ? styles.offer
                   : styles.custom_badge
-              } ${isArLang?"me-auto":"ms-auto"}`}
+              } ${isArLang ? "me-auto" : "ms-auto"}`}
             >
               <span>
-                {type === "pack1"
+                {type === "pack2"
                   ? key("mostPopular")
-                  : type === "pack2"
+                  : type === "pack1"
                   ? key("deal")
                   : key("cust")}
               </span>
             </div>
           </div>
-  
 
           <div className={styles.price}>
             {type !== "custom" ? (
@@ -106,11 +141,18 @@ const PackageItem = ({ pack, type }) => {
                     icon={faCircleCheck}
                   />
                   {key(feature.label)}{" "}
-                  {typeof feature.value !== "boolean"
-                    ? `(${feature.value})`
-                    : ""}
+                  {["true", "false"].includes(feature.value)
+                    ? ""
+                    : `(${feature.value})`}
                 </li>
               ))}
+              <li>
+                <FontAwesomeIcon
+                  className={`${styles.list_icon}`}
+                  icon={faCircleCheck}
+                />
+                {key("upgradeAnyTime")}
+              </li>
               {type === "custom" && (
                 <div className={styles.chooseFeatures}>
                   <img src={chooseFeatures} alt="chooseFeatures" />
@@ -136,6 +178,22 @@ const PackageItem = ({ pack, type }) => {
           cancelBtn={key("cancel")}
         >
           <h5>{key("loginFirst")}</h5>
+        </MainModal>
+      )}
+
+      {showPackageData && (
+        <MainModal
+          show={showPackageData}
+          onHide={() => setShowPackageData(false)}
+          confirmFun={paymentMethods}
+          okBtn={key("continue")}
+          cancelBtn={key("cancel")}
+        >
+          <h5 style={{ lineHeight: 2 }}>
+            {` 💵 ${key("subscriptionCost")} [${subCost} ${key("sar")}] 
+            `}{" "}
+            <br /> {key("reviewPackage")}
+          </h5>
         </MainModal>
       )}
     </>

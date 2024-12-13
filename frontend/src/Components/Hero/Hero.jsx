@@ -4,7 +4,6 @@ import Col from "react-bootstrap/Col";
 import header1 from "../../assets/header1.jpg";
 import header2 from "../../assets/banner.jpg";
 import ButtonTwo from "../UI/Buttons/ButtonTwo";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import circles from "../../assets/svg/circles.svg";
 import dash from "../../assets/svg/dash.svg";
@@ -12,12 +11,13 @@ import AOS from "aos";
 import { useEffect } from "react";
 import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
-  const navigate = useNavigate();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
-
+  const navigate=useNavigate();
+  
   useEffect(() => {
     AOS.init({disable: 'mobile'});;
   }, []);
@@ -40,7 +40,7 @@ const Hero = () => {
             </h1>
             <p>{key("homeSubTitle")}</p>
             <ButtonTwo
-              onClick={() => navigate("/packages")}
+              onClick={() => navigate("/login")}
               text={key("getStarted")}
             />
           </div>
