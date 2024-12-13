@@ -37,17 +37,16 @@
 
 .img1_position{
     position: absolute;
-    top: 2.1875rem;
-    left: 9%;
+    top: 3.125rem;
+    left: 11%;
 }
 .img2_position{
     position: absolute;
     top: 10rem;
-    right:9%;
+    right:13%;
 }
-
 .header1_img{
-    width: 15.625rem;
+    width: 18.75rem;
     overflow: hidden;
     animation-name: img1Transition;
 }
@@ -125,7 +124,7 @@
     }
     .dash{
         left: 5%;
-        bottom: 20%;
+        bottom: 40%;
         width: 6.25rem;
     }
 }
@@ -143,7 +142,7 @@
 }
 @media screen and (max-width:768px) {
     .dash{
-        bottom: 25%;
+        bottom: 35%;
     }
 }
 @media screen and (max-width:527px) {
@@ -163,7 +162,7 @@
     }
     .dash{
         left: 0%;
-        bottom: 30%;
+        bottom: 38%;
         width: 80px;
     }
 }

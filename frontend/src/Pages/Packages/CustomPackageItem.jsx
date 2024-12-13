@@ -14,6 +14,7 @@ import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { toast } from "react-toastify";
 import CheckPermissions from "../../Components/CheckPermissions/CheckPermissions";
 import fetchAccountData from "../../Store/accountInfo-actions";
+import fire from "../../assets/svg/fire.svg";
 
 const CustomPackageItem = ({
   features,
@@ -81,6 +82,7 @@ const CustomPackageItem = ({
     <div className={`${styles.package_side}`}>
       <div className={`${styles.package} ${styles.custom_border}`}>
         <div className={styles.package_type}>
+          <img src={fire} alt="fire" />
           <h4 className="text-center fw-bold">
             {title ? title : key("customPackage")}
           </h4>
@@ -127,7 +129,7 @@ const CustomPackageItem = ({
           okBtn={key("confirm")}
           cancelBtn={key("cancel")}
         >
-          {key("loginFirst")}
+          <h5>{key("loginFirst")}</h5>
         </MainModal>
       )}
       {showPackageData && (
