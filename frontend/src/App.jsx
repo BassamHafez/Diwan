@@ -28,12 +28,15 @@ import CompoundDetails from "./Pages/UserDashboard/PropertyDetails/CompoundDetai
 import UserProfile from "./Pages/UserDashboard/UserProfile/UserProfile";
 import fetchAccountData from "./Store/accountInfo-actions";
 import CustomPackages from "./Pages/Packages/CustomPackages";
+import PageNotFound from "./Pages/Error/PageNotFound";
+import MainError from "./Pages/Error/MainError";
 
 const router = createBrowserRouter(
   [
     {
       path: "/",
       element: <Root />,
+      errorElement: <MainError />,
       children: [
         //main pages
         { index: true, element: <Home /> },
@@ -51,6 +54,7 @@ const router = createBrowserRouter(
         { path: "contacts", element: <Contacts /> },
         { path: "tasks", element: <Tasks /> },
         { path: "profile/:userId", element: <UserProfile /> },
+        { path: "*", element: <PageNotFound /> },
       ],
     },
   ],
