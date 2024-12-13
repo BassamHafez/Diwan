@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
-const Tag = require("../models/tagModel");
+const Package = require("../models/packageModel");
 const Subscription = require("../models/subscriptionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
@@ -44,7 +44,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   let cost = 0;
 
   const [account, subscriptions] = await Promise.all([
-    Account.findById(id).lean(),
+    Account.findById(id).select("owner isFavoriteAllowed").lean(),
     Subscription.find().lean(),
   ]);
 
@@ -112,6 +112,49 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       subscriptionCost: cost,
+    },
+  });
+});
+
+exports.subscribeInPackage = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { packageId } = req.body;
+
+  const [account, package] = await Promise.all([
+    Account.findById(id).select("owner isFavoriteAllowed").lean(),
+    Package.findById(packageId).select("features price").lean(),
+  ]);
+
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (account.owner.toString() !== req.user.id) {
+    return next(new ApiError("Owner of the account can only subscribe", 403));
+  }
+
+  if (!package) {
+    return next(new ApiError("Package not found", 404));
+  }
+
+  const features = package.features.reduce((acc, feature) => {
+    acc[feature.label] = feature.value;
+    return acc;
+  }, {});
+
+  await Account.findByIdAndUpdate(id, {
+    $inc: {
+      allowedUsers: parseInt(features.allowedUsers) || 0,
+      allowedCompounds: parseInt(features.allowedCompounds) || 0,
+    },
+    isFavoriteAllowed:
+      Boolean(features.isFavoriteAllowed) || account.isFavoriteAllowed,
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      subscriptionCost: package.price,
     },
   });
 });

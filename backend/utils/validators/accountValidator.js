@@ -62,6 +62,22 @@ exports.subscribeValidator = [
   validatorMiddleware,
 ];
 
+exports.subscribeInPackageValidator = [
+  check("id")
+    .exists()
+    .withMessage("Account ID is required")
+    .isMongoId()
+    .withMessage("Invalid account ID"),
+
+  check("packageId")
+    .exists()
+    .withMessage("Package ID is required")
+    .isMongoId()
+    .withMessage("Invalid package ID"),
+
+  validatorMiddleware,
+];
+
 exports.updateAccountValidator = [
   check("id")
     .exists()
