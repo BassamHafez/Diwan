@@ -4,7 +4,7 @@ import { formattedDate } from "../Logic/LogicFun";
 import styles from "./PrintContract.module.css";
 import { useSelector } from "react-redux";
 
-const PrintHeader = ({ title, details,tenant,partiesTitle }) => {
+const PrintHeader = ({ title, details, tenant, partiesTitle }) => {
   const currentDate = new Date();
 
   const { t: key } = useTranslation();
@@ -84,30 +84,32 @@ const PrintHeader = ({ title, details,tenant,partiesTitle }) => {
       </div>
       <div className={styles.information}>
         <h5>{partiesTitle}</h5>
-        <table className={`${styles.contract_table} table`}>
-          <thead className={styles.table_head}>
-            <tr>
-              <th>{key("type")}</th>
-              <th>{key("theLandlord")}</th>
-              <th>{key("agent")}</th>
-              <th>{key("theTenant")}</th>
-            </tr>
-          </thead>
-          <tbody className={styles.table_body}>
-            <tr>
-              <td>{key("name")}</td>
-              <td>{details?.landlord?.name}</td>
-              <td>{details?.broker?.name}</td>
-              <td>{tenant?.name}</td>
-            </tr>
-            <tr>
-              <td>{key("phone")}</td>
-              <td>{details?.landlord?.phone}</td>
-              <td>{details?.broker?.phone}</td>
-              <td>{tenant?.phone}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="scrollableTable">
+          <table className={`${styles.contract_table} table`}>
+            <thead className={styles.table_head}>
+              <tr>
+                <th>{key("type")}</th>
+                <th>{key("theLandlord")}</th>
+                <th>{key("agent")}</th>
+                <th>{key("theTenant")}</th>
+              </tr>
+            </thead>
+            <tbody className={styles.table_body}>
+              <tr>
+                <td>{key("name")}</td>
+                <td>{details?.landlord?.name}</td>
+                <td>{details?.broker?.name}</td>
+                <td>{tenant?.name}</td>
+              </tr>
+              <tr>
+                <td>{key("phone")}</td>
+                <td>{details?.landlord?.phone}</td>
+                <td>{details?.broker?.phone}</td>
+                <td>{tenant?.phone}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

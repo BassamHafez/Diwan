@@ -215,124 +215,130 @@ const Expenses = ({ isCompound, refetchDetails }) => {
         <div className="my-4">
           {expenses || !isFetching ? (
             expenses.data?.length > 0 ? (
-              <table className={`${styles.contract_table} table`}>
-                <thead className={styles.table_head}>
-                  <tr>
-                    <th>{key("type")}</th>
-                    <th>{key("amount")}</th>
-                    <th>{key("dueDate")}</th>
-                    <th>{key("status")}</th>
-                    <th>{key("notes")}</th>
-                    <th>{key("actions")}</th>
-                  </tr>
-                </thead>
+              <div className="scrollableTable">
+                <table className={`${styles.contract_table} table`}>
+                  <thead className={styles.table_head}>
+                    <tr>
+                      <th>{key("type")}</th>
+                      <th>{key("amount")}</th>
+                      <th>{key("dueDate")}</th>
+                      <th>{key("status")}</th>
+                      <th>{key("notes")}</th>
+                      <th>{key("actions")}</th>
+                    </tr>
+                  </thead>
 
-                <tbody className={styles.table_body}>
-                  {filteredExpenses.map((ex) => (
-                    <tr key={ex._id}>
-                      <td>{key(ex.type)}</td>
-                      <td>{ex.amount}</td>
-                      <td>{formattedDate(ex.dueDate)}</td>
-                      <td>
-                        <span
-                          className={`${getStatusBgColor(ex.status)} ${
-                            styles.status_span
-                          }`}
-                        >
-                          {isArLang
-                            ? renamedExpensesStatusMethod(ex.status, "ar")
-                            : renamedExpensesStatusMethod(ex.status, "en")}
-                        </span>
-                      </td>
-                      <td className={styles.note_td}>
-                        {ex.note ? ex.note : "-"}
-                      </td>
-                      <td>
-                        <Dropdown>
-                          <Dropdown.Toggle
-                            id="dropdown-basic"
-                            className={styles.dropdown_menu}
+                  <tbody className={styles.table_body}>
+                    {filteredExpenses.map((ex) => (
+                      <tr key={ex._id}>
+                        <td>{key(ex.type)}</td>
+                        <td>{ex.amount}</td>
+                        <td>{formattedDate(ex.dueDate)}</td>
+                        <td>
+                          <span
+                            className={`${getStatusBgColor(ex.status)} ${
+                              styles.status_span
+                            }`}
                           >
-                            <FontAwesomeIcon icon={faEllipsisVertical} />
-                          </Dropdown.Toggle>
-
-                          <Dropdown.Menu>
-                            {ex.status === "pending" && (
-                              <CheckPermissions btnActions={["PAY_EXPENSE"]}>
-                                <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateExpenses("pay", ex._id)
-                                  }
-                                  className="text-center"
-                                >
-                                  {key("paid")}
-                                </Dropdown.Item>
-                              </CheckPermissions>
-                            )}
-                            {ex.status === "paid" && (
-                              <CheckPermissions btnActions={["UNPAY_EXPENSE"]}>
-                                <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateExpenses("unPay", ex._id)
-                                  }
-                                  className="text-center"
-                                >
-                                  {key("unPaid")}
-                                </Dropdown.Item>
-                              </CheckPermissions>
-                            )}
-                            <CheckPermissions btnActions={["UPDATE_EXPENSE"]}>
-                              <Dropdown.Item
-                                onClick={() => {
-                                  setExDetails(ex);
-                                  setShowUpdateModal(true);
-                                }}
-                                className="text-center"
-                              >
-                                {key("ediet")}
-                              </Dropdown.Item>
-                            </CheckPermissions>
-
-                            <Dropdown.Item
-                              onClick={() => {
-                                setExDetails(ex);
-                                setShowDetailsModal(true);
-                              }}
-                              className="text-center"
+                            {isArLang
+                              ? renamedExpensesStatusMethod(ex.status, "ar")
+                              : renamedExpensesStatusMethod(ex.status, "en")}
+                          </span>
+                        </td>
+                        <td className={styles.note_td}>
+                          {ex.note ? ex.note : "-"}
+                        </td>
+                        <td>
+                          <Dropdown>
+                            <Dropdown.Toggle
+                              id="dropdown-basic"
+                              className={styles.dropdown_menu}
                             >
-                              {key("details")}
-                            </Dropdown.Item>
+                              <FontAwesomeIcon icon={faEllipsisVertical} />
+                            </Dropdown.Toggle>
 
-                            {ex.status !== "paid" &&
-                              ex.status !== "cancelled" && (
-                                <CheckPermissions btnActions={["CANCEL_EXPENSE"]}>
+                            <Dropdown.Menu>
+                              {ex.status === "pending" && (
+                                <CheckPermissions btnActions={["PAY_EXPENSE"]}>
                                   <Dropdown.Item
                                     onClick={() =>
-                                      mainpulateExpenses("cancel", ex._id)
+                                      mainpulateExpenses("pay", ex._id)
                                     }
                                     className="text-center"
                                   >
-                                    {key("canceled")}
+                                    {key("paid")}
                                   </Dropdown.Item>
                                 </CheckPermissions>
                               )}
-                            <CheckPermissions btnActions={["DELETE_EXPENSE"]}>
+                              {ex.status === "paid" && (
+                                <CheckPermissions
+                                  btnActions={["UNPAY_EXPENSE"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      mainpulateExpenses("unPay", ex._id)
+                                    }
+                                    className="text-center"
+                                  >
+                                    {key("unPaid")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
+                              )}
+                              <CheckPermissions btnActions={["UPDATE_EXPENSE"]}>
+                                <Dropdown.Item
+                                  onClick={() => {
+                                    setExDetails(ex);
+                                    setShowUpdateModal(true);
+                                  }}
+                                  className="text-center"
+                                >
+                                  {key("ediet")}
+                                </Dropdown.Item>
+                              </CheckPermissions>
+
                               <Dropdown.Item
-                                onClick={() =>
-                                  mainpulateExpenses("delete", ex._id)
-                                }
-                                className="text-center text-danger"
+                                onClick={() => {
+                                  setExDetails(ex);
+                                  setShowDetailsModal(true);
+                                }}
+                                className="text-center"
                               >
-                                {key("fullyDelete")}
+                                {key("details")}
                               </Dropdown.Item>
-                            </CheckPermissions>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+
+                              {ex.status !== "paid" &&
+                                ex.status !== "cancelled" && (
+                                  <CheckPermissions
+                                    btnActions={["CANCEL_EXPENSE"]}
+                                  >
+                                    <Dropdown.Item
+                                      onClick={() =>
+                                        mainpulateExpenses("cancel", ex._id)
+                                      }
+                                      className="text-center"
+                                    >
+                                      {key("canceled")}
+                                    </Dropdown.Item>
+                                  </CheckPermissions>
+                                )}
+                              <CheckPermissions btnActions={["DELETE_EXPENSE"]}>
+                                <Dropdown.Item
+                                  onClick={() =>
+                                    mainpulateExpenses("delete", ex._id)
+                                  }
+                                  className="text-center text-danger"
+                                >
+                                  {key("fullyDelete")}
+                                </Dropdown.Item>
+                              </CheckPermissions>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <NoData type="expenses" text={key("noExpenses")} />
             )

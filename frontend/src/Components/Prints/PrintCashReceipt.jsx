@@ -18,30 +18,32 @@ const PrintCashReceipt = ({ revDetails, details, id }) => {
 
       <div className={styles.information}>
         <h5>{key("cashRecDetails")}</h5>
-        <table className={`${styles.contract_table} table`}>
-          <thead className={styles.table_head}>
-            <tr>
-              <th>
-                {key("amount")} ({key("sarSmall")})
-              </th>
-              <th>{key("dueDate")}</th>
-              <th>{key("paidAt")}</th>
-              <th>{key("paymentMethod")}</th>
-            </tr>
-          </thead>
-          <tbody className={styles.table_body}>
-            <tr>
-              <td>{revDetails?.amount}</td>
-              <td>{formattedDate(revDetails?.dueDate)}</td>
-              <td>{formattedDate(revDetails?.paidAt)}</td>
-              <td>
-                {isArLang
-                  ? renamedPaymentMethod(revDetails.paymentMethod, "ar")
-                  : renamedPaymentMethod(revDetails.paymentMethod, "en")}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="scrollableTable">
+          <table className={`${styles.contract_table} table`}>
+            <thead className={styles.table_head}>
+              <tr>
+                <th>
+                  {key("amount")} ({key("sarSmall")})
+                </th>
+                <th>{key("dueDate")}</th>
+                <th>{key("paidAt")}</th>
+                <th>{key("paymentMethod")}</th>
+              </tr>
+            </thead>
+            <tbody className={styles.table_body}>
+              <tr>
+                <td>{revDetails?.amount}</td>
+                <td>{formattedDate(revDetails?.dueDate)}</td>
+                <td>{formattedDate(revDetails?.paidAt)}</td>
+                <td>
+                  {isArLang
+                    ? renamedPaymentMethod(revDetails.paymentMethod, "ar")
+                    : renamedPaymentMethod(revDetails.paymentMethod, "en")}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <div className={styles.information}>

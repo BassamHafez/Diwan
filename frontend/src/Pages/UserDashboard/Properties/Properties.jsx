@@ -235,7 +235,7 @@ const Properties = () => {
     <div className={styles.main_body}>
       <Row>
         <div className={styles.small_controllers}>
-          <div className="small_filter">
+          <div className="small_filter mb-3">
             <h5>{key("types")}</h5>
             <input
               type="radio"
@@ -297,7 +297,7 @@ const Properties = () => {
 
           {selectedFilter !== "compounds" && (
             <>
-              <div className="small_filter">
+              <div className="small_filter mb-3">
                 <h5>{key("status")}</h5>
                 <input
                   type="radio"
@@ -336,7 +336,7 @@ const Properties = () => {
                 </label>
               </div>
 
-              <div className="small_filter">
+              <div className="small_filter mb-3">
                 <h5>{key("Contracts")}</h5>
                 <input
                   type="radio"
@@ -363,29 +363,31 @@ const Properties = () => {
                 </label>
               </div>
 
-              <div className="small_filter">
+              <div className="small_filter mb-3">
                 <h5>{key("parentRealEstate")}</h5>
-                <Select
-                  isSearchable={true}
-                  name="parentRealEstate"
-                  options={compoundsOptions}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                  isClearable
-                  value={
-                    compoundsOptions?.find(
-                      (option) => option.value === selectedCompoundId
-                    ) || null
-                  }
-                  onChange={(val) =>
-                    handleCompoundFilterChange(val ? val.value : null)
-                  }
-                />
+                  <Select
+                    isSearchable={true}
+                    classNames="w-100"
+                    name="parentRealEstate"
+                    options={compoundsOptions}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                    isClearable
+                    value={
+                      compoundsOptions?.find(
+                        (option) => option.value === selectedCompoundId
+                      ) || null
+                    }
+                    onChange={(val) =>
+                      handleCompoundFilterChange(val ? val.value : null)
+                    }
+                  />
               </div>
             </>
           )}
         </div>
+
         <Col md={3} lg={2} className={styles.filters}>
           <aside>
             <Accordion
@@ -696,6 +698,7 @@ const Properties = () => {
             </Accordion>
           </aside>
         </Col>
+
         <Col md={9} lg={10}>
           <Container fluid>
             <div className="d-flex justify-content-between align-items-center flex-wrap my-3 mb-5 px-1">

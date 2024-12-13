@@ -111,92 +111,94 @@ const CompoundContracts = ({ compoundEstates }) => {
         <div className="my-4">
           {contractsData || !isFetching ? (
             contractsData.data?.contracts?.length > 0 ? (
-              <table className={`${styles.contract_table} table`}>
-                <thead className={styles.table_head}>
-                  <tr>
-                    <th>{key("estate")}</th>
-                    <th>{key("tenant")}</th>
-                    <th>{key("startContract")}</th>
-                    <th>{key("endContract")}</th>
-                    <th>{key("price")}</th>
-                    <th>{key("status")}</th>
-                    <th>{key("actions")}</th>
-                  </tr>
-                </thead>
-
-                <tbody className={styles.table_body}>
-                  {contractsData.data?.contracts.map((contract) => (
-                    <tr key={contract._id}>
-                      <td>{getEstateName(contract?.estate)}</td>
-                      <td>{findTenant(contract.tenant)?.name}</td>
-                      <td>{formattedDate(contract.startDate)}</td>
-                      <td>{formattedDate(contract.endDate)}</td>
-                      <td>{contract.totalAmount}</td>
-                      <td>
-                        <span
-                          className={`${getStatusBgColor(
-                            getContractStatus(
-                              contract.isCanceled,
-                              contract.startDate,
-                              contract.endDate
-                            )
-                          )} ${styles.status_span}`}
-                        >
-                          {isArLang
-                            ? renamedContractStatus(
-                                getContractStatus(
-                                  contract.isCanceled,
-                                  contract.startDate,
-                                  contract.endDate
-                                ),
-                                "ar"
-                              )
-                            : renamedContractStatus(
-                                getContractStatus(
-                                  contract.isCanceled,
-                                  contract.startDate,
-                                  contract.endDate
-                                ),
-                                "en"
-                              )}
-                        </span>
-                      </td>
-                      <td>
-                        <Dropdown>
-                          <Dropdown.Toggle
-                            id="dropdown-basic"
-                            className={styles.dropdown_menu}
-                          >
-                            <FontAwesomeIcon icon={faEllipsisVertical} />
-                          </Dropdown.Toggle>
-
-                          <Dropdown.Menu>
-                            <Dropdown.Item
-                              onClick={() =>
-                                navigate(
-                                  `/estate-unit-details/${contract.estate}`
-                                )
-                              }
-                              className="text-center"
-                            >
-                              {key("view")}
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                              onClick={() => {
-                                setContractDetails(contract);
-                                setShowDetailsModal(true);
-                              }}
-                              className="text-center"
-                            >
-                              {key("details")}
-                            </Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </td>
+              <div className="scrollableTable">
+                <table className={`${styles.contract_table} table`}>
+                  <thead className={styles.table_head}>
+                    <tr>
+                      <th>{key("estate")}</th>
+                      <th>{key("tenant")}</th>
+                      <th>{key("startContract")}</th>
+                      <th>{key("endContract")}</th>
+                      <th>{key("price")}</th>
+                      <th>{key("status")}</th>
+                      <th>{key("actions")}</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody className={styles.table_body}>
+                    {contractsData.data?.contracts.map((contract) => (
+                      <tr key={contract._id}>
+                        <td>{getEstateName(contract?.estate)}</td>
+                        <td>{findTenant(contract.tenant)?.name}</td>
+                        <td>{formattedDate(contract.startDate)}</td>
+                        <td>{formattedDate(contract.endDate)}</td>
+                        <td>{contract.totalAmount}</td>
+                        <td>
+                          <span
+                            className={`${getStatusBgColor(
+                              getContractStatus(
+                                contract.isCanceled,
+                                contract.startDate,
+                                contract.endDate
+                              )
+                            )} ${styles.status_span}`}
+                          >
+                            {isArLang
+                              ? renamedContractStatus(
+                                  getContractStatus(
+                                    contract.isCanceled,
+                                    contract.startDate,
+                                    contract.endDate
+                                  ),
+                                  "ar"
+                                )
+                              : renamedContractStatus(
+                                  getContractStatus(
+                                    contract.isCanceled,
+                                    contract.startDate,
+                                    contract.endDate
+                                  ),
+                                  "en"
+                                )}
+                          </span>
+                        </td>
+                        <td>
+                          <Dropdown>
+                            <Dropdown.Toggle
+                              id="dropdown-basic"
+                              className={styles.dropdown_menu}
+                            >
+                              <FontAwesomeIcon icon={faEllipsisVertical} />
+                            </Dropdown.Toggle>
+
+                            <Dropdown.Menu>
+                              <Dropdown.Item
+                                onClick={() =>
+                                  navigate(
+                                    `/estate-unit-details/${contract.estate}`
+                                  )
+                                }
+                                className="text-center"
+                              >
+                                {key("view")}
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractDetails(contract);
+                                  setShowDetailsModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("details")}
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             ) : (
               <NoData text={key("noCurrentContracts")} />
             )
