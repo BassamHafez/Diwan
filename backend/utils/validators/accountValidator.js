@@ -44,13 +44,13 @@ exports.subscribeValidator = [
 
   check("usersCount")
     .optional()
-    .isInt({ min: 1 })
+    .isInt({ min: 0 })
     .withMessage("Invalid users count"),
 
   check("compoundsCount")
     .exists()
     .withMessage("Compounds count is required")
-    .isInt({ min: 1 })
+    .isInt({ min: 0 })
     .withMessage("Invalid compounds count"),
 
   check("isFavoriteAllowed")
