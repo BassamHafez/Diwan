@@ -30,6 +30,7 @@ import fetchAccountData from "./Store/accountInfo-actions";
 import CustomPackages from "./Pages/Packages/CustomPackages";
 import PageNotFound from "./Pages/Error/PageNotFound";
 import MainError from "./Pages/Error/MainError";
+import Help from "./Pages/Help/Help";
 
 const router = createBrowserRouter(
   [
@@ -46,6 +47,7 @@ const router = createBrowserRouter(
         { path: "custom-package", element: <CustomPackages /> },
         { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
+        { path: "help", element: <Help /> },
         //userDashboard
         { path: "dashboard", element: <UserHome /> },
         { path: "properties", element: <Properties /> },

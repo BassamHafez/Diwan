@@ -22,7 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import TaskItem from "./TaskItem";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import AddTask from "./TaskForms/AddTask";
 import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
@@ -35,6 +35,7 @@ const Tasks = () => {
   const [timeFilter, setTimeFilter] = useState("all");
   const [tagsFilter, setTagsFilter] = useState("all");
   const [typesFilter, setTypesFilter] = useState("all");
+  const [searchFilter, setSearchFilter] = useState("");
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -52,19 +53,38 @@ const Tasks = () => {
     enabled: !!token,
   });
 
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
   const filteredTasks =
     tasks && Array.isArray(tasks.data)
-      ? tasks.data.filter((task) =>
-          (timeFilter === "all"
-            ? true
-            : timeFilter === "underway"
-            ? !task.isCompleted
-            : task.isCompleted) &&
-          (tagsFilter === "all" ? true : task.priority === tagsFilter) &&
-          typesFilter === "all"
-            ? true
-            : task.type === typesFilter
-        )
+      ? tasks.data.filter((task) => {
+          const matchesTitle = task.title
+            .toLowerCase()
+            .includes(searchFilter.toLowerCase());
+
+          const matchesEstate =
+            task.estate &&
+            task.estate.name.toLowerCase().includes(searchFilter.toLowerCase());
+
+          const matchesCompound =
+            task.compound &&
+            task.compound.name
+              .toLowerCase()
+              .includes(searchFilter.toLowerCase());
+
+          return (
+            (timeFilter === "all"
+              ? true
+              : timeFilter === "underway"
+              ? !task.isCompleted
+              : task.isCompleted) &&
+            (tagsFilter === "all" ? true : task.priority === tagsFilter) &&
+            (typesFilter === "all" ? true : task.type === typesFilter) &&
+            (matchesTitle || matchesEstate || matchesCompound)
+          );
+        })
       : [];
 
   return (
@@ -229,7 +249,7 @@ const Tasks = () => {
                 style={{ height: "fit-content" }}
               >
                 <div>
-                  <SearchField text={key("searchTasks")} />
+                  <SearchField onSearch={onSearch} text={key("searchTasks")} />
                 </div>
                 <CheckPermissions btnActions={["ADD_TASK"]}>
                   <div>

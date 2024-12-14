@@ -44,7 +44,8 @@ button:disabled {
   opacity: .5; 
 }
 p{
-  word-break: break-all;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 /* bootstrap */
@@ -211,6 +212,10 @@ p{
   -webkit-overflow-scrolling: touch;
 }
 
+.standard_img {
+  width: 400px;
+}
+
 @media screen and (max-width:768px) {
   body,html{
     font-size: 14px;
@@ -220,5 +225,11 @@ p{
   .swiper-button-next,
   .swiper-button-prev {
       display: none !important;
+  }
+}
+
+@media screen and (max-width: 410px) {
+  .standard_img {
+    width: 99%;
   }
 }

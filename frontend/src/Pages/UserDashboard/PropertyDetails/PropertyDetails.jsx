@@ -167,10 +167,10 @@ const PropertyDetails = () => {
                   data-aos-duration="1000"
                 >
                   <h3 className="my-4 mx-1">
-                    {myData?.estate?.name}{" "}
-                    {myData?.estate?.unitNumber
-                      ? `(${myData?.estate?.unitNumber})`
-                      : ""}
+                  {myData?.estate?.unitNumber
+                      ? `${myData?.estate?.unitNumber}`
+                      : ""}-{" "}{myData?.estate?.name}
+
                   </h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <CheckPermissions btnActions={["DELETE_ESTATE"]}>

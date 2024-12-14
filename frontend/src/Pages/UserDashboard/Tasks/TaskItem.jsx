@@ -128,7 +128,7 @@ const TaskItem = ({ task, refetch }) => {
             />
             <FontAwesomeIcon
               title={key(task.priority)}
-              className={`${circleColor} `}
+              className={`${circleColor}`}
               icon={faCircle}
             />
           </div>

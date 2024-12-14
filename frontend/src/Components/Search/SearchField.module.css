@@ -1,45 +1,21 @@
 .search_container{
-    background-color: transparent !important;
-    border: 0.0625rem solid rgb(201, 200, 200) !important;
-    padding: 3px !important;
-    position: relative;
-    border-radius: 0.655rem;
-    min-width: 300px;
+    border: 1px solid rgb(239, 239, 239);
+    padding: 0.3125rem;
+    border-radius: 1.25rem;
+    min-width: 18.75rem;
+    background-color: rgb(246, 246, 246);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.256);
 }
 .search_container input{
-    background-color: transparent !important;
+    background-color: transparent;
     border: none;
     outline: none;
-    box-shadow: 0 0 0 transparent;
     width:100%;
-    padding:3px 10px;
+    border-radius: 1.25rem;
+    padding:0.1875rem 0.625rem;
     height: 100%;
-}
-
-.search_icon{
-    position: absolute;
-    top: 50%;
-    color: white;
-    font-size: 1.0625rem;
-    padding-inline: 10px;
-    height: 101%;
-    cursor: pointer;
-    background-color: var(--deep_navy);
-    border: none;
-    transition: all .3s;
-}
-.search_icon_ar{
-    left: 0;
-    border-radius: 10px 0 0 10px;
-    transform: translate(-50%,-50%);
-}
-.search_icon_en{
-    right: 0;
-    border-radius:0 10px  10px 0;
-    transform: translateY(-50%);
-}
-.search_icon:hover svg{
-    background-color: var(--dark_white);
+    font-size: 14px;
+   
 }
 
 @media screen and (max-width:1100px) {

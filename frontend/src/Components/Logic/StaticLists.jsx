@@ -753,7 +753,7 @@ export const package1={
   features:[
     {label:"usersCount",value:1},
     {label:"compoundsCount",value:1},
-    {label:"isFavoriteAllowed",value:false},
+    {label:"isFavoriteAllowed",value:"false"},
   ]
 }
 export const package2={
@@ -764,18 +764,17 @@ export const package2={
   features:[
     {label:"usersCount",value:1},
     {label:"compoundsCount",value:1},
-    {label:"isFavoriteAllowed",value:false},
+    {label:"isFavoriteAllowed",value:"false"},
   ]
 }
 
 export const package3={
   _id:"1",
-  title:"باقة مخصصة",
-  price:400,
-  originalPrice:600,
+  arTitle:"باقة مخصصة",
+  enTitle:"Custom Package",
   features:[
-    {label:"customPackageMSg1",value:false},
-    {label:"customPackageMSg2",value:false},
-    {label:"customPackageMSg3",value:false},
+    {label:"customPackageMSg1",value:"false"},
+    {label:"customPackageMSg2",value:"false"},
+    {label:"customPackageMSg3",value:"false"},
   ]
 }
