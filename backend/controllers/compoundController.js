@@ -69,7 +69,9 @@ exports.getCompound = catchAsync(async (req, res, next) => {
       .populate(compoundPopOptions)
       .lean(),
     Estate.find({ compound: compoundId })
-      .select("name description region city image inFavorites status")
+      .select(
+        "unitNumber name description region city image inFavorites status"
+      )
       .lean(),
   ]);
 

@@ -36,7 +36,7 @@ const estatePopOptions = [
 ];
 
 const estatesSelectFields =
-  "compound name description region city image inFavorites status";
+  "compound name description region city image inFavorites status tags";
 
 exports.getAllEstates = factory.getAll(
   Estate,
