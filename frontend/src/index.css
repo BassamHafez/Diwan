@@ -207,10 +207,6 @@ p{
   font-size: 14px;
   color: var(--dark_white);
 }
-.scrollableTable{
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
 
 .standard_img {
   width: 400px;
@@ -219,6 +215,10 @@ p{
 @media screen and (max-width:768px) {
   body,html{
     font-size: 14px;
+  }
+  .scrollableTable{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 @media screen and (max-width:550px) {
