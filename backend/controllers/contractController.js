@@ -60,15 +60,9 @@ exports.createContract = catchAsync(async (req, res, next) => {
     .select("_id")
     .lean();
 
-  // const estatePromise = isActiveContract
-  //   ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-  //   : isFutureContract
-  //   ? Estate.findByIdAndUpdate(estateId, { status: "pending" })
-  //   : Estate.findById(estateId);
-
   const estatePromise = isActiveContract
     ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : Estate.findByIdAndUpdate(estateId, { status: "available" });
+    : Estate.findById(estateId).select("_id").lean();
 
   const [estate, overlappingContract] = await Promise.all([
     estatePromise,
@@ -186,7 +180,7 @@ exports.updateContract = catchAsync(async (req, res, next) => {
   const isActiveContract =
     newStartDate <= Date.now() && newEndDate >= Date.now();
 
-  const isFutureContract = newStartDate > Date.now();
+  // const isFutureContract = newStartDate > Date.now();
 
   const overlappingContractPromise = Contract.findOne({
     _id: { $ne: id },
@@ -200,9 +194,7 @@ exports.updateContract = catchAsync(async (req, res, next) => {
 
   const estatePromise = isActiveContract
     ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : isFutureContract
-    ? Estate.findByIdAndUpdate(estateId, { status: "pending" })
-    : Estate.findById(estateId);
+    : Estate.findById(estateId).select("_id").lean();
 
   const [estate, overlappingContract] = await Promise.all([
     estatePromise,
