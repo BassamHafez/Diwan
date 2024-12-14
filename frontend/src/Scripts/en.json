@@ -132,7 +132,7 @@
   "delete": "Delete",
   "ediet": "Ediet",
   "phoneNum": "Phone Number",
-  "searchContacts": "search by contact",
+  "searchContacts": "search by name, phone",
   "type": "Type",
   "phone2": "Alternative Phone",
   "noDetails": "No details right now",
@@ -192,7 +192,7 @@
   "contracts": "Contracts",
   "addContracts": "Add Contract",
   "exportCsv": "Export CSV",
-  "searchContract": "Search Contract",
+  "searchContract": "search by contract tenant",
   "contractStaus": "contract staus",
   "startContract": "Start Contract",
   "endContract": "End Contract",
@@ -292,7 +292,7 @@
   "deleteAcc": "Deactivate Account",
   "country": "Country",
   "personalInfo": "Personal Information",
-  "searchTasks": "search by (title- estate - unit)",
+  "searchTasks": "search by title, estate, unit",
   "currentContract": "Current Contract",
   "currentContracts": "Current Contracts",
   "view": "View",
@@ -423,5 +423,7 @@
   "allowedCompounds":"Number of Estates Managed",
 
   "upgradeAnyTime":"The package is upgradable at any time",
-  "duplicateError":"This email or phone number is already in use by another user"
+  "duplicateError":"This email or phone number is already in use by another user",
+
+  "searchEstate":"search by name or tag"
 }

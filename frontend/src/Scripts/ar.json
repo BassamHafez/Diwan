@@ -127,7 +127,7 @@
   "delete": "حذف",
   "ediet": "تعديل",
   "phoneNum": "رقم الجوال",
-  "searchContacts": "ابحث عن جهة اتصال",
+  "searchContacts": "ابحث بالاسم أو الجوال",
   "type": "التصنيف",
   "phone2": "رقم الجوال البديل",
   "noDetails": "لاتوجد تفاصيل في الوقت الحالي",
@@ -187,7 +187,7 @@
   "contracts": "العقود",
   "addContracts": "إضافة عقد",
   "exportCsv": "تصدير ملف اكسل",
-  "searchContract": "ابحث عن عقد",
+  "searchContract": "ابحث عن مستأجر عقد",
   "contractStaus": "حالة العقد",
   "startContract": "بداية العقد",
   "endContract": "نهاية العقد",
@@ -419,5 +419,6 @@
   "isFavoriteAllowed": "إضافة الوحدات إلي قائمة المفضلة",
 
   "upgradeAnyTime":"يمكنك ترقية باقتك في أي وقت",
-  "duplicateError":"تم استخدام هذا البريد الإلكتروني أو رقم الهاتف من قبل مستخدم آخر"
+  "duplicateError":"تم استخدام هذا البريد الإلكتروني أو رقم الهاتف من قبل مستخدم آخر",
+  "searchEstate":"ابحث بالاسم أو مفتاح البحث"
 }

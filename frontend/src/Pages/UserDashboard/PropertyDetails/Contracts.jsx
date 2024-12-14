@@ -4,7 +4,7 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
 import { contractStatusOptions } from "../../../Components/Logic/StaticLists";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery } from "@tanstack/react-query";
@@ -40,6 +40,7 @@ const Contracts = ({ details }) => {
   const [contractDetails, setContractDetails] = useState({});
   const [contractId, setContractId] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [searchFilter, setSearchFilter] = useState("");
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -109,10 +110,18 @@ const Contracts = ({ details }) => {
     }
   };
 
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
   const filteredContracts =
     contractsData && Array.isArray(contractsData.data)
       ? contractsData.data.filter(
-          (contract) => statusFilter === "" || contract.status === statusFilter
+          (contract) =>
+            (statusFilter === "" || contract.status === statusFilter) &&
+            contract.tenant?.name
+              .toLowerCase()
+              .includes(searchFilter.toLocaleLowerCase())
         )
       : [];
 
@@ -150,7 +159,7 @@ const Contracts = ({ details }) => {
       <div className={styles.contract_content}>
         <div className={styles.content_header}>
           <div className={styles.search_field}>
-            <SearchField text={key("searchContract")} />
+            <SearchField onSearch={onSearch} text={key("searchContract")} />
           </div>
           <Select
             options={
