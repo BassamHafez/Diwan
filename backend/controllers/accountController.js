@@ -178,10 +178,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
     return next(new ApiError("Subscribe and get more users", 403));
   }
 
-  const userId = new mongoose.Types.ObjectId();
-
   const userData = {
-    _id: userId,
     name: req.body.name,
     email: req.body.email,
     phone: req.body.phone,
@@ -190,16 +187,14 @@ exports.addMember = catchAsync(async (req, res, next) => {
     permissions: req.body.permissions,
   };
 
-  await Promise.all([
-    User.create(userData),
+  const user = await User.create(userData);
 
-    Account.findByIdAndUpdate(id, {
-      $push: {
-        members: { user: userId, permissions: req.body.permissions },
-      },
-      $inc: { allowedUsers: -1 },
-    }),
-  ]);
+  await Account.findByIdAndUpdate(id, {
+    $push: {
+      members: { user: user._id, permissions: req.body.permissions },
+    },
+    $inc: { allowedUsers: -1 },
+  });
 
   res.status(201).json({
     status: "success",
