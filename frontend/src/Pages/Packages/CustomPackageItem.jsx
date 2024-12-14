@@ -27,6 +27,8 @@ const CustomPackageItem = ({
   const [showPackageData, setShowPackageData] = useState(false);
   const [subCost, setSubCost] = useState(0);
   const accountInfo = useSelector((state) => state.accountInfo.data);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
+
   const navigate = useNavigate();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -75,7 +77,7 @@ const CustomPackageItem = ({
 
   const paymentMethods = () => {
     setShowPackageData(false)
-    // navigate(`/profile/${accountInfo?.account?.owner}`);
+    navigate(`/profile/${profileInfo?._id}`);
   };
 
   return (

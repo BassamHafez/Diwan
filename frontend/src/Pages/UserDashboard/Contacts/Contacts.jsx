@@ -8,7 +8,7 @@ import ContactItem from "./ContactItem";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Row from "react-bootstrap/esm/Row";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "./ContactForms/AddContactForm";
 import styles from "./Contacts.module.css";
@@ -27,6 +27,7 @@ const Contacts = () => {
   const token = useSelector((state) => state.userInfo.token);
   const [selectedFilter, setSelectedFilter] = useState("contacts");
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
+  const [searchFilter, setSearchFilter] = useState("");
 
   const {
     data: allContacts,
@@ -84,6 +85,7 @@ const Contacts = () => {
     staleTime: Infinity,
     enabled: selectedFilter === "service" && !!token,
   });
+
   const {
     data: tenants,
     isFetching: isFetchingTenants,
@@ -106,6 +108,10 @@ const Contacts = () => {
     setTenantTypeFilter(event.target.value);
   };
 
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
   const renderContacts = (contacts, type, isFetching) => {
     if (isFetching) return <LoadingOne />;
 
@@ -127,12 +133,28 @@ const Contacts = () => {
     };
 
     const filteredData =
-      selectedFilter === "tenant"
-        ? contacts.data.filter(
-            (contact) =>
-              tenantTypeFilter === "all" || contact.type === tenantTypeFilter
-          )
-        : contacts.data;
+      contacts && Array.isArray(contacts.data)
+        ? contacts.data.filter((contact) => {
+            const normalizedSearchFilter = searchFilter.toLowerCase();
+            const contactName = contact.name?.toLowerCase() || "";
+            const contactPhone = contact.phone?.toLowerCase() || "";
+            const contactPhone2 = contact.phone2?.toLowerCase() || "";
+
+            const isNameMatch = contactName.includes(normalizedSearchFilter);
+            const isPhoneMatch = contactPhone.includes(normalizedSearchFilter);
+            const isPhone2Match = contactPhone2.includes(normalizedSearchFilter);
+
+            if (selectedFilter === "tenant") {
+              return (
+                (tenantTypeFilter === "all" ||
+                  contact.type === tenantTypeFilter) &&
+                (isNameMatch || isPhoneMatch||isPhone2Match)
+              );
+            }
+
+            return isNameMatch || isPhoneMatch||isPhone2Match;
+          })
+        : [];
 
     return filteredData.map((contact) => (
       <ContactItem
@@ -458,7 +480,7 @@ const Contacts = () => {
           <div className={styles.contacts_side}>
             <div className="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-2 px-3">
               <div>
-                <SearchField text={key("searchContacts")} />
+                <SearchField onSearch={onSearch} text={key("searchContacts")} />
               </div>
               <CheckPermissions btnActions={["ADD_CONTACT"]}>
                 <div>

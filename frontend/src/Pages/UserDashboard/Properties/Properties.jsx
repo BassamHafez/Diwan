@@ -17,7 +17,7 @@ import {
   faRotate,
 } from "@fortawesome/free-solid-svg-icons";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddCompound from "../PropertyForms/AddCompound";
 import { useQuery } from "@tanstack/react-query";
@@ -44,6 +44,7 @@ const Properties = () => {
   const [selectedCompoundId, setSelectedCompoundId] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("estates");
   const [statusFiltering, setStatusFiltering] = useState("all");
+  const [searchFilter, setSearchFilter] = useState("all");
   const [compoundStatusFiltering, setCompoundStatusFiltering] = useState("all");
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -123,6 +124,10 @@ const Properties = () => {
       setShowAddEstateModal(true);
     }
   };
+
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
 
   //filtering
   const filteredEstates = estates
@@ -215,8 +220,23 @@ const Properties = () => {
       return rentedEstatesCount.find((comp) => comp.compoundId === itemId);
     };
 
-    if (data?.length > 0) {
-      return data.map((item) => (
+    const filteredData =
+      data && Array.isArray(data)
+        ? data.filter((item) => {
+            const normalizedSearchFilter = searchFilter.toLowerCase();
+            return (
+              item.name.toLowerCase().includes(normalizedSearchFilter) ||
+              (item.tags &&
+                Array.isArray(item.tags) &&
+                item.tags.some((tag) =>
+                  tag.toLowerCase().includes(normalizedSearchFilter)
+                ))
+            );
+          })
+        : [];
+
+    if (filteredData?.length > 0) {
+      return filteredData?.map((item) => (
         <Property
           key={item._id}
           hideCompound={hideCompound}
@@ -365,24 +385,24 @@ const Properties = () => {
 
               <div className="small_filter mb-3">
                 <h5>{key("parentRealEstate")}</h5>
-                  <Select
-                    isSearchable={true}
-                    classNames="w-100"
-                    name="parentRealEstate"
-                    options={compoundsOptions}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
-                    placeholder={isArLang ? "" : "select"}
-                    isClearable
-                    value={
-                      compoundsOptions?.find(
-                        (option) => option.value === selectedCompoundId
-                      ) || null
-                    }
-                    onChange={(val) =>
-                      handleCompoundFilterChange(val ? val.value : null)
-                    }
-                  />
+                <Select
+                  isSearchable={true}
+                  classNames="w-100"
+                  name="parentRealEstate"
+                  options={compoundsOptions}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                  isClearable
+                  value={
+                    compoundsOptions?.find(
+                      (option) => option.value === selectedCompoundId
+                    ) || null
+                  }
+                  onChange={(val) =>
+                    handleCompoundFilterChange(val ? val.value : null)
+                  }
+                />
               </div>
             </>
           )}
@@ -703,7 +723,7 @@ const Properties = () => {
           <Container fluid>
             <div className="d-flex justify-content-between align-items-center flex-wrap my-3 mb-5 px-1">
               <div className="my-2">
-                <SearchField text={key("search")} />
+                <SearchField onSearch={onSearch} text={key("searchEstate")} />
               </div>
               <div className="my-2">
                 <CheckPermissions btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}>

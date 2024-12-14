@@ -1,9 +1,11 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
-import { expensesStatusOptions } from "../../../Components/Logic/StaticLists";
+import {
+  expensesStatusOptions,
+  expensesTypeOptions,
+} from "../../../Components/Logic/StaticLists";
 import { useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
@@ -38,6 +40,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showPayExpensesModal, setShowPayExpensesModal] = useState(false);
+  const [typeFilter, setTypeFilter] = useState("");
   const [exDetails, setExDetails] = useState({});
   const [exID, setExID] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -148,15 +151,22 @@ const Expenses = ({ isCompound, refetchDetails }) => {
     }
   };
 
-  const filterChangeHandler = (val) => {
-    setStatusFilter(val ? val : "");
+  const filterChangeHandler = (val, type) => {
+    if (type === "status") {
+      setStatusFilter(val ? val : "");
+    } else if (type === "type") {
+      setTypeFilter(val ? val : "");
+    }
   };
 
-  const filteredExpenses = expenses
-    ? expenses.data?.filter(
-        (ex) => statusFilter === "" || ex.status === statusFilter
-      )
-    : [];
+  const filteredExpenses =
+    expenses && Array.isArray(expenses.data)
+      ? expenses.data.filter(
+          (ex) =>
+            (statusFilter === "" || ex.status === statusFilter) &&
+            (typeFilter === "" || ex.type === typeFilter)
+        )
+      : [];
 
   return (
     <div className={styles.contracts_body}>
@@ -191,25 +201,38 @@ const Expenses = ({ isCompound, refetchDetails }) => {
 
       <div className={styles.contract_content}>
         <div className={styles.content_header}>
-          <div className={styles.search_field}>
-            <SearchField text={key("searchExpenses")} />
+          <div className="d-flex flex-wrap">
+            <Select
+              options={
+                isArLang ? expensesTypeOptions["ar"] : expensesTypeOptions["en"]
+              }
+              onChange={(val) =>
+                filterChangeHandler(val ? val.value : null, "type")
+              }
+              className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
+                styles.select_type
+              } my-3`}
+              isRtl={isArLang ? false : true}
+              placeholder={key("type")}
+              isClearable
+            />
+            <Select
+              options={
+                isArLang
+                  ? expensesStatusOptions["ar"]
+                  : expensesStatusOptions["en"]
+              }
+              onChange={(val) =>
+                filterChangeHandler(val ? val.value : null, "status")
+              }
+              className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                styles.select_type
+              } my-3`}
+              isRtl={isArLang ? false : true}
+              placeholder={key("status")}
+              isClearable
+            />
           </div>
-          <Select
-            options={
-              isArLang
-                ? expensesStatusOptions["ar"]
-                : expensesStatusOptions["en"]
-            }
-            onChange={(val) =>
-              filterChangeHandler(val ? val.value : null, "status")
-            }
-            className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
-              styles.select_type
-            } my-3`}
-            isRtl={isArLang ? false : true}
-            placeholder={key("status")}
-            isClearable
-          />
         </div>
 
         <div className="my-4">

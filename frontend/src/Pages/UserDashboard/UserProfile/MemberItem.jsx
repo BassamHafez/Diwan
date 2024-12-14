@@ -19,7 +19,7 @@ const MemberItem = ({
   userPermissions,
   userData,
   accountId,
-  accountOwner
+  accountOwner,
 }) => {
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -36,9 +36,9 @@ const MemberItem = ({
   const deleteMember = async () => {
     setShowDeleteModal(false);
 
-    if (userData._id && token) {
+    if (userData?._id && token) {
       const res = await mainDeleteFunHandler({
-        id: userData._id,
+        id: userData?._id,
         token: token,
         type: `accounts/${accountId}/members`,
       });
@@ -80,7 +80,11 @@ const MemberItem = ({
                 <span className="mini_word">Estate Manager</span>
               </div>
             </div>
-            <div className={`d-flex ${isArLang ? "me-auto" : "ms-auto"} ${accountOwner===userData._id?"d-none":""}`}>
+            <div
+              className={`d-flex ${isArLang ? "me-auto" : "ms-auto"} ${
+                accountOwner === userData?._id ? "d-none" : ""
+              }`}
+            >
               <FontAwesomeIcon
                 className={styles.show_icon}
                 onClick={() => setShowPermissionModal(true)}
@@ -149,7 +153,7 @@ const MemberItem = ({
           <UpdatePermissionsForm
             allPermissions={allPermissions}
             userPermissions={userPermissions}
-            userId={userData._id}
+            userId={userData?._id}
             hideModal={() => setShowUpdatePermissionModal(false)}
           />
         </ModalForm>

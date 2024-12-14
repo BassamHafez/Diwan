@@ -7,7 +7,7 @@ import {
   revenueFilterTypeOptions,
   revenuesStatus,
 } from "../../../Components/Logic/StaticLists";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -43,6 +43,7 @@ const Revenue = ({ refetchDetails, details }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [statusFilter, setStatusFilter] = useState("");
+  const [searchFilter, setSearchFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [revenueId, setRevenueId] = useState("");
   const { t: key } = useTranslation();
@@ -158,13 +159,21 @@ const Revenue = ({ refetchDetails, details }) => {
     }
   };
 
-  const filteredRevenues = revenuesData
-    ? revenuesData.data?.filter(
-        (rev) =>
-          (statusFilter === "" || rev.status === statusFilter) &&
-          (typeFilter === "" || rev.type === typeFilter)
-      )
-    : [];
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
+  const filteredRevenues =
+    revenuesData && Array.isArray(revenuesData.data)
+      ? revenuesData.data.filter(
+          (rev) =>
+            (statusFilter === "" || rev.status === statusFilter) &&
+            (typeFilter === "" || rev.type === typeFilter) &&
+            rev.tenant?.name
+              .toLowerCase()
+              .includes(searchFilter.toLocaleLowerCase())
+        )
+      : [];
 
   return (
     <div className={styles.contracts_body}>
@@ -200,7 +209,7 @@ const Revenue = ({ refetchDetails, details }) => {
       <div className={styles.contract_content}>
         <div className={styles.content_header}>
           <div className={styles.search_field}>
-            <SearchField text={key("searchRevenue")} />
+            <SearchField onSearch={onSearch} text={key("searchRevenue")} />
           </div>
           <div className="d-flex flex-wrap">
             <Select

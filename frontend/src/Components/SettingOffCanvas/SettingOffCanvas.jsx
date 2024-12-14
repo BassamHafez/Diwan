@@ -99,7 +99,7 @@ const SettingOffCanvas = ({ show, handleClose }) => {
                 />
               </li>
             </Link>
-            <Link>
+            <Link to={"/help"}>
               <li className={styles.contact_list_item} onClick={handleClose}>
                 {key("Help")}
                 <FontAwesomeIcon
