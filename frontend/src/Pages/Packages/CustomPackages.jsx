@@ -20,10 +20,10 @@ const CustomPackages = () => {
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
+  
   const handleFeatureChange = (e) => {
     const { id, value, type, checked } = e.target;
-
-    const newValue = type === "checkbox" ? checked : value;
+    const newValue = type === "checkbox" ? checked : Number(value);
 
     setFeatures((prevFeatures) => ({
       ...prevFeatures,
