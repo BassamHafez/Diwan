@@ -1,8 +1,8 @@
 import styles from "./Hero.module.css";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import header1 from "../../assets/header1.jpg";
-import header2 from "../../assets/banner.jpg";
+import header1 from "../../assets/banner1.webp";
+import header2 from "../../assets/banner2.webp";
 import ButtonTwo from "../UI/Buttons/ButtonTwo";
 import { useTranslation } from "react-i18next";
 import circles from "../../assets/svg/circles.svg";
@@ -16,10 +16,10 @@ import { useNavigate } from "react-router-dom";
 const Hero = () => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
-  const navigate=useNavigate();
-  
+  const navigate = useNavigate();
+
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
   }, []);
 
   return (
@@ -57,7 +57,7 @@ const Hero = () => {
               <div className={styles.overlay}></div>
               <ImgComponent
                 src={header1}
-                width="300px"
+                width="20.625rem"
                 height="21.875rem"
                 hash={imgHash.hero1}
                 alt="heroBuilding"
@@ -74,7 +74,7 @@ const Hero = () => {
               <div className={styles.overlay}></div>
               <ImgComponent
                 src={header2}
-                width="350px"
+                width="25rem"
                 height="12.3125rem"
                 hash={imgHash.hero2}
                 alt="heroBuilding2"
@@ -83,6 +83,15 @@ const Hero = () => {
           </div>
         </Col>
       </Row>
+      <div className={styles.waves}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+          <path
+            fill="#d39833"
+            fillOpacity="0.1"
+            d="M0,224L48,229.3C96,235,192,245,288,245.3C384,245,480,235,576,245.3C672,256,768,288,864,266.7C960,245,1056,171,1152,154.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
+        </svg>
+      </div>
     </header>
   );
 };

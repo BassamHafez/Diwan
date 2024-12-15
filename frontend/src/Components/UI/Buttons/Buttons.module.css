@@ -47,7 +47,10 @@
     100%{opacity: 0;}
 }
 
-
+.rounded_btn{
+    border-radius: 1.875rem;
+    padding: 0.625rem 1rem;
+}
 /* btn2 */
 
 .btn_two{
@@ -57,6 +60,7 @@
     min-width: 140px;
     border: 1px solid transparent;
     font-weight: 600;
+    border-radius: 1.875rem;
     transition: all .4s;
 }
 .btn_two:hover{

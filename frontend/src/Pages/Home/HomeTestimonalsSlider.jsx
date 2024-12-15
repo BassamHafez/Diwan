@@ -5,11 +5,11 @@ import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
 import styles from "./HomeTestimonalsSlider.module.css";
 
-import person1 from "../../assets/p1.jpeg";
-import person2 from "../../assets/p2.jpeg";
-import person3 from "../../assets/p3.jpeg";
-import person4 from "../../assets/p4.jpg";
-import person5 from "../../assets/p5.jpeg";
+import person1 from "../../assets/people/p1.webp";
+import person2 from "../../assets/people/p2.webp";
+import person3 from "../../assets/people/p3.webp";
+import person4 from "../../assets/people/p4.webp";
+import person5 from "../../assets/people/p5.webp";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";

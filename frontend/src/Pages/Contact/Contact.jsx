@@ -19,7 +19,7 @@ const Contact = () => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   return (
-    <section className="over" id="Contact">
+    <section className="over my-5" id="Contact">
       <Row>
         <Col md={5} className={styles.contact_info}>
           <div className={`${styles.contact_info_layer} p-4`}>
