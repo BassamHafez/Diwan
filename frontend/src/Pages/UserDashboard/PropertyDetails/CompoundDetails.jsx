@@ -55,7 +55,7 @@ const CompoundDetails = () => {
   });
 
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
   }, []);
 
@@ -218,9 +218,11 @@ const CompoundDetails = () => {
                             {key("collectionRatio")} {key("forEstates")}
                           </span>
                           <p>
-                            {convertNumbersToFixedTwo(
-                              (totalPaidRev / totalRev) * 100
-                            )}
+                            {totalRev > 0
+                              ? convertNumbersToFixedTwo(
+                                  (totalPaidRev / totalRev) * 100
+                                )
+                              : 0}
                             %
                           </p>
                         </div>
@@ -236,9 +238,11 @@ const CompoundDetails = () => {
                             {key("netReturns")} {key("forEstates")}
                           </span>
                           <p>
-                            {convertNumbersToFixedTwo(
-                              ((totalRev - totalEx) / totalRev) * 100
-                            )}
+                            {totalRev > 0
+                              ? convertNumbersToFixedTwo(
+                                  ((totalRev - totalEx) / totalRev) * 100
+                                )
+                              : 0}
                             %
                           </p>
                         </div>

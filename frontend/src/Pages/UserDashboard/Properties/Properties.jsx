@@ -722,10 +722,10 @@ const Properties = () => {
         <Col md={9} lg={10}>
           <Container fluid>
             <div className="d-flex justify-content-between align-items-center flex-wrap my-3 mb-5 px-1">
-              <div className="my-2">
+              <div className="my-1">
                 <SearchField onSearch={onSearch} text={key("searchEstate")} />
               </div>
-              <div className="my-2">
+              <div className={`${isArLang?"me-auto":"ms-auto"} my-1`}>
                 <CheckPermissions btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}>
                   <ButtonOne
                     onClick={() => setShowModal(true)}

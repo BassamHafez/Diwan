@@ -5,7 +5,7 @@ const ButtonOne = ({ text, onClick, type, children,color,classes,borderd }) => {
     <button
       onClick={onClick}
       type={type ? type : "button"}
-      className={`${styles.btn_one} ${color==="white"?styles.white_btn:''} ${classes} ${borderd&&"rounded"}`}
+      className={`${styles.btn_one} ${color==="white"?styles.white_btn:''} ${classes} ${borderd&&styles.rounded_btn}`}
     >
       {text ? text : children}
       <div className={styles.btn_one_layer}></div>

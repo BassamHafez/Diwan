@@ -3,10 +3,10 @@ import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import { Link } from "react-router-dom";
 import footerLogo from "../../assets/logo.png";
-import mada from "../../assets/mada.png";
-import masterCard from "../../assets/masterCard.png";
-import visa from "../../assets/visa.png";
-import applePay from "../../assets/applePay.png";
+import mada from "../../assets/logo/mada.png";
+import masterCard from "../../assets/logo/masterCard.png";
+import visa from "../../assets/logo/visa.png";
+import applePay from "../../assets/logo/applePay.png";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -22,7 +22,7 @@ const MainFooter = () => {
 
   return (
     <footer className={styles.footer} >
-      <div className="container pb-4">
+      <div className="container w-100 pb-4">
         <Row>
           <Col lg={4}>
             <div className={styles.footer_logo}>

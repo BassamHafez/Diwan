@@ -28,7 +28,10 @@ const Contacts = () => {
   const [selectedFilter, setSelectedFilter] = useState("contacts");
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
   const [searchFilter, setSearchFilter] = useState("");
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
+  console.log("selectedFilter",selectedFilter)
+  
   const {
     data: allContacts,
     isFetching: isFetchingContacts,
@@ -131,7 +134,7 @@ const Contacts = () => {
           return refetchAllContacts;
       }
     };
-
+    console.log("contracts", contacts);
     const filteredData =
       contacts && Array.isArray(contacts.data)
         ? contacts.data.filter((contact) => {
@@ -142,19 +145,22 @@ const Contacts = () => {
 
             const isNameMatch = contactName.includes(normalizedSearchFilter);
             const isPhoneMatch = contactPhone.includes(normalizedSearchFilter);
-            const isPhone2Match = contactPhone2.includes(normalizedSearchFilter);
+            const isPhone2Match = contactPhone2.includes(
+              normalizedSearchFilter
+            );
 
             if (selectedFilter === "tenant") {
               return (
                 (tenantTypeFilter === "all" ||
                   contact.type === tenantTypeFilter) &&
-                (isNameMatch || isPhoneMatch||isPhone2Match)
+                (isNameMatch || isPhoneMatch || isPhone2Match)
               );
             }
 
-            return isNameMatch || isPhoneMatch||isPhone2Match;
+            return isNameMatch || isPhoneMatch || isPhone2Match;
           })
         : [];
+    console.log("filteredData", filteredData);
 
     return filteredData.map((contact) => (
       <ContactItem
@@ -479,11 +485,11 @@ const Contacts = () => {
         <Col sm={8} lg={9}>
           <div className={styles.contacts_side}>
             <div className="d-flex justify-content-between align-items-center flex-wrap mb-5 mt-2 px-3">
-              <div>
+              <div className="my-1">
                 <SearchField onSearch={onSearch} text={key("searchContacts")} />
               </div>
               <CheckPermissions btnActions={["ADD_CONTACT"]}>
-                <div>
+                <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
                   <ButtonOne
                     onClick={showAddModal}
                     text={`${key("add")} ${key(selectedFilter)}`}

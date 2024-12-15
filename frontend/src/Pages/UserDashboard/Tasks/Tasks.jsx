@@ -248,11 +248,11 @@ const Tasks = () => {
                 className="d-flex justify-content-between align-items-center flex-wrap"
                 style={{ height: "fit-content" }}
               >
-                <div>
+                <div className="my-1">
                   <SearchField onSearch={onSearch} text={key("searchTasks")} />
                 </div>
                 <CheckPermissions btnActions={["ADD_TASK"]}>
-                  <div>
+                  <div className={`${isArLang?"me-auto":"ms-auto"} my-1`}>
                     <ButtonOne
                       onClick={() => setShowAddTaskModal(true)}
                       text={`${key("add")} ${key("task")}`}

@@ -1,21 +1,16 @@
 import Row from "react-bootstrap/Row";
 import styles from "./Packages.module.css";
 import PackageItem from "./PackageItem";
-import {
-  package3,
-} from "../../Components/Logic/StaticLists";
+import { package3 } from "../../Components/Logic/StaticLists";
 import { useQuery } from "@tanstack/react-query";
-import { mainFormsHandlerTypeFormData } from "../../util/Http";
+import { getPublicData } from "../../util/Http";
 import LoadingOne from "../../Components/UI/Loading/LoadingOne";
 
 const Packages = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-
+  
   const { data: packages, isFetching } = useQuery({
-    queryKey: ["allPackages", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "packages", token: token }),
-    enabled: !!token,
+    queryKey: ["allPackages"],
+    queryFn: () => getPublicData({ type: "packages" }),
     staleTime: Infinity,
   });
 

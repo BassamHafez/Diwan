@@ -139,3 +139,13 @@ export const mainEmptyBodyFun = async ({ token, type, method }) => {
     return error;
   }
 };
+
+export const getPublicData = async ({ type }) => {
+  try {
+    const response = await axios.get(`${baseServerUrl}${type}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error; 
+  }
+};
