@@ -35,7 +35,7 @@ const CustomPackageItem = ({
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const dispatch = useDispatch();
-console.log(features)
+  console.log(features);
   const buttonText = btnText
     ? btnText
     : accountInfo?.account?.allowedUsers > 1 ||
@@ -51,14 +51,7 @@ console.log(features)
     if (accountInfo && accountInfo?.account?._id) {
       const formData = {};
       features?.forEach((feature) => {
-        if (typeof feature.value !== "boolean") {
-          if (Number(feature.value) > 0) {
-            console.log(feature.value)
-            formData[feature.label] = feature.value;
-          }
-        } else {
-          formData[feature.label] = feature.value;
-        }
+        formData[feature.label] = feature.value;
       });
 
       const myType = `accounts/${accountInfo?.account?._id}/subscribe`;
