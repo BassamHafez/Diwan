@@ -7,7 +7,7 @@ const packageValidator = require("../utils/validators/packageValidator");
 
 router.get("/", packageController.getAllPackages);
 
-// router.use(authController.protect, authController.restrictTo("admin"));
+router.use(authController.protect, authController.restrictTo("admin"));
 
 router.post(
   "/",
