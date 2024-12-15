@@ -22,7 +22,6 @@ const CustomPackageItem = ({
   btnText,
   chooseActiveActive,
 }) => {
-
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
   const [subCost, setSubCost] = useState(0);
@@ -35,8 +34,8 @@ const CustomPackageItem = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  const dispatch=useDispatch();
-
+  const dispatch = useDispatch();
+  console.log(features);
   const buttonText = btnText
     ? btnText
     : accountInfo?.account?.allowedUsers > 1 ||
@@ -54,6 +53,7 @@ const CustomPackageItem = ({
       features?.forEach((feature) => {
         formData[feature.label] = feature.value;
       });
+
       const myType = `accounts/${accountInfo?.account?._id}/subscribe`;
       const res = await mainFormsHandlerTypeRaw({
         token: token,
@@ -76,7 +76,7 @@ const CustomPackageItem = ({
   };
 
   const paymentMethods = () => {
-    setShowPackageData(false)
+    setShowPackageData(false);
     navigate(`/profile/${profileInfo?._id}`);
   };
 
@@ -94,7 +94,8 @@ const CustomPackageItem = ({
             {features?.map(
               (feature, index) =>
                 feature.value !== false &&
-                feature.value !== undefined && (
+                feature.value !== undefined &&
+                Number(feature.value) > 0 && (
                   <li key={index}>
                     <FontAwesomeIcon
                       className={`${styles.list_icon}`}
@@ -104,7 +105,7 @@ const CustomPackageItem = ({
                     />
                     {key(feature.label)}{" "}
                     {typeof feature.value !== "boolean"
-                      ? `(${Number(feature.value)>0?feature.value:0})`
+                      ? `(${Number(feature.value) > 0 ? feature.value : 0})`
                       : feature.value === true
                       ? ""
                       : ""}
