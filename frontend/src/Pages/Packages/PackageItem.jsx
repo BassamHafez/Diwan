@@ -134,18 +134,31 @@ const PackageItem = ({ pack, type }) => {
           <div className={styles.features}>
             <h4 className="mx-3 mb-3">{key("features")}</h4>
             <ul>
-              {pack?.features?.map((feature, index) => (
-                <li key={`${feature.label}_${index}`}>
-                  <FontAwesomeIcon
-                    className={`${styles.list_icon}`}
-                    icon={faCircleCheck}
-                  />
-                  {key(feature.label)}{" "}
-                  {["true", "false"].includes(feature.value)
-                    ? ""
-                    : `(${feature.value})`}
-                </li>
-              ))}
+              {pack?.features?.map((feature, index) => {
+                const isValidValue =
+                  feature.value === "true" ||
+                  (!isNaN(Number(feature.value)) && Number(feature.value) > 0);
+
+                return isValidValue ? (
+                  <li key={`${feature.label}_${index}`}>
+                    <FontAwesomeIcon
+                      className={`${styles.list_icon}`}
+                      icon={faCircleCheck}
+                    />
+                    {key(feature.label)}{" "}
+                    {feature.value === "true" ? "" : `(${feature.value})`}
+                  </li>
+                ) : type === "custom" ? (
+                  <li key={`${feature.label}_${index}`}>
+                    <FontAwesomeIcon
+                      className={`${styles.list_icon}`}
+                      icon={faCircleCheck}
+                    />
+                    {key(feature.label)}
+                  </li>
+                ) : null;
+              })}
+
               <li>
                 <FontAwesomeIcon
                   className={`${styles.list_icon}`}
