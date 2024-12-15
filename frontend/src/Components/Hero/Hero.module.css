@@ -6,6 +6,7 @@
     overflow: hidden;
     background-color: var(--sky);
     position: relative;
+    z-index: 3;
     width: 100vw;
 }
 
@@ -107,6 +108,7 @@
     bottom: 0;
     left: 0;
     width: 100%;
+    z-index: -1;
 }
 
 @keyframes img1Transition {
