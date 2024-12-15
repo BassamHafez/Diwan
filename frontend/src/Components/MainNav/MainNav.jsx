@@ -25,6 +25,7 @@ import avatar from "../../assets/default.png";
 
 const MainNav = () => {
   const [showSetting, setShowSetting] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const [t, i18n] = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
@@ -33,13 +34,18 @@ const MainNav = () => {
 
   return (
     <>
-      <Navbar expand="lg" className="bg-body-tertiary main_navbar">
+      <Navbar
+        expand="lg"
+        className="bg-body-tertiary main_navbar"
+        onToggle={(expanded) => setIsCollapsed(expanded)}
+        expanded={isCollapsed}
+      >
         <Container fluid>
           <Navbar.Brand href="/">
             <img src={logo} className={styles.logo} alt="logo" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
-          <Navbar.Collapse id="navbarScroll">
+          <Navbar.Collapse id="navbarScroll" className={styles.nav_collapse}>
             <Nav
               className={`${isArLang ? "ms-auto" : "me-auto"}  my-2 my-lg-0 ${
                 styles.nav_list
@@ -49,6 +55,7 @@ const MainNav = () => {
               {isLogin ? (
                 <>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -66,6 +73,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -82,6 +90,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -98,6 +107,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -114,6 +124,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -133,6 +144,7 @@ const MainNav = () => {
               ) : (
                 <>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -150,6 +162,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -166,6 +179,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -182,6 +196,7 @@ const MainNav = () => {
                     </span>
                   </NavLink>
                   <NavLink
+                    onClick={() => isCollapsed && setIsCollapsed(false)}
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
@@ -201,7 +216,7 @@ const MainNav = () => {
               )}
             </Nav>
             <div
-              className={`${styles.nav_controller} d-flex align-items-center justify-content-center`}
+              className={`${styles.nav_controller}`}
             >
               <Dropdown className={styles.language_icon}>
                 <Dropdown.Toggle
@@ -222,28 +237,38 @@ const MainNav = () => {
                 </Dropdown.Menu>
               </Dropdown>
               {!isLogin ? (
-                <>
+                <div className="d-flex align-items-center justify-content-center flex-wrap">
                   <ButtonOne
-                    onClick={() => navigate("register")}
-                    classes="mx-2"
+                    onClick={() => {
+                      navigate("register");
+                      isCollapsed && setIsCollapsed(false);
+                    }}
+                    classes="m-2"
                     color="white"
                     text={t("register")}
+                    borderd={true}
                   />
                   <ButtonOne
-                    onClick={() => navigate("login")}
-                    classes="mx-2"
+                    onClick={() => {
+                      navigate("login");
+                      isCollapsed && setIsCollapsed(false);
+                    }}
+                    classes="m-2"
                     text={t("login")}
+                    borderd={true}
                   />
-                </>
+                </div>
               ) : (
                 <div
                   className={styles.avatar}
                   onClick={() => setShowSetting(true)}
                 >
                   <img
-                    src={profileInfo?.photo?`${import.meta.env.VITE_Host}${
+                    src={
                       profileInfo?.photo
-                    }`:avatar}
+                        ? `${import.meta.env.VITE_Host}${profileInfo?.photo}`
+                        : avatar
+                    }
                     alt="profile_pic"
                   />
                 </div>

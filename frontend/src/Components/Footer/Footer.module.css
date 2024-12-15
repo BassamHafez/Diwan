@@ -3,6 +3,7 @@
     padding-top: 0.625rem;
     border-top: 1px solid rgba(0, 0, 0, 0.093);
     background-color: rgb(247, 243, 243);
+    width: 100vw;
 }
 .footer_p{
     background-color: var(--sub_color);

@@ -1,6 +1,6 @@
 import Col from "react-bootstrap/esm/Col";
 import styles from "./Property.module.css";
-import b1 from "../../assets/villa.jpg";
+import b1 from "../../assets/villa.webp";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";

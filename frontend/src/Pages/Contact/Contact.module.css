@@ -1,7 +1,8 @@
 .contact_info{
-    background-image: url(../../assets/contactusbg.jpg);
+    background-image: url(../../assets/contactusbg.webp);
     background-size: cover;
     position: relative;
+    border-radius: 2.5rem;
 }
 .contact_info_layer{
     background-color: rgba(0,0,0,.8);
@@ -12,6 +13,7 @@
     left:0;
     z-index: 3;
     color: white;
+    border-radius: 2.5rem;
 }
 .contact_links{
     width: fit-content;
@@ -53,7 +55,6 @@
 .sub_title{
     font-size: 0.75rem;
     line-height: 0.9rem;
-    letter-spacing: 0.25rem;
     font-weight: 700;
     color: var(--main_color);
 }
