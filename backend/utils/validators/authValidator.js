@@ -72,3 +72,39 @@ exports.loginValidator = [
 
   validatorMiddleware,
 ];
+
+exports.forgotPasswordValidator = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+
+  validatorMiddleware,
+];
+
+exports.verifyPassResetCodeValidator = [
+  check("resetCode")
+    .notEmpty()
+    .withMessage("Reset code required")
+    .isLength({ min: 6, max: 6 })
+    .withMessage("Invalid reset code or expired"),
+
+  validatorMiddleware,
+];
+
+exports.resetPasswordValidator = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+
+  check("newPassword")
+    .notEmpty()
+    .withMessage("New password required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+
+  validatorMiddleware,
+];
