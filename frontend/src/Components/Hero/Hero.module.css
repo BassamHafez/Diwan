@@ -4,7 +4,11 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    background-color: var(--sky);
+    position: relative;
+    width: 100vw;
 }
+
 .row_div{
     min-height: 80vh;
     width: 100%;
@@ -38,28 +42,28 @@
 .img1_position{
     position: absolute;
     top: 3.125rem;
-    left: 11%;
+    left: 10%;
 }
 .img2_position{
     position: absolute;
     top: 10rem;
-    right:13%;
+    right:10%;
 }
 .header1_img{
-    width: 18.75rem;
+    width: 20.625rem;
     overflow: hidden;
     animation-name: img1Transition;
 }
 .header2_img{
-    width:21.875rem;
+    width:25rem;
     overflow: hidden;
     animation-name: img2Transition;
 }
 
 .header1_img,.header2_img{
     position: relative;
-    border-radius:0.9375rem;
-    box-shadow: 0.625rem 0.625rem 0.625rem  rgba(0, 0, 0, 0.411);    
+    border-radius:1.5625rem;
+    box-shadow: 3px 8px 3px  rgba(0, 0, 0, 0.114);    
     animation-duration: 4s;
     animation-timing-function: ease-in-out;
     animation-direction: alternate;
@@ -69,7 +73,7 @@
 .header1_img img,.header2_img img{
     width: 100%;
     height: 100%;
-    border-radius:0.9375rem;
+    border-radius:1.5625rem;
 }
 
 .overlay{
@@ -98,6 +102,13 @@
     opacity: .5;
 }
 
+.waves{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
 @keyframes img1Transition {
     0%{transform: translateY(0);}
     50%{transform: translateY(-0.625rem);}
@@ -112,7 +123,7 @@
 
 @media screen and (max-width:1239px) {
     .header1_img{
-        width: 12.5rem;
+        width: 15.625rem;
     }
     .header2_img{
         width:18.75rem;

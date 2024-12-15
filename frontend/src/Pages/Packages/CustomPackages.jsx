@@ -17,9 +17,9 @@ const CustomPackages = () => {
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const myAccount = accountInfo?.account;
 
-  useEffect(()=>{
-    scrollTo(0, 0)
-  },[])
+  useEffect(() => {
+    scrollTo(0, 0);
+  }, []);
   const handleFeatureChange = (e) => {
     const { id, value, type, checked } = e.target;
 
@@ -46,7 +46,12 @@ const CustomPackages = () => {
                   type="number"
                   id="usersCount"
                   value={features.usersCount}
-                  onChange={handleFeatureChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "" || parseInt(value) >= 0) {
+                      handleFeatureChange(e);
+                    }
+                  }}
                 />
               </div>
             </Col>
@@ -57,7 +62,12 @@ const CustomPackages = () => {
                   type="number"
                   id="compoundsCount"
                   value={features.compoundsCount}
-                  onChange={handleFeatureChange}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "" || parseInt(value) >= 0) {
+                      handleFeatureChange(e);
+                    }
+                  }}
                 />
               </div>
             </Col>

@@ -15,9 +15,8 @@
   border-radius: 1.875rem;
 }
 .estate_main_details {
-  border-radius: 1.875rem;
   padding: 0.625rem;
-}
+} 
 .main_details {
   display: flex;
   align-items: center;
@@ -51,7 +50,7 @@
 .header_footerItem {
   background-color: var(--main_color);
   color: white;
-  border-radius: 0.625rem;
+  border-radius: 1.875rem;
   padding: 0.625rem;
   display: flex;
   align-items: center;
@@ -78,7 +77,7 @@
   background-color: white;
   box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.12);
   padding: 1.25rem;
-  border-radius: 10px;
+  border-radius: 30px;
   margin-bottom: 1.25rem;
   position: relative;
 }

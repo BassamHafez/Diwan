@@ -71,7 +71,7 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
           } else if (
             data?.response?.data?.message?.split(" ")[0] === "Duplicate"
           ) {
-            notifyError("duplicateError");
+            notifyError(key("duplicateError"));
           } else {
             notifyError(key("wrong"));
           }
@@ -79,7 +79,7 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
         onError: (error) => {
           console.log(error);
           if (error?.response?.data?.message?.split(" ")[0] === "Duplicate") {
-            notifyError("duplicateError");
+            notifyError(key("duplicateError"));
           } else {
             notifyError(key("wrong"));
           }

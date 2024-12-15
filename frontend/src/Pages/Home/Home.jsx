@@ -55,7 +55,7 @@ const Home = () => {
           <ButtonTwo text={key("rateUs")} />
         </div>
       </section>
-      <div data-aos="fade-up" data-aos-duration="1000" className="mt-5">
+      <div data-aos="fade-up" data-aos-duration="1000" className="my-5">
         <Contact />
       </div>
     </>

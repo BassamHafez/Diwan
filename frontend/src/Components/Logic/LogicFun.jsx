@@ -21,17 +21,16 @@ export const convertTpOptionsFormate = (arr) => {
 };
 
 export const convertNumbersToFixedTwo = (num) => {
-  if (num) {
-    return Number.isInteger(num) ? num : num.toFixed(2);
+  if (!num || !isFinite(num) || isNaN(num)) {
+    return 0;
   }
-  return "0";
+  return Number.isInteger(num) ? num : Number(num).toFixed(2);
 };
 
 export const checkAccountFeatures = (accInfo, value) => {
   const feature = accInfo[value];
   return typeof feature === "number" ? feature > 0 : Boolean(feature);
 };
-
 
 export const handleDownloadExcelSheet = (data, name, title) => {
   const wb = XLSX.utils.book_new();
@@ -40,7 +39,6 @@ export const handleDownloadExcelSheet = (data, name, title) => {
 
   XLSX.writeFile(wb, `${name}`);
 };
-
 
 export const generatePDF = (id, name) => {
   const element = document.getElementById(`${id}`);
@@ -74,11 +72,14 @@ export const renamedEstateStatus = (type, language) => {
 
 //compounds
 export const calculateRentedPercentage = (rented, total) => {
-  if (!rented|| total === 0 || rented === 0) {
+  if (!rented || total === 0 || rented === 0) {
     return 0;
   }
   const percentage = (rented / total) * 100;
-  return Number.isInteger(percentage) ? percentage : percentage.toFixed(1);
+  if (!percentage || !isFinite(percentage) || isNaN(percentage)) {
+    return 0;
+  }
+  return Number.isInteger(percentage) ? percentage : percentage.toFixed(1) || 0;
 };
 
 //contact func

@@ -4,7 +4,7 @@ const UserHome = () => {
   return (
     <div className="height_container d-flex flex-column justify-content-center align-items-center">
       <img className={styles.anlaysisImg} src={anlaysisImg} alt="anlaysisImg"/>
-      <span>Analysis will be shown here</span>
+      <span className="text-secondary">Analysis will be shown here</span>
     </div>
   );
 };
