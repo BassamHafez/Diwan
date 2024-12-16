@@ -22,10 +22,6 @@ const estatesPopOptions = [
 
 const estatePopOptions = [
   {
-    path: "compound",
-    select: "name address region city neighborhood image",
-  },
-  {
     path: "broker",
     select: "name phone phone2 notes",
   },
@@ -37,6 +33,8 @@ const estatePopOptions = [
 
 const estatesSelectFields =
   "compound name description region city image inFavorites status tags";
+
+const compoundSelectFields = "name address region city neighborhood image";
 
 exports.getAllEstates = factory.getAll(
   Estate,
@@ -102,6 +100,15 @@ exports.getEstate = catchAsync(async (req, res, next) => {
     return next(new ApiError("No estate found with that ID", 404));
   }
 
+  let compound = null;
+
+  if (estate.compound) {
+    compound = await Compound.findById(estate.compound)
+      .select(compoundSelectFields)
+      .populate(estatePopOptions)
+      .lean();
+  }
+
   const [
     { totalPaid: totalPaidRevenues, totalPending: totalPendingRevenues } = {
       totalPaid: 0,
@@ -126,6 +133,7 @@ exports.getEstate = catchAsync(async (req, res, next) => {
       totalPaidExpenses,
       totalPendingExpenses,
       estate,
+      compound,
     },
   });
 });
@@ -161,11 +169,12 @@ exports.createEstate = catchAsync(async (req, res, next) => {
     }
 
     req.body.unitNumber = +compound.estatesCount + 1;
-    req.body.region = compound.region;
-    req.body.city = compound.city;
-    if (compound.neighborhood) req.body.neighborhood = compound.neighborhood;
-    if (compound.broker) req.body.broker = compound.broker;
-    if (compound.landlord) req.body.landlord = compound.landlord;
+
+    if (req.body.region) delete req.body.region;
+    if (req.body.city) delete req.body.city;
+    if (req.body.neighborhood) delete req.body.neighborhood;
+    if (req.body.broker) delete req.body.broker;
+    if (req.body.landlord) delete req.body.landlord;
   }
 
   const estateCreatePromise = Estate.create(req.body);
@@ -212,13 +221,11 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
   }
 
   if (estate.compound) {
-    const compound = await Compound.findById(estate.compound);
-
-    req.body.region = compound.region;
-    req.body.city = compound.city;
-    if (compound.neighborhood) req.body.neighborhood = compound.neighborhood;
-    if (compound.broker) req.body.broker = compound.broker;
-    if (compound.landlord) req.body.landlord = compound.landlord;
+    if (req.body.region) delete req.body.region;
+    if (req.body.city) delete req.body.city;
+    if (req.body.neighborhood) delete req.body.neighborhood;
+    if (req.body.broker) delete req.body.broker;
+    if (req.body.landlord) delete req.body.landlord;
   }
 
   const estateUpdatePromise = Estate.findByIdAndUpdate(

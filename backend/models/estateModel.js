@@ -16,14 +16,8 @@ const estateSchema = new mongoose.Schema(
       required: true,
     },
     address: String,
-    region: {
-      type: String,
-      required: true,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
+    region: String,
+    city: String,
     neighborhood: {
       type: String,
       default: "not specified",
