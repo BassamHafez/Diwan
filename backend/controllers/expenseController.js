@@ -1,4 +1,5 @@
 const Expense = require("../models/expenseModel");
+const Estate = require("../models/estateModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -16,9 +17,25 @@ const expensePopOptions = [
 
 exports.getAllExpenses = factory.getAll(Expense, expensePopOptions);
 exports.getExpense = factory.getOne(Expense, expensePopOptions);
-exports.createExpense = factory.createOne(Expense);
 exports.updateExpense = factory.updateOne(Expense);
 exports.deleteExpense = factory.deleteOne(Expense);
+
+exports.createExpense = catchAsync(async (req, res, next) => {
+  const { estate, compound } = req.body;
+
+  if (estate && !compound) {
+    const estateData = await Estate.findById(estate).select("compound").lean();
+
+    req.body.compound = estateData.compound;
+  }
+
+  const newExpense = await Expense.create(req.body);
+
+  res.status(201).json({
+    status: "success",
+    data: newExpense,
+  });
+});
 
 exports.payExpense = catchAsync(async (req, res, next) => {
   const { id } = req.params;
