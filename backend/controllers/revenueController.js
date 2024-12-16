@@ -1,4 +1,5 @@
 const Revenue = require("../models/revenueModel");
+const Estate = require("../models/estateModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -28,9 +29,12 @@ exports.getAllRevenues = catchAsync(async (req, res, next) => {
 exports.createRevenue = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
+  const estate = await Estate.findById(estateId).select("compound").lean();
+
   const revenue = await Revenue.create({
     ...req.body,
     estate: estateId,
+    compound: estate.compound,
     account: req.user.account,
   });
 

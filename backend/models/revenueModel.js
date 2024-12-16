@@ -41,6 +41,10 @@ const revenueSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Estate",
     },
+    compound: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Compound",
+    },
     account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
