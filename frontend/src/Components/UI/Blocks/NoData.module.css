@@ -5,21 +5,28 @@
     justify-content: center;
     text-align: center;
 }
-.noData img{
-    width: 400px;
+.medium_size img{
+    width: 350px;
+}
+.small_size img{
+    width: 250px;
 }
 .noData span{
     color: var(--dark_white);
     font-weight: 600;
     font-size: 14px;
 }
-@media screen and (max-width:420px) {
-    .noData img{
-        width:300px;
+.small_size span{
+    font-size: 12px;
+}
+@media screen and (max-width:360px) {
+    .medium_size img{
+        width:99%;
     } 
 }
-@media screen and (max-width:310px) {
-    .noData img{
-        width:200px;
-    } 
+
+@media screen and (max-width:260px) {
+    .small_size img{
+        width: 99%;
+    }
 }

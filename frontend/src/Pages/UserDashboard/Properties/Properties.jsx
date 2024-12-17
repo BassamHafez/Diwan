@@ -44,7 +44,7 @@ const Properties = () => {
   const [selectedCompoundId, setSelectedCompoundId] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("estates");
   const [statusFiltering, setStatusFiltering] = useState("all");
-  const [searchFilter, setSearchFilter] = useState("all");
+  const [searchFilter, setSearchFilter] = useState("");
   const [compoundStatusFiltering, setCompoundStatusFiltering] = useState("all");
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -248,7 +248,7 @@ const Properties = () => {
       ));
     }
 
-    return <NoData text={key("noItemsFound")} />;
+    return <NoData text={type==="estate"?key("noEstateUnit"):key("noProperty")} type="estate" />;
   };
 
   return (
@@ -725,7 +725,7 @@ const Properties = () => {
               <div className="my-1">
                 <SearchField onSearch={onSearch} text={key("searchEstate")} />
               </div>
-              <div className={`${isArLang?"me-auto":"ms-auto"} my-1`}>
+              <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
                 <CheckPermissions btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}>
                   <ButtonOne
                     onClick={() => setShowModal(true)}
