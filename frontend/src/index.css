@@ -218,6 +218,29 @@ p {
   width: 400px;
 }
 
+.or_span{
+  position: relative;
+  text-align: center;
+}
+.or_span::after{
+  content: "";
+  width: 12.5rem;
+  height: 0.0625rem;
+  background-color: rgb(188, 188, 188);
+  position: absolute;
+  top: 50%;
+  left:1.25rem;
+}
+.or_span::before{
+  content: "";
+  width: 12.5rem;
+  height: 0.0625rem;
+  background-color: rgb(188, 188, 188);
+  position: absolute;
+  top: 50%;
+  right:1.25rem;
+}
+
 @media screen and (max-width: 992px) {
   .main_navbar {
     border-bottom: 1px solid rgb(238, 236, 236);
