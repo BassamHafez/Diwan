@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Tag = require("../models/tagModel");
+const { USER_ACCESS_PERMISSIONS } = require("../utils/globals");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const sendEmail = require("../utils/sendEmail");
@@ -29,40 +30,6 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-const userAccessPermissions = [
-  "FAVORITES",
-  "ADD_COMPOUND",
-  "UPDATE_COMPOUND",
-  "DELETE_COMPOUND",
-  "ADD_ESTATE",
-  "UPDATE_ESTATE",
-  "DELETE_ESTATE",
-  "ADD_CONTRACT",
-  "UPDATE_CONTRACT",
-  "DELETE_CONTRACT",
-  "CANCEL_CONTRACT",
-  "ADD_REVENUE",
-  "UPDATE_REVENUE",
-  "DELETE_REVENUE",
-  "CANCEL_REVENUE",
-  "PAY_REVENUE",
-  "UNPAY_REVENUE",
-  "ADD_EXPENSE",
-  "UPDATE_EXPENSE",
-  "DELETE_EXPENSE",
-  "CANCEL_EXPENSE",
-  "PAY_EXPENSE",
-  "UNPAY_EXPENSE",
-  "ADD_CONTACT",
-  "UPDATE_CONTACT",
-  "DELETE_CONTACT",
-  "ADD_TASK",
-  "UPDATE_TASK",
-  "DELETE_TASK",
-  "COMPLETE_TASK",
-  "UPDATE_ACCOUNT",
-];
-
 exports.signup = catchAsync(async (req, res, next) => {
   const userId = new mongoose.Types.ObjectId();
   const accountId = new mongoose.Types.ObjectId();
@@ -74,7 +41,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     phone: req.body.phone,
     password: req.body.password,
     account: accountId,
-    permissions: userAccessPermissions,
+    permissions: USER_ACCESS_PERMISSIONS,
   };
 
   const accountData = {
@@ -83,7 +50,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     members: [
       {
         user: userId,
-        permissions: userAccessPermissions,
+        permissions: USER_ACCESS_PERMISSIONS,
       },
     ],
   };
