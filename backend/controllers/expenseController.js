@@ -1,5 +1,6 @@
 const Expense = require("../models/expenseModel");
 const Estate = require("../models/estateModel");
+const Compound = require("../models/compoundModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -24,16 +25,33 @@ exports.createExpense = catchAsync(async (req, res, next) => {
   const { estate, compound } = req.body;
 
   if (estate && !compound) {
-    const estateData = await Estate.findById(estate).select("compound").lean();
+    const estateData = await Estate.findById(estate)
+      .select("compound landlord")
+      .lean();
 
     req.body.compound = estateData.compound;
+    req.body.landlord = estateData.landlord;
+
+    if (!req.body.landlord) {
+      const compoundData = await Compound.findById(estateData.compound)
+        .select("landlord")
+        .lean();
+
+      req.body.landlord = compoundData.landlord;
+    }
+  } else if (compound && !estate) {
+    const compoundData = await Compound.findById(compound)
+      .select("landlord")
+      .lean();
+
+    req.body.landlord = compoundData.landlord;
   }
 
-  const newExpense = await Expense.create(req.body);
+  await Expense.create(req.body);
 
   res.status(201).json({
     status: "success",
-    data: newExpense,
+    message: "Expense created successfully",
   });
 });
 

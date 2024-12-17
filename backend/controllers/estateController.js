@@ -365,7 +365,9 @@ exports.getEstateExpenses = catchAsync(async (req, res, next) => {
 exports.createEstateExpense = catchAsync(async (req, res, next) => {
   const estateId = req.params.id;
 
-  const estate = await Estate.findById(estateId).select("_id compound").lean();
+  const estate = await Estate.findById(estateId)
+    .select("_id compound landlord")
+    .lean();
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -373,6 +375,15 @@ exports.createEstateExpense = catchAsync(async (req, res, next) => {
 
   req.body.estate = estateId;
   req.body.compound = estate.compound;
+  req.body.landlord = estate.landlord;
+
+  if (!req.body.landlord && estate.compound) {
+    const compound = await Compound.findById(estate.compound)
+      .select("landlord")
+      .lean();
+
+    req.body.landlord = compound.landlord;
+  }
 
   const expense = await Expense.create(req.body);
 

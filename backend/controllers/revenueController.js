@@ -1,5 +1,6 @@
 const Revenue = require("../models/revenueModel");
 const Estate = require("../models/estateModel");
+const Compound = require("../models/compoundModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -29,18 +30,35 @@ exports.getAllRevenues = catchAsync(async (req, res, next) => {
 exports.createRevenue = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
-  const estate = await Estate.findById(estateId).select("compound").lean();
+  const estate = await Estate.findById(estateId)
+    .select("compound landlord")
+    .lean();
 
-  const revenue = await Revenue.create({
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  if (estate.compound) req.body.compound = estate.compound;
+
+  if (estate.landlord) req.body.landlord = estate.landlord;
+
+  if (!req.body.landlord) {
+    const compound = await Compound.findById(estate.compound)
+      .select("landlord")
+      .lean();
+
+    req.body.landlord = compound.landlord;
+  }
+
+  await Revenue.create({
     ...req.body,
     estate: estateId,
-    compound: estate.compound,
     account: req.user.account,
   });
 
   res.status(201).json({
     status: "success",
-    data: revenue,
+    message: "Revenue created successfully",
   });
 });
 
