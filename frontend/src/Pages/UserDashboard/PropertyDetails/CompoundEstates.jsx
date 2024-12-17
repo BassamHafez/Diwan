@@ -7,19 +7,31 @@ import Property from "../../../Components/Property/Property";
 import { estateStatus } from "../../../Components/Logic/StaticLists";
 import Row from "react-bootstrap/esm/Row";
 import NoData from "../../../Components/UI/Blocks/NoData";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [statusFilter, setStatusFilter] = useState("");
+  const [searchFilter, setSearchFilter] = useState("");
 
-  const filteredEstates = compoundEstates
-    ? compoundEstates.filter(
-        (estate) => !statusFilter || estate.status === statusFilter
-      )
-    : [];
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
+  const filteredEstates =
+    compoundEstates && Array.isArray(compoundEstates)
+      ? compoundEstates.filter((estate) => {
+          const normalizedSearchFilter = searchFilter.toLowerCase();
+          return (
+            (!statusFilter || estate.status === statusFilter) &&
+            (estate.name.toLowerCase().includes(normalizedSearchFilter) ||
+              estate.unitNumber === Number(normalizedSearchFilter))
+          );
+        })
+      : [];
+
   return (
     <>
       <div className={styles.contracts_body}>
@@ -44,7 +56,7 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
         >
           <div className={styles.content_header}>
             <div className={styles.search_field}>
-              <SearchField text={key("searchContract")} />
+              <SearchField onSearch={onSearch} text={key("searchEstateWithUnitNum")} />
             </div>
             <Select
               options={isArLang ? estateStatus["ar"] : estateStatus["en"]}
@@ -72,7 +84,7 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
                   />
                 ))
               ) : (
-                <NoData text={key("noEstates")} />
+                <NoData text={key("noEstateUnit")} smallSize={true} />
               )}
             </Row>
           </div>

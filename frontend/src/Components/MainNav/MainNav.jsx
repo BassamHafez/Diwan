@@ -17,6 +17,7 @@ import {
   faLayerGroup,
   faClipboard,
   faUsers,
+  faScroll,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
 import { useState } from "react";
@@ -31,6 +32,24 @@ const MainNav = () => {
   const navigate = useNavigate();
   const isLogin = useSelector((state) => state.userInfo.isLogin);
   const profileInfo = useSelector((state) => state.profileInfo.data);
+
+  const packageLink = (
+    <NavLink
+      onClick={() => isCollapsed && setIsCollapsed(false)}
+      className={({ isActive }) => (isActive ? styles.active : undefined)}
+      to={"/packages"}
+    >
+      <span>
+        <FontAwesomeIcon
+          className={`${styles.nav_icon} ${
+            isArLang ? styles.ar_icon : styles.en_icon
+          }`}
+          icon={faLayerGroup}
+        />
+        {t("packages")}
+      </span>
+    </NavLink>
+  );
 
   return (
     <>
@@ -128,18 +147,19 @@ const MainNav = () => {
                     className={({ isActive }) =>
                       isActive ? styles.active : undefined
                     }
-                    to={"/packages"}
+                    to={"/reports"}
                   >
                     <span>
                       <FontAwesomeIcon
                         className={`${styles.nav_icon} ${
                           isArLang ? styles.ar_icon : styles.en_icon
                         }`}
-                        icon={faLayerGroup}
+                        icon={faScroll}
                       />
-                      {t("packages")}
+                      {t("reports")}
                     </span>
                   </NavLink>
+                  {packageLink}
                 </>
               ) : (
                 <>
@@ -195,29 +215,11 @@ const MainNav = () => {
                       {t("contact")}
                     </span>
                   </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/packages"}
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faLayerGroup}
-                      />
-                      {t("packages")}
-                    </span>
-                  </NavLink>
+                  {packageLink}
                 </>
               )}
             </Nav>
-            <div
-              className={`${styles.nav_controller}`}
-            >
+            <div className={styles.nav_controller}>
               <Dropdown className={styles.language_icon}>
                 <Dropdown.Toggle
                   className={`${styles.lang_btn} bg-transparent text-dark`}

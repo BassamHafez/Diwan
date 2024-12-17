@@ -105,7 +105,7 @@
   }
   .nav_list a:hover {
     border-bottom: none;
-    scale: 1.01;
+    scale: 1;
     color: var(--sub_color);
     background-color: var(--sub_light);
   }
