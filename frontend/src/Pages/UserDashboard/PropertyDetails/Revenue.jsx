@@ -52,12 +52,13 @@ const Revenue = ({ refetchDetails, details }) => {
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+
   const {
     data: revenuesData,
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["revenuesData", token],
+    queryKey: ["revenuesData",propId,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/revenues`,
@@ -176,210 +177,215 @@ const Revenue = ({ refetchDetails, details }) => {
       : [];
 
   return (
-    <div className={styles.contracts_body}>
-      <div className={styles.header}>
-        <h4>{key("revenues")}</h4>
-        <div>
-          {revenuesData && revenuesData?.data?.length > 0 && (
-            <ButtonOne
-              classes="m-2"
-              borderd
-              color="white"
-              text={key("exportCsv")}
-              onClick={() =>
-                handleDownloadExcelSheet(
-                  revenuesData?.data,
-                  "Revenues.xlsx",
-                  "Revenuse"
-                )
-              }
-            />
-          )}
-          <CheckPermissions btnActions={["ADD_REVENUE"]}>
-            <ButtonOne
-              onClick={() => setShowAddRevenueModal(true)}
-              classes="m-2 bg-navy"
-              borderd
-              text={`${key("addRevenue")}`}
-            />
-          </CheckPermissions>
-        </div>
-      </div>
-
-      <div className={styles.contract_content}>
-        <div className={styles.content_header}>
-          <div className={styles.search_field}>
-            <SearchField onSearch={onSearch} text={key("searchRevenue")} />
-          </div>
-          <div className="d-flex flex-wrap">
-            <Select
-              options={
-                isArLang
-                  ? revenueFilterTypeOptions["ar"]
-                  : revenueFilterTypeOptions["en"]
-              }
-              onChange={(val) =>
-                filterChangeHandler(val ? val.value : null, "type")
-              }
-              className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
-                styles.select_type
-              } my-3`}
-              isRtl={isArLang ? false : true}
-              placeholder={key("type")}
-              isClearable
-            />
-            <Select
-              options={isArLang ? revenuesStatus["ar"] : revenuesStatus["en"]}
-              onChange={(val) =>
-                filterChangeHandler(val ? val.value : null, "status")
-              }
-              className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
-                styles.select_type
-              } my-3`}
-              isRtl={isArLang ? false : true}
-              placeholder={key("status")}
-              isClearable
-            />
+    <>
+      <div className={styles.contracts_body}>
+        <div className={styles.header}>
+          <h4>{key("revenues")}</h4>
+          <div>
+            {revenuesData && revenuesData?.data?.length > 0 && (
+              <ButtonOne
+                classes="m-2"
+                borderd
+                color="white"
+                text={key("exportCsv")}
+                onClick={() =>
+                  handleDownloadExcelSheet(
+                    revenuesData?.data,
+                    "Revenues.xlsx",
+                    "Revenuse"
+                  )
+                }
+              />
+            )}
+            <CheckPermissions btnActions={["ADD_REVENUE"]}>
+              <ButtonOne
+                onClick={() => setShowAddRevenueModal(true)}
+                classes="m-2 bg-navy"
+                borderd
+                text={`${key("addRevenue")}`}
+              />
+            </CheckPermissions>
           </div>
         </div>
 
-        <div className="my-4">
-          {revenuesData || !isFetching ? (
-            revenuesData.data?.length > 0 ? (
-              <div className="scrollableTable">
-                <table className={`${styles.contract_table} table`}>
-                  <thead className={styles.table_head}>
-                    <tr>
-                      <th>{key("singleContactType")}</th>
-                      <th>{key("type")}</th>
-                      <th>{key("amount")}</th>
-                      <th>{key("dueDate")}</th>
-                      <th>{key("status")}</th>
-                      <th>{key("actions")}</th>
-                    </tr>
-                  </thead>
+        <div className={styles.contract_content}>
+          <div className={styles.content_header}>
+            <div className={styles.search_field}>
+              <SearchField onSearch={onSearch} text={key("searchRevenue")} />
+            </div>
+            <div className="d-flex flex-wrap">
+              <Select
+                options={
+                  isArLang
+                    ? revenueFilterTypeOptions["ar"]
+                    : revenueFilterTypeOptions["en"]
+                }
+                onChange={(val) =>
+                  filterChangeHandler(val ? val.value : null, "type")
+                }
+                className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
+                  styles.select_type
+                } my-3`}
+                isRtl={isArLang ? false : true}
+                placeholder={key("type")}
+                isClearable
+              />
+              <Select
+                options={isArLang ? revenuesStatus["ar"] : revenuesStatus["en"]}
+                onChange={(val) =>
+                  filterChangeHandler(val ? val.value : null, "status")
+                }
+                className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                  styles.select_type
+                } my-3`}
+                isRtl={isArLang ? false : true}
+                placeholder={key("status")}
+                isClearable
+              />
+            </div>
+          </div>
 
-                  <tbody className={styles.table_body}>
-                    {filteredRevenues.map((rev) => (
-                      <tr key={rev._id}>
-                        <td>{rev.tenant?.name}</td>
-                        <td>{key(rev.type)}</td>
-                        <td>{rev.amount}</td>
-                        <td>{formattedDate(rev.dueDate)}</td>
-                        <td>
-                          <span
-                            className={`${getStatusBgColor(rev.status)} ${
-                              styles.status_span
-                            }`}
-                          >
-                            {isArLang
-                              ? renamedRevenuesStatus(rev.status, "ar")
-                              : renamedRevenuesStatus(rev.status, "en")}
-                          </span>
-                        </td>
-                        <td>
-                          <Dropdown>
-                            <Dropdown.Toggle
-                              id="dropdown-basic"
-                              className={styles.dropdown_menu}
+          <div className="my-4">
+            {revenuesData || !isFetching ? (
+              revenuesData.data?.length > 0 ? (
+                <div className="scrollableTable">
+                  <table className={`${styles.contract_table} table`}>
+                    <thead className={styles.table_head}>
+                      <tr>
+                        <th>{key("singleContactType")}</th>
+                        <th>{key("type")}</th>
+                        <th>{key("amount")}</th>
+                        <th>{key("dueDate")}</th>
+                        <th>{key("status")}</th>
+                        <th>{key("actions")}</th>
+                      </tr>
+                    </thead>
+
+                    <tbody className={styles.table_body}>
+                      {filteredRevenues.map((rev) => (
+                        <tr key={rev._id}>
+                          <td>{rev.tenant?.name}</td>
+                          <td>{key(rev.type)}</td>
+                          <td>{rev.amount}</td>
+                          <td>{formattedDate(rev.dueDate)}</td>
+                          <td>
+                            <span
+                              className={`${getStatusBgColor(rev.status)} ${
+                                styles.status_span
+                              }`}
                             >
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
+                              {isArLang
+                                ? renamedRevenuesStatus(rev.status, "ar")
+                                : renamedRevenuesStatus(rev.status, "en")}
+                            </span>
+                          </td>
+                          <td>
+                            <Dropdown>
+                              <Dropdown.Toggle
+                                id="dropdown-basic"
+                                className={styles.dropdown_menu}
+                              >
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                              </Dropdown.Toggle>
 
-                            <CheckPermissions
-                              btnActions={[""]}
-                            ></CheckPermissions>
-                            <CheckPermissions
-                              btnActions={[""]}
-                            ></CheckPermissions>
-                            <Dropdown.Menu className={styles.dropdown_list}>
-                              {rev.status === "pending" && (
-                                <CheckPermissions btnActions={["PAY_REVENUE"]}>
-                                  <Dropdown.Item
-                                    onClick={() =>
-                                      mainpulateRev("pay", rev._id)
-                                    }
-                                    className="text-center"
-                                  >
-                                    {key("paid")}
-                                  </Dropdown.Item>
-                                </CheckPermissions>
-                              )}
-                              {rev.status === "paid" && (
-                                <>
+                              <CheckPermissions
+                                btnActions={[""]}
+                              ></CheckPermissions>
+                              <CheckPermissions
+                                btnActions={[""]}
+                              ></CheckPermissions>
+                              <Dropdown.Menu className={styles.dropdown_list}>
+                                {rev.status === "pending" && (
                                   <CheckPermissions
-                                    btnActions={["UNPAY_REVENUE"]}
+                                    btnActions={["PAY_REVENUE"]}
                                   >
                                     <Dropdown.Item
                                       onClick={() =>
-                                        mainpulateRev("unPay", rev._id)
+                                        mainpulateRev("pay", rev._id)
                                       }
                                       className="text-center"
                                     >
-                                      {key("unPaid")}
-                                    </Dropdown.Item>
-                                  </CheckPermissions>
-                                  <Dropdown.Item
-                                    onClick={() =>
-                                      setShowCashReceiptModal(true)
-                                    }
-                                    className="text-center"
-                                  >
-                                    {key("cashReceipt")}
-                                  </Dropdown.Item>
-                                </>
-                              )}
-                              {rev.status !== "paid" &&
-                                rev.status !== "canceled" && (
-                                  <CheckPermissions
-                                    btnActions={["CANCEL_REVENUE"]}
-                                  >
-                                    <Dropdown.Item
-                                      onClick={() =>
-                                        mainpulateRev("cancel", rev._id)
-                                      }
-                                      className="text-center"
-                                    >
-                                      {key("canceled")}
+                                      {key("paid")}
                                     </Dropdown.Item>
                                   </CheckPermissions>
                                 )}
-                              <Dropdown.Item
-                                onClick={() => {
-                                  setRevDetails(rev);
-                                  setShowDetailsModal(true);
-                                }}
-                                className="text-center"
-                              >
-                                {key("details")}
-                              </Dropdown.Item>
-                              <CheckPermissions btnActions={["DELETE_REVENUE"]}>
+                                {rev.status === "paid" && (
+                                  <>
+                                    <CheckPermissions
+                                      btnActions={["UNPAY_REVENUE"]}
+                                    >
+                                      <Dropdown.Item
+                                        onClick={() =>
+                                          mainpulateRev("unPay", rev._id)
+                                        }
+                                        className="text-center"
+                                      >
+                                        {key("unPaid")}
+                                      </Dropdown.Item>
+                                    </CheckPermissions>
+                                    <Dropdown.Item
+                                      onClick={() =>
+                                        setShowCashReceiptModal(true)
+                                      }
+                                      className="text-center"
+                                    >
+                                      {key("cashReceipt")}
+                                    </Dropdown.Item>
+                                  </>
+                                )}
+                                {rev.status !== "paid" &&
+                                  rev.status !== "canceled" && (
+                                    <CheckPermissions
+                                      btnActions={["CANCEL_REVENUE"]}
+                                    >
+                                      <Dropdown.Item
+                                        onClick={() =>
+                                          mainpulateRev("cancel", rev._id)
+                                        }
+                                        className="text-center"
+                                      >
+                                        {key("canceled")}
+                                      </Dropdown.Item>
+                                    </CheckPermissions>
+                                  )}
                                 <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateRev("delete", rev._id)
-                                  }
-                                  className="text-center text-danger"
+                                  onClick={() => {
+                                    setRevDetails(rev);
+                                    setShowDetailsModal(true);
+                                  }}
+                                  className="text-center"
                                 >
-                                  {key("fullyDelete")}
+                                  {key("details")}
                                 </Dropdown.Item>
-                              </CheckPermissions>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                                <CheckPermissions
+                                  btnActions={["DELETE_REVENUE"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      mainpulateRev("delete", rev._id)
+                                    }
+                                    className="text-center text-danger"
+                                  >
+                                    {key("fullyDelete")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <NoData text={key("noRevenues")} smallSize={true} />
+              )
             ) : (
-              <NoData text={key("noRevenues")} smallSize={true} />
-            )
-          ) : (
-            <LoadingOne />
-          )}
+              <LoadingOne />
+            )}
+          </div>
         </div>
       </div>
-
       {showAddRevenueModal && (
         <ModalForm
           show={showAddRevenueModal}
@@ -463,7 +469,7 @@ const Revenue = ({ refetchDetails, details }) => {
           />
         </MainModal>
       )}
-    </div>
+    </>
   );
 };
 

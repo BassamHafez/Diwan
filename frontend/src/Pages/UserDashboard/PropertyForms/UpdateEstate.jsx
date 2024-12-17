@@ -27,7 +27,7 @@ import CreatableSelect from "react-select/creatable";
 import { useParams } from "react-router-dom";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
-const UpdateEstate = ({ hideModal, refetch, estateData }) => {
+const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
@@ -112,16 +112,18 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
     setTagsOptions(myTagsOptions);
   }, [tags]);
 
+  const estateParent=estateParentCompound?estateParentCompound:estateData
+  
   const initialValues = {
     image: "",
     compound: compoundsOptions.find(
-      (option) => option.value === estateData.compound?._id
+      (option) => option.value === estateParentCompound?._id
     ) || { label: key("notSpecified"), value: "not" },
     name: estateData.name || "",
     description: estateData.description || "",
-    region: estateData.region || "",
-    city: estateData.city || "",
-    neighborhood: estateData.neighborhood || "",
+    region: estateParent.region || "",
+    city: estateParent.city || "",
+    neighborhood: estateParent.neighborhood || "",
     address: estateData.address || "",
     tags:
       estateData.tags.map((tag) => {
@@ -131,8 +133,8 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
     area: estateData.area || "",
     waterAccountNumber: estateData.waterAccountNumber || "",
     electricityAccountNumber: estateData.electricityAccountNumber || "",
-    broker: estateData?.broker?._id || "",
-    landlord: estateData?.landlord?._id || "",
+    broker: estateParent?.broker?._id || "",
+    landlord: estateParent?.landlord?._id || "",
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -250,11 +252,11 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
       let cities;
       let districts;
       if (isArLang) {
-        cities = citiesByRegionAr[estateData.region] || [];
-        districts = districtsByCityAr[estateData.city] || [];
+        cities = citiesByRegionAr[estateParent.region] || [];
+        districts = districtsByCityAr[estateParent.city] || [];
       } else {
-        cities = citiesByRegion[estateData.region] || [];
-        districts = districtsByCity[estateData.city] || [];
+        cities = citiesByRegion[estateParent.region] || [];
+        districts = districtsByCity[estateParent.city] || [];
       }
       let finalDistricts = [
         { label: key("notSpecified"), value: "not specified" },
@@ -266,7 +268,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData }) => {
     };
 
     settingCityAndDistrictOptionsOptions();
-  }, [estateData, isArLang, key]);
+  }, [estateParent, isArLang, key]);
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];

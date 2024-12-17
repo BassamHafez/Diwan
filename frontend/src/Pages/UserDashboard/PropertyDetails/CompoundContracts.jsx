@@ -35,7 +35,7 @@ const CompoundContracts = ({ compoundEstates }) => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["contracts", token],
+    queryKey: ["compContracts",compId,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `compounds/${compId}/current-contracts`,

@@ -61,7 +61,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: [myQueryKey, token],
+    queryKey: [myQueryKey,myParam,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `${myEndPoint}/${myParam}/expenses`,
@@ -169,265 +169,278 @@ const Expenses = ({ isCompound, refetchDetails }) => {
       : [];
 
   return (
-    <div className={styles.contracts_body}>
-      <div className={styles.header}>
-        <h4>{key("expenses")}</h4>
-        <div>
-          {expenses && expenses?.data?.length > 0 && (
-            <ButtonOne
-              classes="m-2"
-              borderd
-              color="white"
-              text={key("exportCsv")}
-              onClick={() =>
-                handleDownloadExcelSheet(
-                  expenses?.data,
-                  "Contracts.xlsx",
-                  "Contracts"
-                )
-              }
-            />
-          )}
-          <CheckPermissions btnActions={["ADD_EXPENSE"]}>
-            <ButtonOne
-              onClick={() => setShowAddExModal(true)}
-              classes="m-2 bg-navy"
-              borderd
-              text={key("addExpenses")}
-            />
-          </CheckPermissions>
-        </div>
-      </div>
-
-      <div className={styles.contract_content}>
-        <div className={styles.content_header}>
-          <div className="d-flex flex-wrap">
-            <Select
-              options={
-                isArLang ? expensesTypeOptions["ar"] : expensesTypeOptions["en"]
-              }
-              onChange={(val) =>
-                filterChangeHandler(val ? val.value : null, "type")
-              }
-              className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
-                styles.select_type
-              } my-3`}
-              isRtl={isArLang ? false : true}
-              placeholder={key("type")}
-              isClearable
-            />
-            <Select
-              options={
-                isArLang
-                  ? expensesStatusOptions["ar"]
-                  : expensesStatusOptions["en"]
-              }
-              onChange={(val) =>
-                filterChangeHandler(val ? val.value : null, "status")
-              }
-              className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
-                styles.select_type
-              } my-3`}
-              isRtl={isArLang ? false : true}
-              placeholder={key("status")}
-              isClearable
-            />
+    <>
+      <div className={styles.contracts_body}>
+        <div className={styles.header}>
+          <h4>{key("expenses")}</h4>
+          <div>
+            {expenses && expenses?.data?.length > 0 && (
+              <ButtonOne
+                classes="m-2"
+                borderd
+                color="white"
+                text={key("exportCsv")}
+                onClick={() =>
+                  handleDownloadExcelSheet(
+                    expenses?.data,
+                    "Contracts.xlsx",
+                    "Contracts"
+                  )
+                }
+              />
+            )}
+            <CheckPermissions btnActions={["ADD_EXPENSE"]}>
+              <ButtonOne
+                onClick={() => setShowAddExModal(true)}
+                classes="m-2 bg-navy"
+                borderd
+                text={key("addExpenses")}
+              />
+            </CheckPermissions>
           </div>
         </div>
 
-        <div className="my-4">
-          {expenses || !isFetching ? (
-            expenses.data?.length > 0 ? (
-              <div className="scrollableTable">
-                <table className={`${styles.contract_table} table`}>
-                  <thead className={styles.table_head}>
-                    <tr>
-                      <th>{key("type")}</th>
-                      <th>{key("amount")}</th>
-                      <th>{key("dueDate")}</th>
-                      <th>{key("status")}</th>
-                      <th>{key("notes")}</th>
-                      <th>{key("actions")}</th>
-                    </tr>
-                  </thead>
+        <div className={styles.contract_content}>
+          <div className={styles.content_header}>
+            <div className="d-flex flex-wrap">
+              <Select
+                options={
+                  isArLang
+                    ? expensesTypeOptions["ar"]
+                    : expensesTypeOptions["en"]
+                }
+                onChange={(val) =>
+                  filterChangeHandler(val ? val.value : null, "type")
+                }
+                className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
+                  styles.select_type
+                } my-3`}
+                isRtl={isArLang ? false : true}
+                placeholder={key("type")}
+                isClearable
+              />
+              <Select
+                options={
+                  isArLang
+                    ? expensesStatusOptions["ar"]
+                    : expensesStatusOptions["en"]
+                }
+                onChange={(val) =>
+                  filterChangeHandler(val ? val.value : null, "status")
+                }
+                className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                  styles.select_type
+                } my-3`}
+                isRtl={isArLang ? false : true}
+                placeholder={key("status")}
+                isClearable
+              />
+            </div>
+          </div>
 
-                  <tbody className={styles.table_body}>
-                    {filteredExpenses.map((ex) => (
-                      <tr key={ex._id}>
-                        <td>{key(ex.type)}</td>
-                        <td>{ex.amount}</td>
-                        <td>{formattedDate(ex.dueDate)}</td>
-                        <td>
-                          <span
-                            className={`${getStatusBgColor(ex.status)} ${
-                              styles.status_span
-                            }`}
-                          >
-                            {isArLang
-                              ? renamedExpensesStatusMethod(ex.status, "ar")
-                              : renamedExpensesStatusMethod(ex.status, "en")}
-                          </span>
-                        </td>
-                        <td className={styles.note_td}>
-                          {ex.note ? ex.note : "-"}
-                        </td>
-                        <td>
-                          <Dropdown>
-                            <Dropdown.Toggle
-                              id="dropdown-basic"
-                              className={styles.dropdown_menu}
+          <div className="my-4">
+            {expenses || !isFetching ? (
+              expenses.data?.length > 0 ? (
+                <div className="scrollableTable">
+                  <table className={`${styles.contract_table} table`}>
+                    <thead className={styles.table_head}>
+                      <tr>
+                        <th>{key("type")}</th>
+                        <th>{key("amount")}</th>
+                        <th>{key("dueDate")}</th>
+                        <th>{key("status")}</th>
+                        <th>{key("notes")}</th>
+                        <th>{key("actions")}</th>
+                      </tr>
+                    </thead>
+
+                    <tbody className={styles.table_body}>
+                      {filteredExpenses.map((ex) => (
+                        <tr key={ex._id}>
+                          <td>{key(ex.type)}</td>
+                          <td>{ex.amount}</td>
+                          <td>{formattedDate(ex.dueDate)}</td>
+                          <td>
+                            <span
+                              className={`${getStatusBgColor(ex.status)} ${
+                                styles.status_span
+                              }`}
                             >
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              {ex.status === "pending" && (
-                                <CheckPermissions btnActions={["PAY_EXPENSE"]}>
-                                  <Dropdown.Item
-                                    onClick={() =>
-                                      mainpulateExpenses("pay", ex._id)
-                                    }
-                                    className="text-center"
-                                  >
-                                    {key("paid")}
-                                  </Dropdown.Item>
-                                </CheckPermissions>
-                              )}
-                              {ex.status === "paid" && (
-                                <CheckPermissions
-                                  btnActions={["UNPAY_EXPENSE"]}
-                                >
-                                  <Dropdown.Item
-                                    onClick={() =>
-                                      mainpulateExpenses("unPay", ex._id)
-                                    }
-                                    className="text-center"
-                                  >
-                                    {key("unPaid")}
-                                  </Dropdown.Item>
-                                </CheckPermissions>
-                              )}
-                              <CheckPermissions btnActions={["UPDATE_EXPENSE"]}>
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setExDetails(ex);
-                                    setShowUpdateModal(true);
-                                  }}
-                                  className="text-center"
-                                >
-                                  {key("ediet")}
-                                </Dropdown.Item>
-                              </CheckPermissions>
-
-                              <Dropdown.Item
-                                onClick={() => {
-                                  setExDetails(ex);
-                                  setShowDetailsModal(true);
-                                }}
-                                className="text-center"
+                              {isArLang
+                                ? renamedExpensesStatusMethod(ex.status, "ar")
+                                : renamedExpensesStatusMethod(ex.status, "en")}
+                            </span>
+                          </td>
+                          <td className={styles.note_td}>
+                            {ex.note ? ex.note : "-"}
+                          </td>
+                          <td>
+                            <Dropdown>
+                              <Dropdown.Toggle
+                                id="dropdown-basic"
+                                className={styles.dropdown_menu}
                               >
-                                {key("details")}
-                              </Dropdown.Item>
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                              </Dropdown.Toggle>
 
-                              {ex.status !== "paid" &&
-                                ex.status !== "cancelled" && (
+                              <Dropdown.Menu>
+                                {ex.status === "pending" && (
                                   <CheckPermissions
-                                    btnActions={["CANCEL_EXPENSE"]}
+                                    btnActions={["PAY_EXPENSE"]}
                                   >
                                     <Dropdown.Item
                                       onClick={() =>
-                                        mainpulateExpenses("cancel", ex._id)
+                                        mainpulateExpenses("pay", ex._id)
                                       }
                                       className="text-center"
                                     >
-                                      {key("canceled")}
+                                      {key("paid")}
                                     </Dropdown.Item>
                                   </CheckPermissions>
                                 )}
-                              <CheckPermissions btnActions={["DELETE_EXPENSE"]}>
-                                <Dropdown.Item
-                                  onClick={() =>
-                                    mainpulateExpenses("delete", ex._id)
-                                  }
-                                  className="text-center text-danger"
+                                {ex.status === "paid" && (
+                                  <CheckPermissions
+                                    btnActions={["UNPAY_EXPENSE"]}
+                                  >
+                                    <Dropdown.Item
+                                      onClick={() =>
+                                        mainpulateExpenses("unPay", ex._id)
+                                      }
+                                      className="text-center"
+                                    >
+                                      {key("unPaid")}
+                                    </Dropdown.Item>
+                                  </CheckPermissions>
+                                )}
+                                <CheckPermissions
+                                  btnActions={["UPDATE_EXPENSE"]}
                                 >
-                                  {key("fullyDelete")}
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setExDetails(ex);
+                                      setShowUpdateModal(true);
+                                    }}
+                                    className="text-center"
+                                  >
+                                    {key("ediet")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
+
+                                <Dropdown.Item
+                                  onClick={() => {
+                                    setExDetails(ex);
+                                    setShowDetailsModal(true);
+                                  }}
+                                  className="text-center"
+                                >
+                                  {key("details")}
                                 </Dropdown.Item>
-                              </CheckPermissions>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : ( 
-              <NoData type="expenses" text={key("noExpenses")} smallSize={true} />
-            )
-          ) : (
-            <LoadingOne />
-          )}
-        </div>
-      </div>
 
-      {showAddExModal && (
-        <ModalForm
-          show={showAddExModal}
-          onHide={() => setShowAddExModal(false)}
-        >
-          <AddExpenses
-            hideModal={() => setShowAddExModal(false)}
-            refetch={refetch}
-            isCompound={isCompound}
-          />
-        </ModalForm>
-      )}
-      {showUpdateModal && (
-        <ModalForm
-          show={showUpdateModal}
-          onHide={() => setShowUpdateModal(false)}
-        >
-          <UpdateExpenses
-            hideModal={() => setShowUpdateModal(false)}
-            refetch={refetch}
-            exDetails={exDetails}
-          />
-        </ModalForm>
-      )}
-      {showDeleteModal && (
-        <MainModal
-          show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
-          confirmFun={deleteEx}
-          cancelBtn={key("cancel")}
-          okBtn={key("delete")}
-        >
-          <h5>{key("deleteText")}</h5>
-        </MainModal>
-      )}
-      {showDetailsModal && (
-        <MainModal
-          show={showDetailsModal}
-          onHide={() => setShowDetailsModal(false)}
-          cancelBtn={key("cancel")}
-          okBtn={key("download")}
-          confirmFun={() => generatePDF(exDetails._id, "ExpenseDetails")}
-          title={key("expensesDetails")}
-          modalSize={"lg"}
-        >
-          <ExpensesDetails exDetails={exDetails} />
-          <div className="d-none">
-            <div
-              id={`${exDetails._id}`}
-              className="d-flex justify-content-center align-items-center flex-column"
-            >
-              <ExpensesDetails exDetails={exDetails} />
-            </div>
+                                {ex.status !== "paid" &&
+                                  ex.status !== "cancelled" && (
+                                    <CheckPermissions
+                                      btnActions={["CANCEL_EXPENSE"]}
+                                    >
+                                      <Dropdown.Item
+                                        onClick={() =>
+                                          mainpulateExpenses("cancel", ex._id)
+                                        }
+                                        className="text-center"
+                                      >
+                                        {key("canceled")}
+                                      </Dropdown.Item>
+                                    </CheckPermissions>
+                                  )}
+                                <CheckPermissions
+                                  btnActions={["DELETE_EXPENSE"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() =>
+                                      mainpulateExpenses("delete", ex._id)
+                                    }
+                                    className="text-center text-danger"
+                                  >
+                                    {key("fullyDelete")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <NoData
+                  type="expenses"
+                  text={key("noExpenses")}
+                  smallSize={true}
+                />
+              )
+            ) : (
+              <LoadingOne />
+            )}
           </div>
-        </MainModal>
-      )}
+        </div>
 
+        {showAddExModal && (
+          <ModalForm
+            show={showAddExModal}
+            onHide={() => setShowAddExModal(false)}
+          >
+            <AddExpenses
+              hideModal={() => setShowAddExModal(false)}
+              refetch={refetch}
+              isCompound={isCompound}
+            />
+          </ModalForm>
+        )}
+        {showUpdateModal && (
+          <ModalForm
+            show={showUpdateModal}
+            onHide={() => setShowUpdateModal(false)}
+          >
+            <UpdateExpenses
+              hideModal={() => setShowUpdateModal(false)}
+              refetch={refetch}
+              exDetails={exDetails}
+            />
+          </ModalForm>
+        )}
+        {showDeleteModal && (
+          <MainModal
+            show={showDeleteModal}
+            onHide={() => setShowDeleteModal(false)}
+            confirmFun={deleteEx}
+            cancelBtn={key("cancel")}
+            okBtn={key("delete")}
+          >
+            <h5>{key("deleteText")}</h5>
+          </MainModal>
+        )}
+        {showDetailsModal && (
+          <MainModal
+            show={showDetailsModal}
+            onHide={() => setShowDetailsModal(false)}
+            cancelBtn={key("cancel")}
+            okBtn={key("download")}
+            confirmFun={() => generatePDF(exDetails._id, "ExpenseDetails")}
+            title={key("expensesDetails")}
+            modalSize={"lg"}
+          >
+            <ExpensesDetails exDetails={exDetails} />
+            <div className="d-none">
+              <div
+                id={`${exDetails._id}`}
+                className="d-flex justify-content-center align-items-center flex-column"
+              >
+                <ExpensesDetails exDetails={exDetails} />
+              </div>
+            </div>
+          </MainModal>
+        )}
+      </div>
       {showPayExpensesModal && (
         <ModalForm
           show={showPayExpensesModal}
@@ -443,7 +456,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
           />
         </ModalForm>
       )}
-    </div>
+    </>
   );
 };
 
