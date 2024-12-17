@@ -16,7 +16,7 @@ const { uploadSingleImage } = require("../utils/uploadImage");
 const estatesPopOptions = [
   {
     path: "compound",
-    select: "name",
+    select: "name region city",
   },
 ];
 
@@ -32,7 +32,7 @@ const estatePopOptions = [
 ];
 
 const estatesSelectFields =
-  "compound name description region city image inFavorites status tags";
+  "compound name description region city image inFavorites status tags unitNumber";
 
 const compoundSelectFields = "name address region city neighborhood image";
 
