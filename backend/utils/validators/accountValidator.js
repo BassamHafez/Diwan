@@ -1,39 +1,6 @@
 const { check } = require("express-validator");
 const validatorMiddleware = require("./validatorMiddleware");
-
-const userAccessPermissions = [
-  "FAVORITES",
-  "ADD_COMPOUND",
-  "UPDATE_COMPOUND",
-  "DELETE_COMPOUND",
-  "ADD_ESTATE",
-  "UPDATE_ESTATE",
-  "DELETE_ESTATE",
-  "ADD_CONTRACT",
-  "UPDATE_CONTRACT",
-  "DELETE_CONTRACT",
-  "CANCEL_CONTRACT",
-  "ADD_REVENUE",
-  "UPDATE_REVENUE",
-  "DELETE_REVENUE",
-  "CANCEL_REVENUE",
-  "PAY_REVENUE",
-  "UNPAY_REVENUE",
-  "ADD_EXPENSE",
-  "UPDATE_EXPENSE",
-  "DELETE_EXPENSE",
-  "CANCEL_EXPENSE",
-  "PAY_EXPENSE",
-  "UNPAY_EXPENSE",
-  "ADD_CONTACT",
-  "UPDATE_CONTACT",
-  "DELETE_CONTACT",
-  "ADD_TASK",
-  "UPDATE_TASK",
-  "DELETE_TASK",
-  "COMPLETE_TASK",
-  "UPDATE_ACCOUNT",
-];
+const { USER_ACCESS_PERMISSIONS } = require("../globals");
 
 exports.subscribeValidator = [
   check("id")
@@ -201,7 +168,7 @@ exports.addMemberValidator = [
     .withMessage("Permission must be a string")
     .notEmpty()
     .withMessage("Permission cannot be empty")
-    .isIn(userAccessPermissions)
+    .isIn(USER_ACCESS_PERMISSIONS)
     .withMessage((value) => `Invalid permission: ${value}`),
 
   validatorMiddleware,
@@ -231,7 +198,7 @@ exports.updateMemberValidator = [
     .withMessage("Permission must be a string")
     .notEmpty()
     .withMessage("Permission cannot be empty")
-    .isIn(userAccessPermissions)
+    .isIn(USER_ACCESS_PERMISSIONS)
     .withMessage((value) => `Invalid permission: ${value}`),
 
   validatorMiddleware,
