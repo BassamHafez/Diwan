@@ -1,10 +1,11 @@
 import noDataImg from "../../../assets/noData.jpg";
 import finishTasks from "../../../assets/finishTasks.jpg";
 import noExpenses from "../../../assets/noExpenses.png";
+import estate from "../../../assets/estate.jpg";
 
 import styles from "./NoData.module.css";
 
-const NoData = ({text,type}) => {
+const NoData = ({text,type,smallSize}) => {
   let myImage=noDataImg;
   switch (type) {
     case "tasks":
@@ -13,6 +14,9 @@ const NoData = ({text,type}) => {
     case "expenses":
       myImage=noExpenses
       break;
+    case "estate":
+      myImage=estate
+      break;
 
     default:
       myImage=noDataImg
@@ -20,7 +24,7 @@ const NoData = ({text,type}) => {
   }
 
   return (
-    <div className={styles.noData}>
+    <div className={`${styles.noData} ${smallSize?styles.small_size:styles.medium_size}`}>
       <img src={myImage} alt="noDataImg" />
       <span>{text}</span>
     </div>

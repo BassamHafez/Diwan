@@ -287,7 +287,7 @@ const Contracts = ({ details }) => {
                 </table>
               </div>
             ) : (
-              <NoData text={key("noContracts")} />
+              <NoData text={key("noContracts")} smallSize={true} />
             )
           ) : (
             <LoadingOne />

@@ -362,8 +362,8 @@ const Expenses = ({ isCompound, refetchDetails }) => {
                   </tbody>
                 </table>
               </div>
-            ) : (
-              <NoData type="expenses" text={key("noExpenses")} />
+            ) : ( 
+              <NoData type="expenses" text={key("noExpenses")} smallSize={true} />
             )
           ) : (
             <LoadingOne />

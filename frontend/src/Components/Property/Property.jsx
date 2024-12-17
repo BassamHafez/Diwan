@@ -34,7 +34,7 @@ const Property = ({
     }
   };
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
   }, []);
 
   const getStatusBgColor = (status) => {
@@ -123,19 +123,19 @@ const Property = ({
 
           <p className={styles.desc}>{property.description}</p>
 
-          {!isCompoundDetailsPage && (
-            <div className={isArLang ? "text-start" : "text-end"}>
-              <span
-                className={`${styles.compound_badge} ${
-                  hideCompound ? styles.percent_estate_badge : ""
-                }`}
-              >
-                {hideCompound
-                  ? renderEstateInfo(property)
-                  : renderCompoundName(property)}
-              </span>
-            </div>
-          )}
+          <div className={isArLang ? "text-start" : "text-end"}>
+            <span
+              className={`${styles.compound_badge} ${
+                hideCompound ? styles.percent_estate_badge : ""
+              }`}
+            >
+              {isCompoundDetailsPage
+                ? `${key("unitNumber")} ${property.unitNumber}`
+                : hideCompound
+                ? renderEstateInfo(property)
+                : renderCompoundName(property)}
+            </span>
+          </div>
         </div>
       </div>
     </Col>

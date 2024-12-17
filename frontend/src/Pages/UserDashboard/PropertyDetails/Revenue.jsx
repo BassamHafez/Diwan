@@ -372,7 +372,7 @@ const Revenue = ({ refetchDetails, details }) => {
                 </table>
               </div>
             ) : (
-              <NoData text={key("noRevenues")} />
+              <NoData text={key("noRevenues")} smallSize={true} />
             )
           ) : (
             <LoadingOne />
