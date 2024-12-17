@@ -467,5 +467,9 @@
   "showReportSum":"Show summaries",
   "netProfit":"Net profit",
   "theCommission":"Commission",
-  "incomePerEstate":"Income per Estate"
+  "incomePerEstate":"Income per Estate",
+  "unitNumber":"Unit Number",
+  "searchEstateWithUnitNum":"Search by name or Number",
+  "noProperty":"There is no estates",
+  "noEstateUnit":"There is no units"
 }

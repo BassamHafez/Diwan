@@ -462,5 +462,9 @@
   "showReportSum":"إظهار الملخصات",
   "netProfit":"صافي الربح",
   "theCommission":"العمولة",
-  "incomePerEstate":"الدخل لكل عقار"
+  "incomePerEstate":"الدخل لكل عقار",
+  "unitNumber":"الوحدة رقم",
+  "searchEstateWithUnitNum":"ابحث بالاسم أو الرقم",
+  "noProperty":"لا يوجد عقارات",
+  "noEstateUnit":"لا يوجد وحدات"
 }

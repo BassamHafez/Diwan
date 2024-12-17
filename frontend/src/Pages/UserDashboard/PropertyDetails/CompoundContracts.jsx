@@ -200,7 +200,7 @@ const CompoundContracts = ({ compoundEstates }) => {
                 </table>
               </div>
             ) : (
-              <NoData text={key("noCurrentContracts")} />
+              <NoData text={key("noCurrentContracts")} smallSize={true} />
             )
           ) : (
             <LoadingOne />
