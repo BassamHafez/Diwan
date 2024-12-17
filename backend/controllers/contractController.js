@@ -62,7 +62,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const estatePromise = isActiveContract
     ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : Estate.findById(estateId).select("_id").lean();
+    : Estate.findById(estateId).select("_id compound").lean();
 
   const [estate, overlappingContract] = await Promise.all([
     estatePromise,
@@ -81,6 +81,8 @@ exports.createContract = catchAsync(async (req, res, next) => {
       )
     );
   }
+
+  if (estate.compound) req.body.compound = estate.compound;
 
   const contract = await Contract.create({
     ...req.body,
