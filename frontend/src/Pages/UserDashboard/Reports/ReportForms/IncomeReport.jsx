@@ -14,11 +14,12 @@ import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage
 import styles from "./ReportForm.module.css";
 import { faBuilding } from "@fortawesome/free-regular-svg-icons";
 
-const SearchLandLordReport = ({
+const IncomeReport = ({
   refetch,
   compoundsOptions,
   estatesOptions,
   landlordOptions,
+  type,
 }) => {
   const [isCompound, setIsCompound] = useState(false);
 
@@ -41,7 +42,7 @@ const SearchLandLordReport = ({
     compound: "",
     startDate: "",
     endDate: "",
-    showSum: false,
+    // showSum: false,
   };
 
   const onSubmit = (values) => {
@@ -60,12 +61,14 @@ const SearchLandLordReport = ({
       updatedValues.landlord = values.landlord;
     }
     console.log(updatedValues);
+
+    const endPoint = type === "incomeReport" ? "income" : "income-details";
     mutate(
       {
         formData: updatedValues,
         token: token,
         method: "add",
-        type: `reports`,
+        type: `reports/${endPoint}`,
       },
       {
         onSuccess: (data) => {
@@ -117,7 +120,33 @@ const SearchLandLordReport = ({
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
-            <Col sm={6}>
+            <Col lg={6} className="position-relative">
+              <ul className=" d-flex flex-column flex-sm-row justify-content-center position-absolute top-0 start-0 mt-0 mt-sm-2 z-3">
+                <li
+                  onClick={() => setIsCompound(true)}
+                  className={`mx-2 ${
+                    isCompound ? styles.active : styles.unActive_choice
+                  }`}
+                >
+                  <FontAwesomeIcon
+                    icon={faBuilding}
+                    className={isArLang ? "ms-1" : "me-1"}
+                  />
+                  {key("estate")}
+                </li>
+                <li
+                  onClick={() => setIsCompound(false)}
+                  className={`mx-2 ${
+                    !isCompound ? styles.active : styles.unActive_choice
+                  }`}
+                >
+                  <FontAwesomeIcon
+                    icon={faCouch}
+                    className={isArLang ? "ms-1" : "me-1"}
+                  />
+                  {key("unit")}
+                </li>
+              </ul>
               {!isCompound ? (
                 <div className="field mb-1">
                   <label htmlFor="estate">{key("theUnit")}</label>
@@ -156,8 +185,8 @@ const SearchLandLordReport = ({
                 </div>
               )}
             </Col>
-            <Col md={6} className="d-flex align-items-center">
-              <ul className="h-100 d-flex flex-column justify-content-end">
+            {/* <Col md={6} className="d-flex align-items-center">
+              <ul className="h-100 d-flex justify-content-end">
                 <li
                   onClick={() => setIsCompound(true)}
                   className={`my-1 ${
@@ -168,7 +197,7 @@ const SearchLandLordReport = ({
                     icon={faBuilding}
                     className={isArLang ? "ms-1" : "me-1"}
                   />
-                  {key("compound")}
+                  {key("estate")}
                 </li>
                 <li
                   onClick={() => setIsCompound(false)}
@@ -180,13 +209,14 @@ const SearchLandLordReport = ({
                     icon={faCouch}
                     className={isArLang ? "ms-1" : "me-1"}
                   />
-                  {key("theUnit")}
+                  {key("unit")}
                 </li>
               </ul>
-            </Col>
-            <Col sm={6}>
+            </Col> */}
+
+            <Col lg={6}>
               <div className="field">
-                <label htmlFor="landlord">{key("landlord")}</label>
+                <label htmlFor="landlord">{key("theLandlord")}</label>
                 <Select
                   id="landlord"
                   name="landlord"
@@ -202,7 +232,8 @@ const SearchLandLordReport = ({
                 <ErrorMessage name="landlord" component={InputErrorMessage} />
               </div>
             </Col>
-            <Col sm={6} className="d-flex align-items-center">
+
+            {/* <Col sm={6} className="d-flex align-items-center">
               <div className="form-check form-switch d-flex align-items-center mt-2">
                 <label
                   className="form-check-label mx-2"
@@ -219,7 +250,7 @@ const SearchLandLordReport = ({
                   onChange={(e) => setFieldValue("showSum", e.target.checked)}
                 />
               </div>
-            </Col>
+            </Col> */}
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="startDate">
@@ -257,4 +288,4 @@ const SearchLandLordReport = ({
   );
 };
 
-export default SearchLandLordReport;
+export default IncomeReport;

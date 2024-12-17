@@ -22,6 +22,8 @@ const Property = ({
   isCompoundDetailsPage,
   rentedEstatesCountObj,
 }) => {
+  
+  const parentCompound = property.compound ? property.compound : property;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
   const navigate = useNavigate();
@@ -51,7 +53,9 @@ const Property = ({
   };
 
   const renderCompoundName = (property) => {
-    return property.compound?.name || key("noCompound");
+    return property.compound
+      ? `${property.compound?.name} ${property?.unitNumber || ""}`
+      : key("noCompound");
   };
 
   const renderEstateInfo = (property) => {
@@ -70,6 +74,7 @@ const Property = ({
       "unit"
     )} (${rentedPercentage}%)`;
   };
+
 
   return (
     <Col
@@ -116,8 +121,8 @@ const Property = ({
                 icon={faLocationDot}
                 className={`${isArLang ? "ms-1" : "me-1"} color-main`}
               />
-              {property.region} (
-              <span className="mini_word">{property.city}</span>)
+              {parentCompound.region} (
+              <span className="mini_word">{parentCompound.city}</span>)
             </span>
           </div>
 

@@ -2,7 +2,7 @@
     opacity: 1;
     cursor: pointer;
     color: var(--main_color);
-    transition: all .4s;
+    transition: opacity .4s;
 }
 
 .unActive_choice{
@@ -11,5 +11,5 @@
 }
 
 .active:hover,.unActive_choice:hover{
-    scale: 1.1;
+    opacity: .8;
 }
