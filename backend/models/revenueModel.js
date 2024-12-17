@@ -45,6 +45,10 @@ const revenueSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Compound",
     },
+    landlord: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "LandlordContact",
+    },
     account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
