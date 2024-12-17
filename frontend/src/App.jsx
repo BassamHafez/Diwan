@@ -31,6 +31,8 @@ import CustomPackages from "./Pages/Packages/CustomPackages";
 import PageNotFound from "./Pages/Error/PageNotFound";
 import MainError from "./Pages/Error/MainError";
 import Help from "./Pages/Help/Help";
+import Reports from "./Pages/UserDashboard/Reports/Reports";
+import ForgetPassword from "./Pages/Auth/ForgetPassword/ForgetPassword";
 
 const router = createBrowserRouter(
   [
@@ -48,6 +50,7 @@ const router = createBrowserRouter(
         { path: "login", element: <Login /> },
         { path: "register", element: <Register /> },
         { path: "help", element: <Help /> },
+        { path: "forget-password", element: <ForgetPassword /> },
         //userDashboard
         { path: "dashboard", element: <UserHome /> },
         { path: "properties", element: <Properties /> },
@@ -56,6 +59,7 @@ const router = createBrowserRouter(
         { path: "contacts", element: <Contacts /> },
         { path: "tasks", element: <Tasks /> },
         { path: "profile/:userId", element: <UserProfile /> },
+        { path: "reports", element: <Reports /> },
         { path: "*", element: <PageNotFound /> },
       ],
     },

@@ -7,7 +7,7 @@ const MainError = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{minHeight:"100vh"}} className="d-flex flex-column justify-content-center align-items-center p-2">
+    <div style={{Height:"100vh"}} className="d-flex flex-column justify-content-center align-items-center">
       <img
         className="standard_img"
         src={notFoundImg}
@@ -18,7 +18,7 @@ const MainError = () => {
         {key("contactSupport")} <Link>{key("here")}</Link>
       </span>
       <div className="py-5">
-        <button className="btn btn-secondary" onClick={() => navigate("/")}>{key("home")}</button>
+        <button className="btn bg-main py-2 px-5" style={{transition:"scale .3s"}} onClick={() => navigate("/")}>{key("home")}</button>
       </div>
     </div>
   );
