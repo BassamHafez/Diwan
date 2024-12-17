@@ -19,7 +19,7 @@ import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("incomeReport");
   const [landlordOptions, setLandlordOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [estatesOptions, setEstatesOptions] = useState([]);
@@ -209,6 +209,7 @@ const Reports = () => {
                   compoundsOptions={compoundsOptions}
                   estatesOptions={estatesOptions}
                   // refetch={refetch}
+                  type={typeFilter}
                 />
               )}
             </div>

@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
-import SearchLandLordReport from "./ReportForms/SearchLandLordReport";
 import styles from "./Reports.module.css";
 import { formattedDate } from "../../../Components/Logic/LogicFun";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import IncomeReport from "./ReportForms/IncomeReport";
 
 const fakeData = [];
 
@@ -12,18 +12,20 @@ const LandlordReport = ({
   estatesOptions,
   landlordOptions,
   refetch,
+  type
 }) => {
   const { t: key } = useTranslation();
 
   return (
     <div>
-      <h2 className="my-3">{key("landlordReport")}</h2>
+      <h2 className="my-3">{key(type)} ({key("theLandlord")})</h2>
       <div>
-        <SearchLandLordReport
+        <IncomeReport
           landlordOptions={landlordOptions}
           compoundsOptions={compoundsOptions}
           estatesOptions={estatesOptions}
           refetch={refetch}
+          type={type}
         />
       </div>
 
