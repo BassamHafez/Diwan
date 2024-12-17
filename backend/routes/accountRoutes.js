@@ -17,8 +17,8 @@ router.get("/my-account", accountController.getMyAccount);
 
 router.patch(
   "/:id",
-  accountValidator.updateAccountValidator,
   authController.checkPermission("UPDATE_ACCOUNT"),
+  accountValidator.updateAccountValidator,
   accountController.updateAccount
 );
 

@@ -12,9 +12,9 @@ router
   .route("/")
   .get(filterAccountResults, serviceContactController.getAllServiceContacts)
   .post(
+    authController.checkPermission("ADD_CONTACT"),
     contactValidator.createContactValidator,
     setAccountId,
-    authController.checkPermission("ADD_CONTACT"),
     serviceContactController.createServiceContact
   );
 
@@ -25,13 +25,13 @@ router
     serviceContactController.getServiceContact
   )
   .patch(
-    contactValidator.updateContactValidator,
     authController.checkPermission("UPDATE_CONTACT"),
+    contactValidator.updateContactValidator,
     serviceContactController.updateServiceContact
   )
   .delete(
-    contactValidator.getContactValidator,
     authController.checkPermission("DELETE_CONTACT"),
+    contactValidator.getContactValidator,
     serviceContactController.deleteServiceContact
   );
 

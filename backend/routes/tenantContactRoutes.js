@@ -12,9 +12,9 @@ router
   .route("/")
   .get(filterAccountResults, tenantContactController.getAllTenantContacts)
   .post(
+    authController.checkPermission("ADD_CONTACT"),
     contactValidator.createTenantContactValidator,
     setAccountId,
-    authController.checkPermission("ADD_CONTACT"),
     tenantContactController.createTenantContact
   );
 
@@ -25,13 +25,13 @@ router
     tenantContactController.getTenantContact
   )
   .patch(
-    contactValidator.updateTenantContactValidator,
     authController.checkPermission("UPDATE_CONTACT"),
+    contactValidator.updateTenantContactValidator,
     tenantContactController.updateTenantContact
   )
   .delete(
-    contactValidator.getContactValidator,
     authController.checkPermission("DELETE_CONTACT"),
+    contactValidator.getContactValidator,
     tenantContactController.deleteTenantContact
   );
 

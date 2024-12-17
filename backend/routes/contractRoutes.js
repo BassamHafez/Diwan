@@ -17,8 +17,8 @@ router
     contractController.getAllContracts
   )
   .post(
-    contractValidator.createContractValidator,
     authController.checkPermission("ADD_CONTRACT"),
+    contractValidator.createContractValidator,
     setAccountId,
     contractController.createContract
   );
@@ -33,13 +33,13 @@ router.get(
 router
   .route("/:id")
   .patch(
-    contractValidator.updateContractValidator,
     authController.checkPermission("UPDATE_CONTRACT"),
+    contractValidator.updateContractValidator,
     contractController.updateContract
   )
   .delete(
-    contractValidator.getContractValidator,
     authController.checkPermission("CANCEL_CONTRACT"),
+    contractValidator.getContractValidator,
     contractController.cancelContract
   );
 
