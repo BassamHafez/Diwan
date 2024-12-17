@@ -234,7 +234,7 @@ const Properties = () => {
             );
           })
         : [];
-
+          
     if (filteredData?.length > 0) {
       return filteredData?.map((item) => (
         <Property

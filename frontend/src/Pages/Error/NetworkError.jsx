@@ -11,8 +11,8 @@ const NetworkError = () => {
 
   return (
     <div
-      style={{ zIndex: "4" }}
-      className="d-flex justify-content-center align-items-center flex-column position-absolute top-0 left-0 over h-100 w-100"
+      style={{ zIndex: "8" }}
+      className="d-flex justify-content-center align-items-center flex-column position-absolute top-0 start-0 over h-100 w-100"
     >
       <img className="standard_img" src={noConnectionImg} alt="noConnetion" />
       <h2>{key("networkError")}</h2>

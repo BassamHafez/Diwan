@@ -430,7 +430,7 @@ const PropertyDetails = () => {
             <section className={styles.tabs_section}>
               <Tabs defaultActiveKey="general" className="my-3" fill>
                 <Tab eventKey="general" title={key("general")}>
-                  <GeneralDetails details={myData?.estate} refetch={refetch} />
+                  <GeneralDetails details={myData?.estate} estateParentCompound={myData?.compound} refetch={refetch} />
                 </Tab>
 
                 <Tab eventKey="tasks" title={key("tasks")}>

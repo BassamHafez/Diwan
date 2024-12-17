@@ -54,7 +54,7 @@ const Contracts = ({ details }) => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["contracts", token],
+    queryKey: ["contracts",propId,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/contracts`,
@@ -126,175 +126,176 @@ const Contracts = ({ details }) => {
       : [];
 
   return (
-    <div className={styles.contracts_body}>
-      <div className={styles.header}>
-        <h4>{key("contracts")}</h4>
-        <div>
-          {contractsData && contractsData?.data?.length > 0 && (
-            <ButtonOne
-              classes="m-2"
-              borderd
-              color="white"
-              text={key("exportCsv")}
-              onClick={() =>
-                handleDownloadExcelSheet(
-                  contractsData?.data,
-                  "Contracts.xlsx",
-                  "Contracts"
-                )
-              }
-            />
-          )}
-          <CheckPermissions btnActions={["ADD_CONTRACT"]}>
-            <ButtonOne
-              onClick={() => setShowAddContractModal(true)}
-              classes="m-2 bg-navy"
-              borderd
-              text={key("addContracts")}
-            />
-          </CheckPermissions>
-        </div>
-      </div>
-
-      <div className={styles.contract_content}>
-        <div className={styles.content_header}>
-          <div className={styles.search_field}>
-            <SearchField onSearch={onSearch} text={key("searchContract")} />
+    <>
+      <div className={styles.contracts_body}>
+        <div className={styles.header}>
+          <h4>{key("contracts")}</h4>
+          <div>
+            {contractsData && contractsData?.data?.length > 0 && (
+              <ButtonOne
+                classes="m-2"
+                borderd
+                color="white"
+                text={key("exportCsv")}
+                onClick={() =>
+                  handleDownloadExcelSheet(
+                    contractsData?.data,
+                    "Contracts.xlsx",
+                    "Contracts"
+                  )
+                }
+              />
+            )}
+            <CheckPermissions btnActions={["ADD_CONTRACT"]}>
+              <ButtonOne
+                onClick={() => setShowAddContractModal(true)}
+                classes="m-2 bg-navy"
+                borderd
+                text={key("addContracts")}
+              />
+            </CheckPermissions>
           </div>
-          <Select
-            options={
-              isArLang
-                ? contractStatusOptions["ar"]
-                : contractStatusOptions["en"]
-            }
-            onChange={(val) =>
-              filterChangeHandler(val ? val.value : null, "status")
-            }
-            className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
-              styles.select_type
-            } my-3`}
-            isRtl={isArLang ? false : true}
-            placeholder={key("contractStaus")}
-            isClearable
-          />
         </div>
 
-        <div className="my-4">
-          {contractsData || !isFetching ? (
-            contractsData.data?.length > 0 ? (
-              <div className="scrollableTable">
-                <table className={`${styles.contract_table} table`}>
-                  <thead className={styles.table_head}>
-                    <tr>
-                      <th>{key("tenant")}</th>
-                      <th>{key("startContract")}</th>
-                      <th>{key("endContract")}</th>
-                      <th>{key("price")}</th>
-                      <th>{key("status")}</th>
-                      <th>{key("actions")}</th>
-                    </tr>
-                  </thead>
+        <div className={styles.contract_content}>
+          <div className={styles.content_header}>
+            <div className={styles.search_field}>
+              <SearchField onSearch={onSearch} text={key("searchContract")} />
+            </div>
+            <Select
+              options={
+                isArLang
+                  ? contractStatusOptions["ar"]
+                  : contractStatusOptions["en"]
+              }
+              onChange={(val) =>
+                filterChangeHandler(val ? val.value : null, "status")
+              }
+              className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                styles.select_type
+              } my-3`}
+              isRtl={isArLang ? false : true}
+              placeholder={key("contractStaus")}
+              isClearable
+            />
+          </div>
 
-                  <tbody className={styles.table_body}>
-                    {filteredContracts.map((contract) => (
-                      <tr key={contract._id}>
-                        <td>{contract.tenant?.name}</td>
-                        <td>{formattedDate(contract.startDate)}</td>
-                        <td>{formattedDate(contract.endDate)}</td>
-                        <td>{contract.totalAmount}</td>
-                        <td>
-                          <span
-                            className={`${getStatusBgColor(
-                              getContractStatus(
-                                contract.isCanceled,
-                                contract.startDate,
-                                contract.endDate
-                              )
-                            )} ${styles.status_span}`}
-                          >
-                            {isArLang
-                              ? renamedContractStatus(
-                                  getContractStatus(
-                                    contract.isCanceled,
-                                    contract.startDate,
-                                    contract.endDate
-                                  ),
-                                  "ar"
+          <div className="my-4">
+            {contractsData || !isFetching ? (
+              contractsData.data?.length > 0 ? (
+                <div className="scrollableTable">
+                  <table className={`${styles.contract_table} table`}>
+                    <thead className={styles.table_head}>
+                      <tr>
+                        <th>{key("tenant")}</th>
+                        <th>{key("startContract")}</th>
+                        <th>{key("endContract")}</th>
+                        <th>{key("price")}</th>
+                        <th>{key("status")}</th>
+                        <th>{key("actions")}</th>
+                      </tr>
+                    </thead>
+
+                    <tbody className={styles.table_body}>
+                      {filteredContracts.map((contract) => (
+                        <tr key={contract._id}>
+                          <td>{contract.tenant?.name}</td>
+                          <td>{formattedDate(contract.startDate)}</td>
+                          <td>{formattedDate(contract.endDate)}</td>
+                          <td>{contract.totalAmount}</td>
+                          <td>
+                            <span
+                              className={`${getStatusBgColor(
+                                getContractStatus(
+                                  contract.isCanceled,
+                                  contract.startDate,
+                                  contract.endDate
                                 )
-                              : renamedContractStatus(
-                                  getContractStatus(
-                                    contract.isCanceled,
-                                    contract.startDate,
-                                    contract.endDate
-                                  ),
-                                  "en"
-                                )}
-                          </span>
-                        </td>
-                        <td>
-                          <Dropdown>
-                            <Dropdown.Toggle
-                              id="dropdown-basic"
-                              className={styles.dropdown_menu}
+                              )} ${styles.status_span}`}
                             >
-                              <FontAwesomeIcon icon={faEllipsisVertical} />
-                            </Dropdown.Toggle>
-
-                            <Dropdown.Menu>
-                              <CheckPermissions
-                                btnActions={["UPDATE_CONTRACT"]}
+                              {isArLang
+                                ? renamedContractStatus(
+                                    getContractStatus(
+                                      contract.isCanceled,
+                                      contract.startDate,
+                                      contract.endDate
+                                    ),
+                                    "ar"
+                                  )
+                                : renamedContractStatus(
+                                    getContractStatus(
+                                      contract.isCanceled,
+                                      contract.startDate,
+                                      contract.endDate
+                                    ),
+                                    "en"
+                                  )}
+                            </span>
+                          </td>
+                          <td>
+                            <Dropdown>
+                              <Dropdown.Toggle
+                                id="dropdown-basic"
+                                className={styles.dropdown_menu}
                               >
+                                <FontAwesomeIcon icon={faEllipsisVertical} />
+                              </Dropdown.Toggle>
+
+                              <Dropdown.Menu>
+                                <CheckPermissions
+                                  btnActions={["UPDATE_CONTRACT"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setContractDetails(contract);
+                                      setShowUpdateContractModal(true);
+                                    }}
+                                    className="text-center"
+                                  >
+                                    {key("ediet")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
+
+                                <CheckPermissions
+                                  btnActions={["CANCEL_CONTRACT"]}
+                                >
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setContractId(contract._id);
+                                      setShowDeleteModal(true);
+                                    }}
+                                    className="text-center"
+                                  >
+                                    {key("cancel")}
+                                  </Dropdown.Item>
+                                </CheckPermissions>
+
                                 <Dropdown.Item
                                   onClick={() => {
                                     setContractDetails(contract);
-                                    setShowUpdateContractModal(true);
+                                    setShowDetailsModal(true);
                                   }}
                                   className="text-center"
                                 >
-                                  {key("ediet")}
+                                  {key("details")}
                                 </Dropdown.Item>
-                              </CheckPermissions>
-
-                              <CheckPermissions
-                                btnActions={["CANCEL_CONTRACT"]}
-                              >
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setContractId(contract._id);
-                                    setShowDeleteModal(true);
-                                  }}
-                                  className="text-center"
-                                >
-                                  {key("cancel")}
-                                </Dropdown.Item>
-                              </CheckPermissions>
-
-                              <Dropdown.Item
-                                onClick={() => {
-                                  setContractDetails(contract);
-                                  setShowDetailsModal(true);
-                                }}
-                                className="text-center"
-                              >
-                                {key("details")}
-                              </Dropdown.Item>
-                            </Dropdown.Menu>
-                          </Dropdown>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                              </Dropdown.Menu>
+                            </Dropdown>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <NoData text={key("noContracts")} smallSize={true} />
+              )
             ) : (
-              <NoData text={key("noContracts")} smallSize={true} />
-            )
-          ) : (
-            <LoadingOne />
-          )}
+              <LoadingOne />
+            )}
+          </div>
         </div>
       </div>
-
       {showAddContractModal && (
         <ModalForm
           show={showAddContractModal}
@@ -354,7 +355,7 @@ const Contracts = ({ details }) => {
           />
         </MainModal>
       )}
-    </div>
+    </>
   );
 };
 
