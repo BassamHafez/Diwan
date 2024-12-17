@@ -12,10 +12,10 @@ router
   .route("/")
   .get(filterAccountResults, compoundController.getAllCompounds)
   .post(
+    authController.checkPermission("ADD_COMPOUND"),
     compoundController.uploadCompoundImage,
     compoundController.resizeCompoundImage,
     compoundValidator.createCompoundValidator,
-    authController.checkPermission("ADD_COMPOUND"),
     setAccountId,
     compoundController.createCompound
   );
@@ -24,15 +24,15 @@ router
   .route("/:id")
   .get(compoundValidator.getCompoundValidator, compoundController.getCompound)
   .patch(
+    authController.checkPermission("UPDATE_COMPOUND"),
     compoundController.uploadCompoundImage,
     compoundController.resizeCompoundImage,
     compoundValidator.updateCompoundValidator,
-    authController.checkPermission("UPDATE_COMPOUND"),
     compoundController.updateCompound
   )
   .delete(
-    compoundValidator.getCompoundValidator,
     authController.checkPermission("DELETE_COMPOUND"),
+    compoundValidator.getCompoundValidator,
     compoundController.deleteCompound
   );
 
@@ -51,8 +51,8 @@ router
     compoundController.getCompoundExpenses
   )
   .post(
-    compoundValidator.createCompoundExpenseValidator,
     authController.checkPermission("ADD_EXPENSE"),
+    compoundValidator.createCompoundExpenseValidator,
     setAccountId,
     compoundController.createCompoundExpense
   );

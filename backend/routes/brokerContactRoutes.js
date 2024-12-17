@@ -12,9 +12,9 @@ router
   .route("/")
   .get(filterAccountResults, brokerContactController.getAllBrokerContacts)
   .post(
+    authController.checkPermission("ADD_CONTACT"),
     contactValidator.createContactValidator,
     setAccountId,
-    authController.checkPermission("ADD_CONTACT"),
     brokerContactController.createBrokerContact
   );
 
@@ -25,13 +25,13 @@ router
     brokerContactController.getBrokerContact
   )
   .patch(
-    contactValidator.updateContactValidator,
     authController.checkPermission("UPDATE_CONTACT"),
+    contactValidator.updateContactValidator,
     brokerContactController.updateBrokerContact
   )
   .delete(
-    contactValidator.getContactValidator,
     authController.checkPermission("DELETE_CONTACT"),
+    contactValidator.getContactValidator,
     brokerContactController.deleteBrokerContact
   );
 

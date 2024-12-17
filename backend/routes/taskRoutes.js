@@ -12,8 +12,8 @@ router
   .route("/")
   .get(filterAccountResults, taskController.getAllTasks)
   .post(
-    taskValidator.createTaskValidator,
     authController.checkPermission("ADD_TASK"),
+    taskValidator.createTaskValidator,
     setAccountId,
     taskController.createTask
   );
@@ -22,20 +22,20 @@ router
   .route("/:id")
   .get(taskValidator.getTaskValidator, taskController.getTask)
   .patch(
-    taskValidator.updateTaskValidator,
     authController.checkPermission("UPDATE_TASK"),
+    taskValidator.updateTaskValidator,
     taskController.updateTask
   )
   .delete(
-    taskValidator.getTaskValidator,
     authController.checkPermission("DELETE_TASK"),
+    taskValidator.getTaskValidator,
     taskController.deleteTask
   );
 
 router.patch(
   "/:id/complete",
-  taskValidator.completeTaskValidator,
   authController.checkPermission("COMPLETE_TASK"),
+  taskValidator.completeTaskValidator,
   taskController.completeTask
 );
 

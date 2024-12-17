@@ -12,9 +12,9 @@ router
   .route("/")
   .get(filterAccountResults, landlordContactController.getAllLandlordContacts)
   .post(
+    authController.checkPermission("ADD_CONTACT"),
     contactValidator.createContactValidator,
     setAccountId,
-    authController.checkPermission("ADD_CONTACT"),
     landlordContactController.createLandlordContact
   );
 
@@ -25,13 +25,13 @@ router
     landlordContactController.getLandlordContact
   )
   .patch(
-    contactValidator.updateContactValidator,
     authController.checkPermission("UPDATE_CONTACT"),
+    contactValidator.updateContactValidator,
     landlordContactController.updateLandlordContact
   )
   .delete(
-    contactValidator.getContactValidator,
     authController.checkPermission("DELETE_CONTACT"),
+    contactValidator.getContactValidator,
     landlordContactController.deleteLandlordContact
   );
 

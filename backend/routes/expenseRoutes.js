@@ -12,8 +12,8 @@ router
   .route("/")
   .get(filterAccountResults, expenseController.getAllExpenses)
   .post(
-    expenseValidator.createExpenseValidator,
     authController.checkPermission("ADD_EXPENSE"),
+    expenseValidator.createExpenseValidator,
     setAccountId,
     expenseController.createExpense
   );
@@ -22,34 +22,34 @@ router
   .route("/:id")
   .get(expenseValidator.getExpenseValidator, expenseController.getExpense)
   .patch(
-    expenseValidator.updateExpenseValidator,
     authController.checkPermission("UPDATE_EXPENSE"),
+    expenseValidator.updateExpenseValidator,
     expenseController.updateExpense
   )
   .delete(
-    expenseValidator.getExpenseValidator,
     authController.checkPermission("DELETE_EXPENSE"),
+    expenseValidator.getExpenseValidator,
     expenseController.deleteExpense
   );
 
 router.patch(
   "/:id/pay",
-  expenseValidator.payExpenseValidator,
   authController.checkPermission("PAY_EXPENSE"),
+  expenseValidator.payExpenseValidator,
   expenseController.payExpense
 );
 
 router.patch(
   "/:id/unpay",
-  expenseValidator.getExpenseValidator,
   authController.checkPermission("UNPAY_EXPENSE"),
+  expenseValidator.getExpenseValidator,
   expenseController.unpayExpense
 );
 
 router.patch(
   "/:id/cancel",
-  expenseValidator.getExpenseValidator,
   authController.checkPermission("CANCEL_EXPENSE"),
+  expenseValidator.getExpenseValidator,
   expenseController.cancelExpense
 );
 

@@ -12,8 +12,8 @@ router
   .route("/")
   .get(revenueValidator.getRevenuesValidator, revenueController.getAllRevenues)
   .post(
-    revenueValidator.createRevenueValidator,
     authController.checkPermission("ADD_REVENUE"),
+    revenueValidator.createRevenueValidator,
     revenueController.createRevenue
   );
 
@@ -21,27 +21,27 @@ router
 router
   .route("/:id")
   .patch(
-    revenueValidator.getRevenueValidator,
     authController.checkPermission("UPDATE_REVENUE"),
+    revenueValidator.getRevenueValidator,
     revenueController.cancelRevenue
   )
   .delete(
-    revenueValidator.getRevenueValidator,
     authController.checkPermission("DELETE_REVENUE"),
+    revenueValidator.getRevenueValidator,
     revenueController.deleteRevenue
   );
 
 router.patch(
   "/:id/pay",
-  revenueValidator.payRevenueValidator,
   authController.checkPermission("PAY_REVENUE"),
+  revenueValidator.payRevenueValidator,
   revenueController.payRevenue
 );
 
 router.patch(
   "/:id/unpay",
-  revenueValidator.getRevenueValidator,
   authController.checkPermission("UNPAY_REVENUE"),
+  revenueValidator.getRevenueValidator,
   revenueController.unpayRevenue
 );
 

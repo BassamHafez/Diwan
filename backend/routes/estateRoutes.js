@@ -13,14 +13,14 @@ router.use(authController.protect);
 router
   .route("/:id/favorites")
   .post(
-    estateValidator.getEstateValidator,
     authController.checkPermission("FAVORITES"),
+    estateValidator.getEstateValidator,
     setAccountId,
     estateController.favoriteEstate
   )
   .delete(
-    estateValidator.getEstateValidator,
     authController.checkPermission("FAVORITES"),
+    estateValidator.getEstateValidator,
     estateController.unfavoriteEstate
   );
 
@@ -28,10 +28,10 @@ router
   .route("/")
   .get(filterAccountResults, estateController.getAllEstates)
   .post(
+    authController.checkPermission("ADD_ESTATE"),
     estateController.uploadEstateImage,
     estateController.resizeEstateImage,
     estateValidator.createEstateValidator,
-    authController.checkPermission("ADD_ESTATE"),
     setAccountId,
     estateController.createEstate
   );
@@ -40,10 +40,10 @@ router
   .route("/:id")
   .get(estateValidator.getEstateValidator, estateController.getEstate)
   .patch(
+    authController.checkPermission("UPDATE_ESTATE"),
     estateController.uploadEstateImage,
     estateController.resizeEstateImage,
     estateValidator.updateEstateValidator,
-    authController.checkPermission("UPDATE_ESTATE"),
     estateController.updateEstate
   )
   .delete(estateValidator.getEstateValidator, estateController.deleteEstate);
@@ -54,8 +54,8 @@ router
   .route("/:id/expenses")
   .get(estateValidator.getEstateValidator, estateController.getEstateExpenses)
   .post(
-    estateValidator.createEstateExpenseValidator,
     authController.checkPermission("ADD_EXPENSE"),
+    estateValidator.createEstateExpenseValidator,
     setAccountId,
     estateController.createEstateExpense
   );
