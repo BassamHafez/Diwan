@@ -15,6 +15,7 @@ const contractRoutes = require("../routes/contractRoutes");
 const revenueRoutes = require("../routes/revenueRoutes");
 const expenseRoutes = require("../routes/expenseRoutes");
 const taskRoutes = require("../routes/taskRoutes");
+const reportRoutes = require("../routes/reportRoutes");
 
 const mountRoutes = (app) => {
   app.use("/api/v1/auth", authRoutes);
@@ -34,6 +35,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/tags", tagRoutes);
   app.use("/api/v1/expenses", expenseRoutes);
   app.use("/api/v1/tasks", taskRoutes);
+  app.use("/api/v1/reports", reportRoutes);
 };
 
 module.exports = mountRoutes;
