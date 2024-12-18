@@ -1,5 +1,6 @@
 const Contract = require("../models/contractModel");
 const Estate = require("../models/estateModel");
+const Compound = require("../models/compoundModel");
 const Revenue = require("../models/revenueModel");
 const ScheduledTask = require("../models/scheduledTaskModel");
 const catchAsync = require("../utils/catchAsync");
@@ -83,6 +84,16 @@ exports.createContract = catchAsync(async (req, res, next) => {
   }
 
   if (estate.compound) req.body.compound = estate.compound;
+
+  if (estate.landlord) req.body.landlord = estate.landlord;
+
+  if (!req.body.landlord && estate.compound) {
+    const compound = await Compound.findById(estate.compound)
+      .select("landlord")
+      .lean();
+
+    req.body.landlord = compound.landlord;
+  }
 
   const contract = await Contract.create({
     ...req.body,

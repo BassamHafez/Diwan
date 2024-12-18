@@ -42,7 +42,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 
   if (estate.landlord) req.body.landlord = estate.landlord;
 
-  if (!req.body.landlord) {
+  if (!req.body.landlord && estate.compound) {
     const compound = await Compound.findById(estate.compound)
       .select("landlord")
       .lean();
