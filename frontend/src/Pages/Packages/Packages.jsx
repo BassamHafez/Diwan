@@ -1,7 +1,7 @@
 import Row from "react-bootstrap/Row";
 import styles from "./Packages.module.css";
 import PackageItem from "./PackageItem";
-import { package3 } from "../../Components/Logic/StaticLists";
+import { customPackage } from "../../Components/Logic/StaticLists";
 import { useQuery } from "@tanstack/react-query";
 import { getPublicData } from "../../util/Http";
 import LoadingOne from "../../Components/UI/Loading/LoadingOne";
@@ -30,7 +30,7 @@ const Packages = () => {
               type={index % 2 === 0 ? "pack1" : "pack2"}
             />
           ))}
-          <PackageItem pack={package3} type={"custom"} />
+          <PackageItem pack={customPackage} type={"custom"} />
         </Row>
       </div>
     </div>

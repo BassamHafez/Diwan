@@ -455,7 +455,7 @@
 
   "incomeReport":"Income Report",
   "incomeReportDetails":"Income Report Details",
-  "revenuesReport":"Revenues Report",
+  "paymentsReport":"Payments Report",
   "commissionReport":"Commission Payment Report",
   "profitReport":"Profit Report",
   "contractsReport":"Contracts Report",
@@ -471,5 +471,18 @@
   "unitNumber":"Unit Number",
   "searchEstateWithUnitNum":"Search by name or Number",
   "noProperty":"There is no estates",
-  "noEstateUnit":"There is no units"
+  "noEstateUnit":"There is no units",
+  "updateAccount":"You must update your office data first",
+  "recipient":"Recipient",
+  "recMethod":"Receiving method",
+  "recDate":"Date of receipt",
+  "revenue":"Revenue",
+  "expense":"Expense",
+  "total":"Total",
+  "category":"Category",
+  "cash":"Cash",
+  "bank-transfer":"Bank transfer",
+  "online":"Online",
+  "startDueDate":"Start Due Date",
+  "endDueDate":"End Due Date"
 }

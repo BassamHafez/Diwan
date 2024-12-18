@@ -14,15 +14,13 @@ import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage
 import styles from "./ReportForm.module.css";
 import { faBuilding } from "@fortawesome/free-regular-svg-icons";
 
-const IncomeReport = ({
+const PaymentsReport = ({
   compoundsOptions,
   estatesOptions,
   landlordOptions,
   getSearchData,
-  type,
 }) => {
   const [isCompound, setIsCompound] = useState(false);
-
   const { t: key } = useTranslation();
 
   const token = JSON.parse(localStorage.getItem("token"));
@@ -32,11 +30,6 @@ const IncomeReport = ({
 
   const requiredLabel = <span className="text-danger">*</span>;
 
-  const paymentStatusOptions = [
-    { label: key("paid"), value: "paid" },
-    { label: key("pending"), value: "pending" },
-  ];
-
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
@@ -45,24 +38,17 @@ const IncomeReport = ({
     landlord: "",
     estate: "",
     compound: "",
-    startDate: "",
-    endDate: "",
+    startDueDate: "",
+    endDueDate: "",
     status: "",
   };
 
   const onSubmit = (values) => {
-    let updatedValues;
-    if (type === "paymentsReport") {
-      updatedValues = {
-        startDueDate: values.startDate,
-        endDueDate: values.endDate,
-      };
-    } else {
-      updatedValues = {
-        startDate: values.startDate,
-        endDate: values.endDate,
-      };
-    }
+    const updatedValues = {
+      startDueDate: values.startDate,
+      endDueDate: values.endDate,
+      status:values.status
+    };
 
     if (!isCompound && values.estate) {
       updatedValues.estate = values.estate.value;
@@ -73,36 +59,13 @@ const IncomeReport = ({
     if (values.landlord) {
       updatedValues.landlord = values.landlord;
     }
-
-    if (values.status) {
-      updatedValues.status = values.status;
-    }
-
     console.log(updatedValues);
-
-    let endPoint = "income";
-
-    switch (type) {
-      case "incomeReport":
-        endPoint = "income";
-        break;
-      case "incomeReportDetails":
-        endPoint = "income-details";
-        break;
-      case "paymentsReport":
-        endPoint = "payments";
-        break;
-
-      default:
-        break;
-    }
-
     mutate(
       {
         formData: updatedValues,
         token: token,
         method: "add",
-        type: `reports/${endPoint}`,
+        type: `reports/payments`,
       },
       {
         onSuccess: (data) => {
@@ -143,7 +106,6 @@ const IncomeReport = ({
         const { startDate } = this.parent;
         return value > startDate;
       }),
-    status: string().nullable(),
   });
 
   return (
@@ -238,25 +200,6 @@ const IncomeReport = ({
                 <ErrorMessage name="landlord" component={InputErrorMessage} />
               </div>
             </Col>
-
-            {/* <Col sm={6} className="d-flex align-items-center">
-              <div className="form-check form-switch d-flex align-items-center mt-2">
-                <label
-                  className="form-check-label mx-2"
-                  htmlFor="isFavoriteAllowed"
-                >
-                  {key("showReportSum")}
-                </label>
-                <input
-                  className="form-check-input fs-3 m-0"
-                  style={{ cursor: "pointer" }}
-                  type="checkbox"
-                  id="isFavoriteAllowed"
-                  checked={values.showSum}
-                  onChange={(e) => setFieldValue("showSum", e.target.checked)}
-                />
-              </div>
-            </Col> */}
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="startDate">
@@ -278,25 +221,6 @@ const IncomeReport = ({
               </div>
             </Col>
 
-            <Col lg={6}>
-              <div className="field">
-                <label htmlFor="status">{key("status")}</label>
-                <Select
-                  id="status"
-                  name="status"
-                  options={paymentStatusOptions}
-                  onChange={(val) =>
-                    setFieldValue("status", val ? val.value : null)
-                  }
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
-                  placeholder={isArLang ? "" : "select"}
-                  isClearable
-                />
-                <ErrorMessage name="status" component={InputErrorMessage} />
-              </div>
-            </Col>
-
             <div className="d-flex justify-content-end align-items-center mt-3 px-4">
               <button className="submit_btn my-2" type="submit">
                 {isPending ? (
@@ -313,4 +237,4 @@ const IncomeReport = ({
   );
 };
 
-export default IncomeReport;
+export default PaymentsReport;
