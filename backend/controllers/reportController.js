@@ -151,10 +151,6 @@ exports.getIncomeDetailsReport = catchAsync(async (req, res, next) => {
       path: "tenant",
       select: "name",
     },
-    {
-      path: "contract",
-      select: "startDate",
-    },
   ]);
 
   const selectedFields = "note amount type paidAt paymentMethod";
