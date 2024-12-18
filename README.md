@@ -5,7 +5,7 @@ Html, CSS, React Bootstrap, React Js, Redux toolkit , Mongo db, Node Js
 <h4>Description</h4>
 A modern platform designed to enhance the financial efficiency of real estate portfolios for owners and
 managers.
-Features:
+<h5>Features</h5>
 <ul>
   <li>Enables users to manage estates, compounds, contracts, revenues, expenses and more.</li>
   <li>Financial management of portfolios, tenant management, rent collection, and maintenance tracking.
