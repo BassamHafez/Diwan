@@ -30,4 +30,13 @@ router.post(
   reportController.getPaymentsReport
 );
 
+// Operational Reports
+
+router.post(
+  "/contracts",
+  authController.checkPermission("CONTRACTS_REPORTS"),
+  reportValidator.validateContractsReport,
+  reportController.getContractsReport
+);
+
 module.exports = router;
