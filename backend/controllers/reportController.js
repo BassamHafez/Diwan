@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
 const Expense = require("../models/expenseModel");
 const Revenue = require("../models/revenueModel");
+const Contract = require("../models/contractModel");
 const catchAsync = require("../utils/catchAsync");
+
+// Financial Reports (Lessor)
 
 exports.getIncomeReport = catchAsync(async (req, res, next) => {
   const accountId = req.user.account;
@@ -222,5 +225,65 @@ exports.getPaymentsReport = catchAsync(async (req, res, next) => {
       revenues,
       expenses,
     },
+  });
+});
+
+// Operational Reports
+
+exports.getContractsReport = catchAsync(async (req, res, next) => {
+  const accountId = req.user.account;
+  const { landlord, startDueDate, endDueDate, estate, compound, status } =
+    req.body;
+
+  const start = new Date(startDueDate);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(endDueDate);
+  end.setHours(23, 59, 59, 999);
+
+  const filter = {
+    account: accountId,
+    startDate: { $lte: end },
+    endDate: { $gte: start },
+  };
+
+  if (landlord) {
+    filter.landlord = landlord;
+  }
+
+  if (estate) {
+    filter.estate = estate;
+  }
+
+  if (compound && !estate) {
+    filter.compound = compound;
+  }
+
+  if (status) {
+    filter.status = status;
+  }
+
+  const popOptions = [
+    {
+      path: "tenant",
+      select: "name phone",
+    },
+    {
+      path: "estate",
+      select: "name",
+    },
+  ];
+
+  const selectedFields =
+    "startDate endDate totalAmount paymentPeriodValue paymentPeriodUnit status";
+
+  const contracts = await Contract.find(filter)
+    .select(selectedFields)
+    .populate(popOptions)
+    .lean();
+
+  res.status(200).json({
+    status: "success",
+    data: contracts,
   });
 });
