@@ -146,12 +146,23 @@ exports.getIncomeDetailsReport = catchAsync(async (req, res, next) => {
     },
   ];
 
+  const revenuesPopOptions = popOptions.concat([
+    {
+      path: "tenant",
+      select: "name",
+    },
+    {
+      path: "contract",
+      select: "startDate",
+    },
+  ]);
+
   const selectedFields = "note amount type paidAt paymentMethod";
 
   const [revenues, expenses] = await Promise.all([
     Revenue.find(filter)
       .select(selectedFields)
-      .populate(popOptions.concat([{ path: "tenant", select: "name" }]))
+      .populate(revenuesPopOptions)
       .lean(),
     Expense.find(filter).select(selectedFields).populate(popOptions).lean(),
   ]);
