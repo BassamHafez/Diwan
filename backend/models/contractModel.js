@@ -44,6 +44,10 @@ const contractSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    compound: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Compound",
+    },
     landlord: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "LandlordContact",
