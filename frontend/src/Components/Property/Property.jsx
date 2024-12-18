@@ -22,7 +22,6 @@ const Property = ({
   isCompoundDetailsPage,
   rentedEstatesCountObj,
 }) => {
-  
   const parentCompound = property.compound ? property.compound : property;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
@@ -75,7 +74,6 @@ const Property = ({
     )} (${rentedPercentage}%)`;
   };
 
-
   return (
     <Col
       md={6}
@@ -115,16 +113,18 @@ const Property = ({
                 : renamedEstateStatus(property.status, "en")}
             </span>
           )}
-          <div className={styles.caption_header}>
-            <span>
-              <FontAwesomeIcon
-                icon={faLocationDot}
-                className={`${isArLang ? "ms-1" : "me-1"} color-main`}
-              />
-              {parentCompound.region} (
-              <span className="mini_word">{parentCompound.city}</span>)
-            </span>
-          </div>
+          {!isCompoundDetailsPage && (
+            <div className={styles.caption_header}>
+              <span>
+                <FontAwesomeIcon
+                  icon={faLocationDot}
+                  className={`${isArLang ? "ms-1" : "me-1"} color-main`}
+                />
+                {parentCompound.region} (
+                <span className="mini_word">{parentCompound.city}</span>)
+              </span>
+            </div>
+          )}
 
           <p className={styles.desc}>{property.description}</p>
 

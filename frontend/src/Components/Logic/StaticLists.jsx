@@ -457,60 +457,60 @@ export const estateStatus = {
 
 //tasks
 
-export const taskTypeOptions={
-  en:[
-    {label:"Maintenance",value:"maintenance"},
-    {label:"Purchases",value:"purchases"},
-    {label:"Reminder",value:"reminder"},
-    {label:"Other",value:"other"},
+export const taskTypeOptions = {
+  en: [
+    { label: "Maintenance", value: "maintenance" },
+    { label: "Purchases", value: "purchases" },
+    { label: "Reminder", value: "reminder" },
+    { label: "Other", value: "other" },
   ],
-  ar:[
-    {label:"صيانة",value:"maintenance"},
-    {label:"مشتريات",value:"purchases"},
-    {label:"تذكير",value:"reminder"},
-    {label:"أخري",value:"other"},
-  ]
-}
+  ar: [
+    { label: "صيانة", value: "maintenance" },
+    { label: "مشتريات", value: "purchases" },
+    { label: "تذكير", value: "reminder" },
+    { label: "أخري", value: "other" },
+  ],
+};
 
-export const prioritysOptions={
-  en:[
-    {label:"Low",value:"low"},
-    {label:"Medium",value:"medium"},
-    {label:"High",value:"high"},
-  ],  
-  ar:[
-    {label:"منخفضة",value:"low"},
-    {label:"متوسطة",value:"medium"},
-    {label:"عالية",value:"high"}
-  ]
-}
+export const prioritysOptions = {
+  en: [
+    { label: "Low", value: "low" },
+    { label: "Medium", value: "medium" },
+    { label: "High", value: "high" },
+  ],
+  ar: [
+    { label: "منخفضة", value: "low" },
+    { label: "متوسطة", value: "medium" },
+    { label: "عالية", value: "high" },
+  ],
+};
 
 //expenses
-export const expensesStatusOptions={
-  en:[
-    {label:"Pending",value:"pending"},
-    {label:"Paid",value:"paid"},
-    {label:"Cancelled",value:"cancelled"},
+export const expensesStatusOptions = {
+  en: [
+    { label: "Pending", value: "pending" },
+    { label: "Paid", value: "paid" },
+    { label: "Cancelled", value: "cancelled" },
   ],
-  ar:[
-    {label:"معلقة",value:"pending"},
-    {label:"مدفوعة",value:"paid"},
-    {label:"ملغية",value:"cancelled"},
-  ]
-}
+  ar: [
+    { label: "معلقة", value: "pending" },
+    { label: "مدفوعة", value: "paid" },
+    { label: "ملغية", value: "cancelled" },
+  ],
+};
 
-export const expensesTypeOptions={
-  en:[
-    {label:"Maintenance",value:"maintenance"},
-    {label:"Purchases",value:"purchases"},
-    {label:"Other",value:"other"},
+export const expensesTypeOptions = {
+  en: [
+    { label: "Maintenance", value: "maintenance" },
+    { label: "Purchases", value: "purchases" },
+    { label: "Other", value: "other" },
   ],
-  ar:[
-    {label:"صيانة",value:"maintenance"},
-    {label:"مشتريات",value:"purchases"},
-    {label:"أخري",value:"other"},
-  ]
-}
+  ar: [
+    { label: "صيانة", value: "maintenance" },
+    { label: "مشتريات", value: "purchases" },
+    { label: "أخري", value: "other" },
+  ],
+};
 // ----------------------------------------------------------Saudi Arabia----------------------------
 //saudi arabia En
 export const SaudiRegion = [
@@ -742,39 +742,53 @@ export const imgHash = {
   defaultImg: "LSMZ?q9Ge.WB?w%1xvRj-:aeM{t7",
 };
 
+//custom package
+export const customPackage = {
+  _id: "1",
+  arTitle: "باقة مخصصة",
+  enTitle: "Custom Package",
+  features: [
+    { label: "customPackageMSg1", value: "false" },
+    { label: "customPackageMSg2", value: "false" },
+    { label: "customPackageMSg3", value: "false" },
+  ],
+};
 
-//demo data
-
-export const package1={
-  _id:"1",
-  title:"باقة ديوان",
-  price:200,
-  originalPrice:300,
-  features:[
-    {label:"usersCount",value:1},
-    {label:"compoundsCount",value:1},
-    {label:"isFavoriteAllowed",value:"false"},
-  ]
-}
-export const package2={
-  _id:"1",
-  title:"الباقة الذهبية",
-  price:400,
-  originalPrice:800,
-  features:[
-    {label:"usersCount",value:1},
-    {label:"compoundsCount",value:1},
-    {label:"isFavoriteAllowed",value:"false"},
-  ]
-}
-
-export const package3={
-  _id:"1",
-  arTitle:"باقة مخصصة",
-  enTitle:"Custom Package",
-  features:[
-    {label:"customPackageMSg1",value:"false"},
-    {label:"customPackageMSg2",value:"false"},
-    {label:"customPackageMSg3",value:"false"},
-  ]
-}
+//Reports
+export const incomeReportTable = [
+  "category",
+  "estate",
+  "theTenant",
+  "startContract",
+  "total",
+  // "theCommission",
+  // "netProfit",
+];
+export const incomeReportDetailsTable = [
+  "category",
+  "theUnit",
+  // "compound",
+  "theTenant",
+  "startContract",
+  "type",
+  "total",
+  // "theCommission",
+  // "recipient",
+  "recDate",
+  "recMethod",
+  "notes",
+];
+export const paymentsReportTable = [
+  "category",
+  "theUnit",
+  // "compound",
+  "theTenant",
+  "dueDate",
+  "type",
+  "total",
+  "status",
+  // "recipient",
+  "recDate",
+  "recMethod",
+  "notes",
+];
