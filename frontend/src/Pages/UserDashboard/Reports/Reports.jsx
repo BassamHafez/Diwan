@@ -19,7 +19,8 @@ import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
-  const [typeFilter, setTypeFilter] = useState("incomeReport");
+  const [landlordFilter, setLandlordFilter] = useState("incomeReport");
+  const [managerFilter, setManagerFilter] = useState("commissionReport");
   const [landlordOptions, setLandlordOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [estatesOptions, setEstatesOptions] = useState([]);
@@ -130,9 +131,9 @@ const Reports = () => {
                   <ul className={styles.filter_list}>
                     <li
                       className={
-                        typeFilter === "incomeReport" ? styles.active : ""
+                        landlordFilter === "incomeReport" ? styles.active : ""
                       }
-                      onClick={() => setTypeFilter("incomeReport")}
+                      onClick={() => setLandlordFilter("incomeReport")}
                     >
                       <FontAwesomeIcon
                         className={`${iconClass}`}
@@ -142,11 +143,11 @@ const Reports = () => {
                     </li>
                     <li
                       className={
-                        typeFilter === "incomeReportDetails"
+                        landlordFilter === "incomeReportDetails"
                           ? styles.active
                           : ""
                       }
-                      onClick={() => setTypeFilter("incomeReportDetails")}
+                      onClick={() => setLandlordFilter("incomeReportDetails")}
                     >
                       <FontAwesomeIcon
                         className={`${iconClass}`}
@@ -156,15 +157,15 @@ const Reports = () => {
                     </li>
                     <li
                       className={
-                        typeFilter === "revenuesReport" ? styles.active : ""
+                        landlordFilter === "paymentsReport" ? styles.active : ""
                       }
-                      onClick={() => setTypeFilter("revenuesReport")}
+                      onClick={() => setLandlordFilter("paymentsReport")}
                     >
                       <FontAwesomeIcon
                         className={`${iconClass}`}
                         icon={faMoneyBillTrendUp}
                       />
-                      {key("revenuesReport")}
+                      {key("paymentsReport")}
                     </li>
                   </ul>
                 )}
@@ -173,9 +174,11 @@ const Reports = () => {
                   <ul className={styles.filter_list}>
                     <li
                       className={
-                        typeFilter === "commissionReport" ? styles.active : ""
+                        managerFilter === "commissionReport"
+                          ? styles.active
+                          : ""
                       }
-                      onClick={() => setTypeFilter("commissionReport")}
+                      onClick={() => setManagerFilter("commissionReport")}
                     >
                       <FontAwesomeIcon
                         className={`${iconClass}`}
@@ -185,9 +188,9 @@ const Reports = () => {
                     </li>
                     <li
                       className={
-                        typeFilter === "profitReport" ? styles.active : ""
+                        managerFilter === "profitReport" ? styles.active : ""
                       }
-                      onClick={() => setTypeFilter("profitReport")}
+                      onClick={() => setManagerFilter("profitReport")}
                     >
                       <FontAwesomeIcon
                         className={`${iconClass}`}
@@ -208,8 +211,7 @@ const Reports = () => {
                   landlordOptions={landlordOptions}
                   compoundsOptions={compoundsOptions}
                   estatesOptions={estatesOptions}
-                  // refetch={refetch}
-                  type={typeFilter}
+                  filterType={landlordFilter}
                 />
               )}
             </div>
