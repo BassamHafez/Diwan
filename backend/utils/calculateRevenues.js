@@ -42,6 +42,8 @@ function calculateRevenues(contract) {
       tenant: contract.tenant,
       estate: contract.estate,
       account: contract.account,
+      compound: contract.compound || null,
+      landlord: contract.landlord || null,
     });
 
     // Move to the next due date
