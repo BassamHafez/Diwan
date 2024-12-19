@@ -33,6 +33,9 @@ import MainError from "./Pages/Error/MainError";
 import Help from "./Pages/Help/Help";
 import Reports from "./Pages/UserDashboard/Reports/Reports";
 import ForgetPassword from "./Pages/Auth/ForgetPassword/ForgetPassword";
+import AllSubscriptions from "./Pages/Admin/Subscriptions/AllSubscriptions";
+import AdminHome from "./Pages/Admin/AdminHome/AdminHome";
+import AllPackages from "./Pages/Admin/Packages/AllPackages";
 
 const router = createBrowserRouter(
   [
@@ -60,6 +63,13 @@ const router = createBrowserRouter(
         { path: "tasks", element: <Tasks /> },
         { path: "profile/:userId", element: <UserProfile /> },
         { path: "reports", element: <Reports /> },
+        
+        //adminDashboard
+        { path: "admin-dashboard", element: <AdminHome /> },
+        { path: "admin-subscriptions", element: <AllSubscriptions /> },
+        { path: "admin-packages", element: < AllPackages /> },
+
+        //else
         { path: "*", element: <PageNotFound /> },
       ],
     },

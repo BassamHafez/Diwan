@@ -35,7 +35,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const [brokersOptions, setBrokersOptions] = useState([]);
   const [landlordOptions, setlandlordOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -155,7 +155,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
           if (data?.status === "success") {
             refetch();
             refetchTags();
-            queryClient.invalidateQueries(["compounds", token])
+            queryClient.invalidateQueries(["compounds", token]);
             notifySuccess(key("updatedSucc"));
             setSelectedFile(null);
             setImagePreviewUrl(null);
@@ -175,7 +175,9 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
 
   const validationSchema = object({
     name: string().required(key("fieldReq")),
-    description: string().required(key("fieldReq")),
+    description: string()
+      .min(5, key("descValidation"))
+      .required(key("fieldReq")),
     city: string().required(key("fieldReq")),
     region: string().required(key("fieldReq")),
     neighborhood: string().required(key("fieldReq")),
@@ -313,7 +315,11 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                   id="landlord"
                   name="landlord"
                   options={landlordOptions}
-                  value={landlordOptions?.find((landlord)=>landlord.value===values.landlord)||null}
+                  value={
+                    landlordOptions?.find(
+                      (landlord) => landlord.value === values.landlord
+                    ) || null
+                  }
                   onChange={(val) => setFieldValue("landlord", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
@@ -417,7 +423,11 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                   id="broker"
                   name="broker"
                   options={brokersOptions}
-                  value={brokersOptions?.find((broker)=>broker.value===values.broker)||null}
+                  value={
+                    brokersOptions?.find(
+                      (broker) => broker.value === values.broker
+                    ) || null
+                  }
                   onChange={(val) => setFieldValue("broker", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}

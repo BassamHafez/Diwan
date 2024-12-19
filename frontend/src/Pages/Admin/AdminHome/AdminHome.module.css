@@ -1,0 +1,9 @@
+.anlaysisImg{
+    width: 400px;
+}
+
+@media screen and (max-width:410px) {
+    .anlaysisImg{
+        width: 99%;
+    }
+}

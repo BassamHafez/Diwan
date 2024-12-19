@@ -20,7 +20,7 @@ import {
 } from "../../../../Components/Logic/StaticLists";
 import { formattedDate } from "../../../../Components/Logic/LogicFun";
 
-const UpdateTask = ({ hideModal, refetch, task }) => {
+const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [contactsOptions, setContactsOptions] = useState([]);
   const [estatesOptions, setEstatesOptions] = useState([]);
@@ -240,41 +240,7 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                 <ErrorMessage name="date" component={InputErrorMessage} />
               </div>
             </Col>
-            <Col sm={6}>
-              {task.compound ? (
-                <div className="field mb-1">
-                  <label htmlFor="compound">
-                    {key("compound")} {requiredLabel}
-                  </label>
-                  <Select
-                    id="compound"
-                    name="compound"
-                    value={values.compound}
-                    options={compoundsOptions}
-                    onChange={(val) => setFieldValue("compound", val || null)}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
-                    placeholder={isArLang ? "" : "select"}
-                  />
-                  <ErrorMessage name="compound" component={InputErrorMessage} />
-                </div>
-              ) : (
-                <div className="field mb-1">
-                  <label htmlFor="estate">{key("theUnit")}</label>
-                  <Select
-                    id="estate"
-                    name="estate"
-                    options={estatesOptions}
-                    value={values.estate}
-                    onChange={(val) => setFieldValue("estate", val || null)}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
-                    placeholder={isArLang ? "" : "select"}
-                  />
-                  <ErrorMessage name="estate" component={InputErrorMessage} />
-                </div>
-              )}
-            </Col>
+
             <Col sm={6}>
               <div className="field mb-1">
                 <label htmlFor="contact">
@@ -341,6 +307,43 @@ const UpdateTask = ({ hideModal, refetch, task }) => {
                 />
                 <ErrorMessage name="priority" component={InputErrorMessage} />
               </div>
+            </Col>
+            <Col sm={6}>
+              {task.compound ? (
+                <div className="field mb-1">
+                  <label htmlFor="compound">
+                    {key("compound")} {requiredLabel}
+                  </label>
+                  <Select
+                    id="compound"
+                    name="compound"
+                    value={values.compound}
+                    options={compoundsOptions}
+                    onChange={(val) => setFieldValue("compound", val || null)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                    isDisabled={compId}
+                  />
+                  <ErrorMessage name="compound" component={InputErrorMessage} />
+                </div>
+              ) : (
+                <div className="field mb-1">
+                  <label htmlFor="estate">{key("theUnit")}</label>
+                  <Select
+                    id="estate"
+                    name="estate"
+                    options={estatesOptions}
+                    value={values.estate}
+                    onChange={(val) => setFieldValue("estate", val || null)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? false : true}
+                    placeholder={isArLang ? "" : "select"}
+                    isDisabled={propId}
+                  />
+                  <ErrorMessage name="estate" component={InputErrorMessage} />
+                </div>
+              )}
             </Col>
             <Col sm={12}>
               <div className="field">

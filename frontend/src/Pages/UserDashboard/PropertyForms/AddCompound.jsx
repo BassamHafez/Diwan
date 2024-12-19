@@ -42,7 +42,7 @@ const AddCompound = ({ hideModal, refetch }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
   const { data: tags, refetch: refetchTags } = useQuery({
     queryKey: ["tags", token],
@@ -167,7 +167,9 @@ const AddCompound = ({ hideModal, refetch }) => {
 
   const validationSchema = object({
     name: string().required(key("fieldReq")),
-    description: string().required(key("fieldReq")),
+    description: string()
+      .min(5, key("descValidation"))
+      .required(key("fieldReq")),
     city: string().required(key("fieldReq")),
     region: string().required(key("fieldReq")),
     neighborhood: string().required(key("fieldReq")),
