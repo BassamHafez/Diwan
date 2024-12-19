@@ -386,6 +386,9 @@
   "DELETE_TASK": "حذف مهمة",
   "COMPLETE_TASK": "إكمال مهمة",
   "UPDATE_ACCOUNT": "تحديث الحساب",
+  "FINANCIAL_REPORTS": "التقارير المالية",
+  "CONTRACTS_REPORTS": "تقارير العقود",
+
   "updateYourOffice": "ابدأ بتحديث بيانات المكتب الخاص بك",
   "upgradeSubscription": "ترقية الباقة",
   "featureEnded": "نأسف! لقد وصلت إلي الحد الأقصي المسموح به لباقتك الحالية، جدد الاشتراك للاستمرار",
@@ -479,5 +482,12 @@
   "bank-transfer": "حوالة بنكية",
   "online": "أونلاين",
   "startDueDate": "تاريخ بداية الاستحقاق",
-  "endDueDate": "تاريخ نهاية الاستحقاق"
+  "endDueDate": "تاريخ نهاية الاستحقاق",
+  "resetPass": "إعادة تعيين كلمة السر",
+  "verify": "تحقق",
+  "wrongVerificationCode": "رمز التحقق الذي أدخلته غير صحيح",
+  "summary": "الملخص",
+  "totalRevenues": "إجمالي الإيرادات",
+  "totalExpenses": "إجمالي المصروفات",
+  "totalAmount":"إجمالي المبالغ"
 }

@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { faCircle, faPaste } from "@fortawesome/free-regular-svg-icons";
 import {
-  faFileInvoice,
+  faFileContract,
+  // faFileInvoice,
   faFileInvoiceDollar,
   faMoneyBillTrendUp,
   faSackDollar,
@@ -16,11 +17,14 @@ import LandlordReport from "./LandlordReport";
 import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
+import OperationalReport from "./OperationalReport";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
   const [landlordFilter, setLandlordFilter] = useState("incomeReport");
-  const [managerFilter, setManagerFilter] = useState("commissionReport");
+  const [operationalFilter, setOperationalFilter] = useState("contractsReport");
+  // const [managerFilter, setManagerFilter] = useState("commissionReport");
+
   const [landlordOptions, setLandlordOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [estatesOptions, setEstatesOptions] = useState([]);
@@ -66,6 +70,7 @@ const Reports = () => {
   const circleIcon = (
     <FontAwesomeIcon className={`${iconClass}`} icon={faCircle} />
   );
+  
   return (
     <>
       <div className={`${styles.main_container} height_container`}>
@@ -87,7 +92,7 @@ const Reports = () => {
                     {circleIcon}
                     {key("landlordReport")}
                   </li>
-                  <li
+                  {/* <li
                     className={
                       reportTypeFilter === "landlordManager"
                         ? styles.active
@@ -97,7 +102,7 @@ const Reports = () => {
                   >
                     {circleIcon}
                     {key("landlordManager")}
-                  </li>
+                  </li> */}
                   <li
                     className={
                       reportTypeFilter === "operationalReport"
@@ -109,7 +114,7 @@ const Reports = () => {
                     {circleIcon}
                     {key("operationalReport")}
                   </li>
-                  <li
+                  {/* <li
                     className={
                       reportTypeFilter === "investmentReport"
                         ? styles.active
@@ -119,7 +124,7 @@ const Reports = () => {
                   >
                     {circleIcon}
                     {key("investmentReport")}
-                  </li>
+                  </li> */}
                 </ul>
 
                 <hr />
@@ -170,7 +175,7 @@ const Reports = () => {
                   </ul>
                 )}
 
-                {reportTypeFilter === "landlordManager" && (
+                {/* {reportTypeFilter === "landlordManager" && (
                   <ul className={styles.filter_list}>
                     <li
                       className={
@@ -199,6 +204,25 @@ const Reports = () => {
                       {key("profitReport")}
                     </li>
                   </ul>
+                )} */}
+
+                {reportTypeFilter === "operationalReport" && (
+                  <ul className={styles.filter_list}>
+                    <li
+                      className={
+                        operationalFilter === "contractsReport"
+                          ? styles.active
+                          : ""
+                      }
+                      onClick={() => setOperationalFilter("contractsReport")}
+                    >
+                      <FontAwesomeIcon
+                        className={`${iconClass}`}
+                        icon={faFileContract}
+                      />
+                      {key("contractsReport")}
+                    </li>
+                  </ul>
                 )}
               </div>
             </div>
@@ -212,6 +236,15 @@ const Reports = () => {
                   compoundsOptions={compoundsOptions}
                   estatesOptions={estatesOptions}
                   filterType={landlordFilter}
+                />
+              )}
+
+              {reportTypeFilter === "operationalReport" && (
+                <OperationalReport
+                  landlordOptions={landlordOptions}
+                  compoundsOptions={compoundsOptions}
+                  estatesOptions={estatesOptions}
+                  filterType={operationalFilter}
                 />
               )}
             </div>

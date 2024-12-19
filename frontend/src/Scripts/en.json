@@ -389,6 +389,9 @@
   "DELETE_TASK": "Delete Task",
   "COMPLETE_TASK": "Complete Task",
   "UPDATE_ACCOUNT": "Update Account",
+  "FINANCIAL_REPORTS":"Financial Reports",
+  "CONTRACTS_REPORTS":"Contracts Reports",
+
   "updateYourOffice": "Start Updating Your Office Data",
   "upgradeSubscription": "Upgrade Subscription",
   "featureEnded": "sorry!, your reached the limit of your package, please renew your package to continue",
@@ -484,5 +487,12 @@
   "bank-transfer":"Bank transfer",
   "online":"Online",
   "startDueDate":"Start Due Date",
-  "endDueDate":"End Due Date"
+  "endDueDate":"End Due Date",
+  "resetPass":"Reset Password",
+  "verify":"Verify",
+  "wrongVerificationCode":"The verification code you entered is incorrect",
+  "summary":"summary",
+  "totalRevenues":"Total Revenues",
+  "totalExpenses":"Total Expenses",
+  "totalAmount":"Total Amounts"
 }

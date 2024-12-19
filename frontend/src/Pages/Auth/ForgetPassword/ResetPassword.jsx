@@ -1,13 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Form, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { signFormsHandler } from "../../../util/Http";
 import { toast } from "react-toastify";
 import { object, string } from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faYinYang } from "@fortawesome/free-solid-svg-icons";
-import { ErrorMessage, Field, Formik } from "formik";
+import { ErrorMessage, Field, Formik,Form } from "formik";
 import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import Modal from "react-bootstrap/Modal";
 import styles from "./ForgetPassword.module.css";
@@ -22,6 +22,7 @@ const ResetPassword = ({ show, onHide }) => {
   const { mutate, isPending } = useMutation({
     mutationFn: signFormsHandler,
     onSuccess: (data) => {
+      console.log(data);
       if (data.data.status === "success") {
         setIsRightEmail(false);
         notifySuccess(key("newPassSaved"));
@@ -32,6 +33,7 @@ const ResetPassword = ({ show, onHide }) => {
       }
     },
     onError: (error) => {
+      console.log(error);
       if (error.data.message === "account with this email not found") {
         setIsRightEmail(true);
       } else {
@@ -47,6 +49,7 @@ const ResetPassword = ({ show, onHide }) => {
   };
 
   const onSubmit = (values) => {
+    console.log(values);
     mutate({
       formData: values,
       method: "put",
@@ -75,34 +78,34 @@ const ResetPassword = ({ show, onHide }) => {
       className={styles.modal_container}
     >
       <Modal.Body className={styles.modal_body}>
-        <h4>{key("newPass")}</h4>
+        <h4>{key("resetPass")}</h4>
         <Formik
           initialValues={initialValues}
           onSubmit={onSubmit}
           validationSchema={validationSchema}
         >
           <Form>
-            <div className={styles.field}>
+            <div className="field">
               <label htmlFor="resetPasswordEmail">{key("email")}</label>
               <Field type="email" id="resetPasswordEmail" name="email" />
               {isRightEmail && <InputErrorMessage text={key("noAcc")} />}
               <ErrorMessage name="email" component={InputErrorMessage} />
             </div>
 
-            <div className={styles.field}>
-              <label htmlFor="newPass">{key("newPass")}</label>
+            <div className="field">
+              <label htmlFor="newPassword">{key("newPassword")}</label>
 
-              <Field type="password" id="newPass" name="newPassword" />
+              <Field type="password" id="newPassword" name="newPassword" />
               <ErrorMessage name="newPassword" component={InputErrorMessage} />
             </div>
 
             <div className="d-flex justify-content-center align-items-center mt-3 px-2">
               {isPending ? (
-                <button type="submit" className={styles.save_btn}>
+                <button type="submit" className="submit_btn">
                   <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
                 </button>
               ) : (
-                <button className={styles.save_btn} type="submit">
+                <button className="submit_btn" type="submit">
                   {key("confirm")}
                 </button>
               )}

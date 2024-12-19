@@ -754,12 +754,14 @@ export const customPackage = {
   ],
 };
 
+
+
 //Reports
 export const incomeReportTable = [
   "category",
-  "estate",
-  "theTenant",
-  "startContract",
+  "theUnit",
+  // "theTenant",
+  // "startContract",
   "total",
   // "theCommission",
   // "netProfit",
@@ -769,14 +771,14 @@ export const incomeReportDetailsTable = [
   "theUnit",
   // "compound",
   "theTenant",
-  "startContract",
+  // "startContract",
   "type",
   "total",
   // "theCommission",
   // "recipient",
   "recDate",
   "recMethod",
-  "notes",
+  // "notes",
 ];
 export const paymentsReportTable = [
   "category",
@@ -792,3 +794,13 @@ export const paymentsReportTable = [
   "recMethod",
   "notes",
 ];
+
+
+export const contractsReportTable=[
+  "theUnit",
+  "theTenant",
+  "startDate",
+  "endDate",
+  "amount",
+  "status"
+]

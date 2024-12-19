@@ -35,7 +35,7 @@ const CustomPackageItem = ({
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const dispatch = useDispatch();
-  console.log(features);
+
   const buttonText = btnText
     ? btnText
     : accountInfo?.account?.allowedUsers > 1 ||
