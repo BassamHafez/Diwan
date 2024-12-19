@@ -14,7 +14,6 @@ import { Link } from "react-router-dom";
 import VerificationCode from "./VerificationCode";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 
 const ForgetPassword = () => {
   const [isRightEmail, setIsRightEmail] = useState(false);
@@ -33,16 +32,16 @@ const ForgetPassword = () => {
         notifySuccess(key("checkResetPass"));
         setShowModal(true);
       } else {
-        notifyError(key("faildResetPass"));
+        notifyError(key("wrong"));
       }
     },
     onError: (error) => {
       console.log(error);
-      if (error.data.message === "account with this email not found") {
+      if (error.data.message === "There is no user with email provided") {
         setIsRightEmail(true);
       } else {
         setIsRightEmail(false);
-        notifyError(key("faildResetPass"));
+        notifyError(key("wrong"));
       }
     },
   });
@@ -95,14 +94,14 @@ const ForgetPassword = () => {
                   <ErrorMessage name="email" component={InputErrorMessage} />
                 </div>
 
-                <div className="d-flex justify-content-center align-items-center mt-3 px-2">
-                  <ButtonOne borderd type="submit" classes="w-sm-50">
+                <div className="d-flex justify-content-center align-items-center mt-4 px-2">
+                  <button type="submit" className="submit_btn bg-main" >
                     {isPending ? (
                       <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
                     ) : (
                       key("sendEmail")
                     )}
-                  </ButtonOne>
+                  </button>
                 </div>
 
                 <div className={styles.options}>

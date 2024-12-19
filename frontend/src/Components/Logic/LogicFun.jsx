@@ -3,12 +3,13 @@ import * as XLSX from "xlsx";
 
 // main fun
 export const formattedDate = (date) => {
-  if (!date) {
+  const parsedDate = new Date(date);
+  if (!date || isNaN(parsedDate)) {
     return "-";
   }
-  const formattedDate = new Date(date).toISOString().split("T")[0];
-  return formattedDate;
+  return parsedDate.toISOString().split("T")[0];
 };
+
 
 export const convertTpOptionsFormate = (arr) => {
   let arrOptions = [];
