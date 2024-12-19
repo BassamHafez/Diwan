@@ -161,7 +161,9 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   const validationSchema = object().shape({
     compound: string().nullable(),
     name: string().required(key("fieldReq")),
-    description: string().required(key("fieldReq")),
+    description: string()
+      .min(5, key("descValidation"))
+      .required(key("fieldReq")),
 
     city: string().when("compound", (compound, schema) =>
       !compound || compound === "not"

@@ -29,6 +29,7 @@ import {
   formattedDate,
 } from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import TaskContent from "../Tasks/TaskContent";
 
 const PropertyDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,9 +45,21 @@ const PropertyDetails = () => {
   const accountInfo = useSelector((state) => state.accountInfo.data);
 
   useEffect(() => {
-    AOS.init({disable: 'mobile'});
+    AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
   }, []);
+
+  //filter here
+  const { data: tasks, refetch:refetchTasks } = useQuery({
+    queryKey: ["tasks", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "tasks",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
 
   const { data, refetch } = useQuery({
     queryKey: ["singleProp", token, propId],
@@ -150,6 +163,11 @@ const PropertyDetails = () => {
   };
 
   const myData = data?.data;
+  const filteredTasks =
+    tasks && Array.isArray(tasks.data)
+      ? tasks.data.filter((task) => task.estate?._id === propId)
+      : [];
+  const myTasks = { data: filteredTasks };
 
   return (
     <>
@@ -167,10 +185,10 @@ const PropertyDetails = () => {
                   data-aos-duration="1000"
                 >
                   <h3 className="my-4 mx-1">
-                  {myData?.estate?.unitNumber
+                    {myData?.estate?.unitNumber
                       ? `${myData?.estate?.unitNumber}`
-                      : ""}-{" "}{myData?.estate?.name}
-
+                      : ""}
+                    - {myData?.estate?.name}
                   </h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <CheckPermissions btnActions={["DELETE_ESTATE"]}>
@@ -430,15 +448,22 @@ const PropertyDetails = () => {
             <section className={styles.tabs_section}>
               <Tabs defaultActiveKey="general" className="my-3" fill>
                 <Tab eventKey="general" title={key("general")}>
-                  <GeneralDetails details={myData?.estate} estateParentCompound={myData?.compound} refetch={refetch} />
+                  <GeneralDetails
+                    details={myData?.estate}
+                    estateParentCompound={myData?.compound}
+                    refetch={refetch}
+                  />
                 </Tab>
 
                 <Tab eventKey="tasks" title={key("tasks")}>
-                  tasks here
-                </Tab>
-
-                <Tab eventKey="docs" title={key("docs")}>
-                  docs here
+                  <TaskContent
+                    timeFilter="all"
+                    tagsFilter="all"
+                    typesFilter="all"
+                    tasks={myTasks}
+                    refetch={refetchTasks}
+                    propId={propId}
+                  />
                 </Tab>
               </Tabs>
             </section>

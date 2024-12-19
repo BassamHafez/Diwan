@@ -29,11 +29,12 @@ import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 import AddEstate from "../PropertyForms/AddEstate";
 import AOS from "aos";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
+import TaskContent from "../Tasks/TaskContent";
 
 const CompoundDetails = () => {
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
   const [rentedEstateCount, setRentedEstateCount] = useState(false);
-
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
   const { compId } = useParams();
@@ -58,6 +59,17 @@ const CompoundDetails = () => {
     AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
   }, []);
+  //filter here
+  const { data: tasks, refetch:refetchTasks } = useQuery({
+    queryKey: ["tasks", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "tasks",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
 
   useEffect(() => {
     let rentedEstates = [];
@@ -104,6 +116,12 @@ const CompoundDetails = () => {
   const totalMonthRev = Number(compDetails?.totalMonthRevenue);
   const totalMonthPaidRev = Number(compDetails?.totalMonthPaidRevenues);
 
+  const filteredTasks =
+    tasks && Array.isArray(tasks.data)
+      ? tasks.data.filter((task) => task.compound?._id === compId)
+      : [];
+  const myTasks = { data: filteredTasks };
+
   return (
     <>
       <ScrollTopBtn />
@@ -122,22 +140,26 @@ const CompoundDetails = () => {
                   <h3 className="my-4 mx-1">{compDetails?.compound?.name}</h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <CheckPermissions btnActions={["DELETE_COMPOUND"]}>
-                      <div
-                        className={`${styles.controller_btn} ${styles.delete_btn}`}
-                        onClick={() => setShowDeleteModal(true)}
-                        title={key("delete")}
-                      >
-                        <FontAwesomeIcon icon={faTrashCan} />
-                      </div>
+                      <CheckAllowedCompounds id={compId}>
+                        <div
+                          className={`${styles.controller_btn} ${styles.delete_btn}`}
+                          onClick={() => setShowDeleteModal(true)}
+                          title={key("delete")}
+                        >
+                          <FontAwesomeIcon icon={faTrashCan} />
+                        </div>
+                      </CheckAllowedCompounds>
                     </CheckPermissions>
                     <CheckPermissions btnActions={["ADD_ESTATE"]}>
-                      <div
-                        className={styles.bookmarked}
-                        onClick={() => setShowAddEstateModal(true)}
-                        title={key("addEstate")}
-                      >
-                        <FontAwesomeIcon icon={faPlus} />
-                      </div>
+                      <CheckAllowedCompounds id={compId}>
+                        <div
+                          className={styles.bookmarked}
+                          onClick={() => setShowAddEstateModal(true)}
+                          title={key("addEstate")}
+                        >
+                          <FontAwesomeIcon icon={faPlus} />
+                        </div>
+                      </CheckAllowedCompounds>
                     </CheckPermissions>
                   </div>
                 </div>
@@ -292,11 +314,16 @@ const CompoundDetails = () => {
                 </Tab>
 
                 <Tab eventKey="tasks" title={key("tasks")}>
-                  tasks here
-                </Tab>
-
-                <Tab eventKey="docs" title={key("docs")}>
-                  docs here
+                  <div className="p-md-3">
+                    <TaskContent
+                      timeFilter="all"
+                      tagsFilter="all"
+                      typesFilter="all"
+                      tasks={myTasks}
+                      refetch={refetchTasks}
+                      compId={compId}
+                    />
+                  </div>
                 </Tab>
               </Tabs>
             </section>

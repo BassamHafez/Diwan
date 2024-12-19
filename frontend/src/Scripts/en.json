@@ -494,5 +494,15 @@
   "summary":"summary",
   "totalRevenues":"Total Revenues",
   "totalExpenses":"Total Expenses",
-  "totalAmount":"Total Amounts"
+  "totalAmount":"Total Amounts",
+  "permittedCompounds":"Permitted Compounds",
+
+  "accounts":"Accounts",
+  "users":"Users",
+  "support":"Support",
+  "changeLang":"change Language",
+  "diwan":"Diwan Amlak",
+  "subscriptions":"Subscriptions",
+  "descValidation":"at least 5 characters",
+  "searchTitle":"search by title"
 }

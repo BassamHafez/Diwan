@@ -7,12 +7,7 @@ const CheckPermissions = ({ children, btnActions = [] }) => {
     profileInfo?.permissions?.includes(action)
   );
 
-  if (hasPermissions) {
-    return children;
-  } else {
-    return null;
-  }
+  return hasPermissions ? children : null;
 };
-
 
 export default CheckPermissions;

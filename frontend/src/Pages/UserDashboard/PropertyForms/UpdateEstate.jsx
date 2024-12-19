@@ -27,7 +27,12 @@ import CreatableSelect from "react-select/creatable";
 import { useParams } from "react-router-dom";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
-const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) => {
+const UpdateEstate = ({
+  hideModal,
+  refetch,
+  estateData,
+  estateParentCompound,
+}) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
@@ -36,7 +41,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
   const [brokersOptions, setBrokersOptions] = useState([]);
   const [landlordOptions, setlandlordOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
-  const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -112,8 +117,8 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
     setTagsOptions(myTagsOptions);
   }, [tags]);
 
-  const estateParent=estateParentCompound?estateParentCompound:estateData
-  
+  const estateParent = estateParentCompound ? estateParentCompound : estateData;
+
   const initialValues = {
     image: "",
     compound: compoundsOptions.find(
@@ -167,11 +172,11 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
     formData.append("area", values.area);
 
     if (values.landlord) {
-        formData.append("landlord", values.landlord);
-      }
-      if (values.broker) {
-        formData.append("broker", values.broker);
-      }
+      formData.append("landlord", values.landlord);
+    }
+    if (values.broker) {
+      formData.append("broker", values.broker);
+    }
     if (values.waterAccountNumber) {
       formData.append(
         "waterAccountNumber",
@@ -197,7 +202,7 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
           if (data?.status === "success") {
             refetch();
             refetchTags();
-            queryClient.invalidateQueries(["estates", token])
+            queryClient.invalidateQueries(["estates", token]);
             notifySuccess(key("updatedSucc"));
             setSelectedFile(null);
             setImagePreviewUrl(null);
@@ -220,8 +225,9 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
       .nullable()
       .transform((value) => (value?.value ? value.value : value)),
     name: string().required(key("fieldReq")),
-    description: string().required(key("fieldReq")),
-
+    description: string()
+      .min(5, key("descValidation"))
+      .required(key("fieldReq")),
     city: string().when("compound", (compound, schema) =>
       !compound || compound.value === "not"
         ? schema.required(key("fieldReq"))
@@ -386,14 +392,18 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
                   id="landlord"
                   name="landlord"
                   options={landlordOptions}
-                  value={landlordOptions?.find(
-                    (landlord) => landlord.value === values.landlord
-                  )||null}
+                  value={
+                    landlordOptions?.find(
+                      (landlord) => landlord.value === values.landlord
+                    ) || null
+                  }
                   onChange={(val) => setFieldValue("landlord", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
-                  isDisabled={values.compound&&values.compound?.value!=="not"}
+                  isDisabled={
+                    values.compound && values.compound?.value !== "not"
+                  }
                 />
                 <ErrorMessage name="landlord" component={InputErrorMessage} />
               </div>
@@ -518,14 +528,18 @@ const UpdateEstate = ({ hideModal, refetch, estateData,estateParentCompound }) =
                   id="broker"
                   name="broker"
                   options={brokersOptions}
-                  value={brokersOptions?.find(
-                    (broker) => broker.value === values.broker
-                  )||null}
+                  value={
+                    brokersOptions?.find(
+                      (broker) => broker.value === values.broker
+                    ) || null
+                  }
                   onChange={(val) => setFieldValue("broker", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? false : true}
                   placeholder={isArLang ? "" : "select"}
-                  isDisabled={values.compound&&values.compound?.value!=="not"}
+                  isDisabled={
+                    values.compound && values.compound?.value !== "not"
+                  }
                 />
                 <ErrorMessage name="broker" component={InputErrorMessage} />
               </div>
