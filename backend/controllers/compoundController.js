@@ -25,7 +25,14 @@ const compoundPopOptions = [
 ];
 
 exports.getAllCompounds = catchAsync(async (req, res, next) => {
-  const compounds = await Compound.find({ account: req.user.account }).lean();
+  const permittedCompounds = req.user.permittedCompounds;
+
+  const compoundFilter =
+    permittedCompounds?.length > 0
+      ? { _id: { $in: permittedCompounds }, account: req.user.account }
+      : { account: req.user.account };
+
+  const compounds = await Compound.find(compoundFilter).lean();
 
   const compoundsIds = compounds.map((compound) => compound._id);
 
@@ -63,11 +70,16 @@ exports.getAllCompounds = catchAsync(async (req, res, next) => {
 
 exports.getCompound = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
+  const permittedCompounds = req.user.permittedCompounds;
+
+  const compoundFilter =
+    permittedCompounds?.length > 0
+      ? { _id: compoundId, _id: { $in: permittedCompounds } }
+      : { _id: compoundId, account: req.user.account };
 
   const [compound, estates] = await Promise.all([
-    Compound.findOne({ _id: compoundId, account: req.user.account })
-      .populate(compoundPopOptions)
-      .lean(),
+    Compound.findOne(compoundFilter).populate(compoundPopOptions).lean(),
+
     Estate.find({ compound: compoundId })
       .select(
         "unitNumber name description region city image inFavorites status"
@@ -219,10 +231,14 @@ exports.resizeCompoundImage = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteCompound = catchAsync(async (req, res, next) => {
-  const compound = await Compound.findOne({
-    _id: req.params.id,
-    account: req.user.account,
-  });
+  const permittedCompounds = req.user.permittedCompounds;
+
+  const compoundFilter =
+    permittedCompounds?.length > 0
+      ? { _id: req.params.id, _id: { $in: permittedCompounds } }
+      : { _id: req.params.id, account: req.user.account };
+
+  const compound = await Compound.findOne(compoundFilter).lean();
 
   if (!compound) {
     return next(new ApiError("No compound found with that ID", 404));
@@ -282,6 +298,12 @@ exports.createCompound = catchAsync(async (req, res, next) => {
 exports.updateCompound = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
   const { id } = req.params;
+  const permittedCompounds = req.user.permittedCompounds;
+
+  const compoundFilter =
+    permittedCompounds?.length > 0
+      ? { _id: id, _id: { $in: permittedCompounds } }
+      : { _id: id, account: req.user.account };
 
   const tagUpdatePromise = tags
     ? Tag.findOneAndUpdate(
@@ -292,7 +314,7 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
     : Promise.resolve();
 
   const compoundUpdatePromise = Compound.findOneAndUpdate(
-    { _id: id, account: req.user.account },
+    compoundFilter,
     req.body,
     {
       new: true,
