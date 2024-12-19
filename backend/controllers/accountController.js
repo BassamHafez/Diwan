@@ -192,7 +192,11 @@ exports.addMember = catchAsync(async (req, res, next) => {
 
   await Account.findByIdAndUpdate(id, {
     $push: {
-      members: { user: user._id, permissions: req.body.permissions },
+      members: {
+        user: user._id,
+        permissions: req.body.permissions,
+        permittedCompounds: req.body.permittedCompounds || [],
+      },
     },
     $inc: { allowedUsers: -1 },
   });
