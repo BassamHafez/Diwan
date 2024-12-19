@@ -1,15 +1,22 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Reports.module.css";
-import { formattedDate } from "../../../Components/Logic/LogicFun";
+import {
+  formattedDate,
+  generatePDF,
+  handleDownloadExcelSheet,
+} from "../../../Components/Logic/LogicFun";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import IncomeReport from "./ReportForms/IncomeReport";
 import {
   incomeReportDetailsTable,
   incomeReportTable,
   paymentsReportTable,
 } from "../../../Components/Logic/StaticLists";
 import { useEffect, useState } from "react";
+import ReportsForm from "./ReportForms/ReportsForm";
+import PrintFinancialReport from "../../../Components/Prints/PrintFinancialReport";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 
 const LandlordReport = ({
   compoundsOptions,
@@ -19,16 +26,29 @@ const LandlordReport = ({
 }) => {
   const [expenses, setExpenses] = useState([]);
   const [revenues, setRevenues] = useState([]);
+  const [dataEnteried, setDataEnteried] = useState({});
+
   const { t: key } = useTranslation();
 
   useEffect(() => {
+    const intialData = {
+      compound: "",
+      landlord: "",
+      estate: "",
+    };
     setExpenses([]);
     setRevenues([]);
+    if (filterType !== "paymentsReport") {
+      setDataEnteried({ ...intialData, startDate: "", endDate: "" });
+    } else {
+      setDataEnteried({ ...intialData, startDueDate: "", endDueDate: "" });
+    }
   }, [filterType]);
 
-  const getSearchData = (ex, rev) => {
+  const getSearchData = (ex, rev, formValues) => {
     setExpenses(ex);
     setRevenues(rev);
+    setDataEnteried(formValues);
   };
 
   const combinedData = [
@@ -50,108 +70,141 @@ const LandlordReport = ({
       : paymentsReportTable || [];
 
   return (
-    <div>
-      <h2 className="my-3">
-        {key(filterType)} ({key("theLandlord")})
-      </h2>
-      <div className="p-md-5">
-        <IncomeReport
-          landlordOptions={landlordOptions}
-          compoundsOptions={compoundsOptions}
-          estatesOptions={estatesOptions}
-          getSearchData={getSearchData}
-          type={filterType}
-        />
-      </div>
-
-      <hr />
-
+    <>
       <div>
-        <h4 className="my-3">{key("incomePerEstate")}</h4>
-        <div className="scrollableTable">
-          <table className={`${styles.contract_table} table`}>
-            <thead className={styles.table_head}>
-              <tr>
-                {tableHeaders.map((title, index) => (
-                  <th key={`${title}_${index}`}>{key(title)}</th>
-                ))}
-              </tr>
-            </thead>
+        <h2 className="my-3">
+          {key(filterType)} ({key("theLandlord")})
+        </h2>
+        <div className="p-md-5">
+          <ReportsForm
+            landlordOptions={landlordOptions}
+            compoundsOptions={compoundsOptions}
+            estatesOptions={estatesOptions}
+            getSearchData={getSearchData}
+            type={filterType}
+          />
+        </div>
 
-            <tbody className={styles.table_body}>
-              {combinedData.length > 0 ? (
-                combinedData.map((item, index) =>
-                  filterType === "incomeReport" ? (
-                    <tr key={index}>
-                      <td>{key(item.category)}</td>
-                      <td>{item.estateName || "-"}</td>
-                      <td>{item.tenant?.name || "-"}</td>
-                      <td>
-                        {item.category === "revenue"
-                          ? formattedDate(item.startContract || new Date())
-                          : "-"}
-                      </td>
-                      <td>{item.total}</td>
-                      {/* <td>0</td> */}
-                      {/* <td>{item.total}</td> */}
-                    </tr>
-                  ) : filterType === "incomeReportDetails" ? (
-                    <tr key={index}>
-                      <td>{key(item.category)}</td>
-                      <td>{item.estate?.name || "-"}</td>
-                      {/* <td>{item.compound?.name || "-"}</td> */}
-                      <td>{item.tenant?.name || "-"}</td>
-                      <td>
-                        {item.category === "revenue"
-                          ? formattedDate(item.startContract || new Date())
-                          : "-"}
-                      </td>
-                      <td>{key(item.type)}</td>
-                      <td>{item.amount}</td>
-                      {/* <td>0</td> */}
-                      {/* <td>{item.recipient || "-"}</td> */}
-                      <td>{formattedDate(item.paidAt) || "-"}</td>
-                      <td>{key(item.paymentMethod) || "-"}</td>
-                      <td>{item.note || "-"}</td>
-                    </tr>
-                  ) : (
-                    <tr key={index}>
-                      <td>{key(item.category)}</td>
-                      <td>{item.estate?.name || "-"}</td>
-                      {/* <td>{item.compound?.name || "-"}</td> */}
-                      <td>{item.tenant?.name || "-"}</td>
-                      <td>{formattedDate(item.dueDate || "-")}</td>
-                      <td>{key(item.type)}</td>
-                      <td>{item.amount}</td>
-                      <td>{key(item.status)}</td>
-                      {/* <td>{item.recipient || "-"}</td> */}
-                      <td>{formattedDate(item.paidAt) || "-"}</td>
-                      <td>{key(item.paymentMethod) || "-"}</td>
-                      <td>{item.note || "-"}</td>
-                    </tr>
-                  )
-                )
-              ) : (
-                <tr>
-                  <td
-                    colSpan={`${tableHeaders.length || "7"}`}
-                    className="py-5"
-                  >
-                    <div className="d-flex flex-column justify-content-center align-items-center">
-                      <FontAwesomeIcon
-                        className="fs-1 text-secondary mb-3"
-                        icon={faCircleInfo}
-                      />
-                      <span className="mini_word">{key("noDetails")}</span>
-                    </div>
-                  </td>
-                </tr>
+        <hr />
+
+        <div>
+          <div className={styles.header}>
+            <h4>{key("incomePerEstate")}</h4>
+            <div>
+              {combinedData && combinedData?.length > 0 && (
+                <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
+                  <ButtonOne
+                    classes="m-2"
+                    borderd
+                    color="white"
+                    text={key("exportCsv")}
+                    onClick={() =>
+                      handleDownloadExcelSheet(
+                        combinedData,
+                        `${filterType}.xlsx`,
+                        `${filterType}`
+                      )
+                    }
+                  />
+                  <ButtonOne
+                    onClick={() =>
+                      generatePDF(
+                        filterType,
+                        `${key(filterType)}_(${
+                          dataEnteried.startDate ||
+                          dataEnteried.startDueDate ||
+                          ""
+                        }) (${
+                          dataEnteried.endDate || dataEnteried.endDueDate || ""
+                        }) ${
+                          dataEnteried?.estate || dataEnteried.compound || ""
+                        }`
+                      )
+                    }
+                    classes="m-2 bg-navy"
+                    borderd
+                    text={key("download")}
+                  />
+                </CheckPermissions>
               )}
-            </tbody>
-          </table>
+            </div>
+          </div>
+          <div className="scrollableTable">
+            <table className={`${styles.contract_table} table`}>
+              <thead className={styles.table_head}>
+                <tr>
+                  {tableHeaders.map((title, index) => (
+                    <th key={`${title}_${index}`}>{key(title)}</th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody className={styles.table_body}>
+                {combinedData.length > 0 ? (
+                  combinedData.map((item, index) =>
+                    filterType === "incomeReport" ? (
+                      <tr key={index}>
+                        <td>{key(item.category)}</td>
+                        <td>{item.estateName || "-"}</td>
+                        <td>{item.total}</td>
+                      </tr>
+                    ) : filterType === "incomeReportDetails" ? (
+                      <tr key={index}>
+                        <td>{key(item.category)}</td>
+                        <td>{item.estate?.name || "-"}</td>
+                        <td>{item.tenant?.name || "-"}</td>
+                        <td>{key(item.type)}</td>
+                        <td>{item.amount}</td>
+                        <td>{formattedDate(item.paidAt) || "-"}</td>
+                        <td>{key(item.paymentMethod) || "-"}</td>
+                      </tr>
+                    ) : (
+                      <tr key={index}>
+                        <td>{key(item.category)}</td>
+                        <td>{item.estate?.name || "-"}</td>
+                        <td>{item.tenant?.name || "-"}</td>
+                        <td>{formattedDate(item.dueDate || "-")}</td>
+                        <td>{key(item.type)}</td>
+                        <td>{item.amount}</td>
+                        <td>{key(item.status)}</td>
+                        <td>{formattedDate(item.paidAt) || "-"}</td>
+                        <td>{key(item.paymentMethod) || "-"}</td>
+                        <td>{item.note || "-"}</td>
+                      </tr>
+                    )
+                  )
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={`${tableHeaders.length || "7"}`}
+                      className="py-5"
+                    >
+                      <div className="d-flex flex-column justify-content-center align-items-center">
+                        <FontAwesomeIcon
+                          className="fs-1 text-secondary mb-3"
+                          icon={faCircleInfo}
+                        />
+                        <span className="mini_word">{key("noDetails")}</span>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+
+      <div className="d-none">
+        <PrintFinancialReport
+          expenses={expenses}
+          revenues={revenues}
+          combinedData={combinedData}
+          dataEnteried={dataEnteried}
+          filterType={filterType}
+        />
+      </div>
+    </>
   );
 };
 

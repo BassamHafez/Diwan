@@ -1,26 +1,17 @@
 import { useTranslation } from "react-i18next";
-import logo from "../../assets/whiteLogo.png";
-import { formattedDate } from "../Logic/LogicFun";
+
 import styles from "./PrintContract.module.css";
 import { useSelector } from "react-redux";
+import PrintNavBar from "./PrintNavBar";
 
 const PrintHeader = ({ title, details, tenant, partiesTitle }) => {
-  const currentDate = new Date();
-
   const { t: key } = useTranslation();
   const mainColClass = "d-flex justify-content-center align-items-center mx-3";
   const profileInfo = useSelector((state) => state.profileInfo.data);
 
   return (
     <>
-      <div className={styles.header}>
-        <img src={logo} alt="logo" />
-        <h2>{title}</h2>
-        <div className="text-center">
-          <span style={{ fontSize: "12px" }}>{key("printDate")}</span>
-          <p>{formattedDate(currentDate)}</p>
-        </div>
-      </div>
+      <PrintNavBar title={title} />
       <div className={styles.information}>
         <h5>{key("estateDetails")}</h5>
         <div className="d-flex flex-wrap justify-content-evenly">

@@ -16,7 +16,7 @@ const MySubscription = ({chooseActiveActive}) => {
     compoundsCount: myAccount?.allowedCompounds,
     isFavoriteAllowed: myAccount?.isFavoriteAllowed,
   };
-
+  
   return (
     <Row>
       <Col sm={6} xl={8} className="py-5">

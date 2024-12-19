@@ -13,22 +13,34 @@ import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import styles from "./ReportForm.module.css";
 import { faBuilding } from "@fortawesome/free-regular-svg-icons";
+import { contractStatusOptions } from "../../../../Components/Logic/StaticLists";
+import CheckPermissions from "../../../../Components/CheckPermissions/CheckPermissions";
 
-const PaymentsReport = ({
+const ReportsForm = ({
   compoundsOptions,
   estatesOptions,
   landlordOptions,
   getSearchData,
+  type,
 }) => {
   const [isCompound, setIsCompound] = useState(false);
   const { t: key } = useTranslation();
 
   const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+
+  const currentLang = isArLang ? "ar" : "en";
+  const permissionArr =
+    type !== "contractsReport" ? "FINANCIAL_REPORTS" : "CONTRACTS_REPORTS";
+  const requiredLabel = <span className="text-danger">*</span>;
+
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
-  const requiredLabel = <span className="text-danger">*</span>;
+  const paymentStatusOptions = [
+    { label: key("paid"), value: "paid" },
+    { label: key("pending"), value: "pending" },
+  ];
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -38,17 +50,24 @@ const PaymentsReport = ({
     landlord: "",
     estate: "",
     compound: "",
-    startDueDate: "",
-    endDueDate: "",
+    startDate: "",
+    endDate: "",
     status: "",
   };
 
   const onSubmit = (values) => {
-    const updatedValues = {
-      startDueDate: values.startDate,
-      endDueDate: values.endDate,
-      status:values.status
-    };
+    let updatedValues;
+    if (type === "paymentsReport" || type === "contractsReport") {
+      updatedValues = {
+        startDueDate: values.startDate,
+        endDueDate: values.endDate,
+      };
+    } else {
+      updatedValues = {
+        startDate: values.startDate,
+        endDate: values.endDate,
+      };
+    }
 
     if (!isCompound && values.estate) {
       updatedValues.estate = values.estate.value;
@@ -59,19 +78,62 @@ const PaymentsReport = ({
     if (values.landlord) {
       updatedValues.landlord = values.landlord;
     }
+
+    if (values.status) {
+      updatedValues.status = values.status;
+    }
+
     console.log(updatedValues);
+
+    let endPoint = "income";
+
+    switch (type) {
+      case "incomeReport":
+        endPoint = "income";
+        break;
+      case "incomeReportDetails":
+        endPoint = "income-details";
+        break;
+      case "paymentsReport":
+        endPoint = "payments";
+        break;
+      case "contractsReport":
+        endPoint = "contracts";
+        break;
+
+      default:
+        break;
+    }
+
+    const printDataValues={
+      ...updatedValues
+    }
+    if (!isCompound && values.estate) {
+      printDataValues.estate = values.estate?.label;
+    } else if (isCompound && values.compound) {
+      printDataValues.compound = values.compound?.label;
+    }
+
     mutate(
       {
         formData: updatedValues,
         token: token,
         method: "add",
-        type: `reports/payments`,
+        type: `reports/${endPoint}`,
       },
       {
         onSuccess: (data) => {
           console.log(data);
           if (data?.status === "success") {
-            getSearchData(data.data?.expenses, data.data?.revenues);
+            if (type === "contractsReport") {
+              getSearchData(data.data, printDataValues);
+            } else {
+              getSearchData(
+                data.data?.expenses,
+                data.data?.revenues,
+                printDataValues
+              );
+            }
             notifySuccess(key("searchSucc"));
           } else {
             notifyError(key("searchFailed"));
@@ -106,6 +168,7 @@ const PaymentsReport = ({
         const { startDate } = this.parent;
         return value > startDate;
       }),
+    status: string().nullable(),
   });
 
   return (
@@ -118,7 +181,11 @@ const PaymentsReport = ({
         <Form>
           <Row>
             <Col lg={6} className="position-relative">
-              <ul className=" d-flex flex-column flex-sm-row justify-content-center position-absolute top-0 start-0 mt-0 mt-sm-2 z-3">
+              <ul
+                className={` d-flex flex-column flex-sm-row justify-content-center position-absolute top-0 mt-0 mt-sm-2 z-3 ${
+                  isArLang ? styles.ar_icon : styles.en_icon
+                } `}
+              >
                 <li
                   onClick={() => setIsCompound(true)}
                   className={`mx-2 ${
@@ -221,14 +288,42 @@ const PaymentsReport = ({
               </div>
             </Col>
 
-            <div className="d-flex justify-content-end align-items-center mt-3 px-4">
-              <button className="submit_btn my-2" type="submit">
-                {isPending ? (
-                  <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
-                ) : (
-                  key("getReport")
-                )}
-              </button>
+            {type === "paymentsReport" ||
+              (type === "contractsReport" && (
+                <Col lg={6}>
+                  <div className="field">
+                    <label htmlFor="status">{key("status")}</label>
+                    <Select
+                      id="status"
+                      name="status"
+                      options={
+                        type === "contractsReport"
+                          ? contractStatusOptions[currentLang]
+                          : paymentStatusOptions
+                      }
+                      onChange={(val) =>
+                        setFieldValue("status", val ? val.value : null)
+                      }
+                      className={`${isArLang ? "text-end" : "text-start"}`}
+                      isRtl={isArLang ? false : true}
+                      placeholder={isArLang ? "" : "select"}
+                      isClearable
+                    />
+                    <ErrorMessage name="status" component={InputErrorMessage} />
+                  </div>
+                </Col>
+              ))}
+
+            <div className="d-flex  align-items-center mt-3 px-4">
+              <CheckPermissions btnActions={[permissionArr]}>
+                <button className="submit_btn bg-main" type="submit">
+                  {isPending ? (
+                    <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
+                  ) : (
+                    key("getReport")
+                  )}
+                </button>
+              </CheckPermissions>
             </div>
           </Row>
         </Form>
@@ -237,4 +332,4 @@ const PaymentsReport = ({
   );
 };
 
-export default PaymentsReport;
+export default ReportsForm;

@@ -13,7 +13,6 @@ import styles from "./ForgetPassword.module.css";
 import { faYinYang } from "@fortawesome/free-solid-svg-icons";
 
 const VerificationCode = ({ show, onHide }) => {
-    
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
@@ -24,20 +23,23 @@ const VerificationCode = ({ show, onHide }) => {
   const { mutate, isPending } = useMutation({
     mutationFn: signFormsHandler,
     onSuccess: (data) => {
+      console.log(data);
       if (data?.data?.status === "Success") {
         setIsCodeWrong(false);
         setShowModal(true);
         onHide();
       } else {
-        notifyError(key("faildResetPass"));
+        notifyError(key("wrong"));
       }
     },
     onError: (error) => {
-      if (error.data.message === "Reset code invalid or expired") {
+      console.log(error);
+      if (error.data.message === "Invalid reset code or expired") {
         setIsCodeWrong(true);
+        notifyError(key("wrongVerificationCode"));
       } else {
         setIsCodeWrong(false);
-        notifyError(key("faildResetPass"));
+        notifyError(key("wrong"));
       }
     },
   });
@@ -90,11 +92,11 @@ const VerificationCode = ({ show, onHide }) => {
 
               <div className="d-flex justify-content-center align-items-center mt-3 px-2">
                 {isPending ? (
-                  <button type="submit" className={styles.save_btn}>
+                  <button type="submit" className="submit_btn">
                     <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
                   </button>
                 ) : (
-                  <button className={styles.save_btn} type="submit">
+                  <button className="submit_btn" type="submit">
                     {key("verify")}
                   </button>
                 )}
