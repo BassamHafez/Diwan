@@ -184,6 +184,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
     phone: req.body.phone,
     password: req.body.password,
     account: id,
+    permittedCompounds: req.body.permittedCompounds || [],
     permissions: req.body.permissions,
   };
 
@@ -229,7 +230,10 @@ exports.updateMember = catchAsync(async (req, res, next) => {
 
     Account.updateOne(
       { _id: id, "members.user": userId },
-      { "members.$.permissions": req.body.permissions }
+      {
+        "members.$.permissions": req.body.permissions,
+        "members.$.permittedCompounds": req.body.permittedCompounds || [],
+      }
     ),
   ]);
 

@@ -27,24 +27,21 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
-    // accounts: [
-    //   {
-    //     account: {
-    //       type: mongoose.Schema.Types.ObjectId,
-    //       ref: "Account",
-    //     },
-    //     permissions: {
-    //       type: [String],
-    //       default: [],
-    //     },
-    //   },
-    // ],
     account: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Account",
     },
     permissions: {
       type: [String],
+      default: [],
+    },
+    permittedCompounds: {
+      type: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Compound",
+        },
+      ],
       default: [],
     },
     password: {

@@ -157,6 +157,14 @@ exports.addMemberValidator = [
     .isLength({ min: 6 })
     .withMessage("Password must be at least 6 characters"),
 
+  check("permittedCompounds")
+    .exists()
+    .withMessage("Permitted compounds required")
+    .isArray()
+    .withMessage("Permitted compounds must be an array"),
+
+  check("permittedCompounds.*").isMongoId().withMessage("Invalid compound ID"),
+
   check("permissions")
     .exists()
     .withMessage("Permissions required")
@@ -186,6 +194,13 @@ exports.updateMemberValidator = [
     .withMessage("User ID is required")
     .isMongoId()
     .withMessage("Invalid user ID"),
+
+  check("permittedCompounds")
+    .optional()
+    .isArray()
+    .withMessage("Permitted compounds must be an array"),
+
+  check("permittedCompounds.*").isMongoId().withMessage("Invalid compound ID"),
 
   check("permissions")
     .exists()
