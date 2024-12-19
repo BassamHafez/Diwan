@@ -13,3 +13,11 @@
 .active:hover,.unActive_choice:hover{
     opacity: .8;
 }
+
+.ar_icon{
+    left: 0;
+}
+
+.en_icon{
+    right: 0;
+}
