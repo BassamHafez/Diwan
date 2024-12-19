@@ -229,7 +229,10 @@ exports.updateMember = catchAsync(async (req, res, next) => {
   const [user] = await Promise.all([
     User.findOneAndUpdate(
       { _id: userId, account: id },
-      { permissions: req.body.permissions }
+      {
+        permissions: req.body.permissions,
+        permittedCompounds: req.body.permittedCompounds || [],
+      }
     ),
 
     Account.updateOne(
