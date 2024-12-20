@@ -60,7 +60,7 @@ const CompoundDetails = () => {
     window.scrollTo(0, 0);
   }, []);
   //filter here
-  const { data: tasks, refetch:refetchTasks } = useQuery({
+  const { data: tasks, refetch: refetchTasks } = useQuery({
     queryKey: ["tasks", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({

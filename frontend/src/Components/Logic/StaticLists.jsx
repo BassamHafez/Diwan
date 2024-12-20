@@ -801,3 +801,21 @@ export const contractsReportTable = [
   "amount",
   "status",
 ];
+
+
+//dummy data
+
+export const chartsData=[
+  { totalPaid: 700, totalPending: 200, month: 1 },
+  { totalPaid: 900, totalPending: 1500, month: 2 },
+  { totalPaid: 1000, totalPending: 200, month: 3 },
+  { totalPaid: 800, totalPending: 300, month: 4 },
+  { totalPaid: 500, totalPending: 1000, month: 5 },
+  { totalPaid: 1200, totalPending: 1600, month: 6 },
+  { totalPaid: 1600, totalPending: 300, month: 7 },
+  { totalPaid: 900, totalPending: 800, month: 8 },
+  { totalPaid: 1500, totalPending: 1200, month: 9 },
+  { totalPaid: 400, totalPending: 200, month: 10 },
+  { totalPaid: 1800, totalPending: 1100, month: 11 },
+  { totalPaid: 1800, totalPending: 1100, month: 12 },
+]
