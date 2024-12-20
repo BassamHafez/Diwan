@@ -1,7 +1,7 @@
-// const crypto = require("crypto");
+const crypto = require("crypto");
 const sharp = require("sharp");
 const { uploadSingleImage } = require("../utils/uploadImage");
-// const { sendWhatsappText } = require("../utils/sendWhatsappMsg");
+const { sendWAText } = require("../utils/sendWAMessage");
 
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
@@ -90,7 +90,6 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   });
 });
 
-/*
 exports.getPhoneWACode = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user.id);
 
@@ -106,8 +105,8 @@ exports.getPhoneWACode = catchAsync(async (req, res, next) => {
 
   await Promise.all([
     user.save(),
-    sendWhatsappText(
-      user.phone,
+    sendWAText(
+      `966${user.phone}`,
       `Your verification code is ${verificationCode}`
     ),
   ]);
@@ -140,4 +139,3 @@ exports.verifyPhone = catchAsync(async (req, res, next) => {
     message: "Phone verified successfully",
   });
 });
-*/
