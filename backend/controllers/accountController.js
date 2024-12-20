@@ -27,6 +27,7 @@ exports.getMyAccount = catchAsync(async (req, res, next) => {
   if (account.owner.toString() !== req.user.id) {
     account.members.forEach((member) => {
       delete member.permissions;
+      delete member.permittedCompounds;
     });
   }
 

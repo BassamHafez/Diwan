@@ -24,6 +24,15 @@ const accountSchema = new mongoose.Schema(
           type: [String],
           default: [],
         },
+        permittedCompounds: {
+          type: [
+            {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Compound",
+            },
+          ],
+          default: [],
+        },
       },
     ],
     allowedUsers: {
