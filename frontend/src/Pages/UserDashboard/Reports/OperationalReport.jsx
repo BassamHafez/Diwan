@@ -38,8 +38,6 @@ const OperationalReport = ({
 
   const getSearchData = (contractsData, formValues) => {
     setContractsData(contractsData);
-    console.log("contractsData", contractsData);
-    console.log("data enteried", formValues);
     setDataEnteried(formValues);
   };
 
@@ -76,7 +74,7 @@ const OperationalReport = ({
 
         <div>
           <div className={styles.header}>
-            <h4>{key("incomePerEstate")}</h4>
+            <h4>{key("contracts")}</h4>
             <div>
               {contractsData && contractsData?.length > 0 && (
                 <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
@@ -126,7 +124,7 @@ const OperationalReport = ({
                 {contractsData.length > 0 ? (
                   contractsData.map((item, index) => (
                     <tr key={index}>
-                      <td>{key(item.estate?.name || "-")}</td>
+                      <td>{item.estate?.name || item.compound?.name || "-"}</td>
                       <td>{item.tenant?.name || "-"}</td>
                       <td>{formattedDate(item.startDate || "-")}</td>
                       <td>{formattedDate(item.endDate || "-")}</td>
