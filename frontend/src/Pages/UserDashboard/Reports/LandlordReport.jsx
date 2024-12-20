@@ -17,6 +17,7 @@ import ReportsForm from "./ReportForms/ReportsForm";
 import PrintFinancialReport from "../../../Components/Prints/PrintFinancialReport";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
+import Select from "react-select";
 
 const LandlordReport = ({
   compoundsOptions,
@@ -27,8 +28,15 @@ const LandlordReport = ({
   const [expenses, setExpenses] = useState([]);
   const [revenues, setRevenues] = useState([]);
   const [dataEnteried, setDataEnteried] = useState({});
+  const [resultFilter, setResultFilter] = useState("");
 
   const { t: key } = useTranslation();
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
+
+  const filterOptions = [
+    { label: key("revenues"), value: "revenue" },
+    { label: key("expenses"), value: "expense" },
+  ];
 
   useEffect(() => {
     const intialData = {
@@ -62,6 +70,20 @@ const LandlordReport = ({
     })),
   ];
 
+  const filterChangeHandler = (val) => {
+    setResultFilter(val ? val : "");
+  };
+
+  const filteredResults =
+    combinedData && Array.isArray(combinedData)
+      ? combinedData.filter(
+          (item) =>
+            resultFilter === "" ||
+            item.category.trim().toLocaleLowerCase() ===
+              resultFilter.trim().toLocaleLowerCase()
+        )
+      : [];
+
   const tableHeaders =
     filterType === "incomeReport"
       ? incomeReportTable
@@ -88,14 +110,24 @@ const LandlordReport = ({
         <hr />
 
         <div>
-          <div className={styles.header}>
-            <h4>
-              {filterType === "paymentsReport"
-                ? key("revenuesAndExpenses")
-                : key("incomePerEstate")}
-            </h4>
-            <div>
-              {combinedData && combinedData?.length > 0 && (
+          <h4>
+            {filterType === "paymentsReport"
+              ? key("revenuesAndExpenses")
+              : key("incomePerEstate")}
+          </h4>
+          {combinedData && combinedData?.length > 0 && (
+            <div className={styles.header}>
+              <Select
+                options={filterOptions}
+                onChange={(val) => filterChangeHandler(val ? val.value : null)}
+                className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                  styles.select_type
+                } my-3`}
+                isRtl={isArLang ? false : true}
+                placeholder={key("category")}
+                isClearable
+              />
+              <div>
                 <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
                   <ButtonOne
                     classes="m-2"
@@ -130,9 +162,9 @@ const LandlordReport = ({
                     text={key("download")}
                   />
                 </CheckPermissions>
-              )}
+              </div>
             </div>
-          </div>
+          )}
           <div className="scrollableTable">
             <table className={`${styles.contract_table} table`}>
               <thead className={styles.table_head}>
@@ -144,13 +176,21 @@ const LandlordReport = ({
               </thead>
 
               <tbody className={styles.table_body}>
-                {combinedData.length > 0 ? (
-                  combinedData.map((item, index) =>
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((item, index) =>
                     filterType === "incomeReport" ? (
                       <tr key={index}>
                         <td>{key(item.category)}</td>
-                        <td>{item.estateName || "-"}</td>
-                        <td>{item.total}</td>
+                        <td>{item.estateName || item.compoundName || "-"}</td>
+                        <td
+                          className={` ${
+                            item.category === "expense"
+                              ? "text-danger "
+                              : "text-success"
+                          }`}
+                        >
+                          {item.total}
+                        </td>
                       </tr>
                     ) : filterType === "incomeReportDetails" ? (
                       <tr key={index}>
@@ -160,7 +200,15 @@ const LandlordReport = ({
                         </td>
                         <td>{item.tenant?.name || "-"}</td>
                         <td>{key(item.type)}</td>
-                        <td>{item.amount}</td>
+                        <td
+                          className={` ${
+                            item.category === "expense"
+                              ? "text-danger "
+                              : "text-success"
+                          }`}
+                        >
+                          {item.amount}
+                        </td>
                         <td>{formattedDate(item.paidAt) || "-"}</td>
                         <td>{key(item.paymentMethod) || "-"}</td>
                       </tr>
@@ -173,7 +221,15 @@ const LandlordReport = ({
                         <td>{item.tenant?.name || "-"}</td>
                         <td>{formattedDate(item.dueDate || "-")}</td>
                         <td>{key(item.type)}</td>
-                        <td>{item.amount}</td>
+                        <td
+                          className={` ${
+                            item.category === "expense"
+                              ? "text-danger "
+                              : "text-success"
+                          }`}
+                        >
+                          {item.amount}
+                        </td>
                         <td>{key(item.status)}</td>
                         <td>{formattedDate(item.paidAt) || "-"}</td>
                         <td>{key(item.paymentMethod) || "-"}</td>
