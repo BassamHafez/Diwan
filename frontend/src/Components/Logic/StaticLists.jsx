@@ -356,16 +356,16 @@ export const packagesList = {
 //contract
 export const contractStatusOptions = {
   en: [
+    { label: "Active", value: "active" },
+    { label: "Upcoming", value: "upcoming" },
     { label: "Completed", value: "completed" },
     { label: "Cancelled", value: "canceled" },
-    { label: "Upcoming", value: "upcoming" },
-    { label: "Active", value: "active" },
   ],
   ar: [
+    { label: "ساري", value: "active" },
+    { label: "قادم", value: "upcoming" },
     { label: "مكتمل", value: "completed" },
     { label: "ملغي", value: "canceled" },
-    { label: "قادم", value: "upcoming" },
-    { label: "ساري", value: "active" },
   ],
 };
 export const unitOptions = {
@@ -754,8 +754,6 @@ export const customPackage = {
   ],
 };
 
-
-
 //Reports
 export const incomeReportTable = [
   "category",
@@ -795,12 +793,11 @@ export const paymentsReportTable = [
   "notes",
 ];
 
-
-export const contractsReportTable=[
+export const contractsReportTable = [
   "estate",
   "theTenant",
   "startDate",
   "endDate",
   "amount",
-  "status"
-]
+  "status",
+];

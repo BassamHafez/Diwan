@@ -105,7 +105,10 @@
     font-weight: 500;
     padding: 0.625rem;
   }
-
+  .select_type{
+    min-width: 9.375rem;
+  }
+  
 @media screen and (max-width: 576px) {
   .filter_side {
     background-color: transparent;

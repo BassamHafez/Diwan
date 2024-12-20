@@ -8,12 +8,16 @@ import {
 } from "../../../Components/Logic/LogicFun";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
-import { contractsReportTable } from "../../../Components/Logic/StaticLists";
+import {
+  contractsReportTable,
+  contractStatusOptions,
+} from "../../../Components/Logic/StaticLists";
 import { useState } from "react";
 import ReportsForm from "./ReportForms/ReportsForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import PrintContractsReport from "../../../Components/Prints/PrintContractsReport";
+import Select from "react-select";
 
 const OperationalReport = ({
   compoundsOptions,
@@ -22,6 +26,7 @@ const OperationalReport = ({
   filterType,
 }) => {
   const [contractsData, setContractsData] = useState([]);
+  const [resultFilter, setResultFilter] = useState("");
   const [dataEnteried, setDataEnteried] = useState({
     startDueDate: "",
     endDueDate: "",
@@ -56,6 +61,20 @@ const OperationalReport = ({
     }
   };
 
+  const filterChangeHandler = (val) => {
+    setResultFilter(val ? val : "");
+  };
+
+  const filteredResults =
+    contractsData && Array.isArray(contractsData)
+      ? contractsData.filter(
+          (item) =>
+            resultFilter === "" ||
+            item.status.trim().toLocaleLowerCase() ===
+              resultFilter.trim().toLocaleLowerCase()
+        )
+      : [];
+
   return (
     <>
       <div>
@@ -73,8 +92,23 @@ const OperationalReport = ({
         <hr />
 
         <div>
+          <h4>{key("contracts")}</h4>
           <div className={styles.header}>
-            <h4>{key("contracts")}</h4>
+            <Select
+              options={
+                isArLang
+                  ? contractStatusOptions["ar"]
+                  : contractStatusOptions["en"]
+              }
+              onChange={(val) => filterChangeHandler(val ? val.value : null)}
+              className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
+                styles.select_type
+              } my-3`}
+              isRtl={isArLang ? false : true}
+              placeholder={key("category")}
+              isClearable
+            />
+
             <div>
               {contractsData && contractsData?.length > 0 && (
                 <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
@@ -121,8 +155,8 @@ const OperationalReport = ({
               </thead>
 
               <tbody className={styles.table_body}>
-                {contractsData.length > 0 ? (
-                  contractsData.map((item, index) => (
+                {filteredResults.length > 0 ? (
+                  filteredResults.map((item, index) => (
                     <tr key={index}>
                       <td>{item.estate?.name || item.compound?.name || "-"}</td>
                       <td>{item.tenant?.name || "-"}</td>
