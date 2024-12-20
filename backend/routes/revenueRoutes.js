@@ -23,7 +23,7 @@ router
 router
   .route("/:id")
   .patch(
-    authController.checkPermission("UPDATE_REVENUE"),
+    authController.checkPermission("CANCEL_REVENUE"),
     revenueValidator.getRevenueValidator,
     revenueController.cancelRevenue
   )
