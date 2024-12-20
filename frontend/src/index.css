@@ -240,8 +240,9 @@ p {
   top: 50%;
   right: 1.25rem;
 }
-
-
+.ar_lang *{
+  font-family:"Cairo" !important;
+}
 
 /* admin */
 .admin_body{

@@ -29,8 +29,6 @@ const Contacts = () => {
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
   const [searchFilter, setSearchFilter] = useState("");
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
-  console.log("selectedFilter",selectedFilter)
   
   const {
     data: allContacts,
