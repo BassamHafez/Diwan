@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { array, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -11,11 +11,15 @@ import { useDispatch, useSelector } from "react-redux";
 import fetchAccountData from "../../../../Store/accountInfo-actions";
 import CreatableSelect from "react-select/creatable";
 import { useEffect, useState } from "react";
-import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
+import {
+  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
+} from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 
 const AddMemberForm = ({ hideModal, allPermissions }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
+  const [compoundsOptions, setCompoundsOptions] = useState([]);
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -25,6 +29,23 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+
+  const { data: compounds } = useQuery({
+    queryKey: ["compounds", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    let compoundOptions = [];
+    if (compounds) {
+      compoundOptions = compounds?.data?.compounds?.map((compound) => {
+        return { label: compound.name, value: compound._id };
+      });
+    }
+    setCompoundsOptions(compoundOptions);
+  }, [compounds]);
 
   useEffect(() => {
     if (allPermissions) {
@@ -46,16 +67,25 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
     phone: "",
     password: "",
     permissions: [],
+    permittedCompounds: [],
   };
 
   const onSubmit = (values, { resetForm }) => {
-    if (values.permissions) {
-      values.permissions = values.permissions.map((perm) => perm.value);
+
+    const updatedValues={...values};
+
+    if (updatedValues.permissions) {
+      updatedValues.permissions = updatedValues.permissions.map((perm) => perm.value);
     }
-    console.log(values);
+    if (updatedValues.permittedCompounds) {
+      updatedValues.permittedCompounds = updatedValues.permittedCompounds.map(
+        (perm) => perm.value
+      );
+    }
+    console.log(updatedValues);
     mutate(
       {
-        formData: values,
+        formData: updatedValues,
         token: token,
         method: "add",
         type: `accounts/${accountInfo?.account?._id}/members`,
@@ -109,8 +139,15 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
           value: string().required(key("valueReq")),
         })
       )
-      .min(1, key("permissionsMin"))
       .required(key("fieldReq")),
+    permittedCompounds: array()
+      .of(
+        object().shape({
+          label: string().required(key("labelReq")),
+          value: string().required(key("valueReq")),
+        })
+      )
+      .nullable(),
   });
 
   return (
@@ -140,21 +177,47 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
                 <ErrorMessage name="email" component={InputErrorMessage} />
               </div>
             </Col>
-            <div className="field">
-              <label htmlFor="permissions">
-                {key("permissions")} {requiredLabel}
-              </label>
-              <CreatableSelect
-                isClearable
-                options={permissionsOptions}
-                isMulti
-                onChange={(val) => setFieldValue("permissions", val)}
-                className={`${isArLang ? "text-end" : "text-start"}`}
-                isRtl={isArLang ? false : true}
-                placeholder={isArLang ? "" : "select"}
-              />
-              <ErrorMessage name="permissions" component={InputErrorMessage} />
-            </div>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="permissions">
+                  {key("permissions")} {requiredLabel}
+                </label>
+                <CreatableSelect
+                  isClearable
+                  options={permissionsOptions}
+                  isMulti
+                  onChange={(val) => setFieldValue("permissions", val)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                />
+                <ErrorMessage
+                  name="permissions"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="permittedCompounds">
+                  {key("permittedCompounds")}
+                </label>
+                <CreatableSelect
+                  isClearable
+                  options={compoundsOptions}
+                  isMulti
+                  onChange={(val) => setFieldValue("permittedCompounds", val)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? false : true}
+                  placeholder={isArLang ? "" : "select"}
+                />
+                <ErrorMessage
+                  name="permittedCompounds"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="phoneInput">

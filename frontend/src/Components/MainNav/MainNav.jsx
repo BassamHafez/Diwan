@@ -6,12 +6,10 @@ import Navbar from "react-bootstrap/Navbar";
 import styles from "./MainNav.module.css";
 import logo from "../../assets/logo.png";
 import ButtonOne from "../UI/Buttons/ButtonOne";
-import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleInfo,
   faEnvelope,
-  faGlobe,
   faHouse,
   faBuilding,
   faLayerGroup,
@@ -23,11 +21,12 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 import SettingOffCanvas from "../SettingOffCanvas/SettingOffCanvas";
 import avatar from "../../assets/default.png";
+import LanguageChanger from "../Lang/LanguageChanger";
 
 const MainNav = () => {
   const [showSetting, setShowSetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [t, i18n] = useTranslation();
+  const {t} = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
   const isLogin = useSelector((state) => state.userInfo.isLogin);
@@ -220,24 +219,7 @@ const MainNav = () => {
               )}
             </Nav>
             <div className={styles.nav_controller}>
-              <Dropdown className={styles.language_icon}>
-                <Dropdown.Toggle
-                  className={`${styles.lang_btn} bg-transparent text-dark`}
-                  id="dropdown-basic"
-                >
-                  <FontAwesomeIcon icon={faGlobe} />{" "}
-                  {isArLang ? "العربية" : "English"}
-                </Dropdown.Toggle>
-
-                <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => i18n.changeLanguage("en")}>
-                    English
-                  </Dropdown.Item>
-                  <Dropdown.Item onClick={() => i18n.changeLanguage("ar")}>
-                    العربية
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+              <LanguageChanger/>
               {!isLogin ? (
                 <div className="d-flex align-items-center justify-content-center flex-wrap">
                   <ButtonOne

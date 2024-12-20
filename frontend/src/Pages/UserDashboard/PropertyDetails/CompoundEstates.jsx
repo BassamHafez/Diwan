@@ -9,13 +9,15 @@ import Row from "react-bootstrap/esm/Row";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import { useCallback, useState } from "react";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
+import { useParams } from "react-router-dom";
 
 const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [statusFilter, setStatusFilter] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
-
+  const { compId } = useParams();
   const onSearch = useCallback((searchInput) => {
     setSearchFilter(searchInput);
   }, []);
@@ -38,14 +40,16 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
         <div className={styles.header}>
           <h4>{key("properties")}</h4>
           <CheckPermissions btnActions={["ADD_ESTATE"]}>
-            <div>
-              <ButtonOne
-                onClick={showAddEstatesModal}
-                classes="m-2 bg-navy"
-                borderd
-                text={key("addEstate")}
-              />
-            </div>
+            <CheckAllowedCompounds id={compId}>
+              <div>
+                <ButtonOne
+                  onClick={showAddEstatesModal}
+                  classes="m-2 bg-navy"
+                  borderd
+                  text={key("addEstate")}
+                />
+              </div>
+            </CheckAllowedCompounds>
           </CheckPermissions>
         </div>
 
@@ -56,7 +60,10 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
         >
           <div className={styles.content_header}>
             <div className={styles.search_field}>
-              <SearchField onSearch={onSearch} text={key("searchEstateWithUnitNum")} />
+              <SearchField
+                onSearch={onSearch}
+                text={key("searchEstateWithUnitNum")}
+              />
             </div>
             <Select
               options={isArLang ? estateStatus["ar"] : estateStatus["en"]}

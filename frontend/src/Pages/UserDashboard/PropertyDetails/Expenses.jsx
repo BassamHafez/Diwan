@@ -33,6 +33,7 @@ import UpdateExpenses from "../PropertyForms/UpdateExpenses";
 import ExpensesDetails from "./ExpensesDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 
 const Expenses = ({ isCompound, refetchDetails }) => {
   const [showAddExModal, setShowAddExModal] = useState(false);
@@ -61,7 +62,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: [myQueryKey,myParam,token],
+    queryKey: [myQueryKey, myParam, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `${myEndPoint}/${myParam}/expenses`,
@@ -190,12 +191,14 @@ const Expenses = ({ isCompound, refetchDetails }) => {
               />
             )}
             <CheckPermissions btnActions={["ADD_EXPENSE"]}>
-              <ButtonOne
-                onClick={() => setShowAddExModal(true)}
-                classes="m-2 bg-navy"
-                borderd
-                text={key("addExpenses")}
-              />
+              <CheckAllowedCompounds id={isCompound ? myParam : "estate"}>
+                <ButtonOne
+                  onClick={() => setShowAddExModal(true)}
+                  classes="m-2 bg-navy"
+                  borderd
+                  text={key("addExpenses")}
+                />
+              </CheckAllowedCompounds>
             </CheckPermissions>
           </div>
         </div>

@@ -31,7 +31,7 @@ import {
 import { toast } from "react-toastify";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const TaskItem = ({ task, refetch }) => {
+const TaskItem = ({ task, refetch, compId, propId }) => {
   const [showUpdateTaskModal, setShowUpdateTaskModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [taskData, setTaskData] = useState({});
@@ -222,6 +222,8 @@ const TaskItem = ({ task, refetch }) => {
             hideModal={() => setShowUpdateTaskModal(false)}
             refetch={refetch}
             task={taskData}
+            compId={compId}
+            propId={propId}
           />
         </ModalForm>
       )}
