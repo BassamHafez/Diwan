@@ -6,6 +6,9 @@ const catchAsync = require("../utils/catchAsync");
 
 exports.getStats = catchAsync(async (req, res, next) => {
   const accountId = req.user.account;
+  const startOfYear = new Date(new Date().getFullYear(), 0, 1);
+  // const endOfYear = new Date(new Date().getFullYear() + 1, 0, 1); // 1st Jan next year
+  const endOfYear = new Date(new Date().getFullYear(), 11, 31); // 31st Dec this year
 
   const estatesAggregatePromise = Estate.aggregate([
     { $match: { account: accountId } },
@@ -96,6 +99,34 @@ exports.getStats = catchAsync(async (req, res, next) => {
     .populate(popOptions)
     .lean();
 
+  const revenuesByMonthPromise = Revenue.aggregate([
+    {
+      $match: {
+        account: accountId,
+        dueDate: { $gte: startOfYear, $lt: endOfYear },
+      },
+    },
+    {
+      $group: {
+        _id: { $month: "$dueDate" },
+        totalPaid: {
+          $sum: { $cond: [{ $eq: ["$status", "paid"] }, "$amount", 0] },
+        },
+        totalPending: {
+          $sum: { $cond: [{ $eq: ["$status", "pending"] }, "$amount", 0] },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        month: "$_id",
+        totalPaid: 1,
+        totalPending: 1,
+      },
+    },
+  ]);
+
   const [
     estatesAggregate,
     revenuesAggregate,
@@ -104,6 +135,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
     todayRevenues,
     exPendingRevenues,
     todayExpenses,
+    revenuesByMonth,
   ] = await Promise.all([
     estatesAggregatePromise,
     revenuesAggregatePromise,
@@ -112,6 +144,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
     todayRevenuesPromise,
     exPendingRevenuesPromise,
     todayExpensesPromise,
+    revenuesByMonthPromise,
   ]);
 
   const [
@@ -145,6 +178,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
       todayRevenues,
       exPendingRevenues,
       todayExpenses,
+      revenuesByMonth,
     },
   });
 });
