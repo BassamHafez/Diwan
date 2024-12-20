@@ -47,7 +47,13 @@ exports.createPackageValidator = [
     .withMessage("label is required")
     .isString()
     .withMessage("label must be a string")
-    .isIn(["allowedUsers", "allowedCompounds", "isFavoriteAllowed"])
+    .isIn([
+      "allowedUsers",
+      "allowedCompounds",
+      "allowedEstates",
+      "maxEstatesInCompound",
+      "isFavoriteAllowed",
+    ])
     .withMessage((value) => `Invalid label: ${value}`),
 
   check("features.*.value")
@@ -105,7 +111,13 @@ exports.updatePackageValidator = [
     .optional()
     .isString()
     .withMessage("label must be a string")
-    .isIn(["allowedUsers", "allowedCompounds", "isFavoriteAllowed"])
+    .isIn([
+      "allowedUsers",
+      "allowedCompounds",
+      "allowedEstates",
+      "maxEstatesInCompound",
+      "isFavoriteAllowed",
+    ])
     .withMessage((value) => `Invalid label: ${value}`),
 
   check("features.*.value")

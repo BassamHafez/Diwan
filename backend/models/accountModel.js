@@ -41,7 +41,15 @@ const accountSchema = new mongoose.Schema(
     },
     allowedCompounds: {
       type: Number,
-      default: 2,
+      default: 1,
+    },
+    allowedEstates: {
+      type: Number,
+      default: 5,
+    },
+    maxEstatesInCompound: {
+      type: Number,
+      default: 3,
     },
     isFavoriteAllowed: {
       type: Boolean,

@@ -161,11 +161,23 @@ exports.resizeEstateImage = catchAsync(async (req, res, next) => {
 exports.createEstate = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
 
+  const account = await Account.findById(req.user.account)
+    .select("allowedEstates maxEstatesInCompound")
+    .lean();
+
+  if (account.allowedEstates <= 0) {
+    return next(new ApiError("Subscribe and get more estates", 403));
+  }
+
   if (req.body.compound) {
     const compound = await Compound.findById(req.body.compound);
 
     if (!compound) {
       return next(new ApiError("No compound found with that ID", 404));
+    }
+
+    if (compound.estatesCount >= account.maxEstatesInCompound) {
+      return next(new ApiError("Max estates reached for this compound", 403));
     }
 
     req.body.unitNumber = +compound.estatesCount + 1;
