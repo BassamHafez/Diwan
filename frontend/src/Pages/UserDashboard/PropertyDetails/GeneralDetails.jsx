@@ -33,6 +33,7 @@ import CurrentContract from "./CurrentContract";
 import CompoundContracts from "./CompoundContracts";
 import Expenses from "./Expenses";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 
 const GeneralDetails = ({
   details,
@@ -51,7 +52,7 @@ const GeneralDetails = ({
   useEffect(() => {
     AOS.init({ disable: "mobile" });
   }, []);
-
+console.log(details)
   return (
     <>
       <div className={styles.general_div}>
@@ -63,17 +64,19 @@ const GeneralDetails = ({
           <CheckPermissions
             btnActions={isCompound ? ["UPDATE_COMPOUND"] : ["UPDATE_ESTATE"]}
           >
-            <ButtonOne
-              onClick={() => setShowAUpdateDetailsModal(true)}
-              classes="bg-navy"
-              borderd={true}
-            >
-              {key("ediet")}
-              <FontAwesomeIcon
-                className={`${isArLang ? "me-1" : "ms-1"}`}
-                icon={faWrench}
-              />
-            </ButtonOne>
+            <CheckAllowedCompounds id={isCompound?details._id:"estate"}>
+              <ButtonOne
+                onClick={() => setShowAUpdateDetailsModal(true)}
+                classes="bg-navy"
+                borderd={true}
+              >
+                {key("ediet")}
+                <FontAwesomeIcon
+                  className={`${isArLang ? "me-1" : "ms-1"}`}
+                  icon={faWrench}
+                />
+              </ButtonOne>
+            </CheckAllowedCompounds>
           </CheckPermissions>
         </div>
         <Row>

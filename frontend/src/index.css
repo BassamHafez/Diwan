@@ -241,6 +241,15 @@ p {
   right: 1.25rem;
 }
 
+
+
+/* admin */
+.admin_body{
+  background-color: white;
+  border-radius: 30px;
+  padding: 5px;
+}
+
 @media screen and (max-width: 1150px) {
   .scrollableTable {
     overflow-x: auto;

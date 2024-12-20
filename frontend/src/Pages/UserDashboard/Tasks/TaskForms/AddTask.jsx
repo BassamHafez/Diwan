@@ -25,11 +25,11 @@ import {
 import styles from "./TaskForms.module.css";
 import { convertTpOptionsFormate } from "../../../../Components/Logic/LogicFun";
 
-const AddTask = ({ hideModal, refetch }) => {
+const AddTask = ({ hideModal, refetch, propId, compId }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [estatesOptions, setEstatesOptions] = useState([]);
   const [contactsOptions, setContactsOptions] = useState([]);
-  const [isCompound, setIsCompound] = useState(false);
+  const [isCompound, setIsCompound] = useState(compId ? true : false);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -68,7 +68,7 @@ const AddTask = ({ hideModal, refetch }) => {
     setEstatesOptions(convertTpOptionsFormate(estates?.data));
     setCompoundsOptions(convertTpOptionsFormate(compounds?.data?.compounds));
     setContactsOptions(convertTpOptionsFormate(services?.data));
-  }, [estates, compounds,services]);
+  }, [estates, compounds, services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -78,8 +78,12 @@ const AddTask = ({ hideModal, refetch }) => {
     title: "",
     description: "",
     date: "",
-    estate: "",
-    compound: "",
+    compound: compId
+      ? compoundsOptions?.find((comp) => comp.value === compId) || ""
+      : "",
+    estate: propId
+      ? estatesOptions?.find((estate) => estate.value === propId) || ""
+      : "",
     contact: "",
     type: "",
     cost: "",
@@ -88,30 +92,23 @@ const AddTask = ({ hideModal, refetch }) => {
 
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = {
-      title: values.title,
-      date: values.date,
-      type: values.type,
-      cost: values.cost,
-      priority: values.priority,
+      ...values,
     };
 
-    if (!isCompound && values.estate) {
-      updatedValues.estate = values.estate.value;
-    } else if (isCompound && values.compound) {
-      updatedValues.compound = values.compound.value;
+    if (!isCompound && updatedValues.estate) {
+      updatedValues.estate = updatedValues.estate.value;
+    } else if (isCompound && updatedValues.compound) {
+      updatedValues.compound = updatedValues.compound.value;
     }
 
-    if (values.contact) {
-      updatedValues.contact = values.contact;
-    }
-    if (values.description) {
-      updatedValues.description = values.description;
-    }
+    const cleanedValues = Object.fromEntries(
+      Object.entries(updatedValues).filter(([, value]) => value !== "")
+    );
+    console.log(cleanedValues);
 
-    console.log(updatedValues);
     mutate(
       {
-        formData: updatedValues,
+        formData: cleanedValues,
         token: token,
         method: "add",
         type: `tasks`,
@@ -165,6 +162,7 @@ const AddTask = ({ hideModal, refetch }) => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      enableReinitialize
     >
       {({ setFieldValue, values }) => (
         <Form>
@@ -268,6 +266,7 @@ const AddTask = ({ hideModal, refetch }) => {
                     isRtl={isArLang ? false : true}
                     placeholder={isArLang ? "" : "select"}
                     isClearable
+                    isDisabled={propId}
                   />
                   <ErrorMessage name="estate" component={InputErrorMessage} />
                 </div>
@@ -286,12 +285,13 @@ const AddTask = ({ hideModal, refetch }) => {
                     isRtl={isArLang ? false : true}
                     placeholder={isArLang ? "" : "select"}
                     isClearable
+                    isDisabled={compId}
                   />
                   <ErrorMessage name="compound" component={InputErrorMessage} />
                 </div>
               )}
             </Col>
-            <Col md={6} className="d-flex align-items-center">
+            <Col md={6} className={`d-flex align-items-center ${(compId||propId)?"d-none":""}`}>
               <ul className="h-100 d-flex flex-column justify-content-end">
                 <li
                   onClick={() => setIsCompound(true)}
@@ -321,9 +321,7 @@ const AddTask = ({ hideModal, refetch }) => {
             </Col>
             <Col sm={12}>
               <div className="field">
-                <label htmlFor="description">
-                  {key("description")}
-                </label>
+                <label htmlFor="description">{key("description")}</label>
                 <Field
                   as="textarea"
                   className="text_area"

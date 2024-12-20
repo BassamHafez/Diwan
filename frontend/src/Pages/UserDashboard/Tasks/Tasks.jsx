@@ -1,8 +1,6 @@
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import styles from "./Tasks.module.css";
-import SearchField from "../../../Components/Search/SearchField";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -20,27 +18,20 @@ import {
   faTag,
   faWrench,
 } from "@fortawesome/free-solid-svg-icons";
-import TaskItem from "./TaskItem";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useCallback, useState } from "react";
-import AddTask from "./TaskForms/AddTask";
-import { useQuery } from "@tanstack/react-query";
+
+import TaskContent from "./TaskContent";
+import { useState } from "react";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import NoData from "../../../Components/UI/Blocks/NoData";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import { useQuery } from "@tanstack/react-query";
 
 const Tasks = () => {
-  const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const [timeFilter, setTimeFilter] = useState("all");
   const [tagsFilter, setTagsFilter] = useState("all");
   const [typesFilter, setTypesFilter] = useState("all");
-  const [searchFilter, setSearchFilter] = useState("");
-
+  const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   let iconClass = isArLang ? "ms-2" : "me-2";
-  const token = JSON.parse(localStorage.getItem("token"));
 
   const { data: tasks, refetch } = useQuery({
     queryKey: ["tasks", token],
@@ -52,40 +43,6 @@ const Tasks = () => {
     staleTime: Infinity,
     enabled: !!token,
   });
-
-  const onSearch = useCallback((searchInput) => {
-    setSearchFilter(searchInput);
-  }, []);
-
-  const filteredTasks =
-    tasks && Array.isArray(tasks.data)
-      ? tasks.data.filter((task) => {
-          const matchesTitle = task.title
-            .toLowerCase()
-            .includes(searchFilter.toLowerCase());
-
-          const matchesEstate =
-            task.estate &&
-            task.estate.name.toLowerCase().includes(searchFilter.toLowerCase());
-
-          const matchesCompound =
-            task.compound &&
-            task.compound.name
-              .toLowerCase()
-              .includes(searchFilter.toLowerCase());
-
-          return (
-            (timeFilter === "all"
-              ? true
-              : timeFilter === "underway"
-              ? !task.isCompleted
-              : task.isCompleted) &&
-            (tagsFilter === "all" ? true : task.priority === tagsFilter) &&
-            (typesFilter === "all" ? true : task.type === typesFilter) &&
-            (matchesTitle || matchesEstate || matchesCompound)
-          );
-        })
-      : [];
 
   return (
     <>
@@ -243,56 +200,16 @@ const Tasks = () => {
           </Col>
 
           <Col sm={8} lg={9} xl={10}>
-            <div className={`${styles.tasks_content} position-relative`}>
-              <div
-                className="d-flex justify-content-between align-items-center flex-wrap"
-                style={{ height: "fit-content" }}
-              >
-                <div className="my-1">
-                  <SearchField onSearch={onSearch} text={key("searchTasks")} />
-                </div>
-                <CheckPermissions btnActions={["ADD_TASK"]}>
-                  <div className={`${isArLang?"me-auto":"ms-auto"} my-1`}>
-                    <ButtonOne
-                      onClick={() => setShowAddTaskModal(true)}
-                      text={`${key("add")} ${key("task")}`}
-                      borderd={true}
-                    />
-                  </div>
-                </CheckPermissions>
-              </div>
-              <Row
-                className="mt-3 gy-3 position-relative"
-                style={{ minHeight: "50vh" }}
-              >
-                {tasks ? (
-                  filteredTasks?.length > 0 ? (
-                    filteredTasks?.map((task) => (
-                      <TaskItem key={task._id} task={task} refetch={refetch} />
-                    ))
-                  ) : (
-                    <NoData type="tasks" text={key("noTasks")} />
-                  )
-                ) : (
-                  <LoadingOne />
-                )}
-              </Row>
-            </div>
+            <TaskContent
+              timeFilter={timeFilter}
+              tagsFilter={tagsFilter}
+              typesFilter={typesFilter}
+              tasks={tasks}
+              refetch={refetch}
+            />
           </Col>
         </Row>
       </div>
-      {showAddTaskModal && (
-        <ModalForm
-          show={showAddTaskModal}
-          onHide={() => setShowAddTaskModal(false)}
-          modalSize="lg"
-        >
-          <AddTask
-            hideModal={() => setShowAddTaskModal(false)}
-            refetch={refetch}
-          />
-        </ModalForm>
-      )}
     </>
   );
 };

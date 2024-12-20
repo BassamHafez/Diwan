@@ -489,5 +489,15 @@
   "summary": "الملخص",
   "totalRevenues": "إجمالي الإيرادات",
   "totalExpenses": "إجمالي المصروفات",
-  "totalAmount":"إجمالي المبالغ"
+  "totalAmount":"إجمالي المبالغ",
+  "permittedCompounds":"العقارات المتاحة",
+
+  "accounts":"المكاتب",
+  "users":"المستخدمين",
+  "support":"الدعم االفني",
+  "changeLang":"تغيير اللغة",
+  "diwan":"ديوان أملاك",
+  "subscriptions":"الاشتراكات",
+  "descValidation":"علي الأقل خمس حروف",
+  "searchTitle":"ابحث بالعنوان"
 }
