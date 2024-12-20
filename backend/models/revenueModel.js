@@ -58,6 +58,8 @@ const revenueSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+revenueSchema.index({ account: 1, dueDate: 1 });
+
 const Revenue = mongoose.model("Revenue", revenueSchema);
 
 module.exports = Revenue;
