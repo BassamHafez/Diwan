@@ -26,6 +26,16 @@ exports.createPackageValidator = [
     .isFloat({ min: 0 })
     .withMessage("originalPrice must be a number greater than or equal to 0"),
 
+  check("isBestOffer")
+    .optional()
+    .isBoolean()
+    .withMessage("isBestOffer must be a boolean"),
+
+  check("isMostPopular")
+    .optional()
+    .isBoolean()
+    .withMessage("isMostPopular must be a boolean"),
+
   check("features")
     .exists()
     .withMessage("features is required")
@@ -75,6 +85,16 @@ exports.updatePackageValidator = [
     .optional()
     .isFloat({ min: 0 })
     .withMessage("originalPrice must be a number greater than or equal to 0"),
+
+  check("isBestOffer")
+    .optional()
+    .isBoolean()
+    .withMessage("isBestOffer must be a boolean"),
+
+  check("isMostPopular")
+    .optional()
+    .isBoolean()
+    .withMessage("isMostPopular must be a boolean"),
 
   check("features")
     .optional()
