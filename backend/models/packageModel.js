@@ -20,6 +20,14 @@ const packageSchema = new mongoose.Schema(
       min: 0,
       required: true,
     },
+    isBestOffer: {
+      type: Boolean,
+      default: false,
+    },
+    isMostPopular: {
+      type: Boolean,
+      default: false,
+    },
     features: [
       {
         label: {
