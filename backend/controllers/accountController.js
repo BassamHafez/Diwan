@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Package = require("../models/packageModel");
@@ -41,7 +40,13 @@ exports.getMyAccount = catchAsync(async (req, res, next) => {
 
 exports.subscribe = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const { usersCount, compoundsCount, isFavoriteAllowed } = req.body;
+  const {
+    usersCount,
+    compoundsCount,
+    estatesCount,
+    maxEstatesInCompound,
+    isFavoriteAllowed,
+  } = req.body;
   let cost = 0;
 
   const [account, subscriptions] = await Promise.all([
@@ -89,6 +94,44 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     cost += compoundPrice * compoundsCount;
   }
 
+  if (estatesCount) {
+    let estateFeature = "ADD_ESTATE_LESS_THAN_10";
+
+    if (estatesCount < 10) {
+      estateFeature = "ADD_ESTATE_LESS_THAN_10";
+    } else if (estatesCount >= 10 && estatesCount < 30) {
+      estateFeature = "ADD_ESTATE_10_30";
+    } else if (estatesCount >= 30 && estatesCount < 50) {
+      estateFeature = "ADD_ESTATE_30_50";
+    } else {
+      estateFeature = "ADD_ESTATE_MORE_THAN_50";
+    }
+
+    const estatePrice = subscriptions.find(
+      (sub) => sub.feature === estateFeature
+    ).price;
+
+    cost += estatePrice * estatesCount;
+  }
+
+  if (maxEstatesInCompound) {
+    let maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_3";
+
+    if (maxEstatesInCompound > 3 && maxEstatesInCompound <= 10) {
+      maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_10";
+    } else if (maxEstatesInCompound > 10 && maxEstatesInCompound <= 30) {
+      maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_30";
+    } else {
+      maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_50";
+    }
+
+    const maxEstatesPrice = subscriptions.find(
+      (sub) => sub.feature === maxEstatesFeature
+    ).price;
+
+    cost += maxEstatesPrice;
+  }
+
   if (!account.isFavoriteAllowed && isFavoriteAllowed) {
     const favoritePrice = subscriptions.find(
       (sub) => sub.feature === "FAVORITES"
@@ -105,7 +148,9 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     $inc: {
       allowedUsers: usersCount || 0,
       allowedCompounds: compoundsCount || 0,
+      allowedEstates: estatesCount || 0,
     },
+    maxEstatesInCompound: maxEstatesInCompound || account.maxEstatesInCompound,
     isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
   });
 
@@ -147,9 +192,12 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     $inc: {
       allowedUsers: parseInt(features.allowedUsers) || 0,
       allowedCompounds: parseInt(features.allowedCompounds) || 0,
+      allowedEstates: parseInt(features.allowedEstates) || 0,
     },
     isFavoriteAllowed:
       Boolean(features.isFavoriteAllowed) || account.isFavoriteAllowed,
+    maxEstatesInCompound:
+      parseInt(features.maxEstatesInCompound) || account.maxEstatesInCompound,
   });
 
   res.status(200).json({

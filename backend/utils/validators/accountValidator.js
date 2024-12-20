@@ -20,6 +20,20 @@ exports.subscribeValidator = [
     .isInt({ min: 0 })
     .withMessage("Invalid compounds count"),
 
+  check("estatesCount")
+    .exists()
+    .withMessage("Estate count is required")
+    .isInt({ min: 0 })
+    .withMessage("Invalid estate count"),
+
+  check("maxEstatesInCompound")
+    .exists()
+    .withMessage("Max estates in compound is required")
+    .isInt({ min: 0 })
+    .withMessage("Invalid max estates in compound")
+    .isIn([0, 3, 10, 30, 50])
+    .withMessage("Invalid max estates in compound"),
+
   check("isFavoriteAllowed")
     .exists()
     .withMessage("Favorite allowed is required")
@@ -113,6 +127,16 @@ exports.updateAccountValidator = [
     .not()
     .exists()
     .withMessage("Allowed compounds are not allowed"),
+
+  check("allowedEstates")
+    .not()
+    .exists()
+    .withMessage("Allowed estates are not allowed"),
+
+  check("maxEstatesInCompound")
+    .not()
+    .exists()
+    .withMessage("Max estates in compound is not allowed"),
 
   check("isFavoriteAllowed")
     .not()
