@@ -89,7 +89,11 @@ const LandlordReport = ({
 
         <div>
           <div className={styles.header}>
-            <h4>{key("incomePerEstate")}</h4>
+            <h4>
+              {filterType === "paymentsReport"
+                ? key("revenuesAndExpenses")
+                : key("incomePerEstate")}
+            </h4>
             <div>
               {combinedData && combinedData?.length > 0 && (
                 <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
@@ -151,7 +155,9 @@ const LandlordReport = ({
                     ) : filterType === "incomeReportDetails" ? (
                       <tr key={index}>
                         <td>{key(item.category)}</td>
-                        <td>{item.estate?.name || "-"}</td>
+                        <td>
+                          {item.estate?.name || item.compound?.name || "-"}
+                        </td>
                         <td>{item.tenant?.name || "-"}</td>
                         <td>{key(item.type)}</td>
                         <td>{item.amount}</td>
@@ -161,7 +167,9 @@ const LandlordReport = ({
                     ) : (
                       <tr key={index}>
                         <td>{key(item.category)}</td>
-                        <td>{item.estate?.name || "-"}</td>
+                        <td>
+                          {item.estate?.name || item.compound?.name || "-"}
+                        </td>
                         <td>{item.tenant?.name || "-"}</td>
                         <td>{formattedDate(item.dueDate || "-")}</td>
                         <td>{key(item.type)}</td>

@@ -759,7 +759,7 @@ export const customPackage = {
 //Reports
 export const incomeReportTable = [
   "category",
-  "theUnit",
+  "estate",
   // "theTenant",
   // "startContract",
   "total",
@@ -768,7 +768,7 @@ export const incomeReportTable = [
 ];
 export const incomeReportDetailsTable = [
   "category",
-  "theUnit",
+  "estate",
   // "compound",
   "theTenant",
   // "startContract",
@@ -782,7 +782,7 @@ export const incomeReportDetailsTable = [
 ];
 export const paymentsReportTable = [
   "category",
-  "theUnit",
+  "estate",
   // "compound",
   "theTenant",
   "dueDate",
@@ -797,7 +797,7 @@ export const paymentsReportTable = [
 
 
 export const contractsReportTable=[
-  "theUnit",
+  "estate",
   "theTenant",
   "startDate",
   "endDate",

@@ -4,9 +4,8 @@
 }
 .filter_side {
   box-shadow: 0 0rem 0.1875rem rgba(0, 0, 0, 0.264);
-  height: 100%;
   width: 100%;
-  max-height: 90vh;
+  min-height:70vh;
   padding: 20px;
   background-color: var(--deep_navy);
   border-radius: 1.25rem;
@@ -125,6 +124,7 @@
     background-color: transparent;
     box-shadow: none;
     margin-bottom: 10px;
+    min-height: auto;
   }
   .filter_list li svg,
   .clear_btn {

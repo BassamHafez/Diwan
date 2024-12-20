@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 import OperationalReport from "./OperationalReport";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
@@ -70,7 +71,7 @@ const Reports = () => {
   const circleIcon = (
     <FontAwesomeIcon className={`${iconClass}`} icon={faCircle} />
   );
-  
+
   return (
     <>
       <div className={`${styles.main_container} height_container`}>
@@ -83,15 +84,20 @@ const Reports = () => {
                   {key("report")}
                 </h6>
                 <ul className={styles.filter_list}>
-                  <li
-                    className={
-                      reportTypeFilter === "landlordReport" ? styles.active : ""
-                    }
-                    onClick={() => setReportTypeFilter("landlordReport")}
-                  >
-                    {circleIcon}
-                    {key("landlordReport")}
-                  </li>
+                  <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
+                    <li
+                      className={
+                        reportTypeFilter === "landlordReport"
+                          ? styles.active
+                          : ""
+                      }
+                      onClick={() => setReportTypeFilter("landlordReport")}
+                    >
+                      {circleIcon}
+                      {key("landlordReport")}
+                    </li>
+                  </CheckPermissions>
+
                   {/* <li
                     className={
                       reportTypeFilter === "landlordManager"
@@ -103,17 +109,20 @@ const Reports = () => {
                     {circleIcon}
                     {key("landlordManager")}
                   </li> */}
-                  <li
-                    className={
-                      reportTypeFilter === "operationalReport"
-                        ? styles.active
-                        : ""
-                    }
-                    onClick={() => setReportTypeFilter("operationalReport")}
-                  >
-                    {circleIcon}
-                    {key("operationalReport")}
-                  </li>
+                  <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
+                    <li
+                      className={
+                        reportTypeFilter === "operationalReport"
+                          ? styles.active
+                          : ""
+                      }
+                      onClick={() => setReportTypeFilter("operationalReport")}
+                    >
+                      {circleIcon}
+                      {key("operationalReport")}
+                    </li>
+                  </CheckPermissions>
+
                   {/* <li
                     className={
                       reportTypeFilter === "investmentReport"
@@ -132,98 +141,73 @@ const Reports = () => {
                   <FontAwesomeIcon className={`${iconClass}`} icon={faTags} />
                   {key("type")}
                 </h6>
-                {reportTypeFilter === "landlordReport" && (
-                  <ul className={styles.filter_list}>
-                    <li
-                      className={
-                        landlordFilter === "incomeReport" ? styles.active : ""
-                      }
-                      onClick={() => setLandlordFilter("incomeReport")}
-                    >
-                      <FontAwesomeIcon
-                        className={`${iconClass}`}
-                        icon={faSackDollar}
-                      />
-                      {key("incomeReport")}
-                    </li>
-                    <li
-                      className={
-                        landlordFilter === "incomeReportDetails"
-                          ? styles.active
-                          : ""
-                      }
-                      onClick={() => setLandlordFilter("incomeReportDetails")}
-                    >
-                      <FontAwesomeIcon
-                        className={`${iconClass}`}
-                        icon={faFileInvoiceDollar}
-                      />
-                      {key("incomeReportDetails")}
-                    </li>
-                    <li
-                      className={
-                        landlordFilter === "paymentsReport" ? styles.active : ""
-                      }
-                      onClick={() => setLandlordFilter("paymentsReport")}
-                    >
-                      <FontAwesomeIcon
-                        className={`${iconClass}`}
-                        icon={faMoneyBillTrendUp}
-                      />
-                      {key("paymentsReport")}
-                    </li>
-                  </ul>
-                )}
+                <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
+                  {reportTypeFilter === "landlordReport" && (
+                    <ul className={styles.filter_list}>
+                      <li
+                        className={
+                          landlordFilter === "incomeReport" ? styles.active : ""
+                        }
+                        onClick={() => setLandlordFilter("incomeReport")}
+                      >
+                        <FontAwesomeIcon
+                          className={`${iconClass}`}
+                          icon={faSackDollar}
+                        />
+                        {key("incomeReport")}
+                      </li>
+                      <li
+                        className={
+                          landlordFilter === "incomeReportDetails"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setLandlordFilter("incomeReportDetails")}
+                      >
+                        <FontAwesomeIcon
+                          className={`${iconClass}`}
+                          icon={faFileInvoiceDollar}
+                        />
+                        {key("incomeReportDetails")}
+                      </li>
+                      <li
+                        className={
+                          landlordFilter === "paymentsReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setLandlordFilter("paymentsReport")}
+                      >
+                        <FontAwesomeIcon
+                          className={`${iconClass}`}
+                          icon={faMoneyBillTrendUp}
+                        />
+                        {key("paymentsReport")}
+                      </li>
+                    </ul>
+                  )}
+                </CheckPermissions>
 
-                {/* {reportTypeFilter === "landlordManager" && (
-                  <ul className={styles.filter_list}>
-                    <li
-                      className={
-                        managerFilter === "commissionReport"
-                          ? styles.active
-                          : ""
-                      }
-                      onClick={() => setManagerFilter("commissionReport")}
-                    >
-                      <FontAwesomeIcon
-                        className={`${iconClass}`}
-                        icon={faFileInvoice}
-                      />
-                      {key("commissionReport")}
-                    </li>
-                    <li
-                      className={
-                        managerFilter === "profitReport" ? styles.active : ""
-                      }
-                      onClick={() => setManagerFilter("profitReport")}
-                    >
-                      <FontAwesomeIcon
-                        className={`${iconClass}`}
-                        icon={faSackDollar}
-                      />
-                      {key("profitReport")}
-                    </li>
-                  </ul>
-                )} */}
-
-                {reportTypeFilter === "operationalReport" && (
-                  <ul className={styles.filter_list}>
-                    <li
-                      className={
-                        operationalFilter === "contractsReport"
-                          ? styles.active
-                          : ""
-                      }
-                      onClick={() => setOperationalFilter("contractsReport")}
-                    >
-                      <FontAwesomeIcon
-                        className={`${iconClass}`}
-                        icon={faFileContract}
-                      />
-                      {key("contractsReport")}
-                    </li>
-                  </ul>
-                )}
+                <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
+                  {reportTypeFilter === "operationalReport" && (
+                    <ul className={styles.filter_list}>
+                      <li
+                        className={
+                          operationalFilter === "contractsReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setOperationalFilter("contractsReport")}
+                      >
+                        <FontAwesomeIcon
+                          className={`${iconClass}`}
+                          icon={faFileContract}
+                        />
+                        {key("contractsReport")}
+                      </li>
+                    </ul>
+                  )}
+                </CheckPermissions>
               </div>
             </div>
           </Col>

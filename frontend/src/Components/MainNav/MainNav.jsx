@@ -22,11 +22,12 @@ import { useState } from "react";
 import SettingOffCanvas from "../SettingOffCanvas/SettingOffCanvas";
 import avatar from "../../assets/default.png";
 import LanguageChanger from "../Lang/LanguageChanger";
+import CheckPermissions from "../CheckPermissions/CheckPermissions";
 
 const MainNav = () => {
   const [showSetting, setShowSetting] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
   const isLogin = useSelector((state) => state.userInfo.isLogin);
@@ -141,23 +142,27 @@ const MainNav = () => {
                       {t("tasks")}
                     </span>
                   </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/reports"}
+                  <CheckPermissions
+                    btnActions={["CONTRACTS_REPORTS", "FINANCIAL_REPORTS"]}
                   >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faScroll}
-                      />
-                      {t("reports")}
-                    </span>
-                  </NavLink>
+                    <NavLink
+                      onClick={() => isCollapsed && setIsCollapsed(false)}
+                      className={({ isActive }) =>
+                        isActive ? styles.active : undefined
+                      }
+                      to={"/reports"}
+                    >
+                      <span>
+                        <FontAwesomeIcon
+                          className={`${styles.nav_icon} ${
+                            isArLang ? styles.ar_icon : styles.en_icon
+                          }`}
+                          icon={faScroll}
+                        />
+                        {t("reports")}
+                      </span>
+                    </NavLink>
+                  </CheckPermissions>
                   {packageLink}
                 </>
               ) : (
@@ -219,7 +224,7 @@ const MainNav = () => {
               )}
             </Nav>
             <div className={styles.nav_controller}>
-              <LanguageChanger/>
+              <LanguageChanger />
               {!isLogin ? (
                 <div className="d-flex align-items-center justify-content-center flex-wrap">
                   <ButtonOne
