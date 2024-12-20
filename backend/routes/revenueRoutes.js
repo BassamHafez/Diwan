@@ -4,6 +4,7 @@ const router = express.Router({ mergeParams: true });
 const authController = require("../controllers/authController");
 const revenueController = require("../controllers/revenueController");
 const revenueValidator = require("../utils/validators/revenueValidator");
+const { setAccountId } = require("../utils/requestUtils");
 
 router.use(authController.protect);
 
@@ -14,6 +15,7 @@ router
   .post(
     authController.checkPermission("ADD_REVENUE"),
     revenueValidator.createRevenueValidator,
+    setAccountId,
     revenueController.createRevenue
   );
 
