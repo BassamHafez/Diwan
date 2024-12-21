@@ -6,14 +6,13 @@ import { useTranslation } from "react-i18next";
 import styles from "./Packages.module.css";
 import { useSelector } from "react-redux";
 import Select from "react-select";
-import { maxEstatesInCompoundOptions } from "../../Components/Logic/StaticLists";
 
 const CustomPackages = () => {
   const [features, setFeatures] = useState({
     usersCount: 1,
     compoundsCount: 1,
     estatesCount: 1,
-    maxEstatesInCompound: 3,
+    maxEstatesInCompound: 0,
     isFavoriteAllowed: false,
   });
 
@@ -21,7 +20,6 @@ const CustomPackages = () => {
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const myAccount = accountInfo?.account;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
@@ -44,6 +42,21 @@ const CustomPackages = () => {
   };
 
   const centerClass = "d-flex justify-content-center align-items-center";
+
+  const maxEstatesInCompoundOptions = [
+    {
+      label: `${key("withoutChange")} (${myAccount.maxEstatesInCompound})`,
+      value: 0,
+    },
+    { label: key("threeUnits"), value: 3 },
+    { label: key("tenUnits"), value: 10 },
+    { label: key("ThirtyUnits"), value: 30 },
+    { label: key("fiftyUnits"), value: 50 },
+  ];
+
+  const filteredMaxEstateCompoundOptions = maxEstatesInCompoundOptions.filter(
+    (val) => val.value !== myAccount.maxEstatesInCompound
+  );
 
   return (
     <div className="height_container">
@@ -105,16 +118,15 @@ const CustomPackages = () => {
                   {key("maxEstatesInCompound")}
                 </label>
                 <Select
-                  options={maxEstatesInCompoundOptions}
+                  options={filteredMaxEstateCompoundOptions}
                   onChange={(val) =>
                     handleFeatureChange(val ? val : null, true)
                   }
-                  defaultInputValue={features.maxEstatesInCompound}
                   className={`${isArLang ? "text-end" : "text-start"} ${
                     styles.select_type
                   } my-3`}
                   isRtl={isArLang ? false : true}
-                  placeholder=""
+                  placeholder={filteredMaxEstateCompoundOptions[0].label}
                 />
               </div>
             </Col>

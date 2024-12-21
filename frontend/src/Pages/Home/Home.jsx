@@ -18,21 +18,26 @@ import { useNavigate } from "react-router-dom";
 const Home = () => {
   const { t: key } = useTranslation();
   const isLogin = useSelector((state) => state.userInfo.isLogin);
-  const navigate=useNavigate();
+  const role = useSelector((state) => state.userInfo.role);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
   }, []);
 
-  useEffect(()=>{
-    if(isLogin){
-      navigate("/dashboard")
+  useEffect(() => {
+    if (isLogin) {
+      if (role === "user") {
+        navigate("/dashboard");
+      } else {
+        navigate("/admin-dashboard");
+      }
     }
-  })
+  });
 
   return (
     <>
-      <ScrollTopBtn/>
+      <ScrollTopBtn />
       <Hero />
       <About />
       <section className="my-5 over">

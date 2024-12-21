@@ -516,6 +516,18 @@
   "exPendingRevenues":"التحصيلات المعلقة سابقاً",
   "maxEstatesInCompound":"أقصي عدد لوحدات العقار",
   "estatesCount":"عدد الوحدات",
-  "allowedEstates":"عدد الوحدات",
-  "maxEstatesInCompoundError":"لقصد وصلت إلي الحد الأقصي من وحدات العقار"
+  "allowedEstates":"عدد الوحدات المُدارة",
+  "maxEstatesInCompoundError":"لقصد وصلت إلي الحد الأقصي من وحدات العقار",
+  "arTitle":"العنوان بالعربية",
+  "enTitle":"العنوان بالإنجليزية",
+  "oldPrice":"السعر القديم",
+  "newPrice":"السعر الجديد",
+  "addPackage":"إضافة باقة",
+  "withoutChange":"بدون تغيير",
+  "threeUnits":"ثلاث وحدات (3)",
+  "tenUnits":"عشر وحدات (10)",
+  "ThirtyUnits":"ثلاثون وحدة (30)",
+  "fiftyUnits":"خمسون وحدة (50)",
+    "isMostPopular":"الأكثر شعبية",
+  "isBestOffer":"أفضل عرض"
 }
