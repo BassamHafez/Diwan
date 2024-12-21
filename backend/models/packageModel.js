@@ -40,6 +40,10 @@ const packageSchema = new mongoose.Schema(
         },
       },
     ],
+    purchases: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
