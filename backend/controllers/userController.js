@@ -33,7 +33,7 @@ exports.getMe = (req, res, next) => {
 
 exports.deleteUser = factory.deleteOne(User);
 exports.getAllUsers = factory.getAll(User, [], userSelectedFields);
-exports.getUser = factory.getOne(User, accountPopOptions, userSelectedFields);
+exports.getUser = factory.getOne(User, accountPopOptions);
 
 exports.uploadUserPhoto = uploadSingleImage("photo");
 
