@@ -505,5 +505,22 @@
   "subscriptions":"Subscriptions",
   "descValidation":"at least 5 characters",
   "searchTitle":"search by title",
-  "revenuesAndExpenses":"Revenues And Expenses"
+  "revenuesAndExpenses":"Revenues And Expenses",
+  "paymentRatio":"Payment Ratio",
+  "importantRatios":"Important Ratios",
+  "FinancialReports":"Financial Reports",
+  "estateCount":"Total Units",
+  "totalPaidRevenues":"Paid Revenues",
+  "totalPaidExpenses":"Paid Expenses",
+  "months":"Months",
+  "pendingRevenues":"Pending Revenues",
+  "monthlyRevenues":"Monthly Revenues",
+  "todayTasks":"Today Tasks",
+  "todayRevenues":"Today Revenues",
+  "todayExpenses":"Today Expenses",
+  "exPendingRevenues":"Previously Pending Revenues",
+  "maxEstatesInCompound":"Max Units In Estate",
+  "estatesCount":"Units Count",
+  "allowedEstates":"Units Count",
+  "maxEstatesInCompoundError":"You reached Max Units in Estate"
 }

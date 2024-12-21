@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -39,6 +39,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const queryClient=useQueryClient();
 
   const { data: compounds } = useQuery({
     queryKey: ["compounds", token],
@@ -141,11 +142,14 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
           if (data?.status === "success") {
             refetch();
             refetchTags();
+            queryClient.invalidateQueries(["compounds", token])
             notifySuccess(key("addedSuccess"));
             setSelectedFile(null);
             setImagePreviewUrl(null);
             resetForm();
             hideModal();
+          }else if (data.response.data.message==="Max estates reached for this compound"){
+            notifyError(key("maxEstatesInCompoundError"))
           } else {
             notifyError(key("wrong"));
           }

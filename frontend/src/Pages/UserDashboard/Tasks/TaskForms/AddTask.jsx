@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { date, number, object, string } from "yup";
 import {
@@ -36,6 +36,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const queryClient = useQueryClient();
 
   const { data: compounds } = useQuery({
     queryKey: ["compounds", token],
@@ -117,7 +118,12 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
         onSuccess: (data) => {
           console.log(data);
           if (data?.status === "success") {
-            refetch();
+            if (refetch) {
+              refetch();
+            }
+            if (compId || propId) {
+              queryClient.invalidateQueries(["tasks", token]);
+            }
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();
@@ -291,7 +297,12 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                 </div>
               )}
             </Col>
-            <Col md={6} className={`d-flex align-items-center ${(compId||propId)?"d-none":""}`}>
+            <Col
+              md={6}
+              className={`d-flex align-items-center ${
+                compId || propId ? "d-none" : ""
+              }`}
+            >
               <ul className="h-100 d-flex flex-column justify-content-end">
                 <li
                   onClick={() => setIsCompound(true)}

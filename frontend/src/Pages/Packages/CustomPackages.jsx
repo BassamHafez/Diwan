@@ -5,23 +5,35 @@ import CustomPackageItem from "./CustomPackageItem";
 import { useTranslation } from "react-i18next";
 import styles from "./Packages.module.css";
 import { useSelector } from "react-redux";
+import Select from "react-select";
+import { maxEstatesInCompoundOptions } from "../../Components/Logic/StaticLists";
 
 const CustomPackages = () => {
   const [features, setFeatures] = useState({
     usersCount: 1,
     compoundsCount: 1,
+    estatesCount: 1,
+    maxEstatesInCompound: 3,
     isFavoriteAllowed: false,
   });
 
   const { t: key } = useTranslation();
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const myAccount = accountInfo?.account;
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
-  
-  const handleFeatureChange = (e) => {
+
+  const handleFeatureChange = (e, isSelect) => {
+    if (isSelect) {
+      setFeatures((prevFeatures) => ({
+        ...prevFeatures,
+        ["maxEstatesInCompound"]: e.value,
+      }));
+      return;
+    }
     const { id, value, type, checked } = e.target;
     const newValue = type === "checkbox" ? checked : Number(value);
 
@@ -68,6 +80,41 @@ const CustomPackages = () => {
                       handleFeatureChange(e);
                     }
                   }}
+                />
+              </div>
+            </Col>
+            <Col sm={6} className={centerClass}>
+              <div className="field">
+                <label htmlFor="estatesCount">{key("estatesCount")}</label>
+                <input
+                  type="number"
+                  id="estatesCount"
+                  value={features.estatesCount}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === "" || parseInt(value) >= 0) {
+                      handleFeatureChange(e);
+                    }
+                  }}
+                />
+              </div>
+            </Col>
+            <Col sm={6} className={centerClass}>
+              <div className="field">
+                <label htmlFor="maxEstatesInCompound">
+                  {key("maxEstatesInCompound")}
+                </label>
+                <Select
+                  options={maxEstatesInCompoundOptions}
+                  onChange={(val) =>
+                    handleFeatureChange(val ? val : null, true)
+                  }
+                  defaultInputValue={features.maxEstatesInCompound}
+                  className={`${isArLang ? "text-end" : "text-start"} ${
+                    styles.select_type
+                  } my-3`}
+                  isRtl={isArLang ? false : true}
+                  placeholder=""
                 />
               </div>
             </Col>

@@ -46,6 +46,7 @@ const Members = () => {
             allPermissions={profileInfo?.permissions}
             userPermissions={member?.permissions}
             userData={member?.user}
+            permittedCompounds={member?.permittedCompounds}
             accountOwner={accountInfo?.account?.owner}
           />
         ))}

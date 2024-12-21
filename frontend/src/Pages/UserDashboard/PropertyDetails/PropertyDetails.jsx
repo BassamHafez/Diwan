@@ -51,10 +51,10 @@ const PropertyDetails = () => {
 
   //filter here
   const { data: tasks, refetch:refetchTasks } = useQuery({
-    queryKey: ["tasks", token],
+    queryKey: ["estateTasks",propId,token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: "tasks",
+        type: `tasks?estate=${propId}`,
         token: token,
       }),
     staleTime: Infinity,
@@ -163,11 +163,6 @@ const PropertyDetails = () => {
   };
 
   const myData = data?.data;
-  const filteredTasks =
-    tasks && Array.isArray(tasks.data)
-      ? tasks.data.filter((task) => task.estate?._id === propId)
-      : [];
-  const myTasks = { data: filteredTasks };
 
   return (
     <>
@@ -460,7 +455,7 @@ const PropertyDetails = () => {
                     timeFilter="all"
                     tagsFilter="all"
                     typesFilter="all"
-                    tasks={myTasks}
+                    tasks={tasks}
                     refetch={refetchTasks}
                     propId={propId}
                   />
