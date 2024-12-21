@@ -2,7 +2,7 @@ const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Package = require("../models/packageModel");
 const Subscription = require("../models/subscriptionModel");
-const Counter = require("../models/counterModel");
+const Purchase = require("../models/purchaseModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -40,6 +40,17 @@ exports.getMyAccount = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       account,
+    },
+  });
+});
+
+exports.getMyPurchases = catchAsync(async (req, res, next) => {
+  const purchases = await Purchase.find({ account: req.user.account }).lean();
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      purchases,
     },
   });
 });
@@ -162,11 +173,18 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
     }),
 
-    Counter.findOneAndUpdate(
-      { name: "free_package" },
-      { $inc: { seq: 1 } },
-      { new: true, upsert: true }
-    ),
+    Purchase.create({
+      account: id,
+      amount: cost,
+      type: "custom",
+      customPackage: {
+        usersCount,
+        compoundsCount,
+        estatesCount,
+        maxEstatesInCompound,
+        isFavoriteAllowed,
+      },
+    }),
   ]);
 
   res.status(200).json({
@@ -216,7 +234,12 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
         parseInt(features.maxEstatesInCompound) || account.maxEstatesInCompound,
     }),
 
-    Package.findByIdAndUpdate(packageId, { $inc: { purchases: 1 } }),
+    Purchase.create({
+      account: id,
+      amount: package.price,
+      type: "package",
+      package: packageId,
+    }),
   ]);
 
   res.status(200).json({
