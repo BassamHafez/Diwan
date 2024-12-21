@@ -30,6 +30,7 @@ import {
 } from "../../../util/Http";
 import { toast } from "react-toastify";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import { useQueryClient } from "@tanstack/react-query";
 
 const TaskItem = ({ task, refetch, compId, propId }) => {
   const [showUpdateTaskModal, setShowUpdateTaskModal] = useState(false);
@@ -41,6 +42,7 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
   const { t: key } = useTranslation();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const queryClient = useQueryClient();
 
   let circleColor =
     task.priority === "high"
@@ -79,7 +81,13 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
         type: `tasks`,
       });
       if (res.status === 204) {
-        refetch();
+        if (refetch) {
+          refetch();
+        }
+        if (compId || propId) {
+          queryClient.invalidateQueries(["tasks", token]);
+        }
+
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -102,7 +110,12 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
         },
       });
       if (res.status === "success") {
-        refetch();
+        if (refetch) {
+          refetch();
+        }
+        if (compId || propId) {
+          queryClient.invalidateQueries(["tasks", token]);
+        }
         if (isCompleted) {
           notifySuccess(key("unFinishedSucc"));
         } else {

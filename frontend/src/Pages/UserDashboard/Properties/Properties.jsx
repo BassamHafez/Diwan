@@ -110,17 +110,16 @@ const Properties = () => {
 
   const showNextModal = (selectedModal) => {
     setShowModal(false);
+    const allowName =
+      selectedModal === "compound" ? "allowedCompounds" : "allowedEstates";
+    const isAllowed = checkAccountFeatures(accountInfo?.account, allowName);
+    if (!isAllowed) {
+      notifyError(key("featureEnded"));
+      return;
+    }
     if (selectedModal === "compound") {
-      const isAllowed = checkAccountFeatures(
-        accountInfo?.account,
-        "allowedCompounds"
-      );
-      if (!isAllowed) {
-        notifyError(key("featureEnded"));
-        return;
-      }
       setShowAddCompoundModal(true);
-    } else if (selectedModal === "estate") {
+    } else {
       setShowAddEstateModal(true);
     }
   };
@@ -234,7 +233,7 @@ const Properties = () => {
             );
           })
         : [];
-          
+
     if (filteredData?.length > 0) {
       return filteredData?.map((item) => (
         <Property
@@ -248,7 +247,12 @@ const Properties = () => {
       ));
     }
 
-    return <NoData text={type==="estate"?key("noEstateUnit"):key("noProperty")} type="estate" />;
+    return (
+      <NoData
+        text={type === "estate" ? key("noEstateUnit") : key("noProperty")}
+        type="estate"
+      />
+    );
   };
 
   return (

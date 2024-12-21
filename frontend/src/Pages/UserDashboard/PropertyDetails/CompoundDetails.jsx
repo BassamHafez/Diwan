@@ -22,6 +22,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import {
   calculateRentedPercentage,
+  checkAccountFeatures,
   convertNumbersToFixedTwo,
 } from "../../../Components/Logic/LogicFun";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
@@ -37,6 +38,7 @@ const CompoundDetails = () => {
   const [rentedEstateCount, setRentedEstateCount] = useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const { compId } = useParams();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const queryClient = useQueryClient();
@@ -61,10 +63,10 @@ const CompoundDetails = () => {
   }, []);
   //filter here
   const { data: tasks, refetch: refetchTasks } = useQuery({
-    queryKey: ["tasks", token],
+    queryKey: ["compoundTasks", compId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: "tasks",
+        type: `tasks?compound=${compId}`,
         token: token,
       }),
     staleTime: Infinity,
@@ -116,12 +118,14 @@ const CompoundDetails = () => {
   const totalMonthRev = Number(compDetails?.totalMonthRevenue);
   const totalMonthPaidRev = Number(compDetails?.totalMonthPaidRevenues);
 
-  const filteredTasks =
-    tasks && Array.isArray(tasks.data)
-      ? tasks.data.filter((task) => task.compound?._id === compId)
-      : [];
-  const myTasks = { data: filteredTasks };
-
+  const checkIsAllowed = () => {
+    const isAllowed = checkAccountFeatures(accountInfo?.account, "allowedEstates");
+    if (!isAllowed) {
+      notifyError(key("featureEnded"));
+      return;
+    }
+    setShowAddEstateModal(true);
+  };
   return (
     <>
       <ScrollTopBtn />
@@ -154,7 +158,7 @@ const CompoundDetails = () => {
                       <CheckAllowedCompounds id={compId}>
                         <div
                           className={styles.bookmarked}
-                          onClick={() => setShowAddEstateModal(true)}
+                          onClick={checkIsAllowed}
                           title={key("addEstate")}
                         >
                           <FontAwesomeIcon icon={faPlus} />
@@ -308,7 +312,7 @@ const CompoundDetails = () => {
                     isCompound={true}
                     details={compDetails?.compound}
                     compoundEstates={compDetails?.estates}
-                    showAddEstatesModal={() => setShowAddEstateModal(true)}
+                    showAddEstatesModal={checkIsAllowed}
                     refetch={refetch}
                   />
                 </Tab>
@@ -319,7 +323,7 @@ const CompoundDetails = () => {
                       timeFilter="all"
                       tagsFilter="all"
                       typesFilter="all"
-                      tasks={myTasks}
+                      tasks={tasks}
                       refetch={refetchTasks}
                       compId={compId}
                     />

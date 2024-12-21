@@ -518,5 +518,9 @@
   "todayTasks":"Today Tasks",
   "todayRevenues":"Today Revenues",
   "todayExpenses":"Today Expenses",
-  "exPendingRevenues":"Previously Pending Revenues"
+  "exPendingRevenues":"Previously Pending Revenues",
+  "maxEstatesInCompound":"Max Units In Estate",
+  "estatesCount":"Units Count",
+  "allowedEstates":"Units Count",
+  "maxEstatesInCompoundError":"You reached Max Units in Estate"
 }

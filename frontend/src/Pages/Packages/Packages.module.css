@@ -159,7 +159,9 @@
 .chooseFeatures img {
   width: 100%;
 }
-
+.select_type{
+  min-width: 9.375rem;
+}
 @media screen and (min-width: 770px) and (max-width: 1158px) {
   .features ul {
     min-height: 350px;

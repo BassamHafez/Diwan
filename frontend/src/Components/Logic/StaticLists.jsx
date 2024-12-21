@@ -753,7 +753,12 @@ export const customPackage = {
     { label: "customPackageMSg3", value: "false" },
   ],
 };
-
+export const maxEstatesInCompoundOptions=[
+  {label:"3",value:3},
+  {label:"10",value:10},
+  {label:"30",value:30},
+  {label:"50",value:50},
+]
 //Reports
 export const incomeReportTable = [
   "category",

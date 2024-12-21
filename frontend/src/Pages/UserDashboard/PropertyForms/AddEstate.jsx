@@ -148,6 +148,8 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
             setImagePreviewUrl(null);
             resetForm();
             hideModal();
+          }else if (data.response.data.message==="Max estates reached for this compound"){
+            notifyError(key("maxEstatesInCompoundError"))
           } else {
             notifyError(key("wrong"));
           }

@@ -24,7 +24,7 @@ const PackageItem = ({ pack, type }) => {
   const isLogin = useSelector((state) => state.userInfo.isLogin);
   const [showPackageData, setShowPackageData] = useState(false);
   const [subCost, setSubCost] = useState(0);
-
+  // isMostPopular isBestOffer
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
@@ -90,6 +90,12 @@ const PackageItem = ({ pack, type }) => {
                 }
                 alt="svgShape"
               />
+              {/* <img
+                src={
+                  pack.isMostPopular? triangle : pack.isBestOffer? shape : fire
+                }
+                alt="svgShape"
+              /> */}
               <h3>{isArLang ? pack.arTitle : pack.enTitle}</h3>
             </div>
             <div
