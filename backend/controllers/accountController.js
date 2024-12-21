@@ -11,7 +11,12 @@ const memberPopOptions = {
   select: "name email phone photo",
 };
 
-exports.getAllAccounts = factory.getAll(Account);
+const ownerPopOptions = {
+  path: "owner",
+  select: "name email phone",
+};
+
+exports.getAllAccounts = factory.getAll(Account, ownerPopOptions, "-members");
 exports.updateAccount = factory.updateOne(Account);
 
 exports.getMyAccount = catchAsync(async (req, res, next) => {
