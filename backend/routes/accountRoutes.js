@@ -15,6 +15,8 @@ router.get(
 
 router.get("/my-account", accountController.getMyAccount);
 
+router.get("/purchases", accountController.getMyPurchases);
+
 router.patch(
   "/:id",
   authController.checkPermission("UPDATE_ACCOUNT"),
