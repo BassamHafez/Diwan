@@ -1,3 +1,7 @@
+const Account = require("../models/accountModel");
+const User = require("../models/userModel");
+const Purchase = require("../models/purchaseModel");
+const Compound = require("../models/compoundModel");
 const Estate = require("../models/estateModel");
 const Revenue = require("../models/revenueModel");
 const Expense = require("../models/expenseModel");
@@ -179,6 +183,217 @@ exports.getStats = catchAsync(async (req, res, next) => {
       exPendingRevenues,
       todayExpenses,
       revenuesByMonth,
+    },
+  });
+});
+
+exports.getAdminStats = catchAsync(async (req, res, next) => {
+  const accountsCountPromise = Account.countDocuments();
+  const usersCountPromise = User.countDocuments();
+  const compoundsCountPromise = Compound.countDocuments();
+  const estatesCountPromise = Estate.countDocuments();
+
+  const purchasesStatsPromise = Purchase.aggregate([
+    {
+      $facet: {
+        // Total Revenue
+        totalRevenue: [
+          { $match: { status: "completed" } },
+          { $group: { _id: null, total: { $sum: "$amount" } } },
+        ],
+        // Total Pending Transactions and Total Completed Transactions
+        transactionStatusCounts: [
+          {
+            $group: {
+              _id: "$status",
+              count: { $sum: 1 },
+              amount: { $sum: "$amount" },
+            },
+          },
+        ],
+        // Number of Purchases and Average Purchase Amount
+        generalStats: [
+          {
+            $group: {
+              _id: null,
+              totalPurchases: { $sum: 1 },
+              averageAmount: { $avg: "$amount" },
+            },
+          },
+        ],
+        // Purchase Counts and Average Purchase Amount by Type
+        typeStats: [
+          {
+            $group: {
+              _id: "$type",
+              count: { $sum: 1 },
+              averageAmount: { $avg: "$amount" },
+            },
+          },
+        ],
+        // Top 5 Accounts by Spend
+        topAccounts: [
+          { $match: { status: "completed" } },
+          { $group: { _id: "$account", totalSpend: { $sum: "$amount" } } },
+          { $sort: { totalSpend: -1 } },
+          { $limit: 5 },
+          {
+            $lookup: {
+              from: "accounts",
+              localField: "_id",
+              foreignField: "_id",
+              as: "account",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              totalSpend: 1,
+              accountName: {
+                $arrayElemAt: [{ $ifNull: ["$account.name", ["Unknown"]] }, 0],
+              },
+            },
+          },
+        ],
+        // Most Popular Package
+        popularPackages: [
+          { $match: { type: "package", package: { $ne: null } } },
+          { $group: { _id: "$package", count: { $sum: 1 } } },
+          { $sort: { count: -1 } },
+          { $limit: 1 },
+          {
+            $lookup: {
+              from: "packages",
+              localField: "_id",
+              foreignField: "_id",
+              as: "package",
+            },
+          },
+          {
+            $project: {
+              _id: 0,
+              count: 1,
+              package: {
+                $arrayElemAt: ["$package", 0],
+              },
+            },
+          },
+          {
+            $project: {
+              numberOfPurchases: "$count",
+              arTitle: "$package.arTitle",
+              enTitle: "$package.enTitle",
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        // Simplify the output
+        totalRevenue: { $arrayElemAt: ["$totalRevenue.total", 0] },
+        pendingTransactions: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$transactionStatusCounts",
+                as: "status",
+                cond: { $eq: ["$$status._id", "pending"] },
+              },
+            },
+            0,
+          ],
+        },
+        completedTransactions: {
+          $arrayElemAt: [
+            {
+              $filter: {
+                input: "$transactionStatusCounts",
+                as: "status",
+                cond: { $eq: ["$$status._id", "completed"] },
+              },
+            },
+            0,
+          ],
+        },
+        generalStats: { $arrayElemAt: ["$generalStats", 0] },
+        typeStats: "$typeStats",
+        topAccounts: "$topAccounts",
+        mostPopularPackage: { $arrayElemAt: ["$popularPackages", 0] },
+      },
+    },
+  ]);
+
+  const [
+    accountsCount,
+    usersCount,
+    compoundsCount,
+    estatesCount,
+    purchasesStats,
+  ] = await Promise.all([
+    accountsCountPromise,
+    usersCountPromise,
+    compoundsCountPromise,
+    estatesCountPromise,
+    purchasesStatsPromise,
+  ]);
+
+  const [
+    {
+      totalRevenue: totalCompletedRevenue,
+      pendingTransactions: {
+        count: totalPendingTransactions,
+        amount: totalPendingAmount,
+      },
+      completedTransactions: {
+        count: totalCompletedTransactions,
+        amount: totalCompletedAmount,
+      },
+      generalStats: {
+        totalPurchases: numberOfPurchases,
+        averageAmount: averagePurchaseAmount,
+      },
+      typeStats,
+      topAccounts: topAccountsBySpend,
+      mostPopularPackage,
+    },
+  ] = purchasesStats;
+
+  let customPackagePurchaseCount = 0;
+  let customPackagePurchaseAmount = 0;
+  let packagesPurchaseCount = 0;
+  let packagesPurchaseAmount = 0;
+
+  typeStats.forEach((type) => {
+    if (type._id === "custom") {
+      customPackagePurchaseCount = type.count;
+      customPackagePurchaseAmount = type.averageAmount;
+    } else if (type._id === "package") {
+      packagesPurchaseCount = type.count;
+      packagesPurchaseAmount = type.averageAmount;
+    }
+  });
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      accountsCount,
+      usersCount,
+      compoundsCount,
+      estatesCount,
+      totalCompletedRevenue,
+      totalPendingTransactions,
+      totalPendingAmount,
+      totalCompletedTransactions,
+      totalCompletedAmount,
+      numberOfPurchases,
+      averagePurchaseAmount,
+      customPackagePurchaseCount,
+      customPackagePurchaseAmount,
+      packagesPurchaseCount,
+      packagesPurchaseAmount,
+      topAccountsBySpend,
+      mostPopularPackage,
     },
   });
 });
