@@ -17,14 +17,23 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+const accountPopOptions = [
+  {
+    path: "account",
+    select: "name phone address region city",
+  },
+];
+
+const userSelectedFields = "-permissions -permittedCompounds";
+
 exports.getMe = (req, res, next) => {
   req.params.id = req.user.id;
   next();
 };
 
 exports.deleteUser = factory.deleteOne(User);
-exports.getAllUsers = factory.getAll(User);
-exports.getUser = factory.getOne(User);
+exports.getAllUsers = factory.getAll(User, [], userSelectedFields);
+exports.getUser = factory.getOne(User, accountPopOptions, userSelectedFields);
 
 exports.uploadUserPhoto = uploadSingleImage("photo");
 
