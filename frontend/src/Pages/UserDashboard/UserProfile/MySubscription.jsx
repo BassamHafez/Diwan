@@ -14,6 +14,8 @@ const MySubscription = ({chooseActiveActive}) => {
   const currentFeatures = {
     usersCount: myAccount?.allowedUsers,
     compoundsCount: myAccount?.allowedCompounds,
+    allowedEstates: myAccount?.allowedEstates,
+    maxEstatesInCompound: myAccount?.maxEstatesInCompound,
     isFavoriteAllowed: myAccount?.isFavoriteAllowed,
   };
   

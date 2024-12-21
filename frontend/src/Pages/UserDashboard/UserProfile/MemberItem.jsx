@@ -20,6 +20,7 @@ const MemberItem = ({
   userData,
   accountId,
   accountOwner,
+  permittedCompounds
 }) => {
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -154,6 +155,7 @@ const MemberItem = ({
             allPermissions={allPermissions}
             userPermissions={userPermissions}
             userId={userData?._id}
+            permittedCompoundsArr={permittedCompounds}
             hideModal={() => setShowUpdatePermissionModal(false)}
           />
         </ModalForm>

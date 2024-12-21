@@ -513,5 +513,9 @@
   "todayTasks": "مهام اليوم",
   "todayRevenues": "إيرادات اليوم",
   "todayExpenses":"مصروفات اليوم",
-  "exPendingRevenues":"التحصيلات المعلقة سابقاً"
+  "exPendingRevenues":"التحصيلات المعلقة سابقاً",
+  "maxEstatesInCompound":"أقصي عدد لوحدات العقار",
+  "estatesCount":"عدد الوحدات",
+  "allowedEstates":"عدد الوحدات",
+  "maxEstatesInCompoundError":"لقصد وصلت إلي الحد الأقصي من وحدات العقار"
 }

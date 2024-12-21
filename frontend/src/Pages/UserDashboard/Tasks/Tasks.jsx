@@ -32,7 +32,7 @@ const Tasks = () => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   let iconClass = isArLang ? "ms-2" : "me-2";
-
+  
   const { data: tasks, refetch } = useQuery({
     queryKey: ["tasks", token],
     queryFn: () =>
