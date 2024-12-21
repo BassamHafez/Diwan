@@ -207,10 +207,15 @@ exports.createEstate = catchAsync(async (req, res, next) => {
       )
     : Promise.resolve();
 
-  const [_, estate] = await Promise.all([
-    tagUpdatePromise,
+  const accountUpdatePromise = Account.findByIdAndUpdate(req.user.account, {
+    $inc: { allowedEstates: -1 },
+  });
+
+  const [estate] = await Promise.all([
     estateCreatePromise,
+    tagUpdatePromise,
     estateCountUpdatePromise,
+    accountUpdatePromise,
   ]);
 
   res.status(201).json({
