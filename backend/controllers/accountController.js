@@ -2,6 +2,7 @@ const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Package = require("../models/packageModel");
 const Subscription = require("../models/subscriptionModel");
+const Counter = require("../models/counterModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -149,15 +150,24 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     return next(new ApiError("Invalid subscription", 400));
   }
 
-  await Account.findByIdAndUpdate(id, {
-    $inc: {
-      allowedUsers: usersCount || 0,
-      allowedCompounds: compoundsCount || 0,
-      allowedEstates: estatesCount || 0,
-    },
-    maxEstatesInCompound: maxEstatesInCompound || account.maxEstatesInCompound,
-    isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
-  });
+  await Promise.all([
+    Account.findByIdAndUpdate(id, {
+      $inc: {
+        allowedUsers: usersCount || 0,
+        allowedCompounds: compoundsCount || 0,
+        allowedEstates: estatesCount || 0,
+      },
+      maxEstatesInCompound:
+        maxEstatesInCompound || account.maxEstatesInCompound,
+      isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
+    }),
+
+    Counter.findOneAndUpdate(
+      { name: "free_package" },
+      { $inc: { seq: 1 } },
+      { new: true, upsert: true }
+    ),
+  ]);
 
   res.status(200).json({
     status: "success",
@@ -193,17 +203,21 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     return acc;
   }, {});
 
-  await Account.findByIdAndUpdate(id, {
-    $inc: {
-      allowedUsers: parseInt(features.allowedUsers) || 0,
-      allowedCompounds: parseInt(features.allowedCompounds) || 0,
-      allowedEstates: parseInt(features.allowedEstates) || 0,
-    },
-    isFavoriteAllowed:
-      Boolean(features.isFavoriteAllowed) || account.isFavoriteAllowed,
-    maxEstatesInCompound:
-      parseInt(features.maxEstatesInCompound) || account.maxEstatesInCompound,
-  });
+  await Promise.all([
+    Account.findByIdAndUpdate(id, {
+      $inc: {
+        allowedUsers: parseInt(features.allowedUsers) || 0,
+        allowedCompounds: parseInt(features.allowedCompounds) || 0,
+        allowedEstates: parseInt(features.allowedEstates) || 0,
+      },
+      isFavoriteAllowed:
+        Boolean(features.isFavoriteAllowed) || account.isFavoriteAllowed,
+      maxEstatesInCompound:
+        parseInt(features.maxEstatesInCompound) || account.maxEstatesInCompound,
+    }),
+
+    Package.findByIdAndUpdate(packageId, { $inc: { purchases: 1 } }),
+  ]);
 
   res.status(200).json({
     status: "success",
