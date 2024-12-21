@@ -1,37 +1,87 @@
 import Chart from "react-apexcharts";
+import { convertNumbersToFixedTwo } from "../Logic/LogicFun";
+import { useTranslation } from "react-i18next";
 
-const TotalExAndRev = () => {
+const TotalExAndRev = ({ type, paidAmount, total }) => {
+  const { t: key } = useTranslation();
+  const percentage = convertNumbersToFixedTwo((paidAmount / total) * 100);
+
+  const chartConfig =
+    type === "expenses"
+      ? {
+          label: key("paymentRatio"),
+          gradientColors: ["#d39833"],
+        }
+      : type === "revenues"
+      ? {
+          label: key("collectionRatio"),
+          gradientColors: ["#d39833"],
+        }
+      : {
+          label: key("totalRentedEstate"),
+          gradientColors: ["#d39833"],
+        };
+  // #20E647
   const chartData = {
     options: {
       chart: {
-        id: "revenue-expense-bar",
+        height: 280,
+        type: "radialBar",
       },
-      xaxis: {
-        categories: [
-          "Paid Revenues",
-          "Pending Revenues",
-          "Paid Expenses",
-          "Pending Expenses",
-        ],
+      plotOptions: {
+        radialBar: {
+          hollow: {
+            margin: 0,
+            size: "70%",
+            background: "#293450",
+          },
+          track: {
+            dropShadow: {
+              enabled: true,
+              top: 2,
+              left: 0,
+              blur: 4,
+              opacity: 0.15,
+            },
+          },
+          dataLabels: {
+            name: {
+              offsetY: -10,
+              color: "#fff",
+              fontSize: "13px",
+            },
+            value: {
+              color: "#fff",
+              fontSize: "30px",
+              show: true,
+            },
+          },
+        },
       },
-      colors: ["#4caf50", "#f44336", "#2196f3", "#ff9800"], // Custom colors
+      fill: {
+        type: "gradient",
+        gradient: {
+          shade: "dark",
+          type: "vertical",
+          gradientToColors: chartConfig.gradientColors,
+          stops: [0, 100],
+        },
+      },
+      stroke: {
+        lineCap: "round",
+      },
+      labels: [chartConfig.label],
     },
-    series: [
-      {
-        name: "Amount",
-        data: [25500, 15000, 1045, 7600], // Values from your data
-      },
-    ],
+    series: [percentage],
   };
 
   return (
-    <div>
-      <h2>Revenue and Expense Overview</h2>
+    <div className="ar_lang">
       <Chart
         options={chartData.options}
         series={chartData.series}
-        type="bar"
-        width="600"
+        type="radialBar"
+        height={280}
       />
     </div>
   );

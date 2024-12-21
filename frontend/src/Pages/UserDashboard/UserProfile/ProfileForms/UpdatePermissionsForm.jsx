@@ -1,4 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Form, Formik } from "formik";
 import { array, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -10,7 +10,10 @@ import { useDispatch, useSelector } from "react-redux";
 import fetchAccountData from "../../../../Store/accountInfo-actions";
 import CreatableSelect from "react-select/creatable";
 import { useEffect, useState } from "react";
-import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
+import {
+  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
+} from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 
 const UpdatePermissionsForm = ({
@@ -18,8 +21,10 @@ const UpdatePermissionsForm = ({
   allPermissions,
   userPermissions,
   userId,
+  permittedCompoundsArr,
 }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
+  const [compoundsOptions, setCompoundsOptions] = useState([]);
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -28,6 +33,23 @@ const UpdatePermissionsForm = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+
+  const { data: compounds } = useQuery({
+    queryKey: ["compounds", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    let compoundOptions = [];
+    if (compounds) {
+      compoundOptions = compounds?.data?.compounds?.map((compound) => {
+        return { label: compound.name, value: compound._id };
+      });
+    }
+    setCompoundsOptions(compoundOptions);
+  }, [compounds]);
 
   useEffect(() => {
     if (allPermissions) {
@@ -44,17 +66,25 @@ const UpdatePermissionsForm = ({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
+  const myPermittedCompoundsOptions = compoundsOptions?.filter((comp) =>
+    permittedCompoundsArr.includes(comp.value)
+  );
+  const myPermissionsOptions = userPermissions?.map((perm, index) => ({
+    label: key(perm) || index,
+    value: perm,
+  }));
+
   const initialValues = {
-    permissions:
-      userPermissions?.map((perm, index) => ({
-        label: key(perm) || index,
-        value: perm,
-      })) || [],
+    permissions: myPermissionsOptions || [],
+    permittedCompounds: myPermittedCompoundsOptions || [],
   };
 
   const onSubmit = (values) => {
     const updatedValues = {
       permissions: values.permissions.map((perm) => `${perm.value}`),
+      permittedCompounds: values.permittedCompounds.map(
+        (perm) => `${perm.value}`
+      ),
     };
     mutate(
       {
@@ -92,6 +122,14 @@ const UpdatePermissionsForm = ({
       )
       .min(1, key("permissionsMin"))
       .required(key("fieldReq")),
+    permittedCompounds: array()
+      .of(
+        object().shape({
+          label: string().required(key("labelReq")),
+          value: string().required(key("valueReq")),
+        })
+      )
+      .nullable(),
   });
 
   return (
@@ -117,6 +155,25 @@ const UpdatePermissionsForm = ({
                 placeholder={isArLang ? "" : "select"}
               />
               <ErrorMessage name="permissions" component={InputErrorMessage} />
+            </div>
+            <div className="field">
+              <label htmlFor="permittedCompounds">
+                {key("permittedCompounds")}
+              </label>
+              <CreatableSelect
+                isClearable
+                options={compoundsOptions}
+                isMulti
+                onChange={(val) => setFieldValue("permittedCompounds", val)}
+                value={values.permittedCompounds}
+                className={`${isArLang ? "text-end" : "text-start"}`}
+                isRtl={isArLang ? false : true}
+                placeholder={isArLang ? "" : "select"}
+              />
+              <ErrorMessage
+                name="permittedCompounds"
+                component={InputErrorMessage}
+              />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
               <button onClick={hideModal} className="cancel_btn my-2">

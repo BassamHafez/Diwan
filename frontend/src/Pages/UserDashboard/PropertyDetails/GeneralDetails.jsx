@@ -52,7 +52,7 @@ const GeneralDetails = ({
   useEffect(() => {
     AOS.init({ disable: "mobile" });
   }, []);
-console.log(details)
+
   return (
     <>
       <div className={styles.general_div}>

@@ -287,13 +287,6 @@ const Revenue = ({ refetchDetails, details }) => {
                               >
                                 <FontAwesomeIcon icon={faEllipsisVertical} />
                               </Dropdown.Toggle>
-
-                              <CheckPermissions
-                                btnActions={[""]}
-                              ></CheckPermissions>
-                              <CheckPermissions
-                                btnActions={[""]}
-                              ></CheckPermissions>
                               <Dropdown.Menu className={styles.dropdown_list}>
                                 {rev.status === "pending" && (
                                   <CheckPermissions
