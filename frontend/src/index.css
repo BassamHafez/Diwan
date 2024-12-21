@@ -10,6 +10,7 @@
   --deep_navy: #2a3a47;
   --main_font: "Cairo", sans-serif;
   --sub_white: rgb(247, 247, 247);
+  color-scheme: only light;
 }
 * {
   margin: 0;
@@ -21,6 +22,8 @@ body {
   overflow-x: hidden !important;
   scroll-behavior: smooth;
   font-family: var(--main_font) !important;
+  background-color: #ffffff;
+  color: #000000;
 }
 body::-webkit-scrollbar {
   display: none;
@@ -240,12 +243,12 @@ p {
   top: 50%;
   right: 1.25rem;
 }
-.ar_lang *{
-  font-family:"Cairo" !important;
+.ar_lang * {
+  font-family: "Cairo" !important;
 }
 
 /* admin */
-.admin_body{
+.admin_body {
   background-color: white;
   border-radius: 30px;
   padding: 5px;
@@ -278,5 +281,12 @@ p {
 @media screen and (max-width: 410px) {
   .standard_img {
     width: 99%;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000000; /* Dark background color */
+    color: #ffffff; /* Text color for dark mode */
   }
 }

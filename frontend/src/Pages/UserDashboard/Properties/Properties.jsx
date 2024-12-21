@@ -415,7 +415,6 @@ const Properties = () => {
         <Col md={3} lg={2} className={styles.filters}>
           <aside>
             <Accordion
-              className={styles.accordion_container}
               defaultActiveKey={["0", "1", "2", "3"]}
             >
               <AccordionContent

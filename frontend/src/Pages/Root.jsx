@@ -1,8 +1,7 @@
 import { Outlet } from "react-router-dom";
 import MainNav from "../Components/MainNav/MainNav";
 import MainFooter from "../Components/Footer/MainFooter";
-import { useEffect, useState } from "react";
-import NetworkError from "./Error/NetworkError";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -12,25 +11,19 @@ import ButtonOne from "../Components/UI/Buttons/ButtonOne";
 import { useTranslation } from "react-i18next";
 import LogOutModal from "../Components/UI/Modals/LogOutModal";
 import SearchField from "../Components/Search/SearchField";
+import useIsOnline from "../hooks/useIsOnline";
+import noConnectionImg from "../assets/noConnection.png";
 
 const Root = () => {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [logoutModalShow, setLogoutModalShow] = useState(false);
   const { t: key } = useTranslation();
 
   const role = useSelector((state) => state.userInfo.role);
-  const handleOnline = () => setIsOnline(true);
-  const handleOffline = () => setIsOnline(false);
+  const isOnline = useIsOnline();
 
-  useEffect(() => {
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
+  const refreshPage = () => {
+    window.location.reload();
+  };
 
   return (
     <>
@@ -79,7 +72,19 @@ const Root = () => {
           </>
         )
       ) : (
-        <NetworkError />
+        <div
+          style={{ zIndex: "8" }}
+          className="d-flex justify-content-center align-items-center flex-column position-absolute top-0 start-0 over h-100 w-100"
+        >
+          <img
+            className="standard_img"
+            src={noConnectionImg}
+            alt="noConnetion"
+          />
+          <h2>{key("networkError")}</h2>
+          <p>{key("networkErrorMsg")} </p>
+          <ButtonOne text={key("reloadPage")} onClick={refreshPage} />
+        </div>
       )}
 
       {logoutModalShow && (
