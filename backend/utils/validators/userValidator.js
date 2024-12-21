@@ -80,3 +80,43 @@ exports.verifyPhoneValidator = [
 
   validatorMiddleware,
 ];
+
+exports.addAdminValidator = [
+  check("name")
+    .notEmpty()
+    .withMessage("User name required")
+    .isLength({ min: 3 })
+    .withMessage("Too short User name"),
+
+  check("email")
+    .notEmpty()
+    .withMessage("Email required")
+    .isEmail()
+    .withMessage("Invalid email address"),
+
+  check("phone")
+    .notEmpty()
+    .withMessage("Phone number required")
+    .isLength({ min: 10 })
+    .withMessage("Invalid phone number")
+    .isMobilePhone("ar-SA")
+    .withMessage("Invalid Saudi phone number"),
+
+  check("password")
+    .notEmpty()
+    .withMessage("Password required")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters"),
+
+  check("passwordConfirm")
+    .notEmpty()
+    .withMessage("Password confirmation required")
+    .custom((passwordConfirm, { req }) => {
+      if (passwordConfirm !== req.body.password) {
+        throw new Error("Password Confirmation incorrect");
+      }
+      return true;
+    }),
+
+  validatorMiddleware,
+];

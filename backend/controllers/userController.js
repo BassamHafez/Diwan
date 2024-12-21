@@ -139,3 +139,21 @@ exports.verifyPhone = catchAsync(async (req, res, next) => {
     message: "Phone verified successfully",
   });
 });
+
+exports.addAdmin = catchAsync(async (req, res, next) => {
+  const adminData = {
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
+    password: req.body.password,
+    role: "admin",
+    phoneVerified: true,
+  };
+
+  await User.create(adminData);
+
+  res.status(201).json({
+    status: "success",
+    message: "Admin added successfully",
+  });
+});
