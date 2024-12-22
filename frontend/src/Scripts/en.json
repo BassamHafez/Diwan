@@ -522,5 +522,22 @@
   "maxEstatesInCompound":"Max Units In Estate",
   "estatesCount":"Units Count",
   "allowedEstates":"Units Count",
-  "maxEstatesInCompoundError":"You reached Max Units in Estate"
+  "maxEstatesInCompoundError":"You reached Max Units in Estate",
+  "arTitle":"Arabic Title",
+  "enTitle":"English Title",
+  "oldPrice":"Old Price",
+  "newPrice":"New Price",
+  "addPackage":"Add Package",
+  "withoutChange":"no Change",
+  "threeUnits":"three units (3)",
+  "tenUnits":"ten units (10)",
+  "ThirtyUnits":"thiry units (30)",
+  "fiftyUnits":"fify units (50)",
+  "isMostPopular":"Most Popular",
+  "isBestOffer":"Best Offer",
+  "noAccounts":"There Is No Accounts",
+  "ownerInfo":"Owner Information",
+  "noUsers":"No users yet!",
+  "call":"Call",
+  "addAdmin":"Add Admin"
 }

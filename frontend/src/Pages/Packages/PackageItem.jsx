@@ -86,31 +86,29 @@ const PackageItem = ({ pack, type }) => {
             <div className={styles.package_type}>
               <img
                 src={
-                  type === "pack1" ? triangle : type === "pack2" ? shape : fire
+                  pack.isMostPopular
+                    ? shape
+                    : pack.isBestOffer
+                    ? triangle
+                    : fire
                 }
                 alt="svgShape"
               />
-              {/* <img
-                src={
-                  pack.isMostPopular? triangle : pack.isBestOffer? shape : fire
-                }
-                alt="svgShape"
-              /> */}
               <h3>{isArLang ? pack.arTitle : pack.enTitle}</h3>
             </div>
             <div
               className={`${styles.badge} ${
-                type === "pack1"
+                pack.isBestOffer
                   ? styles.main_bg
-                  : type === "pack2"
+                  : pack.isMostPopular
                   ? styles.offer
                   : styles.custom_badge
               } ${isArLang ? "me-auto" : "ms-auto"}`}
             >
               <span>
-                {type === "pack2"
+                {pack.isMostPopular
                   ? key("mostPopular")
-                  : type === "pack1"
+                  : pack.isBestOffer
                   ? key("deal")
                   : key("cust")}
               </span>
@@ -182,7 +180,7 @@ const PackageItem = ({ pack, type }) => {
           <div className="text-center pt-4 pb-2">
             <ButtonThree
               onClick={subscribtionHandler}
-              color={type === "pack2" ? undefined : "white"}
+              color={pack.isMostPopular ? undefined : "white"}
               text={key("orderPackage")}
             />
           </div>

@@ -36,6 +36,9 @@ import ForgetPassword from "./Pages/Auth/ForgetPassword/ForgetPassword";
 import AllSubscriptions from "./Pages/Admin/Subscriptions/AllSubscriptions";
 import AdminHome from "./Pages/Admin/AdminHome/AdminHome";
 import AllPackages from "./Pages/Admin/Packages/AllPackages";
+import AllAccounts from "./Pages/Admin/Accounts/AllAccounts";
+import AllUsers from "./Pages/Admin/Users/AllUsers";
+import AllAdmins from "./Pages/Admin/myAdmins/AllAdmins";
 
 const router = createBrowserRouter(
   [
@@ -63,11 +66,14 @@ const router = createBrowserRouter(
         { path: "tasks", element: <Tasks /> },
         { path: "profile/:userId", element: <UserProfile /> },
         { path: "reports", element: <Reports /> },
-        
+
         //adminDashboard
         { path: "admin-dashboard", element: <AdminHome /> },
         { path: "admin-subscriptions", element: <AllSubscriptions /> },
-        { path: "admin-packages", element: < AllPackages /> },
+        { path: "admin-members", element: <AllAdmins /> },
+        { path: "admin-accounts", element: <AllAccounts /> },
+        { path: "admin-users", element: <AllUsers /> },
+        { path: "admin-packages", element: <AllPackages /> },
 
         //else
         { path: "*", element: <PageNotFound /> },
@@ -88,6 +94,7 @@ function App() {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const token = useSelector((state) => state.userInfo.token);
+  const role = useSelector((state) => state.userInfo.role);
 
   useEffect(() => {
     const updateFontFamily = () => {
@@ -117,10 +124,10 @@ function App() {
 
   // get account data from api
   useEffect(() => {
-    if (token) {
+    if ((token, role === "user")) {
       dispatch(fetchAccountData(token));
     }
-  }, [dispatch, token]);
+  }, [dispatch, token, role]);
 
   // recieve user data from localStorage with login and role states
   useEffect(() => {

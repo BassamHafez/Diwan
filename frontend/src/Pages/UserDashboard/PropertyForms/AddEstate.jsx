@@ -24,6 +24,8 @@ import {
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
 import CreatableSelect from "react-select/creatable";
+import fetchAccountData from "../../../Store/accountInfo-actions";
+import { useDispatch } from "react-redux";
 
 const AddEstate = ({ hideModal, refetch, compId }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -40,7 +42,8 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const queryClient=useQueryClient();
-
+  const dispatch=useDispatch();
+  
   const { data: compounds } = useQuery({
     queryKey: ["compounds", token],
     queryFn: () =>
@@ -142,6 +145,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
           if (data?.status === "success") {
             refetch();
             refetchTags();
+            dispatch(fetchAccountData(token));
             queryClient.invalidateQueries(["compounds", token])
             notifySuccess(key("addedSuccess"));
             setSelectedFile(null);

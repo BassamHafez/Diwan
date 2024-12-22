@@ -31,16 +31,24 @@ const LoginForm = () => {
   const dispatch = useDispatch();
 
   const saveDataIntoRedux = (res) => {
-    dispatch(userActions.setUserInfo(res.data.user));
+    const role = res?.data?.user?.role;
+    const user = res.data.user;
+    const token = res.token;
+
+    dispatch(userActions.setUserInfo(user));
     dispatch(userActions.setIsLogin(true));
-    dispatch(userActions.setRole(res?.data?.user?.role));
-    dispatch(userActions.setToken(res.token));
-    dispatch(saveUserInfoIntoLocalStorag(res.data.user));
+    dispatch(userActions.setRole(role));
+    dispatch(userActions.setToken(token));
+    dispatch(saveUserInfoIntoLocalStorag(user));
     dispatch(saveIsLoginState(true));
-    dispatch(saveRoleState(res?.data?.user?.role));
-    dispatch(saveTokenState(res.token));
+    dispatch(saveRoleState(role));
+    dispatch(saveTokenState(token));
     notifySuccess(key("logged"));
-    navigate("/properties");
+    if (role !== "admin") {
+      navigate("/dashboard");
+    } else {
+      navigate("/admin-dashboard");
+    }
   };
 
   const { mutate, isPending } = useMutation({

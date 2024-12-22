@@ -140,6 +140,7 @@
     padding: 10px 12px;
     background-color: rgb(206, 6, 6);
 }
+
 @media screen and (max-width:768px) {
     .list_links{
         display: flex;
