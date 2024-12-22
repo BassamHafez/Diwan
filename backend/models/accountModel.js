@@ -55,6 +55,10 @@ const accountSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isRemindersAllowed: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
