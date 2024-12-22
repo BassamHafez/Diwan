@@ -63,11 +63,14 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     estatesCount,
     maxEstatesInCompound,
     isFavoriteAllowed,
+    isRemindersAllowed,
   } = req.body;
   let cost = 0;
 
   const [account, subscriptions] = await Promise.all([
-    Account.findById(id).select("owner isFavoriteAllowed").lean(),
+    Account.findById(id)
+      .select("owner isFavoriteAllowed isRemindersAllowed")
+      .lean(),
     Subscription.find().lean(),
   ]);
 
@@ -157,6 +160,14 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     cost += favoritePrice;
   }
 
+  if (!account.isRemindersAllowed && isRemindersAllowed) {
+    const remindersPrice = subscriptions.find(
+      (sub) => sub.feature === "REMINDERS"
+    ).price;
+
+    cost += remindersPrice;
+  }
+
   if (!cost) {
     return next(new ApiError("Invalid subscription", 400));
   }
@@ -171,6 +182,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       maxEstatesInCompound:
         maxEstatesInCompound || account.maxEstatesInCompound,
       isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
+      isRemindersAllowed: isRemindersAllowed || account.isRemindersAllowed,
     }),
 
     Purchase.create({
@@ -183,6 +195,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
         estatesCount,
         maxEstatesInCompound,
         isFavoriteAllowed,
+        isRemindersAllowed,
       },
     }),
   ]);
@@ -200,7 +213,9 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
   const { packageId } = req.body;
 
   const [account, package] = await Promise.all([
-    Account.findById(id).select("owner isFavoriteAllowed").lean(),
+    Account.findById(id)
+      .select("owner isFavoriteAllowed isRemindersAllowed")
+      .lean(),
     Package.findById(packageId).select("features price").lean(),
   ]);
 
@@ -230,6 +245,8 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
       },
       isFavoriteAllowed:
         Boolean(features.isFavoriteAllowed) || account.isFavoriteAllowed,
+      isRemindersAllowed:
+        Boolean(features.isRemindersAllowed) || account.isRemindersAllowed,
       maxEstatesInCompound:
         parseInt(features.maxEstatesInCompound) || account.maxEstatesInCompound,
     }),

@@ -40,6 +40,12 @@ exports.subscribeValidator = [
     .isBoolean()
     .withMessage("Invalid favorite allowed"),
 
+  check("isRemindersAllowed")
+    .exists()
+    .withMessage("Reminders allowed is required")
+    .isBoolean()
+    .withMessage("Invalid reminders allowed"),
+
   validatorMiddleware,
 ];
 
@@ -142,6 +148,11 @@ exports.updateAccountValidator = [
     .not()
     .exists()
     .withMessage("Favorite allowed is not allowed"),
+
+  check("isRemindersAllowed")
+    .not()
+    .exists()
+    .withMessage("Reminders allowed is not allowed"),
 
   validatorMiddleware,
 ];

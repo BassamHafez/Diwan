@@ -53,6 +53,7 @@ exports.createPackageValidator = [
       "allowedEstates",
       "maxEstatesInCompound",
       "isFavoriteAllowed",
+      "isRemindersAllowed",
     ])
     .withMessage((value) => `Invalid label: ${value}`),
 
@@ -117,6 +118,7 @@ exports.updatePackageValidator = [
       "allowedEstates",
       "maxEstatesInCompound",
       "isFavoriteAllowed",
+      "isRemindersAllowed",
     ])
     .withMessage((value) => `Invalid label: ${value}`),
 
