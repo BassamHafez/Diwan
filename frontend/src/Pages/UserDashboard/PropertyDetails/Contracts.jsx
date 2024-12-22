@@ -4,7 +4,7 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
 import { contractStatusOptions } from "../../../Components/Logic/StaticLists";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery } from "@tanstack/react-query";
@@ -27,7 +27,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-// import ContractDetails from "./ContractDetails";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
@@ -63,12 +62,6 @@ const Contracts = ({ details }) => {
     enabled: propId && !!token,
     staleTime: Infinity,
   });
-
-  useEffect(() => {
-    if (token && propId) {
-      refetch();
-    }
-  }, [refetch, token, propId]);
 
   const getStatusBgColor = (status) => {
     switch (status) {
