@@ -183,7 +183,7 @@ const UserHome = () => {
           <Row className="g-3 w-100">
             <Col md={12} className="my-3">
               <div className={styles.information_section}>
-                <h4 className="fw-bold mb-4">{key("FinancialReports")}</h4>
+                <h4 className="fw-bold mb-4">{key("financialOverview")}</h4>
                 <Row className="g-4 w-100 flex-wrap">
                   {FinancialData?.map((item, index) => (
                     <Col
@@ -377,7 +377,6 @@ const UserHome = () => {
             />
           </div>
         </Col>
-
         <Col sm={12}>
           <div className={styles.information_section}>
             <h4 className="fw-bold mb-4">{key("exPendingRevenues")}</h4>

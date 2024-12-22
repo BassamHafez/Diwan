@@ -7,7 +7,7 @@ import {
   revenueFilterTypeOptions,
   revenuesStatus,
 } from "../../../Components/Logic/StaticLists";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback,useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -67,12 +67,6 @@ const Revenue = ({ refetchDetails, details }) => {
     enabled: propId && !!token,
     staleTime: Infinity,
   });
-
-  useEffect(() => {
-    if (token && propId) {
-      refetch();
-    }
-  }, [refetch, token, propId]);
 
   const getStatusBgColor = (status) => {
     switch (status) {
