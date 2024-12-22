@@ -1,5 +1,7 @@
+const mongoose = require("mongoose");
 const Task = require("../models/taskModel");
 const Expense = require("../models/expenseModel");
+const ScheduledTask = require("../models/scheduledTaskModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -65,7 +67,10 @@ exports.createTask = catchAsync(async (req, res, next) => {
   }
 
   if (estate || compound) {
+    const expenseId = new mongoose.Types.ObjectId();
+
     const expenseData = {
+      _id: expenseId,
       amount: cost,
       dueDate: date,
       contact,
@@ -77,7 +82,14 @@ exports.createTask = catchAsync(async (req, res, next) => {
 
     [task] = await Promise.all([
       Task.create(req.body),
+
       Expense.create(expenseData),
+
+      ScheduledTask.create({
+        type: "EXPENSE_REMINDER",
+        scheduledAt: new Date(date.setHours(10, 0, 0, 0)),
+        expense: expenseId,
+      }),
     ]);
   }
 
