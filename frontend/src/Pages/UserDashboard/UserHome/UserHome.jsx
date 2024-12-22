@@ -149,6 +149,16 @@ const UserHome = () => {
     }
   };
 
+  const today = new Date().toISOString().split("T")[0];
+
+  const todayTasks = myData?.todayAndBeforeTasks?.filter(
+    (task) => task.date.split("T")[0] === today
+  );
+  
+  const overdueTasks = myData?.todayAndBeforeTasks?.filter(
+    (task) => task.date.split("T")[0] < today
+  );
+
   return (
     <div className="height_container d-flex flex-column justify-content-center align-items-center px-2 py-5 p-md-4">
       {isFetching && <LoadingOne />}
@@ -345,12 +355,24 @@ const UserHome = () => {
         </Col>
         <Col sm={12}>
           <div className={styles.information_section}>
+            <h4 className="fw-bold mb-4">{key("overdueTasks")}</h4>
+            <TaskContent
+              timeFilter="all"
+              tagsFilter="all"
+              typesFilter="all"
+              tasks={{ data: overdueTasks }}
+              refetch={refetch}
+            />
+          </div>
+        </Col>
+        <Col sm={12}>
+          <div className={styles.information_section}>
             <h4 className="fw-bold mb-4">{key("todayTasks")}</h4>
             <TaskContent
               timeFilter="all"
               tagsFilter="all"
               typesFilter="all"
-              tasks={{ data: myData?.todayTasks }}
+              tasks={{ data: todayTasks }}
               refetch={refetch}
             />
           </div>
