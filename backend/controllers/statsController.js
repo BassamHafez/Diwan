@@ -57,9 +57,16 @@ exports.getStats = catchAsync(async (req, res, next) => {
     },
   ]);
 
-  const todayFilter = {
+  const tasksFilter = {
     account: accountId,
     date: {
+      $lte: new Date().setHours(23, 59, 59, 999),
+    },
+  };
+
+  const todayFilter = {
+    account: accountId,
+    dueDate: {
       $gte: new Date().setHours(0, 0, 0, 0),
       $lt: new Date().setHours(23, 59, 59, 999),
     },
@@ -76,13 +83,10 @@ exports.getStats = catchAsync(async (req, res, next) => {
     },
   ];
 
-  const todayTasksPromise = Task.find(todayFilter)
+  const todayAndBeforeTasksPromise = Task.find(tasksFilter)
     .select("title description date type cost priority isCompleted")
     .populate(popOptions)
     .lean();
-
-  todayFilter.dueDate = todayFilter.date;
-  delete todayFilter.date;
 
   const todayRevenuesPromise = Revenue.find(todayFilter)
     .select("note amount dueDate type status")
@@ -135,7 +139,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
     estatesAggregate,
     revenuesAggregate,
     expensesAggregate,
-    todayTasks,
+    todayAndBeforeTasks,
     todayRevenues,
     exPendingRevenues,
     todayExpenses,
@@ -144,7 +148,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
     estatesAggregatePromise,
     revenuesAggregatePromise,
     expensesAggregatePromise,
-    todayTasksPromise,
+    todayAndBeforeTasksPromise,
     todayRevenuesPromise,
     exPendingRevenuesPromise,
     todayExpensesPromise,
@@ -178,7 +182,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
       totalPendingExpenses,
       totalEstatesCount: totalEstates,
       rentedEstatesCount: rentedEstates,
-      todayTasks,
+      todayAndBeforeTasks,
       todayRevenues,
       exPendingRevenues,
       todayExpenses,
