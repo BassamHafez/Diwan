@@ -4,18 +4,22 @@ import { useTranslation } from "react-i18next";
 import Col from "react-bootstrap/esm/Col";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquarePhone } from "@fortawesome/free-solid-svg-icons";
+import { faCrown, faSquarePhone } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { mainDeleteFunHandler } from "../../../util/Http";
 import MainModal from "../../../Components/UI/Modals/MainModal";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const UserItem = ({ userData, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const token = JSON.parse(localStorage.getItem("token"));
+  const profileInfo = useSelector((state) => state.profileInfo.data);
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const navigate = useNavigate();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
@@ -54,7 +58,15 @@ const UserItem = ({ userData, refetch }) => {
               alt="noAvatar"
             />
             <div>
-              <h5>{userData.name}</h5>
+              <h5>
+                {userData.name}
+                {userData.isKing && (
+                  <FontAwesomeIcon
+                    className="text-warning mx-1"
+                    icon={faCrown}
+                  />
+                )}
+              </h5>
               <span style={{ wordBreak: "break-all" }}>{userData.email}</span>
             </div>
           </div>
@@ -78,16 +90,31 @@ const UserItem = ({ userData, refetch }) => {
               </div>
             </div>
 
-            <div
-              className={`${styles.controller_div} d-flex justify-content-end align-items-center position-relative mt-3`}
-            >
-              <ButtonOne
-                text={key("delete")}
-                classes="bg-danger"
-                borderd={true}
-                onClick={() => setShowDeleteModal(true)}
-              />
-            </div>
+            {userData._id !== profileInfo._id ? (
+              !userData.isKing && (
+                <div
+                  className={`${styles.controller_div} d-flex justify-content-end align-items-center position-relative mt-3`}
+                >
+                  <ButtonOne
+                    text={key("delete")}
+                    classes="bg-danger"
+                    borderd={true}
+                    onClick={() => setShowDeleteModal(true)}
+                  />
+                </div>
+              )
+            ) : (
+              <div
+                className={`${styles.controller_div} d-flex justify-content-end align-items-center position-relative mt-3`}
+              >
+                <ButtonOne
+                  text={key("ediet")}
+                  classes="bg-navy"
+                  borderd={true}
+                  onClick={() => navigate("/admin-settings")}
+                />
+              </div>
+            )}
           </div>
         </div>
       </Col>
@@ -101,7 +128,7 @@ const UserItem = ({ userData, refetch }) => {
         >
           <h5>{key("deleteText")}</h5>
         </MainModal>
-      )}{" "}
+      )}
     </>
   );
 };
