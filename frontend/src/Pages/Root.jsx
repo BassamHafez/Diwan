@@ -17,6 +17,7 @@ import noConnectionImg from "../assets/noConnection.png";
 const Root = () => {
   const [logoutModalShow, setLogoutModalShow] = useState(false);
   const { t: key } = useTranslation();
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const role = useSelector((state) => state.userInfo.role);
   const isOnline = useIsOnline();
@@ -44,15 +45,15 @@ const Root = () => {
               }}
             >
               <Row>
-                <Col lg={2} sm={3}>
+                <Col lg={2} md={3}>
                   <AdminNav />
                 </Col>
-                <Col lg={10} sm={9}>
-                  <div className=" d-flex justify-content-between align-items-center mb-2 px-2">
+                <Col lg={10} md={9}>
+                  <div className=" d-flex justify-content-between align-items-center flex-wrap mb-2 px-2">
                     <div>
                       <SearchField text={key("search")} />
                     </div>
-                    <div className="d-flex align-items-center flex-wrap">
+                    <div className={`d-flex align-items-center flex-wrap ${isArLang?"me-auto":"ms-auto"}`}>
                       <LanguageChanger />
                       <ButtonOne
                         onClick={() => setLogoutModalShow(true)}
