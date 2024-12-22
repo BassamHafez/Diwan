@@ -535,6 +535,7 @@
   "financialOverview":"Financial Overview",
   "accName":"Account Name",
   "packInfo":"Package Info",
+  "overdueTasks":"Overdue Tasks",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",
