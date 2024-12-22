@@ -753,12 +753,12 @@ export const customPackage = {
     { label: "customPackageMSg3", value: "false" },
   ],
 };
-export const maxEstatesInCompoundOptions=[
-  {label:"3",value:3},
-  {label:"10",value:10},
-  {label:"30",value:30},
-  {label:"50",value:50},
-]
+export const maxEstatesInCompoundOriginalOptions = [
+  { label: "3", value: 3 },
+  { label: "10", value: 10 },
+  { label: "30", value: 30 },
+  { label: "50", value: 50 },
+];
 //Reports
 export const incomeReportTable = [
   "category",
@@ -797,7 +797,6 @@ export const paymentsReportTable = [
   "recMethod",
   "notes",
 ];
-
 export const contractsReportTable = [
   "estate",
   "theTenant",
@@ -806,11 +805,8 @@ export const contractsReportTable = [
   "amount",
   "status",
 ];
-
-
 //dummy data
-
-export const chartsData=[
+export const chartsData = [
   { totalPaid: 700, totalPending: 200, month: 1 },
   { totalPaid: 900, totalPending: 1500, month: 2 },
   { totalPaid: 1000, totalPending: 200, month: 3 },
@@ -823,4 +819,4 @@ export const chartsData=[
   { totalPaid: 400, totalPending: 200, month: 10 },
   { totalPaid: 1800, totalPending: 1100, month: 11 },
   { totalPaid: 1800, totalPending: 1100, month: 12 },
-]
+];

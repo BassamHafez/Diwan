@@ -1,23 +1,14 @@
-import { useSelector } from "react-redux";
 import CustomPackageItem from "../../Packages/CustomPackageItem";
 import { useTranslation } from "react-i18next";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { Link } from "react-router-dom";
 import invoiceImage from "../../../assets/invoice.jpg";
+import useCurrentFeatures from "../../../hooks/useCurrentFeatures";
 
 const MySubscription = ({chooseActiveActive}) => {
   const { t: key } = useTranslation();
-  const accountInfo = useSelector((state) => state.accountInfo.data);
-  const myAccount=accountInfo?.account
-  
-  const currentFeatures = {
-    usersCount: myAccount?.allowedUsers,
-    compoundsCount: myAccount?.allowedCompounds,
-    allowedEstates: myAccount?.allowedEstates,
-    maxEstatesInCompound: myAccount?.maxEstatesInCompound,
-    isFavoriteAllowed: myAccount?.isFavoriteAllowed,
-  };
+  const currentFeatures=useCurrentFeatures();
   
   return (
     <Row>

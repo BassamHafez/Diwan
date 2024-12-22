@@ -7,7 +7,6 @@ import { getPublicData } from "../../util/Http";
 import LoadingOne from "../../Components/UI/Loading/LoadingOne";
 
 const Packages = () => {
-  
   const { data: packages, isFetching } = useQuery({
     queryKey: ["allPackages"],
     queryFn: () => getPublicData({ type: "packages" }),
@@ -23,12 +22,8 @@ const Packages = () => {
         {(!packages || isFetching) && <LoadingOne />}
 
         <Row>
-          {packages?.data?.map((packageData, index) => (
-            <PackageItem
-              key={packageData._id}
-              pack={packageData}
-              type={index % 2 === 0 ? "pack1" : "pack2"}
-            />
+          {packages?.data?.map((packageData) => (
+            <PackageItem key={packageData._id} pack={packageData} />
           ))}
           <PackageItem pack={customPackage} type={"custom"} />
         </Row>
