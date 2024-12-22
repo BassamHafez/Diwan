@@ -2,6 +2,7 @@ const cron = require("node-cron");
 const Contract = require("./models/contractModel");
 const Estate = require("./models/estateModel");
 const Revenue = require("./models/revenueModel");
+const Expense = require("./models/expenseModel");
 const ScheduledTask = require("./models/scheduledTaskModel");
 const { sendWAText } = require("./utils/sendWAMessage");
 
@@ -93,7 +94,9 @@ const checkScheduledTasks = async () => {
                 if (tenantPhone) {
                   await sendWAText(
                     tenantPhone,
-                    `Hello ${revenue.tenant.name}, reminder for payment of ${
+                    `Hello ${
+                      revenue.tenant.name
+                    }, diwan reminder for payment of ${
                       revenue.amount
                     } for the estate "${
                       estateName || compoundName || "your property"
@@ -104,7 +107,7 @@ const checkScheduledTasks = async () => {
                 if (landlordPhone) {
                   await sendWAText(
                     landlordPhone,
-                    `Reminder: ${revenue.tenant.name} payment of ${
+                    `Diwan Reminder: ${revenue.tenant.name} payment of ${
                       revenue.amount
                     } is due for the estate "${
                       estateName || compoundName || "your property"
@@ -115,6 +118,54 @@ const checkScheduledTasks = async () => {
             })
             .catch((err) =>
               console.error(`Error fetching revenue for reminder: ${err}`)
+            )
+        );
+      } else if (task.type === "EXPENSE_REMINDER") {
+        const expensePopOptions = [
+          {
+            path: "contact",
+            select: "name phone",
+          },
+          {
+            path: "landlord",
+            select: "name phone",
+          },
+          {
+            path: "estate",
+            select: "name",
+          },
+          {
+            path: "compound",
+            select: "name",
+          },
+        ];
+
+        promises.push(
+          Expense.findById(task.expense)
+            .populate(expensePopOptions)
+            .then(async (expense) => {
+              if (expense) {
+                const contactName = expense.contact?.name;
+                const landlordPhone = expense.landlord?.phone;
+                const estateName = expense.estate?.name;
+                const compoundName = expense.compound?.name;
+
+                if (landlordPhone) {
+                  await sendWAText(
+                    landlordPhone,
+                    `Diwan Reminder: ${
+                      contactName || "contact"
+                    } should receive payment of ${
+                      expense.amount
+                    } for the estate "${
+                      estateName || compoundName || "your property"
+                    }".`
+                  );
+                }
+              }
+            })
+            .catch((err) =>
+              console.error(`Error fetching expense for reminder: ${err}`)
             )
         );
       }

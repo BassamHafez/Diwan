@@ -4,7 +4,12 @@ const scheduledTaskSchema = new mongoose.Schema(
   {
     type: {
       type: String,
-      enum: ["CONTRACT_EXPIRATION", "CONTRACT_ACTIVATION", "REVENUE_REMINDER"],
+      enum: [
+        "CONTRACT_EXPIRATION",
+        "CONTRACT_ACTIVATION",
+        "REVENUE_REMINDER",
+        "EXPENSE_REMINDER",
+      ],
       required: true,
     },
     scheduledAt: {
@@ -18,6 +23,7 @@ const scheduledTaskSchema = new mongoose.Schema(
     contract: mongoose.Schema.Types.ObjectId,
     estate: mongoose.Schema.Types.ObjectId,
     revenue: mongoose.Schema.Types.ObjectId,
+    expense: mongoose.Schema.Types.ObjectId,
   },
   { timestamps: true }
 );
