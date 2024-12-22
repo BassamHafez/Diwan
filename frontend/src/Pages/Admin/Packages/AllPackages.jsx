@@ -26,7 +26,7 @@ const AllPackages = () => {
 
   return (
     <>
-      <div className="p-2">
+      <div className="admin_body height_container p-2 position-relative">
         <div className="my-3">
           <MainTitle title={key("packages")} />
         </div>
@@ -38,7 +38,7 @@ const AllPackages = () => {
           />
         </div>
 
-        {!packages || (isFetching && <LoadingOne />)}
+        {(!packages || isFetching) && <LoadingOne />}
         <Row className="g-4">
           {packages?.data?.map((packageData) => (
             <PackItem key={packageData._id} pack={packageData} refetch={refetch} />

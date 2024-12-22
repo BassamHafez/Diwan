@@ -529,5 +529,10 @@
   "ThirtyUnits":"ثلاثون وحدة (30)",
   "fiftyUnits":"خمسون وحدة (50)",
     "isMostPopular":"الأكثر شعبية",
-  "isBestOffer":"أفضل عرض"
+  "isBestOffer":"أفضل عرض",
+  "noAccounts":"لا يوجد مكاتب",
+  "ownerInfo":"معلومات المالك",
+  "noUsers":"لا مستخدمين حتي الآن",
+  "call":"اتصال",
+  "addAdmin":"إضافة مشرف"
 }

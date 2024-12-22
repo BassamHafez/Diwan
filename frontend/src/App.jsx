@@ -36,6 +36,9 @@ import ForgetPassword from "./Pages/Auth/ForgetPassword/ForgetPassword";
 import AllSubscriptions from "./Pages/Admin/Subscriptions/AllSubscriptions";
 import AdminHome from "./Pages/Admin/AdminHome/AdminHome";
 import AllPackages from "./Pages/Admin/Packages/AllPackages";
+import AllAccounts from "./Pages/Admin/Accounts/AllAccounts";
+import AllUsers from "./Pages/Admin/Users/AllUsers";
+import AllAdmins from "./Pages/Admin/myAdmins/AllAdmins";
 
 const router = createBrowserRouter(
   [
@@ -67,6 +70,9 @@ const router = createBrowserRouter(
         //adminDashboard
         { path: "admin-dashboard", element: <AdminHome /> },
         { path: "admin-subscriptions", element: <AllSubscriptions /> },
+        { path: "admin-members", element: <AllAdmins /> },
+        { path: "admin-accounts", element: <AllAccounts /> },
+        { path: "admin-users", element: <AllUsers /> },
         { path: "admin-packages", element: <AllPackages /> },
 
         //else

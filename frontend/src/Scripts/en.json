@@ -534,5 +534,10 @@
   "ThirtyUnits":"thiry units (30)",
   "fiftyUnits":"fify units (50)",
   "isMostPopular":"Most Popular",
-  "isBestOffer":"Best Offer"
+  "isBestOffer":"Best Offer",
+  "noAccounts":"There Is No Accounts",
+  "ownerInfo":"Owner Information",
+  "noUsers":"No users yet!",
+  "call":"Call",
+  "addAdmin":"Add Admin"
 }

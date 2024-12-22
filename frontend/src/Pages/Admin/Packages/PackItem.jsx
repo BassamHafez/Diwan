@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import styles from "./AllPackages.module.css";
+import styles from "../Admin.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Col from "react-bootstrap/esm/Col";
 import {
@@ -51,7 +51,7 @@ const PackItem = ({ pack, type, refetch }) => {
   return (
     <>
       <Col xl={4} md={6}>
-        <div className={styles.pack_item}>
+        <div className={styles.item}>
           {!pack.isBestOffer && !pack.isMostPopular ? null : (
             <div
               className={`${styles.badge} ${
