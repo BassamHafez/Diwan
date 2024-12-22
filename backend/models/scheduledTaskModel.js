@@ -22,7 +22,7 @@ const scheduledTaskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-scheduledTaskSchema.index({ isDone: 1, scheduledAt: 1 });
+scheduledTaskSchema.index({ isDone: 1 });
 
 const ScheduledTask = mongoose.model("ScheduledTask", scheduledTaskSchema);
 
