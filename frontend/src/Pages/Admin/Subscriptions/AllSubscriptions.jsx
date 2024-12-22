@@ -2,7 +2,7 @@
 const AllSubscriptions = () => {
   return (
     <div>
-      ss
+      Subscriptions
     </div>
   )
 }

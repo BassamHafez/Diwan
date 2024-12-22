@@ -158,6 +158,7 @@ const ContactItem = ({
                 <a
                   href={`tel:${formattedPhone}`}
                   className={styles.contact_icon}
+                  title={key("call")}
                 >
                   <FontAwesomeIcon icon={faSquarePhone} />
                 </a>
@@ -183,6 +184,7 @@ const ContactItem = ({
                   <a
                     href={`tel:${formattedPhone2}`}
                     className={styles.contact_icon}
+                    title={key("call")}
                   >
                     <FontAwesomeIcon icon={faSquarePhone} />
                   </a>

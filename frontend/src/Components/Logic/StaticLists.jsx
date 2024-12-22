@@ -797,7 +797,6 @@ export const paymentsReportTable = [
   "recMethod",
   "notes",
 ];
-
 export const contractsReportTable = [
   "estate",
   "theTenant",
@@ -806,7 +805,6 @@ export const contractsReportTable = [
   "amount",
   "status",
 ];
-
 //dummy data
 export const chartsData = [
   { totalPaid: 700, totalPending: 200, month: 1 },
