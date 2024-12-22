@@ -104,7 +104,10 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const scheduledTaskPromise = ScheduledTask.create({
     type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
-    scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    // scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    scheduledAt: isActiveContract
+      ? new Date(newEndDate.setHours(23, 59, 59, 999))
+      : new Date(newStartDate.setHours(0, 0, 0, 0)),
     estate: estateId,
     contract: contract._id,
   });
@@ -253,7 +256,10 @@ exports.updateContract = catchAsync(async (req, res, next) => {
 
   const scheduledTaskPromise = ScheduledTask.create({
     type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
-    scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    // scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    scheduledAt: isActiveContract
+      ? new Date(newEndDate.setHours(23, 59, 59, 999))
+      : new Date(newStartDate.setHours(0, 0, 0, 0)),
     estate: estateId,
     contract: updatedContract._id,
   });
