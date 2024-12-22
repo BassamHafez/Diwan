@@ -47,10 +47,14 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  const isActiveContract =
-    newStartDate <= Date.now() && newEndDate >= Date.now();
+  // const isActiveContract =
+  //   newStartDate <= Date.now() && newEndDate >= Date.now();
 
-  // const isFutureContract = newStartDate > Date.now();
+  const today = new Date().toLocaleDateString();
+
+  const isActiveContract =
+    new Date(newStartDate).toLocaleDateString() <= today &&
+    new Date(newEndDate).toLocaleDateString() >= today;
 
   const overlappingContractPromise = Contract.findOne({
     estate: estateId,
@@ -163,9 +167,15 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     cancelOldRevenuesPromise,
   ]);
 
+  // const isActiveContract =
+  //   updatedContract.startDate <= Date.now() &&
+  //   updatedContract.endDate >= Date.now();
+
+  const today = new Date().toLocaleDateString();
+
   const isActiveContract =
-    updatedContract.startDate <= Date.now() &&
-    updatedContract.endDate >= Date.now();
+    new Date(updatedContract.startDate).toLocaleDateString() <= today &&
+    new Date(updatedContract.endDate).toLocaleDateString() >= today;
 
   if (isActiveContract) {
     await Estate.findByIdAndUpdate(updatedContract.estate, {
@@ -191,8 +201,6 @@ exports.updateContract = catchAsync(async (req, res, next) => {
 
   const isActiveContract =
     newStartDate <= Date.now() && newEndDate >= Date.now();
-
-  // const isFutureContract = newStartDate > Date.now();
 
   const overlappingContractPromise = Contract.findOne({
     _id: { $ne: id },
