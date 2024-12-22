@@ -83,6 +83,12 @@ export const mainFormsHandlerTypeRaw = async ({
           Authorization: `Bearer ${token}`,
         },
       });
+    } else if (method === "put") {
+      response = await axios.put(`${baseServerUrl}${type}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
     } else {
       response = await axios.get(`${baseServerUrl}${type}`, {
         headers: {
@@ -146,6 +152,6 @@ export const getPublicData = async ({ type }) => {
     return response.data;
   } catch (error) {
     console.log(error);
-    return error; 
+    return error;
   }
 };

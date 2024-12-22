@@ -19,7 +19,7 @@ const AllUsers = () => {
     queryKey: ["allUsers", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
-        type: "users",
+        type: "users?role=user",
         token: token,
       }),
     staleTime: Infinity,
@@ -35,12 +35,9 @@ const AllUsers = () => {
 
       <Row className="g-3">
         {users?.data?.length > 0 ? (
-          users?.data?.map(
-            (user) =>
-              user.role !== "admin" && (
-                <UserItem key={user._id} userData={user} refetch={refetch} />
-              )
-          )
+          users?.data?.map((user) => (
+            <UserItem key={user._id} userData={user} refetch={refetch} />
+          ))
         ) : (
           <NoData text={"noUsers"} />
         )}
