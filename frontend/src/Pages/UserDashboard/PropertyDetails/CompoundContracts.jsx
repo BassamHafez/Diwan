@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { useNavigate, useParams } from "react-router-dom";
@@ -33,7 +33,6 @@ const CompoundContracts = ({ compoundEstates }) => {
   const {
     data: contractsData,
     isFetching,
-    refetch,
   } = useQuery({
     queryKey: ["compContracts",compId,token],
     queryFn: () =>
@@ -44,12 +43,6 @@ const CompoundContracts = ({ compoundEstates }) => {
     enabled: compId && !!token,
     staleTime: Infinity,
   });
-
-  useEffect(() => {
-    if (token && compId) {
-      refetch();
-    }
-  }, [refetch, token, compId]);
 
   const findTenant = (tenantId) => {
     return contractsData?.data?.tenants.find(

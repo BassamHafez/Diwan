@@ -81,15 +81,15 @@ const PropertyDetails = () => {
   });
 
   useEffect(() => {
-    setIsLoading(true);
-    if (token) {
-      refetchCurrentContract();
+    if (token && propId) {
+      setIsLoading(true);
+      refetchCurrentContract()
+        .finally(() => setIsLoading(false));
     }
-    setIsLoading(false);
-  }, [refetchCurrentContract, token]);
+  }, [propId,token]);
 
   useEffect(() => {
-    if (data?.data?.inFavorites) {
+    if (data?.data?.estate?.inFavorites) {
       setIsMarked(true);
     } else {
       setIsMarked(false);
@@ -312,11 +312,11 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("collectionRatio")}</span>
                           <p>
-                            {myData?.totalPendingRevenues &&
+                            {myData?.totalRevenue &&
                             myData?.totalPendingRevenues !== 0
                               ? convertNumbersToFixedTwo(
                                   (Number(myData?.totalPaidRevenues) /
-                                    Number(myData?.totalPendingRevenues)) *
+                                    Number(myData?.totalRevenue)) *
                                     100
                                 )
                               : "0"}
