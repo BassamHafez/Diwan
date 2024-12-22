@@ -149,30 +149,26 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     { status: "canceled" }
   );
 
-  const oldScheduledTaskPromise = ScheduledTask.findOne({
+  const deleteOldScheduledTaskPromise = ScheduledTask.findOneAndDelete({
     contract: id,
     isDone: false,
   });
 
-  const [updatedContract, oldScheduledTask] = await Promise.all([
+  const [updatedContract] = await Promise.all([
     updateContractPromise,
-    oldScheduledTaskPromise,
+    deleteOldScheduledTaskPromise,
     cancelOldRevenuesPromise,
   ]);
 
-  let updateEstatePromise = Promise.resolve();
+  const isActiveContract =
+    updatedContract.startDate <= Date.now() &&
+    updatedContract.endDate >= Date.now();
 
-  const deleteOldScheduledTaskPromise = ScheduledTask.findByIdAndDelete(
-    oldScheduledTask._id
-  );
-
-  if (contract.status === "active") {
-    updateEstatePromise = Estate.findByIdAndUpdate(updatedContract.estate, {
+  if (isActiveContract) {
+    await Estate.findByIdAndUpdate(updatedContract.estate, {
       status: "available",
     });
   }
-
-  await Promise.all([updateEstatePromise, deleteOldScheduledTaskPromise]);
 
   res.status(200).json({
     status: "success",
