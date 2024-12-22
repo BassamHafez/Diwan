@@ -63,7 +63,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 
     ScheduledTask.create({
       type: "REVENUE_REMINDER",
-      scheduledAt: new Date(req.body.dueDate.setHours(8, 0, 0, 0)),
+      scheduledAt: new Date(req.body.dueDate).setHours(8, 0, 0, 0),
       revenue: revenueId,
     }),
   ]);
@@ -125,7 +125,7 @@ exports.unpayRevenue = catchAsync(async (req, res, next) => {
   if (updatedRevenue.dueDate > new Date()) {
     await ScheduledTask.create({
       type: "REVENUE_REMINDER",
-      scheduledAt: new Date(updatedRevenue.dueDate.setHours(8, 0, 0, 0)),
+      scheduledAt: new Date(updatedRevenue.dueDate).setHours(8, 0, 0, 0),
       revenue: req.params.id,
     });
   }

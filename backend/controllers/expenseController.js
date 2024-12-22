@@ -55,7 +55,7 @@ exports.createExpense = catchAsync(async (req, res, next) => {
 
     ScheduledTask.create({
       type: "EXPENSE_REMINDER",
-      scheduledAt: new Date(req.body.dueDate.setHours(10, 0, 0, 0)),
+      scheduledAt: new Date(req.body.dueDate).setHours(10, 0, 0, 0),
       expense: expenseId,
     }),
   ]);
@@ -145,7 +145,7 @@ exports.unpayExpense = catchAsync(async (req, res, next) => {
   if (updatedExpense.dueDate > new Date()) {
     await ScheduledTask.create({
       type: "EXPENSE_REMINDER",
-      scheduledAt: new Date(updatedExpense.dueDate.setHours(10, 0, 0, 0)),
+      scheduledAt: new Date(updatedExpense.dueDate).setHours(10, 0, 0, 0),
       expense: id,
     });
   }
