@@ -1,7 +1,8 @@
+const mongoose = require("mongoose");
 const Revenue = require("../models/revenueModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
-const factory = require("./handlerFactory");
+const ScheduledTask = require("../models/scheduledTaskModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
@@ -50,11 +51,22 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
     req.body.landlord = compound.landlord;
   }
 
-  await Revenue.create({
-    ...req.body,
-    estate: estateId,
-    account: req.user.account,
-  });
+  const revenueId = new mongoose.Types.ObjectId();
+
+  await Promise.all([
+    Revenue.create({
+      _id: revenueId,
+      ...req.body,
+      estate: estateId,
+      account: req.user.account,
+    }),
+
+    ScheduledTask.create({
+      type: "REVENUE_REMINDER",
+      scheduledAt: new Date(req.body.dueDate.setHours(8, 0, 0, 0)),
+      revenue: revenueId,
+    }),
+  ]);
 
   res.status(201).json({
     status: "success",
@@ -65,17 +77,18 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 exports.cancelRevenue = catchAsync(async (req, res, next) => {
   const updatedRevenue = await Revenue.findOneAndUpdate(
     { _id: req.params.id, account: req.user.account },
-    { status: "canceled", paidAt: null, paymentMethod: null },
-    { new: true }
+    { status: "canceled", paidAt: null, paymentMethod: null }
   );
 
   if (!updatedRevenue) {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
+  await ScheduledTask.deleteOne({ revenue: req.params.id, isDone: false });
+
   res.status(200).json({
     status: "success",
-    data: updatedRevenue,
+    message: "Revenue canceled successfully",
   });
 });
 
@@ -84,35 +97,59 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
 
   const updatedRevenue = await Revenue.findOneAndUpdate(
     { _id: req.params.id, account: req.user.account },
-    { status: "paid", paidAt, paymentMethod },
-    { new: true }
+    { status: "paid", paidAt, paymentMethod }
   );
 
   if (!updatedRevenue) {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
+  await ScheduledTask.deleteOne({ revenue: req.params.id, isDone: false });
+
   res.status(200).json({
     status: "success",
-    data: updatedRevenue,
+    message: "Revenue marked as paid successfully",
   });
 });
 
 exports.unpayRevenue = catchAsync(async (req, res, next) => {
   const updatedRevenue = await Revenue.findOneAndUpdate(
     { _id: req.params.id, account: req.user.account },
-    { status: "pending", paidAt: null, paymentMethod: null },
-    { new: true }
+    { status: "pending", paidAt: null, paymentMethod: null }
   );
 
   if (!updatedRevenue) {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
+  if (updatedRevenue.dueDate > new Date()) {
+    await ScheduledTask.create({
+      type: "REVENUE_REMINDER",
+      scheduledAt: new Date(updatedRevenue.dueDate.setHours(8, 0, 0, 0)),
+      revenue: req.params.id,
+    });
+  }
+
   res.status(200).json({
     status: "success",
-    data: updatedRevenue,
+    message: "Revenue marked as unpaid successfully",
   });
 });
 
-exports.deleteRevenue = factory.deleteOne(Revenue);
+exports.deleteRevenue = catchAsync(async (req, res, next) => {
+  const revenue = await Revenue.findOneAndDelete({
+    _id: req.params.id,
+    account: req.user.account,
+  });
+
+  if (!revenue) {
+    return next(new ApiError("No revenue found with that ID", 404));
+  }
+
+  await ScheduledTask.deleteOne({ revenue: req.params.id, isDone: false });
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});

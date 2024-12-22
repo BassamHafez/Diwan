@@ -1,7 +1,9 @@
 const cron = require("node-cron");
 const Contract = require("./models/contractModel");
 const Estate = require("./models/estateModel");
+const Revenue = require("./models/revenueModel");
 const ScheduledTask = require("./models/scheduledTaskModel");
+const { sendWAText } = require("./utils/sendWAMessage");
 
 let isTaskRunning = false;
 
@@ -15,16 +17,14 @@ const checkScheduledTasks = async () => {
 
   isTaskRunning = true;
   try {
-    const tasks = await ScheduledTask.find({
-      isDone: false,
-      scheduledAt: { $lte: new Date() },
-    }).lean();
+    const tasks = await ScheduledTask.find({ isDone: false }).lean();
 
     if (tasks.length === 0) {
       console.log("No scheduled tasks to process.");
       return;
     }
 
+    const promises = [];
     const tasksIds = [];
     const contractBulkUpdates = [];
     const estateBulkUpdates = [];
@@ -60,10 +60,65 @@ const checkScheduledTasks = async () => {
             update: { status: "rented" },
           },
         });
+      } else if (task.type === "REVENUE_REMINDER") {
+        const revenuePopOptions = [
+          {
+            path: "tenant",
+            select: "name phone",
+          },
+          {
+            path: "landlord",
+            select: "name phone",
+          },
+          {
+            path: "estate",
+            select: "name",
+          },
+          {
+            path: "compound",
+            select: "name",
+          },
+        ];
+
+        promises.push(
+          Revenue.findById(task.revenue)
+            .populate(revenuePopOptions)
+            .then(async (revenue) => {
+              if (revenue) {
+                const tenantPhone = revenue.tenant?.phone;
+                const landlordPhone = revenue.landlord?.phone;
+                const estateName = revenue.estate?.name;
+                const compoundName = revenue.compound?.name;
+
+                if (tenantPhone) {
+                  await sendWAText(
+                    tenantPhone,
+                    `Hello ${revenue.tenant.name}, reminder for payment of ${
+                      revenue.amount
+                    } for the estate "${
+                      estateName || compoundName || "your property"
+                    }".`
+                  );
+                }
+
+                if (landlordPhone) {
+                  await sendWAText(
+                    landlordPhone,
+                    `Reminder: ${revenue.tenant.name} payment of ${
+                      revenue.amount
+                    } is due for the estate "${
+                      estateName || compoundName || "your property"
+                    }".`
+                  );
+                }
+              }
+            })
+            .catch((err) =>
+              console.error(`Error fetching revenue for reminder: ${err}`)
+            )
+        );
       }
     });
-
-    const promises = [];
 
     if (contractBulkUpdates.length > 0) {
       promises.push(Contract.bulkWrite(contractBulkUpdates));
@@ -98,10 +153,7 @@ const checkScheduledTasks = async () => {
 };
 
 const deleteOldTasks = async () => {
-  await ScheduledTask.deleteMany({
-    scheduledAt: { $lte: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) },
-    isDone: true,
-  });
+  await ScheduledTask.deleteMany({ isDone: true });
 
   console.log("Old scheduled tasks deleted");
 };
