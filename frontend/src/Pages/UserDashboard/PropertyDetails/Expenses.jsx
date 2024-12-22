@@ -6,7 +6,7 @@ import {
   expensesStatusOptions,
   expensesTypeOptions,
 } from "../../../Components/Logic/StaticLists";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -71,12 +71,6 @@ const Expenses = ({ isCompound, refetchDetails }) => {
     enabled: myParam && !!token,
     staleTime: Infinity,
   });
-
-  useEffect(() => {
-    if (token && myParam) {
-      refetch();
-    }
-  }, [refetch, token, myParam]);
 
   const getStatusBgColor = (status) => {
     switch (status) {
