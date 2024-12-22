@@ -2,15 +2,21 @@ import styles from "./AdminNav.module.css";
 import avatar from "../../assets/default.png";
 import logo from "../../assets/smallLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo, faGears } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleInfo,
+  faCrown,
+  faGears,
+} from "@fortawesome/free-solid-svg-icons";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AdminNav = () => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const iconClass = isArLang ? "ms-2" : "me-2";
+  const profileInfo = useSelector((state) => state.profileInfo.data);
 
   const generalLinks = [
     { to: "/admin-dashboard", label: key("dashboard") },
@@ -26,6 +32,8 @@ const AdminNav = () => {
     { to: "/help", icon: faCircleInfo, label: key("help") },
   ];
 
+  const tag = profileInfo?.isKing ? key("superAdmin") : key("admin");
+
   return (
     <aside className={styles.nav_side}>
       <img className={styles.logo} src={logo} alt="logo" />
@@ -33,8 +41,16 @@ const AdminNav = () => {
       <div className={styles.nav_header}>
         <img src={avatar} alt="avatar" />
         <div className="mx-3">
-          <h5 className="m-0 fw-bold">بسام حافظ</h5>
-          <span className="mini_word">المسؤول</span>
+          <h5 className="m-0 fw-bold">{profileInfo?.name}</h5>
+          <span className="mini_word">
+            {profileInfo?.isKing && (
+              <FontAwesomeIcon
+                className={`${isArLang ? "ms-1" : "me-1"} text-warning`}
+                icon={faCrown}
+              />
+            )}
+            {tag}
+          </span>
         </div>
       </div>
       <ul className={styles.nav_list}>

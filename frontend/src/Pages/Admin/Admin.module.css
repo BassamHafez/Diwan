@@ -5,6 +5,7 @@
   border-radius: 30px;
   box-shadow: 0 3px 3px rgba(0, 0, 0, 0.312);
   overflow: hidden;
+  min-height: 230px;
 }
 .pack_item h5 {
   color: black;
@@ -23,8 +24,6 @@
 .details_list li span:last-child {
   background-color: var(--deep_navy);
   color: rgb(242, 238, 238);
-  /* background-color: var(--main_color_light);
-    color: black; */
   padding: 10px;
   border-radius: 10px;
   margin: 5px 0;
@@ -105,4 +104,34 @@
 }
 .controller_div:hover{
     opacity: 1;
+}
+
+
+
+/* subscriptions */
+.contract_table {
+  border-collapse: separate !important;
+  border-spacing: 0;
+}
+
+.table_body tr td {
+  text-align: center;
+  background-color: transparent;
+  padding: 0.625rem;
+}
+
+.table_head tr th {
+  background-color: #f8f9fd;
+  text-align: center;
+  color: var(--dark_white);
+  font-weight: 500;
+  padding: 0.625rem;
+}
+.table_icon{
+  color: var(--dark_white);
+  cursor: pointer;
+  transition: scale .4s;
+}
+.table_icon:hover{
+  scale:1.1
 }
