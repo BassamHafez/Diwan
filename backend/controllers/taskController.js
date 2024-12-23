@@ -87,7 +87,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
 
       ScheduledTask.create({
         type: "EXPENSE_REMINDER",
-        scheduledAt: new Date(date.setHours(10, 0, 0, 0)),
+        scheduledAt: new Date(date).setHours(10, 0, 0, 0),
         expense: expenseId,
       }),
     ]);
