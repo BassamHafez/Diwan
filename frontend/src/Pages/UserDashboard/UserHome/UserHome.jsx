@@ -46,8 +46,8 @@ const UserHome = () => {
   const myData = data?.data || {};
 
   const calculateTotal = (num1, num2) => {
-    if (num1 && num2) {
-      return Number(num1) + Number(num2) || 0;
+    if (num1 !== null && num2 !== null) {
+      return Number(num1) + Number(num2);
     }
     return 0;
   };
