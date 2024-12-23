@@ -47,36 +47,14 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  // const isActiveContract =
-  //   newStartDate <= Date.now() && newEndDate >= Date.now();
-
-  const today = new Date().toLocaleDateString();
-
-  const isActiveContract =
-    new Date(newStartDate).toLocaleDateString() <= today &&
-    new Date(newEndDate).toLocaleDateString() >= today;
-
-  const overlappingContractPromise = Contract.findOne({
+  const overlappingContract = await Contract.findOne({
     estate: estateId,
-    startDate: { $lte: newEndDate },
-    endDate: { $gte: newStartDate },
+    startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
+    endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
     isCanceled: false,
   })
     .select("_id")
     .lean();
-
-  const estatePromise = isActiveContract
-    ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : Estate.findById(estateId).select("_id compound").lean();
-
-  const [estate, overlappingContract] = await Promise.all([
-    estatePromise,
-    overlappingContractPromise,
-  ]);
-
-  if (!estate) {
-    return next(new ApiError("No estate found with that ID", 404));
-  }
 
   if (overlappingContract) {
     return next(
@@ -85,6 +63,23 @@ exports.createContract = catchAsync(async (req, res, next) => {
         400
       )
     );
+  }
+
+  // const isActiveContract =
+  //   newStartDate <= Date.now() && newEndDate >= Date.now();
+
+  const today = new Date().toLocaleDateString();
+
+  const isActiveContract =
+    newStartDate.toLocaleDateString() <= today &&
+    newEndDate.toLocaleDateString() >= today;
+
+  const estate = isActiveContract
+    ? await Estate.findByIdAndUpdate(estateId, { status: "rented" })
+    : await Estate.findById(estateId).select("_id compound").lean();
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
   }
 
   if (estate.compound) req.body.compound = estate.compound;
@@ -101,6 +96,8 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const contract = await Contract.create({
     ...req.body,
+    startDate: newStartDate.setHours(0, 0, 0, 0),
+    endDate: newEndDate.setHours(23, 59, 59, 999),
     status: isActiveContract ? "active" : "upcoming",
     estate: estateId,
     account: req.user.account,
@@ -199,31 +196,15 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  const isActiveContract =
-    newStartDate <= Date.now() && newEndDate >= Date.now();
-
-  const overlappingContractPromise = Contract.findOne({
+  const overlappingContract = await Contract.findOne({
     _id: { $ne: id },
     estate: estateId,
-    startDate: { $lte: newEndDate },
-    endDate: { $gte: newStartDate },
+    startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
+    endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
     isCanceled: false,
   })
     .select("_id")
     .lean();
-
-  const estatePromise = isActiveContract
-    ? Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : Estate.findById(estateId).select("_id").lean();
-
-  const [estate, overlappingContract] = await Promise.all([
-    estatePromise,
-    overlappingContractPromise,
-  ]);
-
-  if (!estate) {
-    return next(new ApiError("No estate found with that ID", 404));
-  }
 
   if (overlappingContract) {
     return next(
@@ -232,6 +213,23 @@ exports.updateContract = catchAsync(async (req, res, next) => {
         400
       )
     );
+  }
+
+  // const isActiveContract =
+  //   newStartDate <= Date.now() && newEndDate >= Date.now();
+
+  const today = new Date().toLocaleDateString();
+
+  const isActiveContract =
+    newStartDate.toLocaleDateString() <= today &&
+    newEndDate.toLocaleDateString() >= today;
+
+  const estate = isActiveContract
+    ? await Estate.findByIdAndUpdate(estateId, { status: "rented" })
+    : await Estate.findById(estateId).select("_id compound").lean();
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
   }
 
   const updateContractPromise = Contract.findByIdAndUpdate(
