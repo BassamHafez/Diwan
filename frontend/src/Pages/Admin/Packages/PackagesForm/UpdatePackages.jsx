@@ -51,6 +51,8 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
     },
     isFavoriteAllowed:
       findFeaturesValue("isFavoriteAllowed") === "true" || false,
+    isRemindersAllowed:
+      findFeaturesValue("isRemindersAllowed") === "true" || false,
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -65,6 +67,10 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
       {
         label: "isFavoriteAllowed",
         value: `${values.isFavoriteAllowed || false}`,
+      },
+      {
+        label: "isRemindersAllowed",
+        value: `${values.isRemindersAllowed || false}`,
       },
     ];
 
@@ -238,6 +244,18 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
                 />
                 <label className=" m-0 mx-2" htmlFor="isFavoriteAllowed">
                   {key("add")} {key("bookmarked")}
+                </label>
+              </div>
+              <div>
+                <Field
+                  name="isRemindersAllowed"
+                  type="checkbox"
+                  id="isRemindersAllowed"
+                  className=" fs-5 m-0"
+                  style={{ cursor: "pointer" }}
+                />
+                <label className=" m-0 mx-2" htmlFor="isRemindersAllowed">
+                  {key("isRemindersAllowed")}
                 </label>
               </div>
 

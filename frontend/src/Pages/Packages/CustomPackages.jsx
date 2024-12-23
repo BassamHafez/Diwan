@@ -14,6 +14,7 @@ const CustomPackages = () => {
     estatesCount: 1,
     maxEstatesInCompound: 0,
     isFavoriteAllowed: false,
+    isRemindersAllowed: false,
   });
 
   const { t: key } = useTranslation();
@@ -146,6 +147,26 @@ const CustomPackages = () => {
                     type="checkbox"
                     id="isFavoriteAllowed"
                     checked={features.isFavoriteAllowed}
+                    onChange={handleFeatureChange}
+                  />
+                </div>
+              </Col>
+            )}
+            {!myAccount?.isRemindersAllowed && (
+              <Col sm={6} className={centerClass}>
+                <div className="form-check form-switch p-0 m-0 mt-3 d-flex justify-content-between align-items-center ">
+                  <label
+                    className="form-check-label m-0 fs-sm-5 mx-2"
+                    htmlFor="isRemindersAllowed"
+                  >
+                    {key("isRemindersAllowed")}
+                  </label>
+                  <input
+                    className="form-check-input fs-3 m-0"
+                    style={{ cursor: "pointer" }}
+                    type="checkbox"
+                    id="isRemindersAllowed"
+                    checked={features.isRemindersAllowed}
                     onChange={handleFeatureChange}
                   />
                 </div>

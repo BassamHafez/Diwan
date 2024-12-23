@@ -11,6 +11,7 @@ const useCurrentFeatures = (props) => {
     allowedEstates: myAccount?.allowedEstates,
     maxEstatesInCompound: myAccount?.maxEstatesInCompound,
     isFavoriteAllowed: myAccount?.isFavoriteAllowed,
+    isRemindersAllowed:myAccount?.isRemindersAllowed
   };
 
   return currentFeatures;
