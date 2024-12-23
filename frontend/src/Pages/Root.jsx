@@ -6,13 +6,20 @@ import ButtonOne from "../Components/UI/Buttons/ButtonOne";
 import { useTranslation } from "react-i18next";
 import useIsOnline from "../hooks/useIsOnline";
 import noConnectionImg from "../assets/noConnection.png";
-import AdminContainer from "./Admin/AdminsContainer/AdminContainer";
+import { useState } from "react";
+import Row from "react-bootstrap/esm/Row";
+import AdminNav from "../Components/MainNav/AdminNav";
+import Col from "react-bootstrap/esm/Col";
+import LanguageChanger from "../Components/Lang/LanguageChanger";
+import LogOutModal from "../Components/UI/Modals/LogOutModal";
 
 const Root = () => {
+  const [logoutModalShow, setLogoutModalShow] = useState(false);
+  const isOnline = useIsOnline();
   const { t: key } = useTranslation();
 
   const role = useSelector((state) => state.userInfo.role);
-  const isOnline = useIsOnline();
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const refreshPage = () => {
     window.location.reload();
@@ -29,7 +36,39 @@ const Root = () => {
           </>
         ) : (
           <>
-            <AdminContainer Outlet={Outlet}/>
+            <div
+              className=" py-2 px-3"
+              style={{
+                backgroundColor: "var(--sub_white)",
+                minHeight: "100vh",
+              }}
+            >
+              <Row>
+                <Col lg={2} md={3}>
+                  <AdminNav />
+                </Col>
+                <Col lg={10} md={9}>
+                  <div className=" d-flex justify-content-between align-items-center flex-wrap mb-2 px-2">
+                    <div
+                      className={`d-flex align-items-center flex-wrap ${
+                        isArLang ? "me-auto" : "ms-auto"
+                      }`}
+                    >
+                      <LanguageChanger />
+                      <ButtonOne
+                        onClick={() => setLogoutModalShow(true)}
+                        classes="m-2"
+                        text={key("logout")}
+                        borderd={true}
+                      />
+                    </div>
+                  </div>
+                  <div className="admin_body height_container">
+                    <Outlet />
+                  </div>
+                </Col>
+              </Row>
+            </div>
             <MainFooter />
           </>
         )
@@ -49,7 +88,12 @@ const Root = () => {
         </div>
       )}
 
-
+      {logoutModalShow && (
+        <LogOutModal
+          show={logoutModalShow}
+          onHide={() => setLogoutModalShow(false)}
+        />
+      )}
     </>
   );
 };
