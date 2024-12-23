@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Account = require("../models/accountModel");
 const Expense = require("../models/expenseModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
@@ -25,6 +26,10 @@ exports.updateExpense = factory.updateOne(Expense);
 exports.createExpense = catchAsync(async (req, res, next) => {
   const { estate, compound } = req.body;
 
+  const account = await Account.findById(req.user.account)
+    .select("isRemindersAllowed")
+    .lean();
+
   if (estate && !compound) {
     const estateData = await Estate.findById(estate)
       .select("compound landlord")
@@ -50,14 +55,18 @@ exports.createExpense = catchAsync(async (req, res, next) => {
 
   const expenseId = new mongoose.Types.ObjectId();
 
+  const scheduleTaskPromise =
+    account && account.isRemindersAllowed
+      ? ScheduledTask.create({
+          type: "EXPENSE_REMINDER",
+          scheduledAt: new Date(req.body.dueDate).setHours(10, 0, 0, 0),
+          expense: expenseId,
+        })
+      : Promise.resolve();
+
   await Promise.all([
     Expense.create({ _id: expenseId, ...req.body }),
-
-    ScheduledTask.create({
-      type: "EXPENSE_REMINDER",
-      scheduledAt: new Date(req.body.dueDate).setHours(10, 0, 0, 0),
-      expense: expenseId,
-    }),
+    scheduleTaskPromise,
   ]);
 
   res.status(201).json({
@@ -132,17 +141,24 @@ exports.payExpense = catchAsync(async (req, res, next) => {
 exports.unpayExpense = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const updatedExpense = await Expense.findByIdAndUpdate(id, {
-    status: "pending",
-    paidAt: null,
-    paymentMethod: null,
-  });
+  const [updatedExpense, account] = await Promise.all([
+    await Expense.findByIdAndUpdate(id, {
+      status: "pending",
+      paidAt: null,
+      paymentMethod: null,
+    }),
+    Account.findById(req.user.account).select("isRemindersAllowed").lean(),
+  ]);
 
   if (!updatedExpense) {
     return next(new ApiError("No expense found with that ID", 404));
   }
 
-  if (updatedExpense.dueDate > new Date()) {
+  if (
+    account &&
+    account.isRemindersAllowed &&
+    updatedExpense.dueDate > new Date()
+  ) {
     await ScheduledTask.create({
       type: "EXPENSE_REMINDER",
       scheduledAt: new Date(updatedExpense.dueDate).setHours(10, 0, 0, 0),

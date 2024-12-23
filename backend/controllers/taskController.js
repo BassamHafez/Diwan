@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Task = require("../models/taskModel");
+const Account = require("../models/accountModel");
 const Expense = require("../models/expenseModel");
 const ScheduledTask = require("../models/scheduledTaskModel");
 const factory = require("./handlerFactory");
@@ -69,6 +70,19 @@ exports.createTask = catchAsync(async (req, res, next) => {
   if (estate || compound) {
     const expenseId = new mongoose.Types.ObjectId();
 
+    const account = await Account.findById(req.user.account)
+      .select("isRemindersAllowed")
+      .lean();
+
+    const scheduleTaskPromise =
+      account && account.isRemindersAllowed
+        ? ScheduledTask.create({
+            type: "EXPENSE_REMINDER",
+            scheduledAt: new Date(date).setHours(10, 0, 0, 0),
+            expense: expenseId,
+          })
+        : Promise.resolve();
+
     const expenseData = {
       _id: expenseId,
       amount: cost,
@@ -85,11 +99,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
 
       Expense.create(expenseData),
 
-      ScheduledTask.create({
-        type: "EXPENSE_REMINDER",
-        scheduledAt: new Date(date).setHours(10, 0, 0, 0),
-        expense: expenseId,
-      }),
+      scheduleTaskPromise,
     ]);
   }
 
