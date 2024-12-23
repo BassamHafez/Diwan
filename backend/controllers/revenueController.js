@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Account = require("../models/accountModel");
 const Revenue = require("../models/revenueModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
@@ -31,9 +32,10 @@ exports.getAllRevenues = catchAsync(async (req, res, next) => {
 exports.createRevenue = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
-  const estate = await Estate.findById(estateId)
-    .select("compound landlord")
-    .lean();
+  const [estate, account] = await Promise.all([
+    Estate.findById(estateId).select("compound landlord").lean(),
+    Account.findById(req.user.account).select("isRemindersAllowed").lean(),
+  ]);
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -52,21 +54,23 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
   }
 
   const revenueId = new mongoose.Types.ObjectId();
+  const createRevenuePromise = Revenue.create({
+    _id: revenueId,
+    ...req.body,
+    estate: estateId,
+    account: req.user.account,
+  });
 
-  await Promise.all([
-    Revenue.create({
-      _id: revenueId,
-      ...req.body,
-      estate: estateId,
-      account: req.user.account,
-    }),
+  const scheduleTaskPromise =
+    account && account.isRemindersAllowed
+      ? ScheduledTask.create({
+          type: "REVENUE_REMINDER",
+          scheduledAt: new Date(req.body.dueDate).setHours(8, 0, 0, 0),
+          revenue: revenueId,
+        })
+      : Promise.resolve();
 
-    ScheduledTask.create({
-      type: "REVENUE_REMINDER",
-      scheduledAt: new Date(req.body.dueDate).setHours(8, 0, 0, 0),
-      revenue: revenueId,
-    }),
-  ]);
+  await Promise.all([createRevenuePromise, scheduleTaskPromise]);
 
   res.status(201).json({
     status: "success",
@@ -113,16 +117,23 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
 });
 
 exports.unpayRevenue = catchAsync(async (req, res, next) => {
-  const updatedRevenue = await Revenue.findOneAndUpdate(
-    { _id: req.params.id, account: req.user.account },
-    { status: "pending", paidAt: null, paymentMethod: null }
-  );
+  const [updatedRevenue, account] = await Promise.all([
+    Revenue.findOneAndUpdate(
+      { _id: req.params.id, account: req.user.account },
+      { status: "pending", paidAt: null, paymentMethod: null }
+    ),
+    Account.findById(req.user.account).select("isRemindersAllowed").lean(),
+  ]);
 
   if (!updatedRevenue) {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
-  if (updatedRevenue.dueDate > new Date()) {
+  if (
+    account &&
+    account.isRemindersAllowed &&
+    updatedRevenue.dueDate > new Date()
+  ) {
     await ScheduledTask.create({
       type: "REVENUE_REMINDER",
       scheduledAt: new Date(updatedRevenue.dueDate).setHours(8, 0, 0, 0),
