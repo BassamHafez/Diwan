@@ -18,7 +18,10 @@ const checkScheduledTasks = async () => {
 
   isTaskRunning = true;
   try {
-    const tasks = await ScheduledTask.find({ isDone: false }).lean();
+    const tasks = await ScheduledTask.find({
+      isDone: false,
+      scheduledAt: { $lte: new Date() },
+    }).lean();
 
     if (tasks.length === 0) {
       console.log("No scheduled tasks to process.");
