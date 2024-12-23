@@ -25,6 +25,7 @@ const AdminNav = () => {
     { to: "/admin-users", label: key("users") },
     { to: "/admin-subscriptions", label: key("subscriptions") },
     { to: "/admin-packages", label: key("packages") },
+    { to: "/admin-configs", label: key("customization") },
   ];
 
   const supportLinks = [

@@ -18,7 +18,7 @@ import Col from "react-bootstrap/esm/Col";
 import { revenueTypeOptions } from "../../../Components/Logic/StaticLists";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
-const AddRevenue = ({ hideModal, refetch }) => {
+const AddRevenue = ({ hideModal, refetch,refetchDetails }) => {
   const [tenantsOption, setTenantOption] = useState([]);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -77,6 +77,7 @@ const AddRevenue = ({ hideModal, refetch }) => {
           console.log(data);
           if (data?.status === "success") {
             refetch();
+            refetchDetails();
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();

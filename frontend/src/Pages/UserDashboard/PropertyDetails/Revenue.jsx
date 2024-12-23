@@ -7,7 +7,7 @@ import {
   revenueFilterTypeOptions,
   revenuesStatus,
 } from "../../../Components/Logic/StaticLists";
-import { useCallback,useState } from "react";
+import { memo, useCallback,useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -35,7 +35,7 @@ import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import PrintCashReceipt from "../../../Components/Prints/PrintCashReceipt";
 
-const Revenue = ({ refetchDetails, details }) => {
+const Revenue = memo(({ refetchDetails, details }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
   const [showCashReceiptModal, setShowCashReceiptModal] = useState(false);
@@ -381,6 +381,7 @@ const Revenue = ({ refetchDetails, details }) => {
           <AddRevenue
             hideModal={() => setShowAddRevenueModal(false)}
             refetch={refetch}
+            refetchDetails={refetchDetails}
           />
         </ModalForm>
       )}
@@ -458,6 +459,6 @@ const Revenue = ({ refetchDetails, details }) => {
       )}
     </>
   );
-};
-
+});
+Revenue.displayName="Revenue"
 export default Revenue;

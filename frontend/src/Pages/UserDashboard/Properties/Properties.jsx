@@ -60,7 +60,7 @@ const Properties = () => {
     queryKey: ["compounds", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
+    enabled: selectedFilter === "compounds" &&!!token,
     staleTime: Infinity,
   });
 
@@ -82,7 +82,11 @@ const Properties = () => {
     staleTime: Infinity,
   });
 
-  const { data: bookmarked, isFetching: fetchingBookmarked } = useQuery({
+  const {
+    data: bookmarked,
+    isFetching: fetchingBookmarked,
+    refetch: refetchBookmarked,
+  } = useQuery({
     queryKey: ["bookmarked", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
@@ -101,6 +105,12 @@ const Properties = () => {
       setCompoundStatusFiltering(val);
     } else {
       setSelectedFilter(val);
+      if (val === "bookmarked") {
+        refetchBookmarked();
+      }
+      if(val==="compounds"){
+        refetchCompound()
+      }
     }
   };
 
@@ -414,9 +424,7 @@ const Properties = () => {
 
         <Col md={3} lg={2} className={styles.filters}>
           <aside>
-            <Accordion
-              defaultActiveKey={["0", "1", "2", "3"]}
-            >
+            <Accordion defaultActiveKey={["0", "1", "2", "3"]}>
               <AccordionContent
                 removeTitle={true}
                 title={key("types")}

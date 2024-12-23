@@ -16,6 +16,7 @@ import RevenuesByMonth from "../../../Components/Charts/RevenuesByMonth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import {
+  convertNumbersToFixedTwo,
   formattedDate,
   renamedExpensesStatusMethod,
   renamedRevenuesStatus,
@@ -204,8 +205,8 @@ const UserHome = () => {
                         <div className={styles.box_caption}>
                           <span>{key(item.label)}</span>
 
-                          <p>
-                            {item.value} {item.isMoney ? key("sarSmall") : ""}
+                          <p style={{wordBreak:"break-all"}}>
+                            {convertNumbersToFixedTwo(item.value)} {item.isMoney ? key("sarSmall") : ""}
                           </p>
                         </div>
                       </div>

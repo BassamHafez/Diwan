@@ -95,6 +95,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
       });
       if (res.status === 204 || res.status === 200) {
         refetch();
+        refetchDetails();
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -112,6 +113,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
     });
     if (res.status === "success") {
       refetch();
+      refetchDetails();
       notifySuccess(key("canceledSucc"));
     } else {
       notifyError(key("wrong"));
@@ -125,6 +127,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
     });
     if (res.status === "success") {
       refetch();
+      refetchDetails();
       notifySuccess(key("unPayedSucc"));
     } else {
       notifyError(key("wrong"));
@@ -389,6 +392,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
             <AddExpenses
               hideModal={() => setShowAddExModal(false)}
               refetch={refetch}
+              refetchDetails={refetchDetails}
               isCompound={isCompound}
             />
           </ModalForm>
@@ -402,6 +406,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
               hideModal={() => setShowUpdateModal(false)}
               refetch={refetch}
               exDetails={exDetails}
+              refetchDetails={refetchDetails}
             />
           </ModalForm>
         )}

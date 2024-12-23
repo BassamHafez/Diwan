@@ -34,8 +34,9 @@ import CompoundContracts from "./CompoundContracts";
 import Expenses from "./Expenses";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
+import { memo } from "react";
 
-const GeneralDetails = ({
+const GeneralDetails = memo(({
   details,
   estateParentCompound,
   isCompound,
@@ -352,8 +353,8 @@ const GeneralDetails = ({
           </>
         ) : (
           <>
-            <CurrentContract details={details} />
-            <Contracts details={details} />
+            <CurrentContract details={details} refetchDetails={refetch} />
+            <Contracts details={details} refetchDetails={refetch}/>
             <Revenue refetchDetails={refetch} details={details} />
           </>
         )}
@@ -384,6 +385,7 @@ const GeneralDetails = ({
       )}
     </>
   );
-};
+});
 
+GeneralDetails.displayName = "GeneralDetails";
 export default GeneralDetails;

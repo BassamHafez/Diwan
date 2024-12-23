@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery} from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -41,7 +41,6 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const queryClient=useQueryClient();
   const dispatch=useDispatch();
   
   const { data: compounds } = useQuery({
@@ -49,6 +48,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
     enabled: !!token,
+    staleTime:Infinity
   });
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     mutationFn: mainFormsHandlerTypeFormData,
   });
 
-  const { data: tags, refetch: refetchTags } = useQuery({
+  const { data: tags } = useQuery({
     queryKey: ["tags", token],
     queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
     enabled: !!token,
@@ -144,9 +144,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
           console.log(data);
           if (data?.status === "success") {
             refetch();
-            refetchTags();
             dispatch(fetchAccountData(token));
-            queryClient.invalidateQueries(["compounds", token])
             notifySuccess(key("addedSuccess"));
             setSelectedFile(null);
             setImagePreviewUrl(null);

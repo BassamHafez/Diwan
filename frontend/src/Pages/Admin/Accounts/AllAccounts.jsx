@@ -10,8 +10,12 @@ import NoData from "../../../Components/UI/Blocks/NoData";
 import Accordion from "react-bootstrap/Accordion";
 import AccordionContent from "../../../Components/UI/Tools/AccordionContent";
 import AccountFeatures from "./AccountFeatures";
+import { useCallback, useState } from "react";
+import SearchField from "../../../Components/Search/SearchField";
 
 const AllAccounts = () => {
+  const [searchFilter, setSearchFilter] = useState("");
+
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
 
@@ -26,16 +30,42 @@ const AllAccounts = () => {
     enabled: !!token,
   });
 
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
+  const cleanAccountData =
+    accounts && Array.isArray(accounts?.data)
+      ? accounts?.data?.filter((acc) => acc.owner && acc.name)
+      : [];
+
+  const filteredData =
+    cleanAccountData && Array.isArray(cleanAccountData)
+      ? cleanAccountData?.filter(
+          (acc) =>
+            !searchFilter ||
+            acc?.name
+              .trim()
+              .toLowerCase()
+              .includes(searchFilter.trim().toLowerCase()) ||
+            acc?.phone.includes(searchFilter)
+        )
+      : [];
+
   return (
     <div className="admin_body height_container p-2 position-relative">
       {(!accounts || isFetching) && <LoadingOne />}
       <div className="my-4">
         <MainTitle title={key("accounts")} />
       </div>
-
+      <div className="d-flex align-items-center">
+        <div className="position-relative my-3 p-2">
+          <SearchField onSearch={onSearch} text={key("searchContacts")} />
+        </div>
+      </div>
       <Row className="g-3">
-        {accounts?.data?.length > 0 ? (
-          accounts?.data?.map(
+        {filteredData?.length > 0 ? (
+          filteredData?.map(
             (acc) =>
               acc.owner &&
               acc.name && (

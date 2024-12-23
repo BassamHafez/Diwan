@@ -23,7 +23,7 @@ import {
 import ContractRevenues from "../PropertyDetails/ContractRevenues";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 
-const UpdateContract = ({ contract, hideModal, refetch }) => {
+const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState(
     contract.paymentPeriodUnit || ""
@@ -125,6 +125,7 @@ const UpdateContract = ({ contract, hideModal, refetch }) => {
           if (data?.status === "success") {
             notifySuccess(key("updatedSucc"));
             refetch();
+            refetchDetails();
             queryClient.invalidateQueries(["revenuesData", token]);
             resetForm();
             hideModal();
