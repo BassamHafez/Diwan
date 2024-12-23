@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === "development") {
 
 // limit requests from same IP
 const limiter = rateLimit({
-  max: 200,
+  max: 1000,
   windowMs: 60 * 60 * 1000,
   keyGenerator: (req) => {
     return req.ip; // Customize key generation to ensure correct IP is used
