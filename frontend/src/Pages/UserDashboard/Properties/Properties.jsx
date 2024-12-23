@@ -32,6 +32,7 @@ import {
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Properties = () => {
   const { t: key } = useTranslation();
@@ -49,9 +50,17 @@ const Properties = () => {
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
+  const role = useSelector((state) => state.userInfo.role);
   const accountInfo = useSelector((state) => state.accountInfo.data);
+  const navigate=useNavigate();
   const notifyError = (message) => toast.error(message);
-
+  
+  useEffect(()=>{
+    if(role==="admin"){
+      navigate("/admin-packages")
+    }
+  },[role,navigate])
+  
   const {
     data: compounds,
     isFetching: fetchingCompounds,
