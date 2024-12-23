@@ -20,7 +20,7 @@ import {
 } from "../../../Components/Logic/LogicFun";
 import { useEffect, useState } from "react";
 
-const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
+const UpdateExpenses = ({ hideModal, refetch, exDetails,refetchDetails }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -91,6 +91,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails }) => {
           console.log(data);
           if (data?.status === "success") {
             refetch();
+            refetchDetails()
             notifySuccess(key("updatedSucc"));
             resetForm();
             hideModal();

@@ -32,7 +32,6 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import TaskContent from "../Tasks/TaskContent";
 
 const PropertyDetails = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
   const { propId } = useParams();
@@ -49,9 +48,8 @@ const PropertyDetails = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  //filter here
-  const { data: tasks, refetch:refetchTasks } = useQuery({
-    queryKey: ["estateTasks",propId,token],
+  const { data: tasks, refetch: refetchTasks } = useQuery({
+    queryKey: ["estateTasks", propId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `tasks?estate=${propId}`,
@@ -69,7 +67,7 @@ const PropertyDetails = () => {
     enabled: propId && !!token,
   });
 
-  const { data: currentContract, refetch: refetchCurrentContract } = useQuery({
+  const { data: currentContract } = useQuery({
     queryKey: ["currentContract", propId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
@@ -81,27 +79,12 @@ const PropertyDetails = () => {
   });
 
   useEffect(() => {
-    if (token && propId) {
-      setIsLoading(true);
-      refetchCurrentContract()
-        .finally(() => setIsLoading(false));
-    }
-  }, [propId,token]);
-
-  useEffect(() => {
     if (data?.data?.estate?.inFavorites) {
       setIsMarked(true);
     } else {
       setIsMarked(false);
     }
   }, [data]);
-
-  useEffect(() => {
-    return () => {
-      refetch();
-      queryClient.invalidateQueries(["bookmarked", token]);
-    };
-  }, [refetch, queryClient, token]);
 
   const deleteEstate = async () => {
     setShowDeleteModal(false);
@@ -142,6 +125,7 @@ const PropertyDetails = () => {
       console.log(res);
       if (res.data.status === "success") {
         setIsMarked(false);
+        refetch()
         notifySuccess(key("removedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -155,6 +139,7 @@ const PropertyDetails = () => {
       console.log(res);
       if (res.status === "success") {
         setIsMarked(true);
+        refetch()
         notifySuccess(key("bookmarkedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -168,7 +153,7 @@ const PropertyDetails = () => {
     <>
       <ScrollTopBtn />
       <div className="height_container">
-        {!data || isLoading ? (
+        {!data ? (
           <LoadingOne />
         ) : data ? (
           <div className={styles.detials_content}>

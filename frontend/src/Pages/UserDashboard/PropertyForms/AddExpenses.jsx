@@ -18,7 +18,7 @@ import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
 import { useEffect, useState } from "react";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
-const AddExpenses = ({ hideModal, refetch, isCompound }) => {
+const AddExpenses = ({ hideModal, refetch, isCompound,refetchDetails }) => {
   const [contactServicesOptions, setContactServicesOptions] = useState([]);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -89,6 +89,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound }) => {
           console.log(data);
           if (data?.status === "success") {
             refetch();
+            refetchDetails();
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();

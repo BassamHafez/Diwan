@@ -536,6 +536,8 @@
   "accName":"Account Name",
   "packInfo":"Package Info",
   "overdueTasks":"Overdue Tasks",
+  "noResults":"No Results",
+  "customization":"Customization",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",

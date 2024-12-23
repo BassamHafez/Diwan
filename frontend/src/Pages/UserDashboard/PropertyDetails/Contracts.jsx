@@ -31,7 +31,7 @@ import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const Contracts = ({ details }) => {
+const Contracts = ({ details,refetchDetails }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -88,6 +88,7 @@ const Contracts = ({ details }) => {
       });
       if (res.status === 204 || res.status === 200) {
         refetch();
+        refetchDetails();
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -297,6 +298,7 @@ const Contracts = ({ details }) => {
           <AddNewContract
             hideModal={() => setShowAddContractModal(false)}
             refetch={refetch}
+            refetchDetails={refetchDetails}
           />
         </ModalForm>
       )}
@@ -309,6 +311,7 @@ const Contracts = ({ details }) => {
             hideModal={() => setShowUpdateContractModal(false)}
             refetch={refetch}
             contract={contractDetails}
+            refetchDetails={refetchDetails}
           />
         </ModalForm>
       )}

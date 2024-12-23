@@ -7,12 +7,15 @@ import NoData from "../../../Components/UI/Blocks/NoData";
 import Row from "react-bootstrap/esm/Row";
 import UserItem from "../Users/UserItem";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddAdmin from "./AdminsForm/AddAdmin";
+import SearchField from "../../../Components/Search/SearchField";
 
 const AllAdmins = () => {
+  
   const [showAddPackModal, setShowAddPackModal] = useState(false);
+  const [searchFilter, setSearchFilter] = useState("");
 
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -32,6 +35,23 @@ const AllAdmins = () => {
     enabled: !!token,
   });
 
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
+  const filteredData =
+    users && Array.isArray(users?.data)
+      ? users?.data?.filter(
+          (user) =>
+            !searchFilter ||
+            user.name
+              .trim()
+              .toLowerCase()
+              .includes(searchFilter.trim().toLowerCase()) ||
+            user.phone.includes(searchFilter)
+        )
+      : [];
+
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
@@ -39,20 +59,24 @@ const AllAdmins = () => {
         <div className="my-3">
           <MainTitle title={key("admins")} />
         </div>
-        <div className="d-flex justify-content-end p-2 pb-3">
+        <div className="d-flex justify-content-between position-relative my-1 p-2">
+          <div className="my-2">
+            <SearchField onSearch={onSearch} text={key("searchContacts")} />
+          </div>
           <ButtonOne
             onClick={() => setShowAddPackModal(true)}
             borderd={true}
             text={key("addAdmin")}
+            classes="my-2"
           />
         </div>
         <Row className="g-3">
-          {users?.data?.length > 0 ? (
-            users?.data?.map((user) => (
+          {filteredData?.length > 0 ? (
+            filteredData?.map((user) => (
               <UserItem key={user._id} userData={user} refetch={refetch} />
             ))
           ) : (
-            <NoData text={"noUsers"} />
+            <NoData text={"noResults"} />
           )}
         </Row>
       </div>

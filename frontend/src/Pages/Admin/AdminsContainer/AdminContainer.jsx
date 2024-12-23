@@ -1,29 +1,20 @@
 import Row from "react-bootstrap/esm/Row";
 import AdminNav from "../../../Components/MainNav/AdminNav";
 import Col from "react-bootstrap/esm/Col";
-import SearchField from "../../../Components/Search/SearchField";
 import { useTranslation } from "react-i18next";
 import LanguageChanger from "../../../Components/Lang/LanguageChanger";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { useCallback, useState } from "react";
+import {useState } from "react";
 import LogOutModal from "../../../Components/UI/Modals/LogOutModal";
 
 const AdminContainer = ({ Outlet }) => {
 
-  const [searchTitle,setSearchTitle]=useState("search");
-  const [searchFilter,setSearchFilter]=useState(null);
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [logoutModalShow, setLogoutModalShow] = useState(false);
-
-  const getSearchTitle=(text)=>{
-    setSearchTitle(text)
-  }
   
-  const onSearch = useCallback((searchInput) => {
-    setSearchFilter(searchInput);
-  }, []);
+
   
   return (
     <>
@@ -40,9 +31,6 @@ const AdminContainer = ({ Outlet }) => {
           </Col>
           <Col lg={10} md={9}>
             <div className=" d-flex justify-content-between align-items-center flex-wrap mb-2 px-2">
-              <div>
-                <SearchField  text={key(searchTitle)} />
-              </div>
               <div
                 className={`d-flex align-items-center flex-wrap ${
                   isArLang ? "me-auto" : "ms-auto"

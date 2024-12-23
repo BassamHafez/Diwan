@@ -10,7 +10,6 @@ export const formattedDate = (date) => {
   return parsedDate.toISOString().split("T")[0];
 };
 
-
 export const convertTpOptionsFormate = (arr) => {
   let arrOptions = [];
   if (arr?.length > 0) {
@@ -205,8 +204,13 @@ export const getContractStatus = (isCanceled, startDate, endDate) => {
   if (isCanceled) return "canceled";
 
   const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
   const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
+
   const end = new Date(endDate);
+  end.setHours(0, 0, 0, 0);
 
   if (currentDate < start) {
     return "upcoming";

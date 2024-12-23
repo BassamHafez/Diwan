@@ -28,7 +28,7 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "../Contacts/ContactForms/AddContactForm";
 
-const AddNewContract = ({ hideModal, refetch }) => {
+const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
   const [tenantsOptions, setTenantsOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
@@ -135,6 +135,7 @@ const AddNewContract = ({ hideModal, refetch }) => {
           if (data?.status === "success") {
             notifySuccess(key("addedSuccess"));
             refetch();
+            refetchDetails()
             queryClient.invalidateQueries(["revenuesData", token]);
             resetForm();
             hideModal();

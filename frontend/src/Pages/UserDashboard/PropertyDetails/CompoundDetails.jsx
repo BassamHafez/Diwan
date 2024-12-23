@@ -61,7 +61,7 @@ const CompoundDetails = () => {
     AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
   }, []);
-  //filter here
+
   const { data: tasks, refetch: refetchTasks } = useQuery({
     queryKey: ["compoundTasks", compId, token],
     queryFn: () =>

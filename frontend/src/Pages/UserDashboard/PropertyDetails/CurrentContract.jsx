@@ -26,7 +26,7 @@ import { useSelector } from "react-redux";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const CurrentContract = ({ details }) => {
+const CurrentContract = ({ details,refetchDetails }) => {
   const token = useSelector((state) => state.userInfo.token);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -80,6 +80,7 @@ const CurrentContract = ({ details }) => {
       });
       if (res.status === 204 || res.status === 200) {
         refetch();
+        refetchDetails();
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -244,18 +245,6 @@ const CurrentContract = ({ details }) => {
             id={`${contractDetails.contract?._id}`}
             type="currentContract"
           />
-          {/* <ContractDetails contract={contractDetails} type="currentContract" />
-          <div className="d-none">
-            <div
-              id={`${contractDetails.contract?._id}`}
-              className="d-flex justify-content-center align-items-center flex-column"
-            >
-              <ContractDetails
-                contract={contractDetails}
-                type="currentContract"
-              />
-            </div>
-          </div> */}
         </MainModal>
       )}
     </div>

@@ -40,6 +40,7 @@ import AllAccounts from "./Pages/Admin/Accounts/AllAccounts";
 import AllUsers from "./Pages/Admin/Users/AllUsers";
 import AllAdmins from "./Pages/Admin/myAdmins/AllAdmins";
 import AdminAccountSetting from "./Pages/Admin/Setting/AdminAccountSetting";
+import Configs from "./Pages/Admin/Configs/Configs";
 
 const router = createBrowserRouter(
   [
@@ -76,6 +77,7 @@ const router = createBrowserRouter(
         { path: "admin-users", element: <AllUsers /> },
         { path: "admin-packages", element: <AllPackages /> },
         { path: "admin-settings", element: <AdminAccountSetting /> },
+        { path: "admin-configs", element: <Configs /> },
 
         //else
         { path: "*", element: <PageNotFound /> },
