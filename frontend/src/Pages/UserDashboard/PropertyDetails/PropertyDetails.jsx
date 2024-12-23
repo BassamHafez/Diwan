@@ -30,6 +30,7 @@ import {
 } from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import TaskContent from "../Tasks/TaskContent";
+import defaultHouseImage from "../../../assets/house.png";
 
 const PropertyDetails = () => {
   const { t: key } = useTranslation();
@@ -125,7 +126,7 @@ const PropertyDetails = () => {
       console.log(res);
       if (res.data.status === "success") {
         setIsMarked(false);
-        refetch()
+        refetch();
         notifySuccess(key("removedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -139,7 +140,7 @@ const PropertyDetails = () => {
       console.log(res);
       if (res.status === "success") {
         setIsMarked(true);
-        refetch()
+        refetch();
         notifySuccess(key("bookmarkedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -166,9 +167,9 @@ const PropertyDetails = () => {
                 >
                   <h3 className="my-4 mx-1">
                     {myData?.estate?.unitNumber
-                      ? `${myData?.estate?.unitNumber}`
+                      ? `${myData?.estate?.unitNumber}-`
                       : ""}
-                    - {myData?.estate?.name}
+                    {myData?.estate?.name}
                   </h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
                     <CheckPermissions btnActions={["DELETE_ESTATE"]}>
@@ -209,9 +210,13 @@ const PropertyDetails = () => {
                     data-aos-duration="1000"
                   >
                     <img
-                      src={`${import.meta.env.VITE_Host}${
+                      src={
                         myData?.estate?.image
-                      }`}
+                          ? `${import.meta.env.VITE_Host}${
+                              myData?.estate?.image
+                            }`
+                          : defaultHouseImage
+                      }
                       alt="unit_img"
                     />
                   </div>

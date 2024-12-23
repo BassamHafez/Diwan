@@ -3,7 +3,7 @@ import styles from "./PropertyForms.module.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -562,19 +562,30 @@ const UpdateEstate = ({
           </Row>
           <div className={styles.photo_field}>
             <h6 className="mb-3 text-start">{key("estateImage")}</h6>
-            <label className={styles.photo_label_img} htmlFor="compoundImage">
+            <label
+              className={
+                imagePreviewUrl ||
+                estateData.image ||
+                estateData.image === "/estates/default-estate.png"
+                  ? styles.photo_label_img
+                  : styles.photo_label
+              }
+              htmlFor="compoundImage"
+            >
               {imagePreviewUrl ? (
                 <img
                   src={imagePreviewUrl}
                   alt="Uploaded Preview"
                   className={styles.image_preview}
                 />
-              ) : (
+              ) : estateData.image ? (
                 <img
                   src={`${import.meta.env.VITE_Host}${estateData.image}`}
                   alt="old_image_Preview"
                   className={styles.image_preview}
                 />
+              ) : (
+                <FontAwesomeIcon className={styles.img_icon} icon={faImage} />
               )}
             </label>
             <input

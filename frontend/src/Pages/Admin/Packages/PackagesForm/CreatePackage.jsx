@@ -37,31 +37,37 @@ const CreatePackage = ({ refetch, hideModal }) => {
     estatesCount: "",
     maxEstatesInCompound: "",
     isFavoriteAllowed: false,
+    isRemindersAllowed: false,
   };
 
   const onSubmit = (values, { resetForm }) => {
-
-
     const featuresArr = [
-      { label: "allowedUsers", value: `${values.usersCount||0}` },
-      { label: "allowedCompounds", value: `${values.compoundsCount||0}` },
-      { label: "allowedEstates", value: `${values.estatesCount||0}` },
+      { label: "allowedUsers", value: `${values.usersCount || 0}` },
+      { label: "allowedCompounds", value: `${values.compoundsCount || 0}` },
+      { label: "allowedEstates", value: `${values.estatesCount || 0}` },
       {
         label: "maxEstatesInCompound",
-        value: `${values.maxEstatesInCompound?.value||0}`,
+        value: `${values.maxEstatesInCompound?.value || 0}`,
       },
-      { label: "isFavoriteAllowed", value: `${values.isFavoriteAllowed||false}` },
+      {
+        label: "isFavoriteAllowed",
+        value: `${values.isFavoriteAllowed || false}`,
+      },
+      {
+        label: "isRemindersAllowed",
+        value: `${values.isRemindersAllowed || false}`,
+      },
     ];
 
     const updatedValues = {
-        arTitle: values.arTitle,
-        enTitle: values.enTitle,
-        price: values.price,
-        originalPrice: values.originalPrice,
-        isBestOffer: values.isBestOffer,
-        isMostPopular: values.isMostPopular,
-        features:featuresArr
-      };
+      arTitle: values.arTitle,
+      enTitle: values.enTitle,
+      price: values.price,
+      originalPrice: values.originalPrice,
+      isBestOffer: values.isBestOffer,
+      isMostPopular: values.isMostPopular,
+      features: featuresArr,
+    };
 
     console.log(updatedValues);
     mutate(
@@ -159,18 +165,14 @@ const CreatePackage = ({ refetch, hideModal }) => {
             </Col>
             <Col sm={6}>
               <div className="field">
-                <label htmlFor="usersCount">
-                  {key("usersCount")}
-                </label>
+                <label htmlFor="usersCount">{key("usersCount")}</label>
                 <Field type="number" id="usersCount" name="usersCount" />
                 <ErrorMessage name="usersCount" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
               <div className="field">
-                <label htmlFor="compoundsCount">
-                  {key("compoundsCount")}
-                </label>
+                <label htmlFor="compoundsCount">{key("compoundsCount")}</label>
                 <Field
                   type="number"
                   id="compoundsCount"
@@ -184,9 +186,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
             </Col>
             <Col sm={6}>
               <div className="field">
-                <label htmlFor="estatesCount">
-                  {key("estatesCount")}
-                </label>
+                <label htmlFor="estatesCount">{key("estatesCount")}</label>
                 <Field type="number" id="estatesCount" name="estatesCount" />
                 <ErrorMessage
                   name="estatesCount"
@@ -228,6 +228,18 @@ const CreatePackage = ({ refetch, hideModal }) => {
                 />
                 <label className=" m-0 mx-2" htmlFor="isFavoriteAllowed">
                   {key("add")} {key("bookmarked")}
+                </label>
+              </div>
+              <div>
+                <Field
+                  name="isRemindersAllowed"
+                  type="checkbox"
+                  id="isRemindersAllowed"
+                  className=" fs-5 m-0"
+                  style={{ cursor: "pointer" }}
+                />
+                <label className=" m-0 mx-2" htmlFor="isRemindersAllowed">
+                  {key("isRemindersAllowed")}
                 </label>
               </div>
 

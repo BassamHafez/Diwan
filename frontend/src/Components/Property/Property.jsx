@@ -1,6 +1,6 @@
 import Col from "react-bootstrap/esm/Col";
 import styles from "./Property.module.css";
-import b1 from "../../assets/villa.webp";
+import defaultHouseImg from "../../assets/house.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
@@ -75,75 +75,82 @@ const Property = ({
   };
 
   return (
-    <Col
-      md={6}
-      lg={4}
-      className="d-flex justify-content-center align-items-center"
-    >
-      <div
-        className={styles.property_body}
-        data-aos="fade-up"
-        data-aos-duration="1000"
+    <>
+      <Col
+        xxl={4}
+        lg={6}
+        className="d-flex justify-content-center align-items-center"
       >
-        <div className={styles.card_img} onClick={navigateToDetails}>
-          <ImgComponent
-            width="23.75rem"
-            height="16.25rem"
-            src={
-              property.image
-                ? `${import.meta.env.VITE_Host}${property?.image}`
-                : b1
-            }
-            lazyLoad={true}
-            hash={imgHash.defaultImg}
-            alt={"propertyImage"}
-          />
-        </div>
+        <div
+          className={styles.property_body}
+          data-aos="fade-up"
+          data-aos-duration="1000"
+        >
+          <div
+            className={`${styles.card_img} ${
+              !property.image||property.image==="/estates/default-estate.png"? styles.default_estate : ""
+            }`}
+            onClick={navigateToDetails}
+          >
+            <ImgComponent
+              width="22.5rem"
+              height="15rem"
+              src={
+                property.image
+                  ? `${import.meta.env.VITE_Host}${property?.image}`
+                  : defaultHouseImg
+              }
+              lazyLoad={true}
+              hash={imgHash.defaultImg}
+              alt={"propertyImage"}
+            />
+          </div>
 
-        <div className={styles.card_caption}>
-          <h4>{property.name}</h4>
-          {!hideStatus && (
-            <span
-              className={`${styles.status_badge} ${
-                isArLang ? styles.status_badge_ar : styles.status_badge_en
-              } ${getStatusBgColor(property.status)}`}
-            >
-              {isArLang
-                ? renamedEstateStatus(property.status, "ar")
-                : renamedEstateStatus(property.status, "en")}
-            </span>
-          )}
-          {!isCompoundDetailsPage && (
-            <div className={styles.caption_header}>
-              <span>
-                <FontAwesomeIcon
-                  icon={faLocationDot}
-                  className={`${isArLang ? "ms-1" : "me-1"} color-main`}
-                />
-                {parentCompound.region} (
-                <span className="mini_word">{parentCompound.city}</span>)
+          <div className={styles.card_caption}>
+            <h4>{property.name}</h4>
+            {!hideStatus && (
+              <span
+                className={`${styles.status_badge} ${
+                  isArLang ? styles.status_badge_ar : styles.status_badge_en
+                } ${getStatusBgColor(property.status)}`}
+              >
+                {isArLang
+                  ? renamedEstateStatus(property.status, "ar")
+                  : renamedEstateStatus(property.status, "en")}
+              </span>
+            )}
+            {!isCompoundDetailsPage && (
+              <div className={styles.caption_header}>
+                <span>
+                  <FontAwesomeIcon
+                    icon={faLocationDot}
+                    className={`${isArLang ? "ms-1" : "me-1"} color-main`}
+                  />
+                  {parentCompound.region} (
+                  <span className="mini_word">{parentCompound.city}</span>)
+                </span>
+              </div>
+            )}
+
+            <p className={styles.desc}>{property.description}</p>
+
+            <div className={isArLang ? "text-start" : "text-end"}>
+              <span
+                className={`${styles.compound_badge} ${
+                  hideCompound ? styles.percent_estate_badge : ""
+                }`}
+              >
+                {isCompoundDetailsPage
+                  ? `${key("unitNumber")} ${property.unitNumber}`
+                  : hideCompound
+                  ? renderEstateInfo(property)
+                  : renderCompoundName(property)}
               </span>
             </div>
-          )}
-
-          <p className={styles.desc}>{property.description}</p>
-
-          <div className={isArLang ? "text-start" : "text-end"}>
-            <span
-              className={`${styles.compound_badge} ${
-                hideCompound ? styles.percent_estate_badge : ""
-              }`}
-            >
-              {isCompoundDetailsPage
-                ? `${key("unitNumber")} ${property.unitNumber}`
-                : hideCompound
-                ? renderEstateInfo(property)
-                : renderCompoundName(property)}
-            </span>
           </div>
         </div>
-      </div>
-    </Col>
+      </Col>
+    </>
   );
 };
 

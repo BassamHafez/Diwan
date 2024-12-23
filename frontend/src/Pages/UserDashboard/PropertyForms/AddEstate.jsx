@@ -103,10 +103,11 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
 
     if (selectedFile) {
       formData.append("image", selectedFile);
-    } else {
-      notifyError(key("uploadPhoto"));
-      return;
-    }
+    } 
+    // else {
+    //   notifyError(key("uploadPhoto"));
+    //   return;
+    // }
     if (values.compound !== "not") {
       formData.append("compound", values.compound);
     }

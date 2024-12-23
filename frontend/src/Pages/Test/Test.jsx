@@ -10,3 +10,7 @@ const Test = () => {
 };
 
 export default Test;
+
+
+
+//estate image and compound image 3:2
