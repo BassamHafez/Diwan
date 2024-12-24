@@ -4,6 +4,7 @@ const { uploadSingleImage } = require("../utils/uploadImage");
 const { sendWAText } = require("../utils/sendWAMessage");
 
 const User = require("../models/userModel");
+const Account = require("../models/accountModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const factory = require("./handlerFactory");
@@ -31,7 +32,6 @@ exports.getMe = (req, res, next) => {
   next();
 };
 
-exports.deleteUser = factory.deleteOne(User);
 exports.getAllUsers = factory.getAll(User, [], userSelectedFields);
 exports.getUser = factory.getOne(User, accountPopOptions);
 
@@ -164,5 +164,32 @@ exports.addAdmin = catchAsync(async (req, res, next) => {
   res.status(201).json({
     status: "success",
     message: "Admin added successfully",
+  });
+});
+
+exports.deleteUser = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+
+  const [user, account] = await Promise.all([
+    User.findByIdAndDelete(userId),
+    Account.findOne({ owner: userId }).select("members").lean(),
+  ]);
+
+  if (!user) {
+    return next(new ApiError("No user found with that ID", 404));
+  }
+
+  if (account) {
+    const membersIds = account.members.map((member) => member.user);
+
+    await Promise.all([
+      User.deleteMany({ _id: { $in: membersIds } }, { ordered: false }),
+      Account.deleteOne({ owner: userId }),
+    ]);
+  }
+
+  res.status(204).json({
+    status: "success",
+    data: null,
   });
 });

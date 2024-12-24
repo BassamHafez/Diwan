@@ -23,6 +23,28 @@ const ownerPopOptions = {
 exports.getAllAccounts = factory.getAll(Account, ownerPopOptions, "-members");
 exports.updateAccount = factory.updateOne(Account);
 
+exports.deleteAccount = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const account = await Account.findById(id).select("members").lean();
+
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  const membersIds = account.members.map((member) => member.user);
+
+  await Promise.all([
+    User.deleteMany({ _id: { $in: membersIds } }, { ordered: false }),
+    Account.deleteOne({ _id: id }),
+  ]);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
 exports.getMyAccount = catchAsync(async (req, res, next) => {
   const account = await Account.findById(req.user.account)
     .populate(memberPopOptions)

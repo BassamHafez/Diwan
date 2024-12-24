@@ -13,6 +13,13 @@ router.get(
   accountController.getAllAccounts
 );
 
+router.delete(
+  "/:id",
+  accountValidator.getAccountValidator,
+  authController.restrictTo("admin"),
+  accountController.deleteAccount
+);
+
 router.get("/my-account", accountController.getMyAccount);
 
 router.get("/purchases", accountController.getMyPurchases);
