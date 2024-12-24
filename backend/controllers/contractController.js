@@ -115,9 +115,22 @@ exports.createContract = catchAsync(async (req, res, next) => {
   });
 
   const calculatedRevenues = calculateRevenues(contract);
-  const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
+  const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues, {
+    ordered: false,
+  });
 
-  await Promise.all([scheduledMissionPromise, insertRevenuesPromise]);
+  const [insertedRevenues] = await Promise.all([
+    insertRevenuesPromise,
+    scheduledMissionPromise,
+  ]);
+
+  const revenuesReminders = insertedRevenues.map((revenue) => ({
+    type: "REVENUE_REMINDER",
+    scheduledAt: new Date(revenue.dueDate).setHours(8, 0, 0, 0),
+    revenue: revenue._id,
+  }));
+
+  ScheduledMission.insertMany(revenuesReminders, { ordered: false });
 
   res.status(201).json({
     status: "success",
@@ -272,7 +285,18 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     contract: updatedContract._id,
   });
 
-  await Promise.all([insertRevenuesPromise, scheduledMissionPromise]);
+  const [insertedRevenues] = await Promise.all([
+    insertRevenuesPromise,
+    scheduledMissionPromise,
+  ]);
+
+  const revenuesReminders = insertedRevenues.map((revenue) => ({
+    type: "REVENUE_REMINDER",
+    scheduledAt: new Date(revenue.dueDate).setHours(8, 0, 0, 0),
+    revenue: revenue._id,
+  }));
+
+  ScheduledMission.insertMany(revenuesReminders, { ordered: false });
 
   res.status(201).json({
     status: "success",
