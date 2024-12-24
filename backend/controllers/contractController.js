@@ -2,10 +2,12 @@ const Contract = require("../models/contractModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
 const Revenue = require("../models/revenueModel");
+const TenantContact = require("../models/tenantContactModel");
 const ScheduledMission = require("../models/scheduledMissionModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const calculateRevenues = require("../utils/calculateRevenues");
+const { sendWAText } = require("../utils/sendWAMessage");
 
 const contractPopOptions = [
   {
@@ -47,14 +49,18 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  const overlappingContract = await Contract.findOne({
-    estate: estateId,
-    startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
-    endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
-    isCanceled: false,
-  })
-    .select("_id")
-    .lean();
+  const [overlappingContract, tenant] = await Promise.all([
+    Contract.findOne({
+      estate: estateId,
+      startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
+      endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
+      isCanceled: false,
+    })
+      .select("_id")
+      .lean(),
+
+    TenantContact.findById(req.body.tenant).select("name phone").lean(),
+  ]);
 
   if (overlappingContract) {
     return next(
@@ -63,6 +69,10 @@ exports.createContract = catchAsync(async (req, res, next) => {
         400
       )
     );
+  }
+
+  if (!tenant) {
+    return next(new ApiError("No tenant found with that ID", 404));
   }
 
   // const isActiveContract =
@@ -76,7 +86,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const estate = isActiveContract
     ? await Estate.findByIdAndUpdate(estateId, { status: "rented" })
-    : await Estate.findById(estateId).select("_id compound").lean();
+    : await Estate.findById(estateId).select("_id name compound").lean();
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -132,6 +142,15 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   ScheduledMission.insertMany(revenuesReminders, { ordered: false });
 
+  sendWAText(
+    tenant.phone,
+    `Hello ${
+      tenant.name
+    }, You have a new contract starting on ${newStartDate.toLocaleDateString()} and ending on ${newEndDate.toLocaleDateString()} at "${
+      estate.name
+    }"`
+  );
+
   res.status(201).json({
     status: "success",
     data: contract,
@@ -146,6 +165,7 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     account: req.user.account,
   })
     .select("status")
+    .populate(contractPopOptions)
     .lean();
 
   if (!contract) {
@@ -193,6 +213,11 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
       status: "available",
     });
   }
+
+  sendWAText(
+    contract.tenant.phone,
+    `Hello ${contract.tenant.name}, Your contract at "${contract.estate.name}" has been canceled.`
+  );
 
   res.status(200).json({
     status: "success",

@@ -50,6 +50,20 @@ const checkScheduledMissions = async () => {
             update: { status: "available" },
           },
         });
+
+        promises.push(
+          Contract.findById(task.contract)
+            .select("tenant estate")
+            .populate("tenant", "name phone")
+            .populate("estate", "name")
+            .lean()
+            .then((contract) => {
+              sendWAText(
+                contract.tenant.phone,
+                `Hello ${contract.tenant.name}, your contract for "${contract.estate.name}" has finished.`
+              );
+            })
+        );
       } else if (task.type === "CONTRACT_ACTIVATION") {
         contractBulkUpdates.push({
           updateOne: {
@@ -95,7 +109,9 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Revenue.findById(task.revenue)
+            .select("tenant landlord amount estate compound")
             .populate(revenuePopOptions)
+            .lean()
             .then(async (revenue) => {
               if (revenue) {
                 const tenantPhone = revenue.tenant?.phone;
@@ -154,7 +170,9 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Expense.findById(task.expense)
+            .select("contact landlord amount estate compound")
             .populate(expensePopOptions)
+            .lean()
             .then(async (expense) => {
               if (expense) {
                 const contactName = expense.contact?.name;
