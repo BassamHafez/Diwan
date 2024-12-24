@@ -1,13 +1,16 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
+import MainTitle from "../../../Components/UI/Words/MainTitle";
 
 const ContractRevenues = (props) => {
   const { t: key } = useTranslation();
 
   return (
     <div className="position-relative">
-      <h4 className={props.classes ? props.classes : ""}>{key("revenues")}</h4>
+      <div className="d-flex justify-content-center">
+        <MainTitle small={true} title={key("revenues")} />
+      </div>
       <div className="scrollableTable">
         <table className={`${styles.contract_table} table`}>
           <thead className={styles.table_head}>

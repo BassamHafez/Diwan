@@ -18,7 +18,7 @@ import { faCalendar, faClock } from "@fortawesome/free-regular-svg-icons";
 const RevenueDetails = ({ revDetails }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const iconMarginClass=isArLang ? "ms-2" : "me-2";
+  const iconMarginClass = isArLang ? "ms-2" : "me-2";
 
   return (
     <>
@@ -50,7 +50,7 @@ const RevenueDetails = ({ revDetails }) => {
             <span className={iconMarginClass}>
               <FontAwesomeIcon className={`color-main fs-5`} icon={faUser} />
             </span>
-            <span>{key("tenant")}</span>
+            <span>{key("theTenant")}</span>
           </span>
           <span>{revDetails.tenant?.name}</span>
         </li>
@@ -63,15 +63,17 @@ const RevenueDetails = ({ revDetails }) => {
           </span>
           <span>{revDetails.tenant?.phone}</span>
         </li>
-        <li>
-          <span>
-            <span className={iconMarginClass}>
-              <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
+        {revDetails.tenant?.phone2 && (
+          <li>
+            <span>
+              <span className={iconMarginClass}>
+                <FontAwesomeIcon className={`color-main fs-5`} icon={faPhone} />
+              </span>
+              <span>{key("phone2")}</span>
             </span>
-            <span>{key("phone2")}</span>
-          </span>
-          <span>{revDetails.tenant?.phone2}</span>
-        </li>
+            <span>{revDetails.tenant?.phone2}</span>
+          </li>
+        )}
         <li>
           <span>
             <span className={iconMarginClass}>
@@ -122,12 +124,14 @@ const RevenueDetails = ({ revDetails }) => {
         )}
       </ul>
 
-      <div className={styles.notes}>
-        <h5>{key("notes")}</h5>
-        <div>
-          <p>{revDetails.note ? revDetails.note : "-"}</p>
+      {revDetails.notes && (
+        <div className={styles.notes}>
+          <h5>{key("notes")}</h5>
+          <div>
+            <p>{revDetails.note ? revDetails.note : "-"}</p>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

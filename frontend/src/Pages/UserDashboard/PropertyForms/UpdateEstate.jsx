@@ -516,7 +516,7 @@ const UpdateEstate = ({
 
               <div className="field mb-1">
                 <label htmlFor="price">
-                  {key("price")} ({key("sar")}) {requiredLabel}
+                  {key("unitPrice")} ({key("sar")}) {requiredLabel}
                 </label>
                 <Field type="text" id="price" name="price" />
                 <ErrorMessage name="price" component={InputErrorMessage} />
@@ -565,8 +565,8 @@ const UpdateEstate = ({
             <label
               className={
                 imagePreviewUrl ||
-                estateData.image ||
-                estateData.image === "/estates/default-estate.png"
+                (estateData.image &&
+                  estateData.image !== "/estates/default-estate.png")
                   ? styles.photo_label_img
                   : styles.photo_label
               }
@@ -578,7 +578,8 @@ const UpdateEstate = ({
                   alt="Uploaded Preview"
                   className={styles.image_preview}
                 />
-              ) : estateData.image ? (
+              ) : estateData.image &&
+                estateData.image !== "/estates/default-estate.png" ? (
                 <img
                   src={`${import.meta.env.VITE_Host}${estateData.image}`}
                   alt="old_image_Preview"

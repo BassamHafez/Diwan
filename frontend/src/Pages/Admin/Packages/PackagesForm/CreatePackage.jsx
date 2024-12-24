@@ -124,6 +124,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
       {({ setFieldValue }) => (
         <Form>
           <Row>
+
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="arTitle">
@@ -281,6 +282,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
                 )}
               </button>
             </div>
+            
           </Row>
         </Form>
       )}
