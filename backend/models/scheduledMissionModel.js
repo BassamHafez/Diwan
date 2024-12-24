@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const scheduledTaskSchema = new mongoose.Schema(
+const scheduledMissionSchema = new mongoose.Schema(
   {
     type: {
       type: String,
@@ -28,8 +28,11 @@ const scheduledTaskSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-scheduledTaskSchema.index({ isDone: 1 });
+scheduledMissionSchema.index({ isDone: 1, scheduledAt: 1 });
 
-const ScheduledTask = mongoose.model("ScheduledTask", scheduledTaskSchema);
+const ScheduledMission = mongoose.model(
+  "ScheduledMission",
+  scheduledMissionSchema
+);
 
-module.exports = ScheduledTask;
+module.exports = ScheduledMission;

@@ -3,7 +3,7 @@ const Account = require("../models/accountModel");
 const Expense = require("../models/expenseModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
-const ScheduledTask = require("../models/scheduledTaskModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -57,7 +57,7 @@ exports.createExpense = catchAsync(async (req, res, next) => {
 
   const scheduleTaskPromise =
     account && account.isRemindersAllowed
-      ? ScheduledTask.create({
+      ? ScheduledMission.create({
           type: "EXPENSE_REMINDER",
           scheduledAt: new Date(req.body.dueDate).setHours(10, 0, 0, 0),
           expense: expenseId,
@@ -87,7 +87,7 @@ exports.cancelExpense = catchAsync(async (req, res, next) => {
     return next(new ApiError("No unpaid expense found with that ID", 404));
   }
 
-  await ScheduledTask.deleteOne({ expense: id, isDone: false });
+  await ScheduledMission.deleteOne({ expense: id, isDone: false });
 
   res.status(200).json({
     status: "success",
@@ -107,7 +107,7 @@ exports.deleteExpense = catchAsync(async (req, res, next) => {
     return next(new ApiError("No expense found with that ID", 404));
   }
 
-  await ScheduledTask.deleteOne({ expense: id, isDone: false });
+  await ScheduledMission.deleteOne({ expense: id, isDone: false });
 
   res.status(204).json({
     status: "success",
@@ -130,7 +130,7 @@ exports.payExpense = catchAsync(async (req, res, next) => {
     );
   }
 
-  await ScheduledTask.deleteOne({ expense: id, isDone: false });
+  await ScheduledMission.deleteOne({ expense: id, isDone: false });
 
   res.status(200).json({
     status: "success",
@@ -159,7 +159,7 @@ exports.unpayExpense = catchAsync(async (req, res, next) => {
     account.isRemindersAllowed &&
     updatedExpense.dueDate > new Date()
   ) {
-    await ScheduledTask.create({
+    await ScheduledMission.create({
       type: "EXPENSE_REMINDER",
       scheduledAt: new Date(updatedExpense.dueDate).setHours(10, 0, 0, 0),
       expense: id,
