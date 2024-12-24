@@ -3,38 +3,38 @@ const Contract = require("./models/contractModel");
 const Estate = require("./models/estateModel");
 const Revenue = require("./models/revenueModel");
 const Expense = require("./models/expenseModel");
-const ScheduledTask = require("./models/scheduledTaskModel");
+const ScheduledMission = require("./models/scheduledMissionModel");
 const { sendWAText } = require("./utils/sendWAMessage");
 
 let isTaskRunning = false;
 
-const checkScheduledTasks = async () => {
-  console.time("checkScheduledTasks");
+const checkScheduledMissions = async () => {
+  console.time("checkScheduledMissions");
 
   if (isTaskRunning) {
-    console.timeEnd("checkScheduledTasks");
+    console.timeEnd("checkScheduledMissions");
     return;
   }
 
   isTaskRunning = true;
   try {
-    const tasks = await ScheduledTask.find({
+    const missions = await ScheduledMission.find({
       isDone: false,
       scheduledAt: { $lte: new Date() },
     }).lean();
 
-    if (tasks.length === 0) {
-      console.log("No scheduled tasks to process.");
+    if (missions.length === 0) {
+      console.log("No scheduled missions to process.");
       return;
     }
 
     const promises = [];
-    const tasksIds = [];
+    const missionsIds = [];
     const contractBulkUpdates = [];
     const estateBulkUpdates = [];
 
-    tasks.forEach((task) => {
-      tasksIds.push(task._id);
+    missions.forEach((task) => {
+      missionsIds.push(task._id);
 
       if (task.type === "CONTRACT_EXPIRATION") {
         contractBulkUpdates.push({
@@ -64,6 +64,15 @@ const checkScheduledTasks = async () => {
             update: { status: "rented" },
           },
         });
+
+        // promises.push(
+        //   ScheduledMission.create({
+        //     type: "CONTRACT_EXPIRATION",
+        //     scheduledAt: new Date(task.scheduledAt).setHours(23, 59, 59, 999),
+        //     contract: task.contract,
+        //     estate: task.estate,
+        //   })
+        // );
       } else if (task.type === "REVENUE_REMINDER") {
         const revenuePopOptions = [
           {
@@ -182,10 +191,10 @@ const checkScheduledTasks = async () => {
       promises.push(Estate.bulkWrite(estateBulkUpdates));
     }
 
-    if (tasksIds.length > 0) {
+    if (missionsIds.length > 0) {
       promises.push(
-        ScheduledTask.bulkWrite(
-          tasksIds.map((id) => ({
+        ScheduledMission.bulkWrite(
+          missionsIds.map((id) => ({
             updateOne: {
               filter: { _id: id },
               update: { isDone: true },
@@ -197,24 +206,26 @@ const checkScheduledTasks = async () => {
 
     await Promise.all(promises);
 
-    console.log(`Processed ${tasks.length} scheduled tasks successfully.`);
+    console.log(
+      `Processed ${missions.length} scheduled missions successfully.`
+    );
   } catch (error) {
-    console.error("Error processing scheduled tasks:", error);
+    console.error("Error processing scheduled missions:", error);
   } finally {
     isTaskRunning = false;
-    console.timeEnd("checkScheduledTasks");
+    console.timeEnd("checkScheduledMissions");
   }
 };
 
-const deleteOldTasks = async () => {
-  await ScheduledTask.deleteMany({ isDone: true });
+const clearFinishedMissions = async () => {
+  await ScheduledMission.deleteMany({ isDone: true });
 
-  console.log("Old scheduled tasks deleted");
+  console.log("Old scheduled missions deleted");
 };
 
 const startCronJobs = () => {
-  cron.schedule("*/3 * * * *", checkScheduledTasks); // every 3 minutes
-  cron.schedule("0 0 * * 0", deleteOldTasks); // every week
+  cron.schedule("*/3 * * * *", checkScheduledMissions); // every 3 minutes
+  cron.schedule("0 17 * * 0", clearFinishedMissions); // every Sunday at 5 PM
 };
 
 module.exports = startCronJobs;

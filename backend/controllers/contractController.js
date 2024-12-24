@@ -1,9 +1,8 @@
-const Account = require("../models/accountModel");
 const Contract = require("../models/contractModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
 const Revenue = require("../models/revenueModel");
-const ScheduledTask = require("../models/scheduledTaskModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const calculateRevenues = require("../utils/calculateRevenues");
@@ -48,18 +47,14 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  const [account, overlappingContract] = await Promise.all([
-    Contract.findOne({
-      estate: estateId,
-      startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
-      endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
-      isCanceled: false,
-    })
-      .select("_id")
-      .lean(),
-
-    Account.findById(req.user.account).select("isRemindersAllowed").lean(),
-  ]);
+  const overlappingContract = await Contract.findOne({
+    estate: estateId,
+    startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
+    endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
+    isCanceled: false,
+  })
+    .select("_id")
+    .lean();
 
   if (overlappingContract) {
     return next(
@@ -108,25 +103,20 @@ exports.createContract = catchAsync(async (req, res, next) => {
     account: req.user.account,
   });
 
-  const scheduledTaskPromise =
-    account && account.isRemindersAllowed
-      ? ScheduledTask.create({
-          type: isActiveContract
-            ? "CONTRACT_EXPIRATION"
-            : "CONTRACT_ACTIVATION",
-          // scheduledAt: isActiveContract ? newEndDate : newStartDate,
-          scheduledAt: isActiveContract
-            ? new Date(newEndDate).setHours(23, 59, 59, 999)
-            : new Date(newStartDate).setHours(0, 0, 0, 0),
-          estate: estateId,
-          contract: contract._id,
-        })
-      : Promise.resolve();
+  const scheduledMissionPromise = ScheduledMission.create({
+    type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
+    // scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    scheduledAt: isActiveContract
+      ? newEndDate.setHours(23, 59, 59, 999)
+      : newStartDate.setHours(0, 0, 0, 0),
+    estate: estateId,
+    contract: contract._id,
+  });
 
   const calculatedRevenues = calculateRevenues(contract);
   const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
 
-  await Promise.all([scheduledTaskPromise, insertRevenuesPromise]);
+  await Promise.all([scheduledMissionPromise, insertRevenuesPromise]);
 
   res.status(201).json({
     status: "success",
@@ -163,14 +153,14 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     { status: "canceled" }
   );
 
-  const deleteOldScheduledTaskPromise = ScheduledTask.findOneAndDelete({
+  const deleteOldScheduledMissionPromise = ScheduledMission.findOneAndDelete({
     contract: id,
     isDone: false,
   });
 
   const [updatedContract] = await Promise.all([
     updateContractPromise,
-    deleteOldScheduledTaskPromise,
+    deleteOldScheduledMissionPromise,
     cancelOldRevenuesPromise,
   ]);
 
@@ -206,19 +196,15 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  const [overlappingContract, account] = await Promise.all([
-    Contract.findOne({
-      _id: { $ne: id },
-      estate: estateId,
-      startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
-      endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
-      isCanceled: false,
-    })
-      .select("_id")
-      .lean(),
-
-    Account.findById(req.user.account).select("isRemindersAllowed").lean(),
-  ]);
+  const overlappingContract = await Contract.findOne({
+    _id: { $ne: id },
+    estate: estateId,
+    startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
+    endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
+    isCanceled: false,
+  })
+    .select("_id")
+    .lean();
 
   if (overlappingContract) {
     return next(
@@ -260,7 +246,7 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     { status: "canceled" }
   );
 
-  const deleteOldScheduledTaskPromise = ScheduledTask.findOneAndDelete({
+  const deleteOldScheduledMissionPromise = ScheduledMission.findOneAndDelete({
     contract: id,
     isDone: false,
   });
@@ -268,28 +254,23 @@ exports.updateContract = catchAsync(async (req, res, next) => {
   const [updatedContract] = await Promise.all([
     updateContractPromise,
     cancelOldRevenuesPromise,
-    deleteOldScheduledTaskPromise,
+    deleteOldScheduledMissionPromise,
   ]);
 
   const calculatedRevenues = calculateRevenues(updatedContract);
   const insertRevenuesPromise = Revenue.insertMany(calculatedRevenues);
 
-  const scheduledTaskPromise =
-    account && account.isRemindersAllowed
-      ? ScheduledTask.create({
-          type: isActiveContract
-            ? "CONTRACT_EXPIRATION"
-            : "CONTRACT_ACTIVATION",
-          // scheduledAt: isActiveContract ? newEndDate : newStartDate,
-          scheduledAt: isActiveContract
-            ? new Date(newEndDate).setHours(23, 59, 59, 999)
-            : new Date(newStartDate).setHours(0, 0, 0, 0),
-          estate: estateId,
-          contract: updatedContract._id,
-        })
-      : Promise.resolve();
+  const scheduledMissionPromise = ScheduledMission.create({
+    type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
+    // scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    scheduledAt: isActiveContract
+      ? newEndDate.setHours(23, 59, 59, 999)
+      : newStartDate.setHours(0, 0, 0, 0),
+    estate: estateId,
+    contract: updatedContract._id,
+  });
 
-  await Promise.all([insertRevenuesPromise, scheduledTaskPromise]);
+  await Promise.all([insertRevenuesPromise, scheduledMissionPromise]);
 
   res.status(201).json({
     status: "success",
@@ -302,8 +283,8 @@ exports.getCurrentContract = catchAsync(async (req, res, next) => {
 
   const contract = await Contract.findOne({
     estate: estateId,
-    startDate: { $lte: new Date() },
-    endDate: { $gte: new Date() },
+    startDate: { $lte: new Date().setHours(23, 59, 59, 999) },
+    endDate: { $gte: new Date().setHours(0, 0, 0, 0) },
     isCanceled: false,
   })
     .populate(contractPopOptions)

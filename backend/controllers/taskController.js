@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Task = require("../models/taskModel");
 const Account = require("../models/accountModel");
 const Expense = require("../models/expenseModel");
-const ScheduledTask = require("../models/scheduledTaskModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -76,7 +76,7 @@ exports.createTask = catchAsync(async (req, res, next) => {
 
     const scheduleTaskPromise =
       account && account.isRemindersAllowed
-        ? ScheduledTask.create({
+        ? ScheduledMission.create({
             type: "EXPENSE_REMINDER",
             scheduledAt: new Date(date).setHours(10, 0, 0, 0),
             expense: expenseId,

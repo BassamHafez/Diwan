@@ -3,7 +3,7 @@ const Account = require("../models/accountModel");
 const Revenue = require("../models/revenueModel");
 const Estate = require("../models/estateModel");
 const Compound = require("../models/compoundModel");
-const ScheduledTask = require("../models/scheduledTaskModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 
@@ -63,7 +63,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 
   const scheduleTaskPromise =
     account && account.isRemindersAllowed
-      ? ScheduledTask.create({
+      ? ScheduledMission.create({
           type: "REVENUE_REMINDER",
           scheduledAt: new Date(req.body.dueDate).setHours(8, 0, 0, 0),
           revenue: revenueId,
@@ -88,7 +88,7 @@ exports.cancelRevenue = catchAsync(async (req, res, next) => {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
-  await ScheduledTask.deleteOne({ revenue: req.params.id, isDone: false });
+  await ScheduledMission.deleteOne({ revenue: req.params.id, isDone: false });
 
   res.status(200).json({
     status: "success",
@@ -108,7 +108,7 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
-  await ScheduledTask.deleteOne({ revenue: req.params.id, isDone: false });
+  await ScheduledMission.deleteOne({ revenue: req.params.id, isDone: false });
 
   res.status(200).json({
     status: "success",
@@ -134,7 +134,7 @@ exports.unpayRevenue = catchAsync(async (req, res, next) => {
     account.isRemindersAllowed &&
     updatedRevenue.dueDate > new Date()
   ) {
-    await ScheduledTask.create({
+    await ScheduledMission.create({
       type: "REVENUE_REMINDER",
       scheduledAt: new Date(updatedRevenue.dueDate).setHours(8, 0, 0, 0),
       revenue: req.params.id,
@@ -157,7 +157,7 @@ exports.deleteRevenue = catchAsync(async (req, res, next) => {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
-  await ScheduledTask.deleteOne({ revenue: req.params.id, isDone: false });
+  await ScheduledMission.deleteOne({ revenue: req.params.id, isDone: false });
 
   res.status(204).json({
     status: "success",
