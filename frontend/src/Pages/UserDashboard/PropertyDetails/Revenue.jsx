@@ -7,7 +7,7 @@ import {
   revenueFilterTypeOptions,
   revenuesStatus,
 } from "../../../Components/Logic/StaticLists";
-import { memo, useCallback,useState } from "react";
+import { memo, useCallback, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -34,10 +34,13 @@ import RevenueDetails from "./RevenueDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import PrintCashReceipt from "../../../Components/Prints/PrintCashReceipt";
+import { useSelector } from "react-redux";
+import PrintTaxInvoice from "../../../Components/Prints/PrintTaxInvoice";
 
-const Revenue = memo(({ refetchDetails, details }) => {
+const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
+  const [showTaxInvoiceModa, setShowTaxInvoiceModal] = useState(false);
   const [showCashReceiptModal, setShowCashReceiptModal] = useState(false);
   const [revDetails, setRevDetails] = useState({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -52,13 +55,14 @@ const Revenue = memo(({ refetchDetails, details }) => {
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
 
   const {
     data: revenuesData,
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["revenuesData",propId,token],
+    queryKey: ["revenuesData", propId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/revenues`,
@@ -311,13 +315,25 @@ const Revenue = memo(({ refetchDetails, details }) => {
                                       </Dropdown.Item>
                                     </CheckPermissions>
                                     <Dropdown.Item
-                                      onClick={() =>
-                                        setShowCashReceiptModal(true)
-                                      }
+                                      onClick={() => {
+                                        setRevDetails(rev);
+                                        setShowCashReceiptModal(true);
+                                      }}
                                       className="text-center"
                                     >
                                       {key("cashReceipt")}
                                     </Dropdown.Item>
+                                    {accountInfo?.account?.taxNumber && (
+                                      <Dropdown.Item
+                                        onClick={() => {
+                                          setRevDetails(rev);
+                                          setShowTaxInvoiceModal(true);
+                                        }}
+                                        className="text-center"
+                                      >
+                                        {key("taxInvoice")}
+                                      </Dropdown.Item>
+                                    )}
                                   </>
                                 )}
                                 {rev.status !== "paid" &&
@@ -443,7 +459,7 @@ const Revenue = memo(({ refetchDetails, details }) => {
             generatePDF(
               revDetails._id,
               `${key("cashReceipt")}_${details?.name}(${
-                details?.compound?.name
+                estateParentCompound.name
               })_${revDetails?.tenant?.name}`
             )
           }
@@ -453,12 +469,39 @@ const Revenue = memo(({ refetchDetails, details }) => {
           <PrintCashReceipt
             revDetails={revDetails}
             details={details}
+            estateParentCompound={estateParentCompound}
             id={`${revDetails._id}`}
+          />
+        </MainModal>
+      )}
+      {showTaxInvoiceModa && (
+        <MainModal
+          show={showTaxInvoiceModa}
+          onHide={() => setShowTaxInvoiceModal(false)}
+          cancelBtn={key("cancel")}
+          okBtn={key("download")}
+          confirmFun={() =>
+            generatePDF(
+              revDetails._id,
+              `${key("taxInvoice")}_${details?.name} ${
+                estateParentCompound ? `(${estateParentCompound?.name})` : ""
+              }_${revDetails?.tenant?.name}`
+            )
+          }
+          title={key("taxInvoice")}
+          modalSize={"lg"}
+        >
+          <PrintTaxInvoice
+            revDetails={revDetails}
+            details={details}
+            estateParentCompound={estateParentCompound}
+            id={`${revDetails._id}`}
+            taxNumber={accountInfo?.account?.taxNumber}
           />
         </MainModal>
       )}
     </>
   );
 });
-Revenue.displayName="Revenue"
+Revenue.displayName = "Revenue";
 export default Revenue;

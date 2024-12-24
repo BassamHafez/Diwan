@@ -1,19 +1,29 @@
 import { useTranslation } from "react-i18next";
-
 import styles from "./PrintContract.module.css";
 import { useSelector } from "react-redux";
 import PrintNavBar from "./PrintNavBar";
+import MainTitle from "../../Components/UI/Words/MainTitle";
 
-const PrintHeader = ({ title, details, tenant, partiesTitle }) => {
+const PrintHeader = ({
+  title,
+  details,
+  estateParentCompound,
+  tenant,
+  partiesTitle,
+}) => {
   const { t: key } = useTranslation();
   const mainColClass = "d-flex justify-content-center align-items-center mx-3";
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const centerTitleClass = "d-flex justify-content-center";
 
   return (
     <>
       <PrintNavBar title={title} />
       <div className={styles.information}>
-        <h5>{key("estateDetails")}</h5>
+        <div className={centerTitleClass}>
+          <MainTitle small={true} title={key("estateDetails")} />
+        </div>
+
         <div className="d-flex flex-wrap justify-content-evenly">
           <div className={mainColClass}>
             <div className={styles.details_content}>
@@ -28,9 +38,7 @@ const PrintHeader = ({ title, details, tenant, partiesTitle }) => {
               <div className={styles.title}>
                 <span>{key("compound")}</span>
               </div>
-              <p>
-                {details?.compound ? details.compound?.name : key("noCompound")}
-              </p>
+              <p>{estateParentCompound?.name || key("noCompound")}</p>
             </div>
           </div>
           <div className={mainColClass}>
@@ -39,7 +47,8 @@ const PrintHeader = ({ title, details, tenant, partiesTitle }) => {
                 <span>{key("location")}</span>
               </div>
               <p>
-                {details?.region} ({details?.city})
+                {details?.region || estateParentCompound?.region} (
+                {details?.city || estateParentCompound?.city})
               </p>
             </div>
           </div>
@@ -74,29 +83,54 @@ const PrintHeader = ({ title, details, tenant, partiesTitle }) => {
         </div>
       </div>
       <div className={styles.information}>
-        <h5>{partiesTitle}</h5>
+        <div className={centerTitleClass}>
+          <MainTitle small={true} title={partiesTitle}/>
+        </div>
         <div className="scrollableTable">
           <table className={`${styles.contract_table} table`}>
             <thead className={styles.table_head}>
               <tr>
                 <th>{key("type")}</th>
-                <th>{key("theLandlord")}</th>
-                <th>{key("agent")}</th>
+                {details.broker || estateParentCompound?.broker ? null : (
+                  <th>{key("theLandlord")}</th>
+                )}
+                {!details.broker && !estateParentCompound?.broker ? null : (
+                  <th>{key("agent")}</th>
+                )}
                 <th>{key("theTenant")}</th>
               </tr>
             </thead>
             <tbody className={styles.table_body}>
               <tr>
                 <td>{key("name")}</td>
-                <td>{details?.landlord?.name}</td>
-                <td>{details?.broker?.name}</td>
-                <td>{tenant?.name}</td>
+                {details.broker || estateParentCompound?.broker ? null : (
+                  <td>
+                    {details?.landlord?.name ||
+                      estateParentCompound?.landlord?.name}
+                  </td>
+                )}
+                {!details.broker && !estateParentCompound?.broker ? null : (
+                  <td>
+                    {details?.broker?.name || estateParentCompound?.broker?.name}
+                  </td>
+                )}
+                <td>{tenant?.name||"-"}</td>
               </tr>
               <tr>
                 <td>{key("phone")}</td>
-                <td>{details?.landlord?.phone}</td>
-                <td>{details?.broker?.phone}</td>
-                <td>{tenant?.phone}</td>
+                {details.broker || estateParentCompound?.broker ? null : (
+                  <td>
+                    {details?.landlord?.phone ||
+                      estateParentCompound?.landlord?.phone}
+                  </td>
+                )}
+                {!details.broker && !estateParentCompound?.broker ? null : (
+                  <td>
+                    {details?.broker?.phone ||
+                      estateParentCompound?.broker?.phone}
+                  </td>
+                )}
+                <td>{tenant?.phone||"-"}</td>
               </tr>
             </tbody>
           </table>

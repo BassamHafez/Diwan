@@ -8,8 +8,9 @@ import {
 } from "../Logic/LogicFun";
 import ContractRevenues from "../../Pages/UserDashboard/PropertyDetails/ContractRevenues";
 import PrintHeader from "./PrintHeader";
+import MainTitle from "../UI/Words/MainTitle";
 
-const PrintContract = ({ contract, details, id, type }) => {
+const PrintContract = ({ contract, details,estateParentCompound, id, type }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
@@ -25,18 +26,21 @@ const PrintContract = ({ contract, details, id, type }) => {
     ) || [];
 
   const mainColClass = "d-flex justify-content-center align-items-center mx-3";
-
+  const centerTitleClass = "d-flex justify-content-center";
   return (
     <div className={styles.container_body} id={id}>
       <PrintHeader
         title={key("lease")}
         details={details}
+        estateParentCompound={estateParentCompound}
         tenant={contractData?.tenant}
         partiesTitle={key("partiesContract")}
       />
 
       <div className={styles.information}>
-        <h5>{key("contractDetails")}</h5>
+        <div className={centerTitleClass}>
+          <MainTitle small={true} title={key("contractDetails")}/>
+        </div>
         <div className="scrollableTable">
           <table className={`${styles.contract_table} table`}>
             <thead className={styles.table_head}>
@@ -60,7 +64,9 @@ const PrintContract = ({ contract, details, id, type }) => {
       </div>
 
       <div className={styles.information}>
-        <h5>{key("revDetails")}</h5>
+        <div className={centerTitleClass}>
+          <MainTitle small={true} title={key("revDetails")}/>
+        </div>
         <div className="d-flex flex-wrap justify-content-evenly">
           <div className={mainColClass}>
             <div className={styles.details_content}>
@@ -103,7 +109,6 @@ const PrintContract = ({ contract, details, id, type }) => {
       <div className={styles.information}>
         <ContractRevenues
           revenues={myRevenues}
-          classes={isArLang ? "text-end" : "text-start"}
         />
       </div>
     </div>
