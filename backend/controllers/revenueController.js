@@ -6,6 +6,7 @@ const Compound = require("../models/compoundModel");
 const ScheduledMission = require("../models/scheduledMissionModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
+const { sendWAText } = require("../utils/sendWAMessage");
 
 const revenuePopOptions = [
   {
@@ -102,13 +103,28 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
   const updatedRevenue = await Revenue.findOneAndUpdate(
     { _id: req.params.id, account: req.user.account },
     { status: "paid", paidAt, paymentMethod }
-  );
+  ).populate(revenuePopOptions.concat([{ path: "estate", select: "name" }]));
 
   if (!updatedRevenue) {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
-  await ScheduledMission.deleteOne({ revenue: req.params.id, isDone: false });
+  const removePendingMissionPromise = ScheduledMission.deleteOne({
+    revenue: req.params.id,
+    isDone: false,
+  });
+
+  const sendWAMsgPromise =
+    updatedRevenue.tenant && updatedRevenue.tenant.phone
+      ? sendWAText(
+          updatedRevenue.tenant.phone,
+          `${updatedRevenue.amount} SAR received for "${
+            updatedRevenue.estate.name
+          }" on (${new Date(paidAt).toLocaleDateString()})`
+        )
+      : Promise.resolve();
+
+  await Promise.all([removePendingMissionPromise, sendWAMsgPromise]);
 
   res.status(200).json({
     status: "success",
