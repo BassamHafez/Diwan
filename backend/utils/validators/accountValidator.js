@@ -2,6 +2,16 @@ const { check } = require("express-validator");
 const validatorMiddleware = require("./validatorMiddleware");
 const { USER_ACCESS_PERMISSIONS } = require("../globals");
 
+exports.getAccountValidator = [
+  check("id")
+    .exists()
+    .withMessage("Account ID is required")
+    .isMongoId()
+    .withMessage("Invalid account ID"),
+
+  validatorMiddleware,
+];
+
 exports.subscribeValidator = [
   check("id")
     .exists()
