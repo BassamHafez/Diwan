@@ -6,6 +6,9 @@ const Purchase = require("../models/purchaseModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
+const { sendWAText } = require("../utils/sendWAMessage");
+const sendEmail = require("../utils/sendEmail");
+const { newMemberHtml } = require("../utils/htmlMessages");
 
 const memberPopOptions = {
   path: "members.user",
@@ -298,16 +301,32 @@ exports.addMember = catchAsync(async (req, res, next) => {
 
   const user = await User.create(userData);
 
-  await Account.findByIdAndUpdate(id, {
-    $push: {
-      members: {
-        user: user._id,
-        permissions: req.body.permissions,
-        permittedCompounds: req.body.permittedCompounds || [],
+  const html = newMemberHtml(req.body.phone, req.body.password);
+
+  await Promise.all([
+    Account.findByIdAndUpdate(id, {
+      $push: {
+        members: {
+          user: user._id,
+          permissions: req.body.permissions,
+          permittedCompounds: req.body.permittedCompounds || [],
+        },
       },
-    },
-    $inc: { allowedUsers: -1 },
-  });
+      $inc: { allowedUsers: -1 },
+    }),
+
+    sendWAText(
+      req.body.phone,
+      `Welcome to your new account on Diiwan.com. Your account has been created successfully. Your login credentials are as follows: \nPhone: ${req.body.phone}\nPassword: ${req.body.password}`
+    ),
+
+    sendEmail(
+      req.body.email,
+      "Welcome to Diiwan",
+      `Welcome to your new account on Diiwan.com. Your account has been created successfully. Your login credentials are as follows: \nPhone: ${req.body.phone}\nPassword: ${req.body.password}`,
+      html
+    ),
+  ]);
 
   res.status(201).json({
     status: "success",
