@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
-import {useState } from "react";
+import { useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -26,7 +26,7 @@ import { useSelector } from "react-redux";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const CurrentContract = ({ details,refetchDetails }) => {
+const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   const token = useSelector((state) => state.userInfo.token);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -234,7 +234,12 @@ const CurrentContract = ({ details,refetchDetails }) => {
           cancelBtn={key("cancel")}
           okBtn={key("download")}
           confirmFun={() =>
-            generatePDF(contractDetails.contract?._id, "CurrentContractDetails")
+            generatePDF(
+              contractDetails.contract?._id,
+              `${key("contract")}_${details?.name}(${
+                estateParentCompound?.name
+              })_${contractDetails?.tenant?.name}`
+            )
           }
           title={key("contractDetails")}
           modalSize={"lg"}
@@ -242,6 +247,7 @@ const CurrentContract = ({ details,refetchDetails }) => {
           <PrintContract
             contract={contractDetails}
             details={details}
+            estateParentCompound={estateParentCompound}
             id={`${contractDetails.contract?._id}`}
             type="currentContract"
           />

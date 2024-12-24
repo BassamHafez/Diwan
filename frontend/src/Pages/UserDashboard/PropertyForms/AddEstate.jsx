@@ -104,10 +104,6 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     if (selectedFile) {
       formData.append("image", selectedFile);
     } 
-    // else {
-    //   notifyError(key("uploadPhoto"));
-    //   return;
-    // }
     if (values.compound !== "not") {
       formData.append("compound", values.compound);
     }
@@ -399,7 +395,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
 
               <div className="field mb-1">
                 <label htmlFor="price">
-                  {key("price")} ({key("sar")}) {requiredLabel}
+                  {key("unitPrice")} ({key("sar")}) {requiredLabel}
                 </label>
                 <Field type="text" id="price" name="price" />
                 <ErrorMessage name="price" component={InputErrorMessage} />
