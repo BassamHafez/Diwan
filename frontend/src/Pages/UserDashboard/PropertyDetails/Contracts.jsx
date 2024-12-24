@@ -31,7 +31,7 @@ import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const Contracts = ({ details,refetchDetails }) => {
+const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -53,7 +53,7 @@ const Contracts = ({ details,refetchDetails }) => {
     isFetching,
     refetch,
   } = useQuery({
-    queryKey: ["contracts",propId,token],
+    queryKey: ["contracts", propId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `estates/${propId}/contracts`,
@@ -335,9 +335,9 @@ const Contracts = ({ details,refetchDetails }) => {
           confirmFun={() =>
             generatePDF(
               contractDetails?._id,
-              `${key("contract")}_${details?.name}(${
-                details?.compound?.name
-              })_${contractDetails?.tenant?.name}`
+              `${key("contract")}_${details?.name}${
+                estateParentCompound ? `(${estateParentCompound?.name})` : ""
+              }_${contractDetails?.tenant?.name}`
             )
           }
           title={key("contractDetails")}
@@ -346,6 +346,7 @@ const Contracts = ({ details,refetchDetails }) => {
           {/* <ContractDetails contract={contractDetails} /> */}
           <PrintContract
             contract={contractDetails}
+            estateParentCompound={estateParentCompound}
             details={details}
             id={`${contractDetails._id}`}
           />

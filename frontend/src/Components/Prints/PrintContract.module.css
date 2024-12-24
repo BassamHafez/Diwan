@@ -6,7 +6,7 @@
 }
 .header h2,
 .header p,
-.details_content p{
+.details_content p {
   margin: 0;
 }
 .header {
@@ -49,14 +49,14 @@
   margin: 0.625rem 0;
   background-color: var(--sub_white);
   padding: 0.625rem;
-  border-radius: 0.625rem;
-  box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.218);
+  border-radius: 30px;
+  box-shadow: 0 3px 3px rgba(0, 0, 0, 0.218);
   min-width: 9.375rem;
 }
 .details_content p {
   margin-top: 0.5rem;
 }
-.details_content p{
+.details_content p {
   font-size: 0.9375rem;
   text-align: center;
 }
@@ -82,20 +82,29 @@
   padding: 0.625rem;
 }
 
-
-.notes{
+.notes {
   text-align: start;
   margin: 1.25rem 0.625rem 0.3125rem 0.625rem;
   width: 100%;
 }
-.notes div{
+.notes div {
   background-color: var(--sky);
   padding: 20px;
-  border-radius: 10px
+  border-radius: 10px;
 }
-.notes div p{
+.notes div p {
   color: var(--dark_white);
   margin: 0;
+}
+
+.tax_num {
+  margin-bottom: 10px;
+
+  text-align: start;
+}
+.tax_num span {
+  color: var(--dark_white);
+  font-size: 14px;
 }
 
 @media screen and (max-width: 1180px) {
