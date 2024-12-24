@@ -21,6 +21,7 @@ const scheduledMissionSchema = new mongoose.Schema(
       default: false,
     },
     contract: mongoose.Schema.Types.ObjectId,
+    contractEndDate: Date,
     estate: mongoose.Schema.Types.ObjectId,
     revenue: mongoose.Schema.Types.ObjectId,
     expense: mongoose.Schema.Types.ObjectId,
