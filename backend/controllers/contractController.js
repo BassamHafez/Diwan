@@ -109,6 +109,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
     scheduledAt: isActiveContract
       ? newEndDate.setHours(23, 59, 59, 999)
       : newStartDate.setHours(0, 0, 0, 0),
+    contractEndDate: newEndDate.setHours(23, 59, 59, 999),
     estate: estateId,
     contract: contract._id,
   });
@@ -266,6 +267,7 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     scheduledAt: isActiveContract
       ? newEndDate.setHours(23, 59, 59, 999)
       : newStartDate.setHours(0, 0, 0, 0),
+    contractEndDate: newEndDate.setHours(23, 59, 59, 999),
     estate: estateId,
     contract: updatedContract._id,
   });
