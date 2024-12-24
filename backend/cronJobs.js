@@ -65,14 +65,14 @@ const checkScheduledMissions = async () => {
           },
         });
 
-        // promises.push(
-        //   ScheduledMission.create({
-        //     type: "CONTRACT_EXPIRATION",
-        //     scheduledAt: new Date(task.scheduledAt).setHours(23, 59, 59, 999),
-        //     contract: task.contract,
-        //     estate: task.estate,
-        //   })
-        // );
+        promises.push(
+          ScheduledMission.create({
+            type: "CONTRACT_EXPIRATION",
+            scheduledAt: task.contractEndDate,
+            contract: task.contract,
+            estate: task.estate,
+          })
+        );
       } else if (task.type === "REVENUE_REMINDER") {
         const revenuePopOptions = [
           {
