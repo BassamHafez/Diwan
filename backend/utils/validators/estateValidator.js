@@ -53,9 +53,7 @@ exports.createEstateValidator = [
   check("price")
     .notEmpty()
     .withMessage("Price is required")
-    .isNumeric()
-    .withMessage("Price must be a number")
-    .isInt({ min: 1 })
+    .isFloat({ min: 0 })
     .withMessage("Price must be a positive number"),
 
   check("area")
@@ -152,9 +150,7 @@ exports.updateEstateValidator = [
 
   check("price")
     .optional()
-    .isNumeric()
-    .withMessage("Price must be a number")
-    .isInt({ min: 1 })
+    .isFloat({ min: 0 })
     .withMessage("Price must be a positive number"),
 
   check("area")
