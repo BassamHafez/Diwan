@@ -1,7 +1,31 @@
 import html2pdf from "html2pdf.js";
 import * as XLSX from "xlsx";
+import VerifyPhoneAlert from "../VerifyPhone/VerifyPhoneAlert";
+import { toast } from "react-toastify";
+import { mainAlertTime } from "./StaticLists";
 
 // main fun
+
+const notifyAlert = () =>
+  toast.warn(<VerifyPhoneAlert isModalAlert={true} />, {
+    autoClose: false,
+    draggable: true,
+    position: "top-right",
+  });
+
+export const showPhoneAlertNotification = () => {
+  const lastNotificationTime = localStorage.getItem("lastNotificationTime");
+  const currentTime = new Date().getTime();
+
+  if (
+    !lastNotificationTime ||
+    currentTime - lastNotificationTime >= mainAlertTime
+  ) {
+    notifyAlert();
+    localStorage.setItem("lastNotificationTime", currentTime.toString());
+  }
+};
+
 export const formattedDate = (date) => {
   const parsedDate = new Date(date);
   if (!date || isNaN(parsedDate)) {

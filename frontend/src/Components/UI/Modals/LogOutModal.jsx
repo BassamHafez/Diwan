@@ -15,9 +15,10 @@ const LogOutModal = ({ onClose, onHide, show }) => {
 
   const signOutHandler = () => {
     localStorage.removeItem("userData");
-    dispatch(userActions.setRole(""));
     localStorage.removeItem("role");
     localStorage.removeItem("token");
+    localStorage.removeItem("lastNotificationTime");
+    dispatch(userActions.setRole(""));
     dispatch(userActions.setIsLogin(false));
     dispatch(saveIsLoginState(false));
     if (onClose) {
