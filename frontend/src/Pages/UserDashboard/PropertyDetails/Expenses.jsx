@@ -6,7 +6,7 @@ import {
   expensesStatusOptions,
   expensesTypeOptions,
 } from "../../../Components/Logic/StaticLists";
-import {useState } from "react";
+import { useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -35,7 +35,12 @@ import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 
-const Expenses = ({ isCompound, refetchDetails }) => {
+const Expenses = ({
+  isCompound,
+  refetchDetails,
+  estateParentCompound,
+  details,
+}) => {
   const [showAddExModal, setShowAddExModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -56,6 +61,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
   const myQueryKey = isCompound ? "compoundExpenses" : "EstateExpenses";
   const myEndPoint = isCompound ? "compounds" : "estates";
   const myParam = isCompound ? params.compId : params.propId;
+  const currentLang = isArLang ? "ar" : "en";
 
   const {
     data: expenses,
@@ -158,7 +164,7 @@ const Expenses = ({ isCompound, refetchDetails }) => {
   };
 
   const filteredExpenses =
-    expenses && Array.isArray(expenses.data)
+    expenses && Array.isArray(expenses?.data)
       ? expenses.data.filter(
           (ex) =>
             (statusFilter === "" || ex.status === statusFilter) &&
@@ -166,13 +172,42 @@ const Expenses = ({ isCompound, refetchDetails }) => {
         )
       : [];
 
+  const expensesList = [...(expenses?.data || [])];
+
+  const getLandlordName = (compound, details) => {
+    if (compound?.broker || details?.broker) return "-";
+    return compound?.landlord?.name || details?.landlord?.name || "-";
+  };
+
+  const filteredExpensesList = expensesList?.map((ex) => {
+    const brokerName =
+      estateParentCompound?.broker?.name || details?.broker?.name || "-";
+    const landlordName = getLandlordName(estateParentCompound, details);
+
+    return {
+      [key("theUnit")]: ex?.estate?.name || details?.name || "-",
+      [key("estate")]:
+        estateParentCompound?.name || ex?.compound?.name || key("noCompound"),
+      [key("type")]: ex.type || "-",
+      [`${key("amount")} (${key("sarSmall")})`]: ex?.amount || "-",
+      [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
+      [key("status")]:
+        renamedExpensesStatusMethod(ex.status, currentLang) || "-",
+      [key("agent")]: brokerName,
+      [key("theLandlord")]: landlordName,
+      [key("paidAt")]: formattedDate(ex?.paidAt) || "-",
+      [key("paymentMethod")]: ex?.paymentMethod ? key(ex?.paymentMethod) : "-",
+      [key("notes")]: ex?.note || "-",
+    };
+  });
+
   return (
     <>
       <div className={styles.contracts_body}>
         <div className={styles.header}>
           <h4>{key("expenses")}</h4>
           <div>
-            {expenses && expenses?.data?.length > 0 && (
+            {filteredExpensesList && filteredExpensesList?.length > 0 && (
               <ButtonOne
                 classes="m-2"
                 borderd
@@ -180,9 +215,13 @@ const Expenses = ({ isCompound, refetchDetails }) => {
                 text={key("exportCsv")}
                 onClick={() =>
                   handleDownloadExcelSheet(
-                    expenses?.data,
-                    "Contracts.xlsx",
-                    "Contracts"
+                    filteredExpensesList,
+                    `${key("expenses")}_${details?.name}${
+                      estateParentCompound
+                        ? `_(${estateParentCompound?.name})`
+                        : ""
+                    }.xlsx`,
+                    "expenses"
                   )
                 }
               />
@@ -266,9 +305,10 @@ const Expenses = ({ isCompound, refetchDetails }) => {
                                 styles.status_span
                               }`}
                             >
-                              {isArLang
-                                ? renamedExpensesStatusMethod(ex.status, "ar")
-                                : renamedExpensesStatusMethod(ex.status, "en")}
+                              {renamedExpensesStatusMethod(
+                                ex.status,
+                                currentLang
+                              )}
                             </span>
                           </td>
                           <td className={styles.note_td}>

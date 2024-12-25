@@ -47,6 +47,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const currentLang = isArLang ? "ar" : "en";
 
   const {
     data: contractsData,
@@ -119,13 +120,41 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
         )
       : [];
 
+  const contractsList = [...(contractsData?.data || [])];
+
+  const getLandlordName = (compound, details) => {
+    if (compound?.broker || details?.broker) return "-";
+    return compound?.landlord?.name || details?.landlord?.name || "-";
+  };
+
+  const filteredContractsList = contractsList.map((contract) => {
+    const tenant = contract?.tenant || {};
+    const brokerName =
+      estateParentCompound?.broker?.name || details?.broker?.name || "-";
+    const landlordName = getLandlordName(estateParentCompound, details);
+
+    return {
+      [key("theUnit")]: details?.name || "-",
+      [key("estate")]: estateParentCompound?.name || key("noCompound"),
+      [key("theTenant")]: tenant.name || "-",
+      [key("phone")]: tenant.phone || "-",
+      [key("startContract")]: formattedDate(contract?.startDate) || "-",
+      [key("endContract")]: formattedDate(contract?.endDate) || "-",
+      [`${key("price")} ${key("sarSmall")}`]: contract?.totalAmount || "-",
+      [key("status")]:
+        renamedContractStatus(contract?.status, currentLang) || "-",
+      [key("agent")]: brokerName,
+      [key("theLandlord")]: landlordName,
+    };
+  });
+
   return (
     <>
       <div className={styles.contracts_body}>
         <div className={styles.header}>
           <h4>{key("contracts")}</h4>
           <div>
-            {contractsData && contractsData?.data?.length > 0 && (
+            {filteredContractsList && filteredContractsList?.length > 0 && (
               <ButtonOne
                 classes="m-2"
                 borderd
@@ -133,9 +162,13 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
                 text={key("exportCsv")}
                 onClick={() =>
                   handleDownloadExcelSheet(
-                    contractsData?.data,
-                    "Contracts.xlsx",
-                    "Contracts"
+                    filteredContractsList,
+                    `${key("contracts")}_${details?.name} ${
+                      estateParentCompound
+                        ? `_(${estateParentCompound?.name})`
+                        : ""
+                    }.xlsx`,
+                    key("contracts")
                   )
                 }
               />
@@ -176,7 +209,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
 
           <div className="my-4">
             {contractsData || !isFetching ? (
-              contractsData.data?.length > 0 ? (
+              contractsData?.data?.length > 0 ? (
                 <div className="scrollableTable">
                   <table className={`${styles.contract_table} table`}>
                     <thead className={styles.table_head}>
@@ -207,23 +240,14 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
                                 )
                               )} ${styles.status_span}`}
                             >
-                              {isArLang
-                                ? renamedContractStatus(
-                                    getContractStatus(
-                                      contract.isCanceled,
-                                      contract.startDate,
-                                      contract.endDate
-                                    ),
-                                    "ar"
-                                  )
-                                : renamedContractStatus(
-                                    getContractStatus(
-                                      contract.isCanceled,
-                                      contract.startDate,
-                                      contract.endDate
-                                    ),
-                                    "en"
-                                  )}
+                              {renamedContractStatus(
+                                getContractStatus(
+                                  contract.isCanceled,
+                                  contract.startDate,
+                                  contract.endDate
+                                ),
+                                currentLang
+                              )}
                             </span>
                           </td>
                           <td>
