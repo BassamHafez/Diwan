@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Form, Formik, Field } from "formik";
-import {object, string } from "yup";
+import { object, string } from "yup";
 import { useDispatch } from "react-redux";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import fetchProfileData from "../../Store/profileInfo-actions";

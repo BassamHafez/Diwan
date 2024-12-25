@@ -56,6 +56,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const accountInfo = useSelector((state) => state.accountInfo.data);
+  const currentLang = isArLang ? "ar" : "en";
 
   const {
     data: revenuesData,
@@ -174,13 +175,43 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
         )
       : [];
 
+  const revenuesList = [...(revenuesData?.data || [])];
+
+  const getLandlordName = (compound, details) => {
+    if (compound?.broker || details?.broker) return "-";
+    return compound?.landlord?.name || details?.landlord?.name || "-";
+  };
+
+  const filteredRevenuesList = revenuesList.map((rev) => {
+    const tenant = rev?.tenant || {};
+    const brokerName =
+      estateParentCompound?.broker?.name || details?.broker?.name || "-";
+    const landlordName = getLandlordName(estateParentCompound, details);
+
+    return {
+      [key("theUnit")]: details?.name || "-",
+      [key("estate")]: estateParentCompound?.name || key("noCompound"),
+      [key("theTenant")]: tenant.name || "-",
+      [key("phone")]: tenant.phone || "-",
+      [`${key("amount")} ${key("sarSmall")}`]: rev?.amount || "-",
+      [key("dueDate")]: formattedDate(rev?.dueDate) || "-",
+      [key("status")]: renamedRevenuesStatus(rev?.status, currentLang) || "-",
+      [key("agent")]: brokerName,
+      [key("theLandlord")]: landlordName,
+      [key("paidAt")]: formattedDate(rev?.paidAt) || "-",
+      [key("paymentMethod")]: rev?.paymentMethod
+        ? key(rev?.paymentMethod)
+        : "-",
+    };
+  });
+
   return (
     <>
       <div className={styles.contracts_body}>
         <div className={styles.header}>
           <h4>{key("revenues")}</h4>
           <div>
-            {revenuesData && revenuesData?.data?.length > 0 && (
+            {filteredRevenuesList && filteredRevenuesList?.length > 0 && (
               <ButtonOne
                 classes="m-2"
                 borderd
@@ -188,9 +219,13 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                 text={key("exportCsv")}
                 onClick={() =>
                   handleDownloadExcelSheet(
-                    revenuesData?.data,
-                    "Revenues.xlsx",
-                    "Revenuse"
+                    filteredRevenuesList,
+                    `${key("revenues")}_${details?.name}${
+                      estateParentCompound
+                        ? `_(${estateParentCompound?.name})`
+                        : ""
+                    }.xlsx`,
+                    key("revenues")
                   )
                 }
               />
@@ -272,9 +307,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                 styles.status_span
                               }`}
                             >
-                              {isArLang
-                                ? renamedRevenuesStatus(rev.status, "ar")
-                                : renamedRevenuesStatus(rev.status, "en")}
+                              {renamedRevenuesStatus(rev.status, currentLang)}
                             </span>
                           </td>
                           <td>

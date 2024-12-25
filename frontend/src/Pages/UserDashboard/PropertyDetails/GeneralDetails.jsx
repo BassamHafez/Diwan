@@ -367,11 +367,20 @@ const GeneralDetails = memo(
                 estateParentCompound={estateParentCompound}
                 refetchDetails={refetch}
               />
-              <Revenue refetchDetails={refetch} estateParentCompound={estateParentCompound} details={details} />
+              <Revenue
+                refetchDetails={refetch}
+                estateParentCompound={estateParentCompound}
+                details={details}
+              />
             </>
           )}
 
-          <Expenses isCompound={isCompound} refetchDetails={refetch} />
+          <Expenses
+            isCompound={isCompound}
+            refetchDetails={refetch}
+            estateParentCompound={estateParentCompound}
+            details={details}
+          />
         </div>
 
         {showUpdateDetailsModal && (

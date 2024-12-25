@@ -91,6 +91,40 @@ const LandlordReport = ({
       ? incomeReportDetailsTable
       : paymentsReportTable || [];
 
+  const reportsData = [...(combinedData || [])];
+
+  const filteredReportsData = reportsData.map((ex) => {
+    if (filterType === "incomeReport") {
+      return {
+        [key("category")]: key(ex?.category) || "-",
+        [key("estate")]: ex?.estateName || "-",
+        [`${key("total")} (${key("sarSmall")})`]: ex?.total || "-",
+      };
+    } else if (filterType === "incomeReportDetails") {
+      return {
+        [key("category")]: key(ex?.category) || "-",
+        [key("estate")]: ex.estate?.name || ex.compound?.name || "-",
+        [key("theTenant")]: ex.tenant?.name || "-",
+        [`${key("total")} (${key("sarSmall")})`]: ex?.amount || "-",
+        [key("recDate")]: formattedDate(ex?.paidAt) || "-",
+        [key("recMethod")]: key(ex?.paymentMethod) || "-",
+      };
+    } else {
+      return {
+        [key("category")]: key(ex?.category) || "-",
+        [key("estate")]: ex.estate?.name || ex?.compound?.name || "-",
+        [key("theTenant")]: ex?.tenant?.name || "-",
+        [`${key("total")} (${key("sarSmall")})`]: ex?.amount || "-",
+        [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
+        [key("type")]: key(ex?.type) || "-",
+        [key("status")]: key(ex?.status) || "-",
+        [key("recDate")]: formattedDate(ex?.paidAt) || "-",
+        [key("recMethod")]: key(ex?.paymentMethod) || "-",
+        [key("notes")]: ex?.note || "-",
+      };
+    }
+  });
+
   return (
     <>
       <div>
@@ -136,9 +170,9 @@ const LandlordReport = ({
                     text={key("exportCsv")}
                     onClick={() =>
                       handleDownloadExcelSheet(
-                        combinedData,
-                        `${filterType}.xlsx`,
-                        `${filterType}`
+                        filteredReportsData,
+                        `${key(filterType)}.xlsx`,
+                        `${key(filterType)}`
                       )
                     }
                   />

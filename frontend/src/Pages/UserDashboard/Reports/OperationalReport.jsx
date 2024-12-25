@@ -75,6 +75,19 @@ const OperationalReport = ({
         )
       : [];
 
+  const contractsReport = [...(contractsData || [])];
+
+  const filteredContractsReport = contractsReport?.map((ex) => {
+    return {
+      [key("estate")]: ex?.estate?.name || ex?.compound?.name || "-",
+      [key("theTenant")]: ex?.tenant?.name || "-",
+      [key("startDate")]: formattedDate(ex?.startDate || "-"),
+      [key("endDate")]: formattedDate(ex?.endDate || "-"),
+      [`${key("amount")} (${key("sarSmall")})`]: ex?.totalAmount || "-",
+      [key("status")]: renamedContractStatus(ex?.status, currentLang) || "-",
+    };
+  });
+
   return (
     <>
       <div>
@@ -119,9 +132,9 @@ const OperationalReport = ({
                     text={key("exportCsv")}
                     onClick={() =>
                       handleDownloadExcelSheet(
-                        contractsData,
-                        "ContractsReport.xlsx",
-                        "ContractsReport"
+                        filteredContractsReport,
+                        `${key(filterType)}.xlsx`,
+                        `${key(filterType)}`
                       )
                     }
                   />

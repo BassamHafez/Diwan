@@ -766,11 +766,7 @@ export const maxEstatesInCompoundOriginalOptions = [
 export const incomeReportTable = [
   "category",
   "estate",
-  // "theTenant",
-  // "startContract",
   "total",
-  // "theCommission",
-  // "netProfit",
 ];
 export const incomeReportDetailsTable = [
   "category",

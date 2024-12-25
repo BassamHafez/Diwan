@@ -97,18 +97,6 @@ const Reports = () => {
                       {key("landlordReport")}
                     </li>
                   </CheckPermissions>
-
-                  {/* <li
-                    className={
-                      reportTypeFilter === "landlordManager"
-                        ? styles.active
-                        : ""
-                    }
-                    onClick={() => setReportTypeFilter("landlordManager")}
-                  >
-                    {circleIcon}
-                    {key("landlordManager")}
-                  </li> */}
                   <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
                     <li
                       className={
@@ -122,18 +110,6 @@ const Reports = () => {
                       {key("operationalReport")}
                     </li>
                   </CheckPermissions>
-
-                  {/* <li
-                    className={
-                      reportTypeFilter === "investmentReport"
-                        ? styles.active
-                        : ""
-                    }
-                    onClick={() => setReportTypeFilter("investmentReport")}
-                  >
-                    {circleIcon}
-                    {key("investmentReport")}
-                  </li> */}
                 </ul>
 
                 <hr />

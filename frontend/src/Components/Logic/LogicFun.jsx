@@ -75,6 +75,38 @@ export const generatePDF = (id, name) => {
   html2pdf(element, options);
 };
 
+export const filterAndRenameKeys = (
+  data,
+  keysToKeepAndRename,
+  nestedObjects
+) => {
+  return data?.map((item) => {
+    const filteredItem = {};
+
+    // Process nested objects
+    nestedObjects.forEach((nestedObj) => {
+      if (item[nestedObj]) {
+        const nestedData = item[nestedObj];
+        for (const [oldKey, newKey] of Object.entries(keysToKeepAndRename)) {
+          const [objName, key] = oldKey.split("."); // Split nested object and key
+          if (objName === nestedObj && key in nestedData) {
+            filteredItem[newKey] = nestedData[key];
+          }
+        }
+      }
+    });
+
+    // Process top-level keys
+    for (const [oldKey, newKey] of Object.entries(keysToKeepAndRename)) {
+      if (!oldKey.includes(".") && oldKey in item) {
+        filteredItem[newKey] = item[oldKey];
+      }
+    }
+
+    return filteredItem;
+  });
+};
+
 // estates
 const estateStatus = {
   en: {
