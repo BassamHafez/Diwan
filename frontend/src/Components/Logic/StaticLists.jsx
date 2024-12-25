@@ -1,3 +1,6 @@
+//main
+export const mainAlertTime=30 * 60 * 1000
+
 // packages
 export const packagesList = {
   // month

@@ -2,7 +2,6 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Root from "./Pages/Root";
 import Home from "./Pages/Home/Home";
-import { ToastContainer } from "react-toastify";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,6 +40,7 @@ import AllUsers from "./Pages/Admin/Users/AllUsers";
 import AllAdmins from "./Pages/Admin/myAdmins/AllAdmins";
 import AdminAccountSetting from "./Pages/Admin/Setting/AdminAccountSetting";
 import Configs from "./Pages/Admin/Configs/Configs";
+import VerifyPhonePage from "./Components/VerifyPhone/VerifyPhonePage";
 
 const router = createBrowserRouter(
   [
@@ -59,6 +59,7 @@ const router = createBrowserRouter(
         { path: "register", element: <Register /> },
         { path: "help", element: <Help /> },
         { path: "forget-password", element: <ForgetPassword /> },
+        { path: "verify-phone", element: <VerifyPhonePage /> },
         //userDashboard
         { path: "dashboard", element: <UserHome /> },
         { path: "properties", element: <Properties /> },
@@ -95,7 +96,6 @@ function App() {
   const queryClient = new QueryClient();
   const { i18n: control } = useTranslation();
   const dispatch = useDispatch();
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const token = useSelector((state) => state.userInfo.token);
   const role = useSelector((state) => state.userInfo.role);
@@ -147,16 +147,6 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastContainer
-        position={isArLang ? "bottom-right" : "bottom-left"}
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick
-        draggable
-        pauseOnHover={false}
-        pauseOnFocusLoss={false}
-        className="toast_content"
-      />
       <RouterProvider router={router} />
     </QueryClientProvider>
   );

@@ -8,6 +8,7 @@ import { useSelector } from "react-redux";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useState } from "react";
 import UpdateUserData from "./ProfileForms/UpdateUserData";
+import VerifyPhoneAlert from "../../../Components/VerifyPhone/VerifyPhoneAlert";
 
 const ProfileMain = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -63,6 +64,9 @@ const ProfileMain = () => {
             </div>
           </Col>
         </Row>
+      </div>
+      <div className={`mt-3 px-4 d-flex align-items-center`}>
+            <VerifyPhoneAlert/>
       </div>
 
       {showUpdateModal && (

@@ -26,12 +26,18 @@ const MainModal = ({
       {title && (
         <Modal.Header
           closeButton
-          className={`${isArLang ? "modal_header_ar" : ""} ${styles.modal_header}`}
+          className={`${isArLang ? "modal_header_ar" : ""} ${
+            styles.modal_header
+          }`}
         >
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
       )}
-      <Modal.Body className={`${styles.modal_body} ${title?"":styles.rounded_body} ${(!cancelBtn && !okBtn)&&styles.rounded_modal_body} text-center`}>
+      <Modal.Body
+        className={`${styles.modal_body} ${title ? "" : styles.rounded_body} ${
+          !cancelBtn && !okBtn && styles.rounded_modal_body
+        } text-center`}
+      >
         {children}
       </Modal.Body>
       {(cancelBtn || okBtn) && (
