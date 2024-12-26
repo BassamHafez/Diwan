@@ -36,7 +36,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--sky);
 }
 .default_estate img {
   max-width: 80%;
