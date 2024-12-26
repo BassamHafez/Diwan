@@ -1,6 +1,6 @@
 import Col from "react-bootstrap/esm/Col";
 import styles from "./Property.module.css";
-import defaultHouseImg from "../../assets/house.png";
+import defaultHouseImg from "../../assets/default-estate.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
@@ -88,7 +88,10 @@ const Property = ({
         >
           <div
             className={`${styles.card_img} ${
-              !property.image||property.image==="/estates/default-estate.png"? styles.default_estate : ""
+              !property.image ||
+              property.image === "/estates/default-estate.png"
+                ? styles.default_estate
+                : ""
             }`}
             onClick={navigateToDetails}
           >

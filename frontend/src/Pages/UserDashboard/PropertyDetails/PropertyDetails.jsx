@@ -30,7 +30,7 @@ import {
 } from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import TaskContent from "../Tasks/TaskContent";
-import defaultHouseImage from "../../../assets/house.png";
+import defaultHouseImage from "../../../assets/default-estate.png";
 
 const PropertyDetails = () => {
   const { t: key } = useTranslation();
