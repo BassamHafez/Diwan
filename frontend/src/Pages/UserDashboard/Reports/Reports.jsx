@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { faCircle, faPaste } from "@fortawesome/free-regular-svg-icons";
 import {
   faFileContract,
-  // faFileInvoice,
   faFileInvoiceDollar,
   faMoneyBillTrendUp,
   faSackDollar,
@@ -24,7 +23,6 @@ const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
   const [landlordFilter, setLandlordFilter] = useState("incomeReport");
   const [operationalFilter, setOperationalFilter] = useState("contractsReport");
-  // const [managerFilter, setManagerFilter] = useState("commissionReport");
 
   const [landlordOptions, setLandlordOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
@@ -63,9 +61,16 @@ const Reports = () => {
 
   useEffect(() => {
     setLandlordOptions(convertTpOptionsFormate(landlords?.data));
-    setEstatesOptions(convertTpOptionsFormate(estates?.data));
-    setCompoundsOptions(convertTpOptionsFormate(compounds?.data?.compounds));
-  }, [estates, compounds, landlords]);
+    const additionalLabel = { label: key("all"), value: "all" };
+
+    const estatesOptions = convertTpOptionsFormate(estates?.data);
+    const compoundsOptions = convertTpOptionsFormate(
+      compounds?.data?.compounds
+    );
+
+    setEstatesOptions([additionalLabel, ...estatesOptions]);
+    setCompoundsOptions([additionalLabel, ...compoundsOptions]);
+  }, [estates, compounds, landlords, key]);
 
   let iconClass = isArLang ? "ms-2" : "me-2";
   const circleIcon = (

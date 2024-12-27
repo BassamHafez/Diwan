@@ -221,7 +221,7 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
                     setFieldValue("maxEstatesInCompound", val ? val : null)
                   }
                   className={`${isArLang ? "text-end" : "text-start"} my-3`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder=""
                 />
                 <ErrorMessage

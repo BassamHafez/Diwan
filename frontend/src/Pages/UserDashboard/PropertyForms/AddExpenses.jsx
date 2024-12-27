@@ -146,7 +146,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound,refetchDetails }) => {
                   }
                   onChange={(val) => setFieldValue("type", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />
@@ -173,7 +173,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound,refetchDetails }) => {
                     setFieldValue("contact", val ? val.value : null)
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isClearable
                 />

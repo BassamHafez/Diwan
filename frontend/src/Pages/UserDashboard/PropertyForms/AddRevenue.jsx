@@ -132,7 +132,7 @@ const AddRevenue = ({ hideModal, refetch,refetchDetails }) => {
                   options={tenantsOption}
                   onChange={(val) => setFieldValue("tenant", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="tenant" component={InputErrorMessage} />
@@ -162,7 +162,7 @@ const AddRevenue = ({ hideModal, refetch,refetchDetails }) => {
                   }
                   onChange={(val) => setFieldValue("type", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />

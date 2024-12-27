@@ -1,4 +1,6 @@
-
+.footer_links a{
+    color: inherit;
+}
 /* style one */
 .icons_div_one{
     font-size: 1.5625rem;

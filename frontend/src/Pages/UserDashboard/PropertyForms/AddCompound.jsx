@@ -265,8 +265,11 @@ const AddCompound = ({ hideModal, refetch }) => {
                   isMulti
                   onChange={(val) => setFieldValue("tags", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
                 />
                 <ErrorMessage name="tags" component={InputErrorMessage} />
               </div>
@@ -279,7 +282,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                   options={landlordOptions}
                   onChange={(val) => setFieldValue("landlord", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="landlord" component={InputErrorMessage} />
@@ -303,7 +306,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                     ) || null
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
@@ -323,7 +326,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                   }
                   isDisabled={!values.region}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="city" component="div" className="error" />
@@ -343,7 +346,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                   }
                   isDisabled={!values.city}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage
@@ -367,7 +370,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                   options={brokersOptions}
                   onChange={(val) => setFieldValue("broker", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="broker" component={InputErrorMessage} />

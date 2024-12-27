@@ -307,7 +307,7 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
                       setPaymentPeriodUnit(val.value);
                     }}
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     isDisabled={!startDate || !endDate}
                     placeholder={`${
                       paymentPeriodUnitOptions.find(
@@ -335,7 +335,7 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
                       setFieldValue("paymentPeriodValue", val.value)
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     isDisabled={!paymentPeriodUnit}
                     placeholder={`${
                       paymentPeriodValueOptions.find(

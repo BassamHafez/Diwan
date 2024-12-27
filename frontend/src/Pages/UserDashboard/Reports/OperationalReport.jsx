@@ -117,7 +117,7 @@ const OperationalReport = ({
               className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
                 styles.select_type
               } my-3`}
-              isRtl={isArLang ? false : true}
+              isRtl={isArLang ? true : false}
               placeholder={key("category")}
               isClearable
             />

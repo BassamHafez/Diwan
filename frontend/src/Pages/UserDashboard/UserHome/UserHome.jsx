@@ -21,10 +21,10 @@ import {
   renamedExpensesStatusMethod,
   renamedRevenuesStatus,
 } from "../../../Components/Logic/LogicFun";
-// import { chartsData } from "../../../Components/Logic/StaticLists";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
 import { useNavigate } from "react-router-dom";
 import TaskContent from "../Tasks/TaskContent";
+import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 
 const UserHome = () => {
   const token = useSelector((state) => state.userInfo.token);
@@ -163,7 +163,7 @@ const UserHome = () => {
   return (
     <div className="height_container d-flex flex-column justify-content-center align-items-center px-2 py-5 p-md-4">
       {isFetching && <LoadingOne />}
-
+      <ScrollTopBtn />
       <Row className="g-3 w-100 height_container">
         <Col xl={3} md={4} className="my-3">
           <div className={styles.information_section}>
@@ -219,7 +219,6 @@ const UserHome = () => {
               <div className={`${styles.information_section} p-1`}>
                 <h4 className="fw-bold mx-2 my-4">{key("monthlyRevenues")}</h4>
                 <RevenuesByMonth revenuesByMonth={myData?.revenuesByMonth} />
-                {/* chartsData */}
               </div>
             </Col>
           </Row>

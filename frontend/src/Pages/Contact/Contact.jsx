@@ -23,10 +23,14 @@ const Contact = () => {
       <Row>
         <Col md={5} className={styles.contact_info}>
           <div className={`${styles.contact_info_layer} p-4`}>
-            <div className={isArLang?styles.contact_links_ar:styles.contact_links}>
+            <div
+              className={
+                isArLang ? styles.contact_links_ar : styles.contact_links
+              }
+            >
               {/* <!-- data num 1 --> */}
               <div className="d-flex mb-3">
-                <div className={isArLang?"ms-3":"me-3"}>
+                <div className={isArLang ? "ms-3" : "me-3"}>
                   <FontAwesomeIcon
                     className={styles.contact_info_icon}
                     icon={faPhoneFlip}
@@ -42,7 +46,7 @@ const Contact = () => {
 
               {/* <!-- data num 2 --> */}
               <div className="d-flex mb-3">
-                <div className={isArLang?"ms-3":"me-3"}>
+                <div className={isArLang ? "ms-3" : "me-3"}>
                   <FontAwesomeIcon
                     className={styles.contact_info_icon}
                     icon={faEnvelope}
@@ -58,7 +62,7 @@ const Contact = () => {
 
               {/* <!-- data num 3 --> */}
               <div className="d-flex mb-3">
-                <div className={isArLang?"ms-3":"me-3"}>
+                <div className={isArLang ? "ms-3" : "me-3"}>
                   <FontAwesomeIcon
                     className={styles.contact_info_icon}
                     icon={faMapMarkedAlt}
@@ -83,7 +87,7 @@ const Contact = () => {
           <div className="special_main_color text-center m-auto my-5">
             <h6 className={styles.sub_title}>{key("getInTouch")}</h6>
             <h2 className={styles.form_title}>{key("contactUs")}</h2>
-            <FontAwesomeIcon icon={faCaretDown} />  
+            <FontAwesomeIcon icon={faCaretDown} />
           </div>
           <Formik
           // initialValues={initialValues}
@@ -140,8 +144,11 @@ const Contact = () => {
                       required
                       placeholder={key("message")}
                     />
+                    <ErrorMessage
+                      name="message"
+                      component={InputErrorMessage}
+                    />
                   </Col>
-                  <ErrorMessage name="message" component={InputErrorMessage} />
                 </Row>
 
                 <div className="text-center">

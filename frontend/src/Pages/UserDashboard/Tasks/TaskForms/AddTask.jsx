@@ -204,7 +204,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                   }
                   onChange={(val) => setFieldValue("type", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />
@@ -221,7 +221,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                     setFieldValue("contact", val ? val.value : null)
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isClearable
                 />
@@ -241,7 +241,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                   }
                   onChange={(val) => setFieldValue("priority", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="priority" component={InputErrorMessage} />
@@ -269,7 +269,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                       setFieldValue("estate", val ? val : null)
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                     isClearable
                     isDisabled={propId}
@@ -288,7 +288,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                       setFieldValue("compound", val ? val : null)
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                     isClearable
                     isDisabled={compId}

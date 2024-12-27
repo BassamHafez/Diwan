@@ -161,7 +161,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails,refetchDetails }) => {
                   }
                   onChange={(val) => setFieldValue("type", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />
@@ -188,7 +188,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails,refetchDetails }) => {
                   options={contactServicesOptions}
                   onChange={(val) => setFieldValue("contact", val ? val : null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isClearable
                 />

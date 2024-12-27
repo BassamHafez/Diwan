@@ -1,5 +1,5 @@
 //main
-export const mainAlertTime=30 * 60 * 1000
+export const mainAlertTime = 30 * 60 * 1000;
 
 // packages
 export const packagesList = {
@@ -763,11 +763,7 @@ export const maxEstatesInCompoundOriginalOptions = [
   { label: "50", value: 50 },
 ];
 //Reports
-export const incomeReportTable = [
-  "category",
-  "estate",
-  "total",
-];
+export const incomeReportTable = ["category", "estate", "total"];
 export const incomeReportDetailsTable = [
   "category",
   "estate",

@@ -253,6 +253,12 @@ p {
   border-radius: 30px;
   padding: 5px;
 }
+.ltr_input input{
+  direction: ltr;
+}
+.ltr_input label{
+  color: var(--dark_white);
+}
 
 @media screen and (max-width: 1150px) {
   .scrollableTable {

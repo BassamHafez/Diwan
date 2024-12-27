@@ -41,6 +41,8 @@ import AllAdmins from "./Pages/Admin/myAdmins/AllAdmins";
 import AdminAccountSetting from "./Pages/Admin/Setting/AdminAccountSetting";
 import Configs from "./Pages/Admin/Configs/Configs";
 import VerifyPhonePage from "./Components/VerifyPhone/VerifyPhonePage";
+import AdminTestimonials from "./Pages/Admin/AdminTestimonials/AdminTestimonials";
+import fetchConfigs from "./Store/configs-actions";
 
 const router = createBrowserRouter(
   [
@@ -79,6 +81,7 @@ const router = createBrowserRouter(
         { path: "admin-packages", element: <AllPackages /> },
         { path: "admin-settings", element: <AdminAccountSetting /> },
         { path: "admin-configs", element: <Configs /> },
+        { path: "admin-testimonials", element: <AdminTestimonials /> },
 
         //else
         { path: "*", element: <PageNotFound /> },
@@ -118,6 +121,11 @@ function App() {
       control.off("languageChanged", updateFontFamily);
     };
   }, [control]);
+
+  //fetchMainConfigs
+  useEffect(() => {
+    dispatch(fetchConfigs());
+  }, [dispatch]);
 
   // get profile data from api
   useEffect(() => {

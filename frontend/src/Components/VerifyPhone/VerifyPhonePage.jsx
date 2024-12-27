@@ -4,7 +4,7 @@ import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ModalForm from "../UI/Modals/ModalForm";
 import VerifyPhoneForm from "./VerifyPhoneForm";
 import { useTranslation } from "react-i18next";
@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import ButtonOne from "../UI/Buttons/ButtonOne";
 import verifiedImage from "../../assets/verified.jpg";
 import MainTitle from "../UI/Words/MainTitle";
+import { useNavigate } from "react-router-dom";
 
 const VerifyPhonePage = () => {
   const [showVerifyCodeModal, setShowVerifyCodeModal] = useState(false);
@@ -20,6 +21,14 @@ const VerifyPhonePage = () => {
   const { t: key } = useTranslation();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
+  const navigate=useNavigate();
+
+  useEffect(()=>{
+    if(profileInfo?.phoneVerified===true){
+      navigate(-1)
+    }
+  },[profileInfo?.phoneVerified,navigate]);
 
   const verifyPhoneNumber = async () => {
     const response = await mainFormsHandlerTypeRaw({
