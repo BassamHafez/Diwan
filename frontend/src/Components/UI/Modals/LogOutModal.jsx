@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { userActions } from "../../../Store/userInfo-slice";
 import { saveIsLoginState } from "../../../Store/userInfo-actions";
 import { useTranslation } from "react-i18next";
+import { profileActions } from "../../../Store/profileInfo-slice";
 
 const LogOutModal = ({ onClose, onHide, show }) => {
   const dispatch = useDispatch();
@@ -21,6 +22,8 @@ const LogOutModal = ({ onClose, onHide, show }) => {
     dispatch(userActions.setRole(""));
     dispatch(userActions.setIsLogin(false));
     dispatch(saveIsLoginState(false));
+    dispatch(userActions.setRole(""));
+    dispatch(profileActions.setProfileInfo(null));
     if (onClose) {
       onClose();
     }
@@ -37,7 +40,9 @@ const LogOutModal = ({ onClose, onHide, show }) => {
       centered
       className={styles.modal_container}
     >
-      <Modal.Body className={`${styles.modal_body} ${styles.rounded_body} text-center`}>
+      <Modal.Body
+        className={`${styles.modal_body} ${styles.rounded_body} text-center`}
+      >
         <h4>{key("logoutText")}</h4>
       </Modal.Body>
       <Modal.Footer className={styles.modal_footer}>
