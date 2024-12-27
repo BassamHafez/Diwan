@@ -143,7 +143,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
   ScheduledMission.insertMany(revenuesReminders, { ordered: false });
 
   sendWAText(
-    tenant.phone,
+    `966${tenant.phone}`,
     `Hello ${
       tenant.name
     }, You have a new contract starting on ${newStartDate.toLocaleDateString()} and ending on ${newEndDate.toLocaleDateString()} at "${
@@ -215,7 +215,7 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
   }
 
   sendWAText(
-    contract.tenant.phone,
+    `966${contract.tenant.phone}`,
     `Hello ${contract.tenant.name}, Your contract at "${contract.estate.name}" has been canceled.`
   );
 

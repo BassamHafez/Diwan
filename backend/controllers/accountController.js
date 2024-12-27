@@ -338,7 +338,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
     }),
 
     sendWAText(
-      req.body.phone,
+      `966${req.body.phone}`,
       `Welcome to your new account on Diiwan.com. Your account has been created successfully. Your login credentials are as follows: \nPhone: ${req.body.phone}\nPassword: ${req.body.password}`
     ),
 
