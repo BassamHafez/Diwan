@@ -151,8 +151,11 @@ const UpdatePermissionsForm = ({
                 onChange={(val) => setFieldValue("permissions", val)}
                 value={values.permissions}
                 className={`${isArLang ? "text-end" : "text-start"}`}
-                isRtl={isArLang ? false : true}
+                isRtl={isArLang ? true : false}
                 placeholder={isArLang ? "" : "select"}
+                formatCreateLabel={(inputValue) =>
+                  isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                }
               />
               <ErrorMessage name="permissions" component={InputErrorMessage} />
             </div>
@@ -167,8 +170,11 @@ const UpdatePermissionsForm = ({
                 onChange={(val) => setFieldValue("permittedCompounds", val)}
                 value={values.permittedCompounds}
                 className={`${isArLang ? "text-end" : "text-start"}`}
-                isRtl={isArLang ? false : true}
+                isRtl={isArLang ? true : false}
                 placeholder={isArLang ? "" : "select"}
+                formatCreateLabel={(inputValue) =>
+                  isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                }
               />
               <ErrorMessage
                 name="permittedCompounds"

@@ -53,6 +53,7 @@ const CustomPackages = () => {
     { label: key("tenUnits"), value: 10 },
     { label: key("ThirtyUnits"), value: 30 },
     { label: key("fiftyUnits"), value: 50 },
+    { label: key("threeHundredUnits"), value: 300 },
   ];
 
   const filteredMaxEstateCompoundOptions = maxEstatesInCompoundOptions.filter(
@@ -126,7 +127,7 @@ const CustomPackages = () => {
                   className={`${isArLang ? "text-end" : "text-start"} ${
                     styles.select_type
                   } my-3`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={filteredMaxEstateCompoundOptions[0].label}
                 />
               </div>

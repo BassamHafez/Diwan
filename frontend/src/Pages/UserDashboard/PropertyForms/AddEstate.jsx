@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery} from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { object, string } from "yup";
 import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -41,14 +41,14 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const dispatch=useDispatch();
-  
+  const dispatch = useDispatch();
+
   const { data: compounds } = useQuery({
     queryKey: ["compounds", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
     enabled: !!token,
-    staleTime:Infinity
+    staleTime: Infinity,
   });
 
   useEffect(() => {
@@ -103,7 +103,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
 
     if (selectedFile) {
       formData.append("image", selectedFile);
-    } 
+    }
     if (values.compound !== "not") {
       formData.append("compound", values.compound);
     }
@@ -147,8 +147,11 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
             setImagePreviewUrl(null);
             resetForm();
             hideModal();
-          }else if (data.response.data.message==="Max estates reached for this compound"){
-            notifyError(key("maxEstatesInCompoundError"))
+          } else if (
+            data.response.data.message ===
+            "Max estates reached for this compound"
+          ) {
+            notifyError(key("maxEstatesInCompoundError"));
           } else {
             notifyError(key("wrong"));
           }
@@ -169,13 +172,13 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
       .required(key("fieldReq")),
 
     city: string().when("compound", (compound, schema) =>
-      !compound || compound === "not"
+      !compound || compound?.value !== "not"
         ? schema.required(key("fieldReq"))
         : schema
     ),
 
     region: string().when("compound", (compound, schema) =>
-      !compound || compound === "not"
+      compound || compound?.value !== "not"
         ? schema.required(key("fieldReq"))
         : schema
     ),
@@ -250,7 +253,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   options={compoundsOptions}
                   onChange={(val) => setFieldValue("compound", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   isDisabled={compId ? true : false}
                   placeholder={
                     compId
@@ -294,8 +297,11 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   isMulti
                   onChange={(val) => setFieldValue("tags", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
                 />
                 <ErrorMessage name="tags" component={InputErrorMessage} />
               </div>
@@ -326,7 +332,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                     ) || null
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   isDisabled={
                     (values.compound && values.compound !== "not") || compId
                   }
@@ -353,10 +359,10 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                     (values.compound && values.compound !== "not")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
-                <ErrorMessage name="city" component="div" className="error" />
+                <ErrorMessage name="city" component={InputErrorMessage} />
               </div>
 
               <div className="field mb-1">
@@ -377,13 +383,12 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                     (values.compound && values.compound !== "not")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage
                   name="neighborhood"
-                  component="div"
-                  className="error"
+                  component={InputErrorMessage}
                 />
               </div>
 

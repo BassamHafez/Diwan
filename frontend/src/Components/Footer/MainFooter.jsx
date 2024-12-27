@@ -14,14 +14,16 @@ import {
   faWhatsapp,
   faXTwitter,
 } from "@fortawesome/free-brands-svg-icons";
-import {faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 const MainFooter = () => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const configs = useSelector((state) => state.configs);
 
   return (
-    <footer className={styles.footer} >
+    <footer className={styles.footer}>
       <div className="container w-100 pb-4">
         <Row>
           <Col lg={4}>
@@ -48,7 +50,9 @@ const MainFooter = () => {
                   {key("packages")}
                 </Link>
               </div>
-              <div className={`${isArLang ? "me-5" : "ms-5"} ${styles.second_row}`}>
+              <div
+                className={`${isArLang ? "me-5" : "ms-5"} ${styles.second_row}`}
+              >
                 <Link to={"/"} className={styles.footer_link}>
                   {key("terms")}
                 </Link>
@@ -67,22 +71,31 @@ const MainFooter = () => {
             </div>
             <div>
               <div className={styles.footer_links}>
-                <Link
-                  target="_blank"
-                  to={`https://wa.me/112094`}
-                  rel="noopener noreferrer"
-                >
-                  <FontAwesomeIcon icon={faWhatsapp} />
-                </Link>
-                <Link target="_blank" to={"https://fontawesome.com/search?q=shield&o=r&m=free"}>
-                  <FontAwesomeIcon icon={faInstagram} />
-                </Link>
-                <Link target="_blank" to={"https://fontawesome.com/search?q=shield&o=r&m=free"}>
-                  <FontAwesomeIcon icon={faEnvelope} />
-                </Link>
-                <Link target="_blank" to={"https://fontawesome.com/search?q=shield&o=r&m=free"}>
-                  <FontAwesomeIcon icon={faXTwitter} />
-                </Link>
+                {configs?.whatsappNumber && (
+                  <Link
+                    target="_blank"
+                    to={`https://wa.me/${configs?.whatsappNumber}`}
+                    rel="noopener noreferrer"
+                  >
+                    <FontAwesomeIcon icon={faWhatsapp} />
+                  </Link>
+                )}
+                {configs?.instagramLink && (
+                  <Link target="_blank" to={`${configs?.instagramLink}`}>
+                    <FontAwesomeIcon icon={faInstagram} />
+                  </Link>
+                )}
+
+                {configs?.email && (
+                  <Link target="_blank" to={`mailto:bassamhafez791@gmail.com`}>
+                    <FontAwesomeIcon icon={faEnvelope} />
+                  </Link>
+                )}
+                {configs?.twitterLink && (
+                  <Link target="_blank" to={`${configs?.twitterLink}`}>
+                    <FontAwesomeIcon icon={faXTwitter} />
+                  </Link>
+                )}
               </div>
 
               <div className={styles.footer_payment}>
@@ -98,7 +111,7 @@ const MainFooter = () => {
         </Row>
       </div>
       <div className={styles.footer_p}>
-        <p> © 2024 {key("copyRights")}</p>
+        <p> © 2025 {key("copyRights")}</p>
       </div>
     </footer>
   );

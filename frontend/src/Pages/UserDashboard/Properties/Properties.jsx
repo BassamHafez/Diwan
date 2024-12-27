@@ -414,7 +414,7 @@ const Properties = () => {
                   name="parentRealEstate"
                   options={compoundsOptions}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isClearable
                   value={
@@ -508,7 +508,7 @@ const Properties = () => {
                       name="parentRealEstate"
                       options={compoundsOptions}
                       className={`${isArLang ? "text-end" : "text-start"}`}
-                      isRtl={isArLang ? false : true}
+                      isRtl={isArLang ? true : false}
                       placeholder={isArLang ? "" : "select"}
                       isClearable
                       value={
