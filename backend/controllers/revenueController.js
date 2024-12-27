@@ -117,7 +117,7 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
   const sendWAMsgPromise =
     updatedRevenue.tenant && updatedRevenue.tenant.phone
       ? sendWAText(
-          updatedRevenue.tenant.phone,
+          `966${updatedRevenue.tenant.phone}`,
           `${updatedRevenue.amount} SAR received for "${
             updatedRevenue.estate.name
           }" on (${new Date(paidAt).toLocaleDateString()})`

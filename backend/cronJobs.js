@@ -59,7 +59,7 @@ const checkScheduledMissions = async () => {
             .lean()
             .then((contract) => {
               sendWAText(
-                contract.tenant.phone,
+                `966${contract.tenant.phone}`,
                 `Hello ${contract.tenant.name}, your contract for "${contract.estate.name}" has finished.`
               );
             })
@@ -121,7 +121,7 @@ const checkScheduledMissions = async () => {
 
                 if (tenantPhone) {
                   await sendWAText(
-                    tenantPhone,
+                    `966${tenantPhone}`,
                     `Hello ${
                       revenue.tenant.name
                     }, diwan reminder for payment of ${
@@ -134,7 +134,7 @@ const checkScheduledMissions = async () => {
 
                 if (landlordPhone) {
                   await sendWAText(
-                    landlordPhone,
+                    `966${landlordPhone}`,
                     `Diwan Reminder: ${revenue.tenant.name} payment of ${
                       revenue.amount
                     } is due for the estate "${
@@ -182,7 +182,7 @@ const checkScheduledMissions = async () => {
 
                 if (landlordPhone) {
                   await sendWAText(
-                    landlordPhone,
+                    `966${landlordPhone}`,
                     `Diwan Reminder: ${
                       contactName || "contact"
                     } should receive payment of ${
