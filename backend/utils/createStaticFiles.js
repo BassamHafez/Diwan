@@ -7,6 +7,7 @@ const usersPath = path.join(rootPath, "users");
 const compoundsPath = path.join(rootPath, "compounds");
 const estatesPath = path.join(rootPath, "estates");
 const designsPath = path.join(rootPath, "designs");
+const testimonialsPath = path.join(rootPath, "testimonials");
 
 function ensureDirectories() {
   if (!fs.existsSync(rootPath)) {
@@ -32,6 +33,11 @@ function ensureDirectories() {
   if (!fs.existsSync(designsPath)) {
     fs.mkdirSync(designsPath);
     console.log("Created designs directory");
+  }
+
+  if (!fs.existsSync(testimonialsPath)) {
+    fs.mkdirSync(testimonialsPath);
+    console.log("Created testimonials directory");
   }
 }
 
