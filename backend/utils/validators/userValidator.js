@@ -120,3 +120,27 @@ exports.addAdminValidator = [
 
   validatorMiddleware,
 ];
+
+exports.validateSendUsersMessage = [
+  check("message")
+    .isString()
+    .withMessage("Message must be a string")
+    .notEmpty()
+    .withMessage("Message is required"),
+
+  check("type")
+    .notEmpty()
+    .withMessage("Type is required")
+    .isIn(["whatsapp", "email"])
+    .withMessage("Type must be either 'whatsapp' or 'email'"),
+
+  check("usersIds")
+    .exists()
+    .withMessage("Users IDs are required")
+    .isArray({ min: 1 })
+    .withMessage("Users IDs must be an array with at least one ID"),
+
+  check("usersIds.*").isMongoId().withMessage("Invalid user ID in users IDs"),
+
+  validatorMiddleware,
+];
