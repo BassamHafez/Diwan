@@ -166,8 +166,10 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_10";
     } else if (maxEstatesInCompound > 10 && maxEstatesInCompound <= 30) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_30";
-    } else {
+    } else if (maxEstatesInCompound > 30 && maxEstatesInCompound <= 50) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_50";
+    } else {
+      maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_300";
     }
 
     const maxEstatesPrice = subscriptions.find(
@@ -205,7 +207,9 @@ exports.subscribe = catchAsync(async (req, res, next) => {
         allowedEstates: estatesCount || 0,
       },
       maxEstatesInCompound:
-        maxEstatesInCompound || account.maxEstatesInCompound,
+        maxEstatesInCompound && maxEstatesInCompound > 50
+          ? 300
+          : maxEstatesInCompound || account.maxEstatesInCompound,
       isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
       isRemindersAllowed: isRemindersAllowed || account.isRemindersAllowed,
     }),
