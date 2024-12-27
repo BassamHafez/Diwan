@@ -65,9 +65,12 @@ const ProfileMain = () => {
           </Col>
         </Row>
       </div>
-      <div className={`mt-3 px-4 d-flex align-items-center`}>
-            <VerifyPhoneAlert/>
-      </div>
+
+      {profileInfo?.phoneVerified===false && (
+        <div className={`mt-3 px-4 d-flex align-items-center`}>
+          <VerifyPhoneAlert />
+        </div>
+      )}
 
       {showUpdateModal && (
         <ModalForm

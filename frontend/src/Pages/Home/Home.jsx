@@ -8,7 +8,6 @@ import MainTitle from "../../Components/UI/Words/MainTitle";
 
 import Packages from "../Packages/Packages";
 import HomeTestimonalsSlider from "./HomeTestimonalsSlider";
-import ButtonTwo from "../../Components/UI/Buttons/ButtonTwo";
 import About from "../About/About";
 import Contact from "../Contact/Contact";
 import ScrollTopBtn from "../../Components/UI/Buttons/ScrollTopBtn";
@@ -56,9 +55,6 @@ const Home = () => {
       <section className={styles.Testimonials}>
         <MainTitle title={key("testimonials")} />
         <HomeTestimonalsSlider />
-        <div className="text-center">
-          <ButtonTwo text={key("rateUs")} />
-        </div>
       </section>
       <div data-aos="fade-up" data-aos-duration="1000" className="my-5">
         <Contact />
