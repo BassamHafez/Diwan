@@ -124,7 +124,7 @@ const SettingOffCanvas = ({ show, handleClose }) => {
           <ContactsIcon type="two" />
 
           <p className={`${styles.slide_footer} mt-5 text-center`}>
-            © 2024 {key("copyRights")}
+            © 2025 {key("copyRights")}
           </p>
         </Offcanvas.Body>
       </Offcanvas>

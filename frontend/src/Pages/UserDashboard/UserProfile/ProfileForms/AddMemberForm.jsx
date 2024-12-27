@@ -188,8 +188,11 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
                   isMulti
                   onChange={(val) => setFieldValue("permissions", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
                 />
                 <ErrorMessage
                   name="permissions"
@@ -208,8 +211,11 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
                   isMulti
                   onChange={(val) => setFieldValue("permittedCompounds", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
                 />
                 <ErrorMessage
                   name="permittedCompounds"

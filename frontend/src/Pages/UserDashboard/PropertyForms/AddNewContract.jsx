@@ -252,7 +252,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
                     options={tenantsOptions}
                     onChange={(val) => setFieldValue("tenant", val.value)}
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                   />
                   <ErrorMessage name="tenant" component={InputErrorMessage} />
@@ -326,7 +326,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
                       setPaymentPeriodUnit(val.value);
                     }}
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={""}
                     isDisabled={!startDate || !endDate}
                   />
@@ -350,7 +350,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
                       setFieldValue("paymentPeriodValue", val.value)
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={""}
                     isDisabled={!paymentPeriodUnit}
                   />

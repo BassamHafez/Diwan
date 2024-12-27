@@ -22,13 +22,30 @@ const Root = () => {
   const isPhoneVerified = profileInfo?.phoneVerified;
   const isLogin = useSelector((state) => state.userInfo.isLogin);
   const role = useSelector((state) => state.userInfo.role);
+  const mainColor = useSelector((state) => state.configs.mainColor);
+  const subColor = useSelector((state) => state.configs.subColor);
 
   useEffect(() => {
-    if (!isLogin || isPhoneVerified) return;
-    showPhoneAlertNotification();
-    const interval = setInterval(showPhoneAlertNotification, mainAlertTime);
-    return () => clearInterval(interval);
+    let interval;
+    if (isLogin && isPhoneVerified === false) {
+      showPhoneAlertNotification();
+      interval = setInterval(showPhoneAlertNotification, mainAlertTime);
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, [isLogin, isPhoneVerified]);
+
+  useEffect(() => {
+    if (mainColor) {
+      document.documentElement.style.setProperty("--main_color", mainColor);
+    }
+    if (subColor) {
+      document.documentElement.style.setProperty("--deep_navy", subColor);
+    }
+  }, [mainColor, subColor]);
 
   if (!isOnline) {
     return (
