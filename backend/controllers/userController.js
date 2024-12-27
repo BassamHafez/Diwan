@@ -2,6 +2,7 @@ const crypto = require("crypto");
 const sharp = require("sharp");
 const { uploadSingleImage } = require("../utils/uploadImage");
 const { sendWAText } = require("../utils/sendWAMessage");
+const sendEmail = require("../utils/sendEmail");
 
 const User = require("../models/userModel");
 const Account = require("../models/accountModel");
@@ -191,5 +192,34 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     data: null,
+  });
+});
+
+exports.sendUsersMessage = catchAsync(async (req, res, next) => {
+  const { message, type, usersIds } = req.body;
+
+  const users = await User.find({ _id: { $in: usersIds } })
+    .select("phone email")
+    .lean();
+
+  if (!users.length) {
+    return next(new ApiError("No users found with that IDs", 404));
+  }
+
+  if (type === "whatsapp") {
+    users.forEach((user) => {
+      sendWAText(`966${user.phone}`, message);
+    });
+  } else if (type === "email") {
+    users.forEach((user) => {
+      sendEmail(user.email, "Give A Gift Website", message);
+    });
+  } else {
+    return next(new ApiError("Invalid message type", 400));
+  }
+
+  res.status(200).json({
+    status: "success",
+    message: "Messages are being processed to be sent",
   });
 });

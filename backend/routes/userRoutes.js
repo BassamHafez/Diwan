@@ -43,4 +43,10 @@ router
   .get(userValidator.getUserValidator, userController.getUser)
   .delete(userValidator.getUserValidator, userController.deleteUser);
 
+router.post(
+  "/messages",
+  userValidator.validateSendUsersMessage,
+  userController.sendUsersMessage
+);
+
 module.exports = router;
