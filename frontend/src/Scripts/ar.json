@@ -625,5 +625,6 @@
   "MAX_ESTATES_IN_COMPOUND_3": "الحد الأقصى 3 وحدات في العقار",
   "MAX_ESTATES_IN_COMPOUND_10": "الحد الأقصى 10 وحدات في العقار",
   "MAX_ESTATES_IN_COMPOUND_30": "الحد الأقصى 30 وحدة في العقار",
-  "MAX_ESTATES_IN_COMPOUND_50": "الحد الأقصى 50 وحدة في العقار"
+  "MAX_ESTATES_IN_COMPOUND_50": "الحد الأقصى 50 وحدة في العقار",
+  "MAX_ESTATES_IN_COMPOUND_300": "الحد الأقصى 300 وحدة في العقار"
 }
