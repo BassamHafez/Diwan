@@ -72,7 +72,7 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
                 styles.select_type
               } my-3`}
               isClearable={true}
-              isRtl={isArLang ? false : true}
+              isRtl={isArLang ? true : false}
               placeholder={key("status")}
             />
           </div>

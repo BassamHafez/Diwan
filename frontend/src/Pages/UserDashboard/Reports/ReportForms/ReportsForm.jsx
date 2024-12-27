@@ -223,7 +223,7 @@ const ReportsForm = ({
                       setFieldValue("estate", val ? val : null)
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                     isClearable
                   />
@@ -241,7 +241,7 @@ const ReportsForm = ({
                       setFieldValue("compound", val ? val : null)
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                     isClearable
                   />
@@ -260,7 +260,7 @@ const ReportsForm = ({
                     setFieldValue("landlord", val ? val.value : null)
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isClearable
                 />
@@ -305,7 +305,7 @@ const ReportsForm = ({
                         setFieldValue("status", val ? val.value : null)
                       }
                       className={`${isArLang ? "text-end" : "text-start"}`}
-                      isRtl={isArLang ? false : true}
+                      isRtl={isArLang ? true : false}
                       placeholder={isArLang ? "" : "select"}
                       isClearable
                     />

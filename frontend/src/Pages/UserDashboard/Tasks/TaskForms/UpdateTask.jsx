@@ -259,7 +259,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
                   options={contactsOptions}
                   onChange={(val) => setFieldValue("contact", val ? val : null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="contact" component={InputErrorMessage} />
@@ -279,7 +279,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
                   }
                   onChange={(val) => setFieldValue("type", val || null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />
@@ -308,7 +308,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
                   }
                   onChange={(val) => setFieldValue("priority", val || null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="priority" component={InputErrorMessage} />
@@ -327,7 +327,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
                     options={compoundsOptions}
                     onChange={(val) => setFieldValue("compound", val || null)}
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                     isDisabled={compId}
                   />
@@ -343,7 +343,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
                     value={values.estate}
                     onChange={(val) => setFieldValue("estate", val || null)}
                     className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? false : true}
+                    isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                     isDisabled={propId}
                   />

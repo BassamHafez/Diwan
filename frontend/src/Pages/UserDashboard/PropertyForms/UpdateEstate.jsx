@@ -229,13 +229,13 @@ const UpdateEstate = ({
       .min(5, key("descValidation"))
       .required(key("fieldReq")),
     city: string().when("compound", (compound, schema) =>
-      !compound || compound.value === "not"
+      !compound || compound?.value === "not"
         ? schema.required(key("fieldReq"))
         : schema
     ),
 
     region: string().when("compound", (compound, schema) =>
-      !compound || compound.value === "not"
+      !compound || compound?.value === "not"
         ? schema.required(key("fieldReq"))
         : schema
     ),
@@ -341,7 +341,7 @@ const UpdateEstate = ({
                   options={compoundsOptions}
                   onChange={(val) => setFieldValue("compound", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   isDisabled={true}
                 />
                 <ErrorMessage name="compound" component={InputErrorMessage} />
@@ -380,8 +380,11 @@ const UpdateEstate = ({
                   onChange={(val) => setFieldValue("tags", val || [])}
                   value={values.tags}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
                 />
                 <ErrorMessage name="tags" component={InputErrorMessage} />
               </div>
@@ -399,7 +402,7 @@ const UpdateEstate = ({
                   }
                   onChange={(val) => setFieldValue("landlord", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isDisabled={
                     values.compound && values.compound?.value !== "not"
@@ -449,7 +452,7 @@ const UpdateEstate = ({
                     ) || null
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   isDisabled={
                     values.compound && values.compound?.value !== "not"
                   }
@@ -475,7 +478,7 @@ const UpdateEstate = ({
                     (values.compound && values.compound?.value !== "not")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage name="city" component="div" className="error" />
@@ -498,7 +501,7 @@ const UpdateEstate = ({
                     (values.compound && values.compound?.value !== "not")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                 />
                 <ErrorMessage
@@ -535,7 +538,7 @@ const UpdateEstate = ({
                   }
                   onChange={(val) => setFieldValue("broker", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   isDisabled={
                     values.compound && values.compound?.value !== "not"

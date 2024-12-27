@@ -89,7 +89,7 @@ const MainPayForm = ({ hideModal, refetch, type,Id,refetchDetails }) => {
               }
               onChange={(val) => setFieldValue("paymentMethod", val.value)}
               className={`${isArLang ? "text-end" : "text-start"}`}
-              isRtl={isArLang ? false : true}
+              isRtl={isArLang ? true : false}
               placeholder=""
             />
             <ErrorMessage name="paymentMethod" component={InputErrorMessage} />

@@ -173,7 +173,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
                 ) || null
               }
               className={`${isArLang ? "text-end" : "text-start"}`}
-              isRtl={isArLang ? false : true}
+              isRtl={isArLang ? true : false}
               placeholder={isArLang ? "" : "select"}
             />
             <ErrorMessage name="region" component={InputErrorMessage} />
@@ -193,7 +193,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
               }
               isDisabled={!values.region}
               className={`${isArLang ? "text-end" : "text-start"}`}
-              isRtl={isArLang ? false : true}
+              isRtl={isArLang ? true : false}
               placeholder={isArLang ? "" : "select"}
             />
             <ErrorMessage name="city" component="div" className="error" />

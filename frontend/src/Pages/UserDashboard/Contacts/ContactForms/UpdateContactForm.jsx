@@ -158,7 +158,7 @@ const UpdateContactForm = ({
                   options={tenantTypeOptions}
                   onChange={(val) => setFieldValue("type", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? false : true}
+                  isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}
                   value={tenantTypeOptions.find(
                     (val) => val.value === contact.type

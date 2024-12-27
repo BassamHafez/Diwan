@@ -259,7 +259,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                 className={`${isArLang ? "text-end ms-2" : "text-start me-2"} ${
                   styles.select_type
                 } my-3`}
-                isRtl={isArLang ? false : true}
+                isRtl={isArLang ? true : false}
                 placeholder={key("type")}
                 isClearable
               />
@@ -271,7 +271,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                 className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
                   styles.select_type
                 } my-3`}
-                isRtl={isArLang ? false : true}
+                isRtl={isArLang ? true : false}
                 placeholder={key("status")}
                 isClearable
               />
