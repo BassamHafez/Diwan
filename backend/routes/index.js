@@ -17,6 +17,7 @@ const expenseRoutes = require("../routes/expenseRoutes");
 const taskRoutes = require("../routes/taskRoutes");
 const reportRoutes = require("../routes/reportRoutes");
 const statsRoutes = require("../routes/statsRoutes");
+const configRoutes = require("../routes/configRoutes");
 
 const mountRoutes = (app) => {
   app.use("/api/v1/auth", authRoutes);
@@ -38,6 +39,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/tasks", taskRoutes);
   app.use("/api/v1/reports", reportRoutes);
   app.use("/api/v1/stats", statsRoutes);
+  app.use("/api/v1/configs", configRoutes);
 };
 
 module.exports = mountRoutes;
