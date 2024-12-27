@@ -41,7 +41,7 @@ exports.subscribeValidator = [
     .withMessage("Max estates in compound is required")
     .isInt({ min: 0 })
     .withMessage("Invalid max estates in compound")
-    .isIn([0, 3, 10, 30, 50])
+    .isIn([0, 3, 10, 30, 50, 300])
     .withMessage("Invalid max estates in compound"),
 
   check("isFavoriteAllowed")
