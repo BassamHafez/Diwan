@@ -630,5 +630,6 @@
   "MAX_ESTATES_IN_COMPOUND_3": "Maximum 3 Units per Estate",
   "MAX_ESTATES_IN_COMPOUND_10": "Maximum 10 Units per Estate",
   "MAX_ESTATES_IN_COMPOUND_30": "Maximum 30 Units per Estate",
-  "MAX_ESTATES_IN_COMPOUND_50": "Maximum 50 Units per Estate"
+  "MAX_ESTATES_IN_COMPOUND_50": "Maximum 50 Units per Estate",
+  "MAX_ESTATES_IN_COMPOUND_300": "Maximum 300 Units per Estate"
 }
