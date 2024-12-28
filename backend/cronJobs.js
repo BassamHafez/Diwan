@@ -1,10 +1,12 @@
 const cron = require("node-cron");
+const Account = require("./models/accountModel");
 const Contract = require("./models/contractModel");
 const Estate = require("./models/estateModel");
 const Revenue = require("./models/revenueModel");
 const Expense = require("./models/expenseModel");
 const ScheduledMission = require("./models/scheduledMissionModel");
 const { sendWAText } = require("./utils/sendWAMessage");
+const sendEmail = require("./utils/sendEmail");
 
 let isTaskRunning = false;
 
@@ -234,6 +236,68 @@ const checkScheduledMissions = async () => {
     console.timeEnd("checkScheduledMissions");
   }
 };
+
+let isSubscriptionTaskRunning = false;
+
+const checkSubscriptions = async () => {
+  console.time("checkSubscriptionMissions");
+
+  if (isSubscriptionTaskRunning) {
+    console.timeEnd("checkSubscriptionMissions");
+    return;
+  }
+
+  isSubscriptionTaskRunning = true;
+
+  try {
+    const missions = await ScheduledMission.find({
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+      scheduledAt: { $lte: new Date() },
+    }).lean();
+
+    if (missions.length === 0) {
+      console.log("No subscription missions to process.");
+      return;
+    }
+
+    const promises = [];
+    const missionsIds = [];
+    const accountBulkUpdates = [];
+
+    missions.forEach((task) => {
+      missionsIds.push(task._id);
+
+      const accountUpdatedData = {
+        allowedUsers: 0,
+        allowedCompounds: 0,
+        allowedEstates: 0,
+        maxEstatesInCompound: 0,
+        isFavoriteAllowed: false,
+        isRemindersAllowed: false,
+      }
+
+      // accountBulkUpdates.push({
+      //   updateOne: {
+      //     filter: { _id: task.account },
+      //     update: accountUpdatedData,
+      //   },
+      // });
+
+      promises.push(
+        // Account.findById(task.account)
+        Account.findByIdAndUpdate(task.account, accountUpdatedData)
+          .select("name phone")
+          .then((account) => {
+            sendWAText(
+              `966${account.phone}`,
+              `Hello ${account.name}, your subscription has expired.`
+            );
+          })
+      );
+    });
+
+
 
 const clearFinishedMissions = async () => {
   await ScheduledMission.deleteMany({ isDone: true });

@@ -47,6 +47,9 @@ exports.signup = catchAsync(async (req, res, next) => {
   const accountData = {
     _id: accountId,
     owner: userId,
+    subscriptionEndDate: new Date(
+      Date.now() + 5 * 24 * 60 * 60 * 1000
+    ).setHours(23, 59, 59, 999),
     members: [
       {
         user: userId,

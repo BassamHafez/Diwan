@@ -8,6 +8,10 @@ process.on("uncaughtException", (err) => {
   process.exit(1);
 });
 
+// TODO: Reminders for contracts
+// TODO: check reminders permissions on cronJobs and remove it from controllers
+// TODO: enhance all dates (maybe use moment.js or date-fns or dayjs or luxon)
+
 dotenv.config();
 const app = require("./app");
 
