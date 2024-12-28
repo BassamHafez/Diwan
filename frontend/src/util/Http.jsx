@@ -45,6 +45,13 @@ export const mainFormsHandlerTypeFormData = async ({
           "Content-Type": "multipart/form-data",
         },
       });
+    } else if (method === "put") {
+      response = await axios.put(`${baseServerUrl}${type}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
     } else {
       if (!token) {
         console.log("Unauthorized");

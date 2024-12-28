@@ -63,28 +63,10 @@
     line-height: 3.375rem;
     letter-spacing: 0.125rem;
     font-weight: 700;
-    color: var(--font_color);
+    color: black;
 }
 #form-message{
     width: 100%;
-}
-.form-control{
-    background-color: rgb(246, 246, 246);
-}
-
-.save_btn{
-    background-color: var(--main_color);
-    color: white;
-    padding: 0.625rem 0.9375rem;
-    border-radius: 0.9375rem;
-    font-weight: 700;
-    min-width: 6.875rem;
-    transition:all .3s;
-    min-width: 9.375rem
-}
-.save_btn:hover{
-    background-color: rgb(9, 75, 161);
-    transform: translateX(0.3125rem);
 }
 
 @media screen and (max-width:770px) {

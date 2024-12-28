@@ -385,7 +385,6 @@
   "VariablePrice": "Variable price",
   "cust": "Custom",
   "helpMsg": "Need assistance? Our support team is here to help, Contact us",
-
   "usersCount": "Number of Account Users",
   "compoundsCount": "Number of Estates Managed",
   "isFavoriteAllowed": "Add Estate Units Into Favorite List",
@@ -581,6 +580,7 @@
   "comment": "Comment",
   "job": "Job/Tag",
   "noTestimonials": "There is no testimonials!",
+  "images":"Images",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",

@@ -109,7 +109,7 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
     >
       <Form>
         <div className={styles.photo_field}>
-          <h6 className="mb-3">{key("avatar")}</h6>
+          <h6 className="mb-3">{key("avatar")} (1/1)</h6>
           <label className={styles.photo_label_img} htmlFor="avatar">
             <FontAwesomeIcon title={key("changePhoto")} icon={faCamera}/>
             {imagePreviewUrl ? (
