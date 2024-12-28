@@ -1,8 +1,6 @@
 import styles from "./Hero.module.css";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import header1 from "../../assets/banner1.webp";
-import header2 from "../../assets/banner2.webp";
 import ButtonTwo from "../UI/Buttons/ButtonTwo";
 import { useTranslation } from "react-i18next";
 import circles from "../../assets/svg/circles.svg";
@@ -56,9 +54,9 @@ const Hero = () => {
             <div className={styles.header1_img}>
               <div className={styles.overlay}></div>
               <ImgComponent
-                src={header1}
+                src={`${import.meta.env.VITE_Host}/designs/banner1.webp`}
                 width="20.625rem"
-                height="21.875rem"
+                height="25rem"
                 hash={imgHash.hero1}
                 alt="heroBuilding"
               />
@@ -73,9 +71,9 @@ const Hero = () => {
             <div className={styles.header2_img}>
               <div className={styles.overlay}></div>
               <ImgComponent
-                src={header2}
+                src={`${import.meta.env.VITE_Host}/designs/banner2.webp`}
                 width="25rem"
-                height="12.3125rem"
+                height="18.75rem"
                 hash={imgHash.hero2}
                 alt="heroBuilding2"
               />

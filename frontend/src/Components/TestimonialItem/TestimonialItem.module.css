@@ -15,6 +15,12 @@
   width: 70px;
   height: 70px;
 }
+.person canvas,.person img{
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+}
+
 .person_name {
   font-weight: 700;
   font-size: 20px;

@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import {Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -10,7 +10,7 @@ import Col from "react-bootstrap/esm/Col";
 import styles from "../../Admin.module.css";
 import { useState } from "react";
 
-const UpdateAssets = ({ refetch, configs }) => {
+const UpdateAssets = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [selectedFile2, setSelectedFile2] = useState(null);
@@ -32,7 +32,7 @@ const UpdateAssets = ({ refetch, configs }) => {
   const onSubmit = (values, { resetForm }) => {
     const formData = new FormData();
     const files = [
-      { key: "banner", file: selectedFile },
+      { key: "banner1", file: selectedFile },
       { key: "banner2", file: selectedFile2 },
     ];
 
@@ -46,16 +46,13 @@ const UpdateAssets = ({ refetch, configs }) => {
       {
         formData: formData,
         token: token,
-        method: "patch",
-        type: "configs/secondary-banners",
+        method: "put",
+        type: "configs/banners",
       },
       {
         onSuccess: (data) => {
           console.log(data);
           if (data?.status === "success") {
-            if (refetch) {
-              refetch();
-            }
             notifySuccess(key("updatedSucc"));
             resetForm();
           } else {
@@ -105,8 +102,8 @@ const UpdateAssets = ({ refetch, configs }) => {
       <Form>
         <Row>
           <Col md={6} className="mb-4 p-2 position-relative">
-            <div className={styles.photo_field}>
-              <h6 className="mb-3">{key("banner")}</h6>
+            <div className={`${styles.photo_field} h-100`}>
+              <h6 className="mb-3">{key("banner")} (3:4)</h6>
               <label className={styles.photo_label_img} htmlFor="banner">
                 {imagePreviewUrl ? (
                   <img
@@ -116,7 +113,7 @@ const UpdateAssets = ({ refetch, configs }) => {
                   />
                 ) : (
                   <img
-                    src={`${import.meta.env.VITE_Host}${configs.banner}`}
+                    src={`${import.meta.env.VITE_Host}/designs/banner1.webp`}
                     alt="old_image_Preview"
                     className={styles.image_preview}
                   />
@@ -132,8 +129,8 @@ const UpdateAssets = ({ refetch, configs }) => {
             </div>
           </Col>
           <Col md={6} className="mb-4 p-2 position-relative">
-            <div className={styles.photo_field}>
-              <h6 className="mb-3">{key("banner2")}</h6>
+            <div className={`${styles.photo_field} h-100`}>
+              <h6 className="mb-3">{key("banner2")} (16:9)</h6>
               <label className={styles.photo_label_img} htmlFor="banner2">
                 {imagePreviewUrl2 ? (
                   <img
@@ -143,7 +140,7 @@ const UpdateAssets = ({ refetch, configs }) => {
                   />
                 ) : (
                   <img
-                    src={`${import.meta.env.VITE_Host}${configs.banner2}`}
+                    src={`${import.meta.env.VITE_Host}/designs/banner2.webp`}
                     alt="old_image_Preview2"
                     className={styles.image_preview}
                   />

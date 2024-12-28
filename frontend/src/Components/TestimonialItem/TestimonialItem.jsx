@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import UpdateTestimonial from "../../Pages/Admin/AdminTestimonials/TestimonialsForms/UpdateTestimonial";
 import ModalForm from "../UI/Modals/ModalForm";
+import ImgComponent from "../Img/ImgComponent";
+import { imgHash } from "../Logic/StaticLists";
 
 const TestimonialItem = ({ content, isAdmin, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -42,9 +44,26 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
 
   return (
     <>
-      <div className={`${styles.slide_content} ${isAdmin?styles.admin_width:""}`}>
+      <div
+        className={`${styles.slide_content} ${
+          isAdmin ? styles.admin_width : ""
+        }`}
+      >
         <div className={`${styles.slide_header} d-flex align-items-center`}>
-          <img
+          <div className={styles.person}>
+            <ImgComponent
+              src={
+                content?.image
+                  ? `${import.meta.env.VITE_Host}${content?.image}`
+                  : noAvatar
+              }
+              width="4.375rem"
+              height="4.375rem"
+              hash={imgHash.hero1}
+              alt="avatar"
+            />
+          </div>
+          {/* <img
             src={
               content?.image
                 ? `${import.meta.env.VITE_Host}${content?.image}`
@@ -52,7 +71,8 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
             }
             className={`${styles.person}`}
             alt="person"
-          />
+          /> */}
+
           <div
             className={`${styles.slide_header_caption} d-flex flex-column  ${
               isArLang ? "me-3" : "ms-3"
@@ -62,7 +82,11 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
             <span className={styles.person_date}>{content?.title}</span>
           </div>
         </div>
-        <div className={`${styles.person_comment} ${isAdmin?styles.dashed_border:""}`}>
+        <div
+          className={`${styles.person_comment} ${
+            isAdmin ? styles.dashed_border : ""
+          }`}
+        >
           <p>{content?.comment}</p>
         </div>
 
