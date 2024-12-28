@@ -4,15 +4,76 @@ import InputErrorMessage from "../../Components/UI/Words/InputErrorMessage";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/esm/Col";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+import { mainFormsHandlerTypeRaw } from "../../util/Http";
+import { useMutation } from "@tanstack/react-query";
+import { object, string } from "yup";
 
 const ContactForm = () => {
+  const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
+
+  const { mutate } = useMutation({
+    mutationFn: mainFormsHandlerTypeRaw,
+  });
+
+  const initialValues = {
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  };
+
+  const onSubmit = (values, { resetForm }) => {
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: values,
+            token: token,
+            method: "add",
+            type: `contactUs`,
+          },
+          {
+            onSuccess: (data) => {
+              if (data?.status === "success") {
+                resetForm();
+                resolve(key("sentSuccess"));
+              } else {
+                reject(key("wrong"));
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject(key("wrong"));
+            },
+          }
+        );
+      }),
+      {
+        pending: key(key("sendingMessage")),
+        success: key("sentSuccess"),
+        error: key("wrong"),
+      }
+    );
+  };
+
+  const validationSchema = object().shape({
+    name: string().required(key("fieldReq")),
+    email: string()
+      .email(`${key("emailValidation1")}`)
+      .required(`${key("emailValidation2")}`),
+    subject: string().required(key("fieldReq")),
+    message: string()
+      .min(5, key("min5"))
+      .required(`${key("fieldReq")}`),
+  });
 
   return (
     <Formik
-    // initialValues={initialValues}
-    // onSubmit={onSubmit}
-    // validationSchema={validationSchema}
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
     >
       <Form>
         <Row>
@@ -49,7 +110,7 @@ const ContactForm = () => {
         </Row>
 
         <div className="text-center">
-          <ButtonTwo type="submit" text={key("sendMsg")}/>
+          <ButtonTwo type="submit" text={key("sendMsg")} />
         </div>
       </Form>
     </Formik>
