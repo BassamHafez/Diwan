@@ -3,6 +3,7 @@ const User = require("../models/userModel");
 const Package = require("../models/packageModel");
 const Subscription = require("../models/subscriptionModel");
 const Purchase = require("../models/purchaseModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -37,6 +38,7 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
   await Promise.all([
     User.deleteMany({ _id: { $in: membersIds } }, { ordered: false }),
     Account.deleteOne({ _id: id }),
+    ScheduledMission.deleteMany({ account: id }),
   ]);
 
   res.status(204).json({
@@ -92,11 +94,22 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   } = req.body;
   let cost = 0;
 
+  const expireDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+  const accountData = {
+    subscriptionEndDate: expireDate,
+  };
+
   const [account, subscriptions] = await Promise.all([
     Account.findById(id)
       .select("owner isFavoriteAllowed isRemindersAllowed")
       .lean(),
     Subscription.find().lean(),
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+    }),
   ]);
 
   if (!account) {
@@ -117,6 +130,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += userPrice * usersCount;
+    accountData.allowedUsers = usersCount;
   }
 
   if (compoundsCount) {
@@ -137,6 +151,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += compoundPrice * compoundsCount;
+    accountData.allowedCompounds = compoundsCount;
   }
 
   if (estatesCount) {
@@ -157,19 +172,25 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += estatePrice * estatesCount;
+    accountData.allowedEstates = estatesCount;
   }
 
   if (maxEstatesInCompound) {
     let maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_3";
+    accountData.maxEstatesInCompound = maxEstatesInCompound;
 
     if (maxEstatesInCompound > 3 && maxEstatesInCompound <= 10) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_10";
+      accountData.maxEstatesInCompound = 10;
     } else if (maxEstatesInCompound > 10 && maxEstatesInCompound <= 30) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_30";
+      accountData.maxEstatesInCompound = 30;
     } else if (maxEstatesInCompound > 30 && maxEstatesInCompound <= 50) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_50";
+      accountData.maxEstatesInCompound = 50;
     } else {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_300";
+      accountData.maxEstatesInCompound = 300;
     }
 
     const maxEstatesPrice = subscriptions.find(
@@ -185,6 +206,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += favoritePrice;
+    accountData.isFavoriteAllowed = true;
   }
 
   if (!account.isRemindersAllowed && isRemindersAllowed) {
@@ -193,6 +215,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += remindersPrice;
+    accountData.isRemindersAllowed = true;
   }
 
   if (!cost) {
@@ -200,18 +223,12 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   }
 
   await Promise.all([
-    Account.findByIdAndUpdate(id, {
-      $inc: {
-        allowedUsers: usersCount || 0,
-        allowedCompounds: compoundsCount || 0,
-        allowedEstates: estatesCount || 0,
-      },
-      maxEstatesInCompound:
-        maxEstatesInCompound && maxEstatesInCompound > 50
-          ? 300
-          : maxEstatesInCompound || account.maxEstatesInCompound,
-      isFavoriteAllowed: isFavoriteAllowed || account.isFavoriteAllowed,
-      isRemindersAllowed: isRemindersAllowed || account.isRemindersAllowed,
+    Account.findByIdAndUpdate(id, accountData),
+
+    ScheduledMission.create({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      scheduledAt: expireDate,
     }),
 
     Purchase.create({
@@ -245,7 +262,12 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     Account.findById(id)
       .select("owner isFavoriteAllowed isRemindersAllowed")
       .lean(),
-    Package.findById(packageId).select("features price").lean(),
+    Package.findById(packageId).select("features price duration").lean(),
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+    }),
   ]);
 
   if (!account) {
@@ -265,19 +287,26 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     return acc;
   }, {});
 
+  const expireDate = new Date(
+    Date.now() + features.duration * 30.25 * 24 * 60 * 60 * 1000 // 30 days + 6 hours
+  );
+
   await Promise.all([
     Account.findByIdAndUpdate(id, {
-      $inc: {
-        allowedUsers: parseInt(features.allowedUsers) || 0,
-        allowedCompounds: parseInt(features.allowedCompounds) || 0,
-        allowedEstates: parseInt(features.allowedEstates) || 0,
-      },
-      isFavoriteAllowed:
-        Boolean(features.isFavoriteAllowed) || account.isFavoriteAllowed,
-      isRemindersAllowed:
-        Boolean(features.isRemindersAllowed) || account.isRemindersAllowed,
-      maxEstatesInCompound:
-        parseInt(features.maxEstatesInCompound) || account.maxEstatesInCompound,
+      subscriptionEndDate: expireDate,
+
+      allowedUsers: parseInt(features.allowedUsers) || 0,
+      allowedCompounds: parseInt(features.allowedCompounds) || 0,
+      allowedEstates: parseInt(features.allowedEstates) || 0,
+      isFavoriteAllowed: Boolean(features.isFavoriteAllowed),
+      isRemindersAllowed: Boolean(features.isRemindersAllowed),
+      maxEstatesInCompound: parseInt(features.maxEstatesInCompound),
+    }),
+
+    ScheduledMission.create({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      scheduledAt: expireDate,
     }),
 
     Purchase.create({
