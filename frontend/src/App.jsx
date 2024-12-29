@@ -121,7 +121,6 @@ function App() {
       control.off("languageChanged", updateFontFamily);
     };
   }, [control]);
-
   //fetchMainConfigs
   useEffect(() => {
     dispatch(fetchConfigs());

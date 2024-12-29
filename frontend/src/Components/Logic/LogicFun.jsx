@@ -34,6 +34,11 @@ export const formattedDate = (date) => {
   return parsedDate.toISOString().split("T")[0];
 };
 
+export const convertISoIntoDate = (date) => {
+  const myDate = new Date(date);
+  return myDate.setHours(0, 0, 0, 0);
+};
+
 export const convertTpOptionsFormate = (arr) => {
   let arrOptions = [];
   if (arr?.length > 0) {
@@ -262,11 +267,8 @@ export const getContractStatus = (isCanceled, startDate, endDate) => {
   const currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
 
-  const start = new Date(startDate);
-  start.setHours(0, 0, 0, 0);
-
-  const end = new Date(endDate);
-  end.setHours(0, 0, 0, 0);
+  const start = convertISoIntoDate(startDate);
+  const end = convertISoIntoDate(endDate);
 
   if (currentDate < start) {
     return "upcoming";
@@ -431,4 +433,31 @@ export const expensesStatusOptions = {
 export const renamedExpensesStatusMethod = (type, language) => {
   const mappings = expensesStatusOptions[language];
   return mappings?.[type] || "";
+};
+
+//packages
+
+export const calculateRemainingTime = (
+  endDate,
+  expText,
+  days,
+  oneMonth,
+  months
+) => {
+  const now = new Date();
+  const targetDate = new Date(endDate);
+  const timeDiff = targetDate - now;
+
+  if (timeDiff <= 0) return expText || 0;
+
+  const daysLeft = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  const monthsLeft = Math.floor(daysLeft / 30);
+  const remainingDays = daysLeft % 30;
+
+  if (monthsLeft > 0) {
+    return monthsLeft > 1
+      ? `${monthsLeft} ${months || ""} ${remainingDays} ${days || ""}`
+      : `${oneMonth || ""} ${remainingDays} ${days || ""}`;
+  }
+  return `${daysLeft} ${days || ""}`;
 };

@@ -11,6 +11,7 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import styles from "../../Admin.module.css";
 import { useState } from "react";
+import { maxFileSize } from "../../../../Components/Logic/StaticLists";
 
 const AddTestimonial = ({ hideModal, refetch }) => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -78,7 +79,7 @@ const AddTestimonial = ({ hideModal, refetch }) => {
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
-    if (file?.size > 20 * 1024 * 1024) {
+    if (file?.size > maxFileSize) {
       notifyError(key("imgSizeError"));
       return;
     }

@@ -3,6 +3,7 @@ import userInfoSlice from "./userInfo-slice";
 import profileSlice from "./profileInfo-slice";
 import accountSlice from "./accountInfo-slice";
 import configsSlice from "./configs-slice";
+import packageTimeSlice from "./packageTime-slice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     profileInfo: profileSlice.reducer,
     accountInfo: accountSlice.reducer,
     configs: configsSlice.reducer,
+    packageTime:packageTimeSlice.reducer
   },
 });
 

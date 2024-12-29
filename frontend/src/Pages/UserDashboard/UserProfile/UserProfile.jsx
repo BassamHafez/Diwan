@@ -57,7 +57,7 @@ const UserProfile = () => {
                 <FontAwesomeIcon className={iconMArginClass} icon={faUser} />
                 <span>{key("main")}</span>
               </li>
-              <CheckPermissions btnActions={["UPDATE_ACCOUNT"]}>
+              <CheckPermissions btnActions={["UPDATE_ACCOUNT"]} noCheckingForExpired={true}>
                 <li
                   className={activeLink === "office" ? styles.active : ""}
                   onClick={() => setActivePage("office")}

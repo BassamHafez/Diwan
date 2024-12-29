@@ -4,10 +4,24 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import useCurrentFeatures from "../../../hooks/useCurrentFeatures";
 import PolicyList from "../../../Components/UI/Blocks/PolicyList";
+import { useSelector } from "react-redux";
+import { calculateRemainingTime } from "../../../Components/Logic/LogicFun";
 
 const MySubscription = ({ chooseActiveActive }) => {
   const { t: key } = useTranslation();
   const currentFeatures = useCurrentFeatures();
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  let subscriptionEndDate = accountInfo?.account?.subscriptionEndDate;
+
+  const remainingTime = subscriptionEndDate
+    ? calculateRemainingTime(
+        subscriptionEndDate,
+        key("expired"),
+        key("days"),
+        key("oneMonth"),
+        key("months")
+      )
+    : key("noSubscription");
 
   const policyList = [
     { label: "mySubPolicy", value: null },
@@ -30,6 +44,7 @@ const MySubscription = ({ chooseActiveActive }) => {
           title={key("mySubscription")}
           btnText={key("updatePackage")}
           chooseActiveActive={chooseActiveActive}
+          remainingTime={remainingTime}
         />
       </Col>
     </Row>
