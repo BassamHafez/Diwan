@@ -1,6 +1,5 @@
 const cron = require("node-cron");
 const Account = require("./models/accountModel");
-const Account = require("./models/accountModel");
 const Contract = require("./models/contractModel");
 const Estate = require("./models/estateModel");
 const Revenue = require("./models/revenueModel");
