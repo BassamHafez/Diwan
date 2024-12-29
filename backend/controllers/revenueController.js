@@ -35,8 +35,14 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
 
   const [estate, account] = await Promise.all([
     Estate.findById(estateId).select("compound landlord").lean(),
-    Account.findById(req.user.account).select("isRemindersAllowed").lean(),
+    Account.findById(req.user.account)
+      .select("isRemindersAllowed subscriptionEndDate")
+      .lean(),
   ]);
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));

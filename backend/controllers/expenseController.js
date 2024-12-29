@@ -27,8 +27,12 @@ exports.createExpense = catchAsync(async (req, res, next) => {
   const { estate, compound } = req.body;
 
   const account = await Account.findById(req.user.account)
-    .select("isRemindersAllowed")
+    .select("isRemindersAllowed subscriptionEndDate")
     .lean();
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (estate && !compound) {
     const estateData = await Estate.findById(estate)
