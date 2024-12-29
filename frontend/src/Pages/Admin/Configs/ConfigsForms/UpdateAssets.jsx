@@ -9,6 +9,7 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import styles from "../../Admin.module.css";
 import { useState } from "react";
+import { maxFileSize } from "../../../../Components/Logic/StaticLists";
 
 const UpdateAssets = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -71,7 +72,7 @@ const UpdateAssets = () => {
     const file = e.currentTarget.files[0];
     const inputId = e.currentTarget.id;
 
-    if (file?.size > 20 * 1024 * 1024) {
+    if (file?.size > maxFileSize) {
       notifyError(key("imgSizeError"));
       return;
     }

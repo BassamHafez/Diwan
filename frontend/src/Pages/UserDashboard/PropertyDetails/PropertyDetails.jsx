@@ -90,6 +90,7 @@ const PropertyDetails = () => {
   const deleteEstate = async () => {
     setShowDeleteModal(false);
     if (propId && token) {
+      navigate("/properties");
       const res = await mainDeleteFunHandler({
         id: propId,
         token: token,
@@ -98,7 +99,6 @@ const PropertyDetails = () => {
       if (res.status === 204) {
         queryClient.invalidateQueries(["estates", token]);
         notifySuccess(key("deletedSucc"));
-        navigate("/properties");
       } else {
         notifyError(key("wrong"));
       }

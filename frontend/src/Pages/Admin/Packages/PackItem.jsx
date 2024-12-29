@@ -67,7 +67,13 @@ const PackItem = ({ pack, type, refetch }) => {
               </span>
             </div>
           )}
-          <h5 className="mb-4">{isArLang ? pack.arTitle : pack.enTitle}</h5>
+          <h5
+            className={`${
+              !pack.isBestOffer && !pack.isMostPopular ? "my-4" : "mb-4"
+            }`}
+          >
+            {isArLang ? pack.arTitle : pack.enTitle}
+          </h5>
           <div className="mb-4">
             <Accordion>
               <AccordionContent title={key("details")} eventKey="0">
@@ -91,6 +97,19 @@ const PackItem = ({ pack, type, refetch }) => {
                       {key("enTitle")}
                     </span>
                     <span>{pack.enTitle}</span>
+                  </li>
+                  <li>
+                    <span>
+                      <FontAwesomeIcon
+                        className={iconClass}
+                        icon={faLanguage}
+                      />
+                      {key("duration")}
+                    </span>
+                    <span>
+                      {pack.duration}{" "}
+                      {pack.duration === 1 ? key("month") : key("singleMonths")}
+                    </span>
                   </li>
                   <li>
                     <span>

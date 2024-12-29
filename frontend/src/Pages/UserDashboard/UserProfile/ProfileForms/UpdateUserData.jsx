@@ -11,6 +11,7 @@ import styles from "./ProfileForms.module.css";
 import { useDispatch } from "react-redux";
 import fetchProfileData from "../../../../Store/profileInfo-actions";
 import { useState } from "react";
+import { maxFileSize } from "../../../../Components/Logic/StaticLists";
 
 const UpdateUserData = ({ profileInfo, hideModal }) => {
 
@@ -88,7 +89,7 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
-    if (file?.size > 20 * 1024 * 1024) {
+    if (file?.size > maxFileSize) {
       notifyError(key("imgSizeError"));
       return;
     }

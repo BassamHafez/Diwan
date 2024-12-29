@@ -1,14 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPublicData } from "../../../util/Http";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import Row from "react-bootstrap/esm/Row";
-import PackItem from "./PackItem";
 import { useTranslation } from "react-i18next";
 import MainTitle from "../../../Components/UI/Words/MainTitle";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useState } from "react";
 import CreatePackage from "./PackagesForm/CreatePackage";
+import Tabs from "react-bootstrap/Tabs";
+import PackageTab from "./PackageTab";
+import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
+import Tab from "react-bootstrap/Tab";
 
 const AllPackages = () => {
   const [showAddPackModal, setShowAddPackModal] = useState(false);
@@ -24,6 +25,16 @@ const AllPackages = () => {
     staleTime: Infinity,
   });
 
+  const packagesData = packages?.data;
+
+  const filterPackagesByDuration = (packages, duration) =>
+    packages?.filter((pack) => pack.duration === duration);
+
+  const monthlyPackages = filterPackagesByDuration(packagesData, 1);
+  const threeMonthsPackage = filterPackagesByDuration(packagesData, 3);
+  const sixMonthsPackage = filterPackagesByDuration(packagesData, 6);
+  const yearlyPackage = filterPackagesByDuration(packagesData, 12);
+
   return (
     <>
       <div className="admin_body height_container p-2 position-relative">
@@ -37,14 +48,25 @@ const AllPackages = () => {
             text={key("addPackage")}
           />
         </div>
-
         {(!packages || isFetching) && <LoadingOne />}
-        <Row className="g-4">
-          {packages?.data?.map((packageData) => (
-            <PackItem key={packageData._id} pack={packageData} refetch={refetch} />
-          ))}
-          {/* <PackItem pack={customPackage} type={"custom"} /> */}
-        </Row>
+        <Tabs defaultActiveKey="month" className="mb-5" fill>
+          <Tab eventKey="month" title={key("month")}>
+            <PackageTab packages={monthlyPackages} refetch={refetch} />
+          </Tab>
+          <Tab eventKey="3month" title={key("3month")}>
+            <PackageTab packages={threeMonthsPackage} refetch={refetch} />
+          </Tab>
+          <Tab eventKey="6month" title={key("6month")}>
+            <PackageTab packages={sixMonthsPackage} refetch={refetch} />
+          </Tab>
+          <Tab eventKey="year" title={key("year")}>
+            <PackageTab
+              title="year"
+              packages={yearlyPackage}
+              refetch={refetch}
+            />
+          </Tab>
+        </Tabs>
       </div>
       {showAddPackModal && (
         <ModalForm

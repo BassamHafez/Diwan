@@ -130,8 +130,9 @@ const PackageItem = ({ pack, type }) => {
                 </div>
               </>
             ) : (
-              <span className={styles.price_number}>
-                {key("VariablePrice")}
+              <span className={`${styles.price_number} fs-2 mb-2`}>
+                {key("VariablePrice")}{" "}
+                <span className="text-secondary fs-5">/{key("month")}</span>
               </span>
             )}
           </div>
@@ -180,7 +181,7 @@ const PackageItem = ({ pack, type }) => {
           <div className="text-center pt-4 pb-2">
             <ButtonThree
               onClick={subscribtionHandler}
-              color={pack.isMostPopular ? undefined : "white"}
+              color={pack.isBestOffer ? undefined : "white"}
               text={key("orderPackage")}
             />
           </div>

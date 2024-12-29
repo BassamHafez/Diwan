@@ -88,6 +88,7 @@ const CompoundDetails = () => {
   const deleteCompound = async () => {
     setShowDeleteModal(false);
     if (compId && token) {
+      navigate("/properties");
       const res = await mainDeleteFunHandler({
         id: compId,
         token: token,
@@ -97,7 +98,6 @@ const CompoundDetails = () => {
       if (res.status === 204) {
         queryClient.invalidateQueries(["compounds", token]);
         notifySuccess(key("deletedSucc"));
-        navigate("/properties");
       } else if (
         res.response?.data?.message ===
         "Please delete all estates in this compound first"

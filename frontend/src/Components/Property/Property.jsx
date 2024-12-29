@@ -13,6 +13,7 @@ import {
 } from "../Logic/LogicFun";
 import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
+import { useSelector } from "react-redux";
 
 const Property = ({
   property,
@@ -23,6 +24,7 @@ const Property = ({
   rentedEstatesCountObj,
 }) => {
   const parentCompound = property.compound ? property.compound : property;
+  const isTimeExpired= useSelector((state) => state.packageTime.isTimeExpired);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
   const navigate = useNavigate();
@@ -82,7 +84,7 @@ const Property = ({
         className="d-flex justify-content-center align-items-center"
       >
         <div
-          className={styles.property_body}
+          className={`${styles.property_body} ${isTimeExpired===true?"expired":""}`}
           data-aos="fade-up"
           data-aos-duration="1000"
         >
