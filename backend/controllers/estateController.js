@@ -45,6 +45,14 @@ exports.getAllEstates = factory.getAll(
 exports.getEstate = catchAsync(async (req, res, next) => {
   const estateId = req.params.id;
 
+  const account = await Account.findById(req.user.account)
+    .select("subscriptionEndDate")
+    .lean();
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
+
   const estatePromise = Estate.findOne({
     _id: estateId,
     account: req.user.account,
@@ -162,8 +170,12 @@ exports.createEstate = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
 
   const account = await Account.findById(req.user.account)
-    .select("allowedEstates maxEstatesInCompound")
+    .select("allowedEstates maxEstatesInCompound subscriptionEndDate")
     .lean();
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (account.allowedEstates <= 0) {
     return next(new ApiError("Subscribe and get more estates", 403));
@@ -228,10 +240,17 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
   const estateId = req.params.id;
   const { tags } = req.body;
 
-  const estate = await Estate.findOne({
-    _id: estateId,
-    account: req.user.account,
-  });
+  const [account, estate] = await Promise.all([
+    Account.findById(req.user.account).select("subscriptionEndDate").lean(),
+
+    Estate.findOne({ _id: estateId, account: req.user.account })
+      .select("compound")
+      .lean(),
+  ]);
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (!estate) {
     return next(new ApiError("No estate found with that ID", 404));
@@ -308,8 +327,12 @@ exports.deleteEstate = catchAsync(async (req, res, next) => {
 
 exports.favoriteEstate = catchAsync(async (req, res, next) => {
   const account = await Account.findById(req.user.account)
-    .select("isFavoriteAllowed")
+    .select("isFavoriteAllowed subscriptionEndDate")
     .lean();
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (!account.isFavoriteAllowed) {
     return next(new ApiError("Subscribe in favorite feature first", 403));

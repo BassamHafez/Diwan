@@ -77,7 +77,9 @@ exports.getCompound = catchAsync(async (req, res, next) => {
       ? { _id: compoundId, _id: { $in: permittedCompounds } }
       : { _id: compoundId, account: req.user.account };
 
-  const [compound, estates] = await Promise.all([
+  const [account, compound, estates] = await Promise.all([
+    Account.findById(req.user.account).select("subscriptionEndDate").lean(),
+
     Compound.findOne(compoundFilter).populate(compoundPopOptions).lean(),
 
     Estate.find({ compound: compoundId })
@@ -86,6 +88,10 @@ exports.getCompound = catchAsync(async (req, res, next) => {
       )
       .lean(),
   ]);
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (!compound) {
     return next(new ApiError("No compound found with that ID", 404));
@@ -262,8 +268,12 @@ exports.createCompound = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
 
   const account = await Account.findById(req.user.account)
-    .select("allowedCompounds")
+    .select("allowedCompounds subscriptionEndDate")
     .lean();
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   if (account.allowedCompounds <= 0) {
     return next(new ApiError("Subscribe and get more compounds", 403));
@@ -299,6 +309,14 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
   const { id } = req.params;
   const permittedCompounds = req.user.permittedCompounds;
+
+  const account = await Account.findById(req.user.account)
+    .select("subscriptionEndDate")
+    .lean();
+
+  if (account.subscriptionEndDate < new Date()) {
+    return next(new ApiError("Your subscription has expired", 403));
+  }
 
   const compoundFilter =
     permittedCompounds?.length > 0

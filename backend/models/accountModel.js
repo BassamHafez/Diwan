@@ -35,6 +35,10 @@ const accountSchema = new mongoose.Schema(
         },
       },
     ],
+    subscriptionEndDate: {
+      type: Date,
+      default: new Date(),
+    },
     allowedUsers: {
       type: Number,
       default: 0,

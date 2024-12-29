@@ -73,3 +73,83 @@ exports.newMemberHtml = (phone, password) => {
 </html>
   `;
 };
+
+exports.subscriptionExpirationHtml = (name) => {
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Ended</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #d39833;
+            color: #ffffff;
+            text-align: center;
+            padding: 20px;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .content {
+            padding: 20px;
+            text-align: center;
+            color: #333333;
+        }
+        .content p {
+            margin: 10px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #d39833;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #777777;
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Subscription Ended</h1>
+        </div>
+        <div class="content">
+            <p>Dear ${name},</p>
+            <p>We wanted to let you know that your subscription to <a href="diiwan.com" target="_blank" style="color: #d39833; text-decoration: none;"> <strong>Diiwan.com</strong> </a> has ended.</p>
+            <p>Don’t miss out on the benefits of our services. Renew your subscription today to continue enjoying uninterrupted access!</p>
+            <a href="https://diiwan.com/packages" class="cta-button">Renew Subscription</a>
+        </div>
+        <div class="footer">
+            <p>Thank you for being part of Diiwan.com</p>
+            <p>If you have any questions, feel free to <a href="[Contact Us Link]" style="color: #d39833; text-decoration: none;">contact us</a>.</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+};

@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Tag = require("../models/tagModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const { USER_ACCESS_PERMISSIONS } = require("../utils/globals");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -44,9 +45,12 @@ exports.signup = catchAsync(async (req, res, next) => {
     permissions: USER_ACCESS_PERMISSIONS,
   };
 
+  const subExpireDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+
   const accountData = {
     _id: accountId,
     owner: userId,
+    subscriptionEndDate: subExpireDate,
     members: [
       {
         user: userId,
@@ -60,6 +64,16 @@ exports.signup = catchAsync(async (req, res, next) => {
   await Promise.all([
     Tag.create({ account: accountId }),
     Account.create(accountData),
+    ScheduledMission.create({
+      account: accountId,
+      accountOwner: {
+        name: newUser.name,
+        phone: newUser.phone,
+        email: newUser.email,
+      },
+      type: "SUBSCRIPTION_EXPIRATION",
+      scheduledAt: subExpireDate,
+    }),
   ]);
 
   createSendToken(newUser, 201, res);
