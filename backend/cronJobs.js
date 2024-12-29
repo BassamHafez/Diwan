@@ -1,10 +1,14 @@
 const cron = require("node-cron");
+const Account = require("./models/accountModel");
+const Account = require("./models/accountModel");
 const Contract = require("./models/contractModel");
 const Estate = require("./models/estateModel");
 const Revenue = require("./models/revenueModel");
 const Expense = require("./models/expenseModel");
 const ScheduledMission = require("./models/scheduledMissionModel");
 const { sendWAText } = require("./utils/sendWAMessage");
+const sendEmail = require("./utils/sendEmail");
+const { subscriptionExpirationHtml } = require("./utils/htmlMessages");
 
 let isTaskRunning = false;
 
@@ -235,6 +239,100 @@ const checkScheduledMissions = async () => {
   }
 };
 
+let isSubscriptionTaskRunning = false;
+
+const checkSubscriptions = async () => {
+  console.time("checkSubscriptionMissions");
+
+  if (isSubscriptionTaskRunning) {
+    console.timeEnd("checkSubscriptionMissions");
+    return;
+  }
+
+  isSubscriptionTaskRunning = true;
+
+  try {
+    const missions = await ScheduledMission.find({
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+      scheduledAt: { $lte: new Date() },
+    })
+      .select("_id account accountOwner")
+      .lean();
+
+    if (missions.length === 0) {
+      console.log("No subscription missions to process.");
+      return;
+    }
+
+    const promises = [];
+    const missionsIds = [];
+    const accountBulkUpdates = [];
+
+    missions.forEach((task) => {
+      missionsIds.push(task._id);
+
+      const accountUpdatedData = {
+        allowedUsers: 0,
+        allowedCompounds: 0,
+        allowedEstates: 0,
+        maxEstatesInCompound: 0,
+        isFavoriteAllowed: false,
+        isRemindersAllowed: false,
+      };
+
+      accountBulkUpdates.push({
+        updateOne: {
+          filter: { _id: task.account },
+          update: accountUpdatedData,
+        },
+      });
+
+      sendWAText(
+        `966${task.accountOwner.phone}`,
+        `Hello ${task.accountOwner.name}, your subscription has expired.\nPlease renew your subscription to continue using Diiwan.com .`
+      );
+
+      const html = subscriptionExpirationHtml(task.accountOwner.name);
+
+      sendEmail(
+        task.accountOwner.email,
+        "Your Subscription Has Ended",
+        `Dear ${task.accountOwner.name},\nWe wanted to let you know that your subscription to Diiwan.com has ended.`,
+        html
+      );
+
+      promises.push(
+        Account.updateOne({ _id: task.account }, accountUpdatedData)
+      );
+    });
+
+    if (missionsIds.length > 0) {
+      promises.push(
+        ScheduledMission.bulkWrite(
+          missionsIds.map((id) => ({
+            updateOne: {
+              filter: { _id: id },
+              update: { isDone: true },
+            },
+          }))
+        )
+      );
+    }
+
+    Promise.all(promises).then(() => {
+      console.log(
+        `Processed ${missions.length} subscription missions successfully.`
+      );
+    });
+  } catch (error) {
+    console.error("Error processing subscription missions:", error);
+  } finally {
+    isSubscriptionTaskRunning = false;
+    console.timeEnd("checkSubscriptionMissions");
+  }
+};
+
 const clearFinishedMissions = async () => {
   await ScheduledMission.deleteMany({ isDone: true });
 
@@ -244,6 +342,7 @@ const clearFinishedMissions = async () => {
 const startCronJobs = () => {
   cron.schedule("*/3 * * * *", checkScheduledMissions); // every 3 minutes
   cron.schedule("0 17 * * 0", clearFinishedMissions); // every Sunday at 5 PM
+  cron.schedule("0 */6 * * *", checkSubscriptions); // every 6 hours
 };
 
 module.exports = startCronJobs;

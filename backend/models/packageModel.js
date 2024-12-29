@@ -28,6 +28,10 @@ const packageSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    duration: {
+      type: Number,
+      required: true,
+    },
     features: [
       {
         label: {
