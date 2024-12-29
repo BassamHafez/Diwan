@@ -4,6 +4,7 @@ const Package = require("../models/packageModel");
 const Subscription = require("../models/subscriptionModel");
 const Purchase = require("../models/purchaseModel");
 const ScheduledMission = require("../models/scheduledMissionModel");
+const ScheduledMission = require("../models/scheduledMissionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
@@ -38,6 +39,7 @@ exports.deleteAccount = catchAsync(async (req, res, next) => {
   await Promise.all([
     User.deleteMany({ _id: { $in: membersIds } }, { ordered: false }),
     Account.deleteOne({ _id: id }),
+    ScheduledMission.deleteMany({ account: id }),
     ScheduledMission.deleteMany({ account: id }),
   ]);
 
@@ -111,6 +113,11 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       type: "SUBSCRIPTION_EXPIRATION",
       isDone: false,
     }),
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+    }),
   ]);
 
   if (!account) {
@@ -131,6 +138,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += userPrice * usersCount;
+    accountData.allowedUsers = usersCount;
     accountData.allowedUsers = usersCount;
   }
 
@@ -153,6 +161,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
     cost += compoundPrice * compoundsCount;
     accountData.allowedCompounds = compoundsCount;
+    accountData.allowedCompounds = compoundsCount;
   }
 
   if (estatesCount) {
@@ -174,23 +183,29 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
     cost += estatePrice * estatesCount;
     accountData.allowedEstates = estatesCount;
+    accountData.allowedEstates = estatesCount;
   }
 
   if (maxEstatesInCompound) {
     let maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_3";
     accountData.maxEstatesInCompound = maxEstatesInCompound;
+    accountData.maxEstatesInCompound = maxEstatesInCompound;
 
     if (maxEstatesInCompound > 3 && maxEstatesInCompound <= 10) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_10";
       accountData.maxEstatesInCompound = 10;
+      accountData.maxEstatesInCompound = 10;
     } else if (maxEstatesInCompound > 10 && maxEstatesInCompound <= 30) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_30";
+      accountData.maxEstatesInCompound = 30;
       accountData.maxEstatesInCompound = 30;
     } else if (maxEstatesInCompound > 30 && maxEstatesInCompound <= 50) {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_50";
       accountData.maxEstatesInCompound = 50;
+      accountData.maxEstatesInCompound = 50;
     } else {
       maxEstatesFeature = "MAX_ESTATES_IN_COMPOUND_300";
+      accountData.maxEstatesInCompound = 300;
       accountData.maxEstatesInCompound = 300;
     }
 
@@ -208,6 +223,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
     cost += favoritePrice;
     accountData.isFavoriteAllowed = true;
+    accountData.isFavoriteAllowed = true;
   }
 
   if (!account.isRemindersAllowed && isRemindersAllowed) {
@@ -216,6 +232,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     ).price;
 
     cost += remindersPrice;
+    accountData.isRemindersAllowed = true;
     accountData.isRemindersAllowed = true;
   }
 
@@ -265,6 +282,12 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
       .select("owner isFavoriteAllowed isRemindersAllowed")
       .populate("owner", "name phone email")
       .lean(),
+    Package.findById(packageId).select("features price duration").lean(),
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+    }),
     Package.findById(packageId).select("features price duration").lean(),
     ScheduledMission.deleteOne({
       account: id,
