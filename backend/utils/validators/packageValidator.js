@@ -36,6 +36,12 @@ exports.createPackageValidator = [
     .isBoolean()
     .withMessage("isMostPopular must be a boolean"),
 
+  check("duration")
+    .exists()
+    .withMessage("duration is required")
+    .isInt({ min: 1 })
+    .withMessage("duration must be a positive integer"),
+
   check("features")
     .exists()
     .withMessage("features is required")
@@ -102,6 +108,11 @@ exports.updatePackageValidator = [
     .optional()
     .isBoolean()
     .withMessage("isMostPopular must be a boolean"),
+
+  check("duration")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("duration must be a positive integer"),
 
   check("features")
     .optional()
