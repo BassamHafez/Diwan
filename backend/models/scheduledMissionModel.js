@@ -6,6 +6,7 @@ const scheduledMissionSchema = new mongoose.Schema(
       type: String,
       enum: [
         "SUBSCRIPTION_EXPIRATION",
+        "SUBSCRIPTION_EXPIRATION",
         "CONTRACT_EXPIRATION",
         "CONTRACT_ACTIVATION",
         "REVENUE_REMINDER",
