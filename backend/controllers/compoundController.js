@@ -98,15 +98,16 @@ exports.getCompound = catchAsync(async (req, res, next) => {
   }
 
   const estatesIds = estates.map((estate) => estate._id);
-  const monthStart = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth(),
-    1
-  );
+  const now = new Date();
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
   const monthEnd = new Date(
-    new Date().getFullYear(),
-    new Date().getMonth() + 1,
-    0
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+    23,
+    59,
+    59,
+    999
   );
 
   const revenuesAggregatePromise = Revenue.aggregate([
