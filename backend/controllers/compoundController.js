@@ -1,5 +1,6 @@
 const { v4: uuidv4 } = require("uuid");
 const sharp = require("sharp");
+const mongoose = require("mongoose");
 
 const Account = require("../models/accountModel");
 const Compound = require("../models/compoundModel");
@@ -97,7 +98,6 @@ exports.getCompound = catchAsync(async (req, res, next) => {
     return next(new ApiError("No compound found with that ID", 404));
   }
 
-  const estatesIds = estates.map((estate) => estate._id);
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
   const monthEnd = new Date(
@@ -113,7 +113,7 @@ exports.getCompound = catchAsync(async (req, res, next) => {
   const revenuesAggregatePromise = Revenue.aggregate([
     {
       $match: {
-        estate: { $in: estatesIds },
+        compound: new mongoose.Types.ObjectId(String(compoundId)),
       },
     },
     {
@@ -132,7 +132,7 @@ exports.getCompound = catchAsync(async (req, res, next) => {
   const monthRevenuesAggregatePromise = Revenue.aggregate([
     {
       $match: {
-        estate: { $in: estatesIds },
+        compound: new mongoose.Types.ObjectId(String(compoundId)),
         dueDate: { $gte: monthStart, $lte: monthEnd },
       },
     },
@@ -152,7 +152,7 @@ exports.getCompound = catchAsync(async (req, res, next) => {
   const expensesAggregatePromise = Expense.aggregate([
     {
       $match: {
-        estate: { $in: estatesIds },
+        compound: new mongoose.Types.ObjectId(String(compoundId)),
       },
     },
     {

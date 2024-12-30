@@ -32,9 +32,9 @@ const estatePopOptions = [
 ];
 
 const estatesSelectFields =
-  "compound name description region city image inFavorites status tags unitNumber";
+  "compound name description region city image inFavorites status tags unitNumber commissionPercentage";
 
-const compoundSelectFields = "name address region city neighborhood image";
+const compoundSelectFields = "name address region city neighborhood image commissionPercentage";
 
 exports.getAllEstates = factory.getAll(
   Estate,
@@ -198,6 +198,7 @@ exports.createEstate = catchAsync(async (req, res, next) => {
     if (req.body.city) delete req.body.city;
     if (req.body.neighborhood) delete req.body.neighborhood;
     if (req.body.broker) delete req.body.broker;
+    if (req.body.commissionPercentage) delete req.body.commissionPercentage;
     if (req.body.landlord) delete req.body.landlord;
   }
 
@@ -261,6 +262,7 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
     if (req.body.city) delete req.body.city;
     if (req.body.neighborhood) delete req.body.neighborhood;
     if (req.body.broker) delete req.body.broker;
+    if (req.body.commissionPercentage) delete req.body.commissionPercentage;
     if (req.body.landlord) delete req.body.landlord;
   }
 

@@ -54,6 +54,12 @@ const estateSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "BrokerContact",
     },
+    commissionPercentage: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 0,
+    },
     landlord: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "LandlordContact",

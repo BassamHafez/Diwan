@@ -84,6 +84,13 @@ exports.createEstateValidator = [
 
   check("broker").optional().isMongoId().withMessage("Invalid broker ID"),
 
+  check("commissionPercentage")
+    .if((val, { req }) => req.body.broker)
+    .exists()
+    .withMessage("Broker commission percentage is required")
+    .isFloat({ min: 0, max: 100 })
+    .withMessage("Invalid commission percentage"),
+
   check("landlord").optional().isMongoId().withMessage("Invalid landlord ID"),
 
   // NOT ALLOWED
@@ -179,6 +186,13 @@ exports.updateEstateValidator = [
     .withMessage("Water account number must be a string of 10 digits"),
 
   check("broker").optional().isMongoId().withMessage("Invalid broker ID"),
+
+  check("commissionPercentage")
+    .if((val, { req }) => req.body.broker)
+    .exists()
+    .withMessage("Broker commission percentage is required")
+    .isFloat({ min: 0, max: 100 })
+    .withMessage("Invalid commission percentage"),
 
   check("landlord").optional().isMongoId().withMessage("Invalid landlord ID"),
 
