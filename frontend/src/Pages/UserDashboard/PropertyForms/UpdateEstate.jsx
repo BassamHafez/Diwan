@@ -20,6 +20,7 @@ import {
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
+  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
@@ -121,23 +122,23 @@ const UpdateEstate = ({
 
   const initialValues = {
     image: "",
-    compound: compoundsOptions.find(
+    compound: compoundsOptions?.find(
       (option) => option.value === estateParentCompound?._id
     ) || { label: key("notSpecified"), value: "not" },
-    name: estateData.name || "",
-    description: estateData.description || "",
-    region: estateParent.region || "",
-    city: estateParent.city || "",
-    neighborhood: estateParent.neighborhood || "",
-    address: estateData.address || "",
+    name: estateData?.name || "",
+    description: estateData?.description || "",
+    region: estateParent?.region || "",
+    city: estateParent?.city || "",
+    neighborhood: estateParent?.neighborhood || "",
+    address: estateData?.address || "",
     tags:
-      estateData.tags.map((tag) => {
+      estateData?.tags.map((tag) => {
         return { label: tag, value: tag };
       }) || [],
-    price: estateData.price || "",
-    area: estateData.area || "",
-    waterAccountNumber: estateData.waterAccountNumber || "",
-    electricityAccountNumber: estateData.electricityAccountNumber || "",
+    price: estateData?.price || "",
+    area: estateData?.area || "",
+    waterAccountNumber: estateData?.waterAccountNumber || "",
+    electricityAccountNumber: estateData?.electricityAccountNumber || "",
     broker: estateParent?.broker?._id || "",
     landlord: estateParent?.landlord?._id || "",
   };
@@ -145,6 +146,19 @@ const UpdateEstate = ({
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
     const formData = new FormData();
+    if (values.compound === "not") {
+      if (!values.region) {
+        notifyError(key("regionReq"));
+        return;
+      }
+      if (!values.city) {
+        notifyError(key("cityReq"));
+        return;
+      }
+      formData.append("city", values.city);
+      formData.append("region", values.region);
+      formData.append("neighborhood", values.neighborhood);
+    }
 
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -152,12 +166,6 @@ const UpdateEstate = ({
 
     formData.append("name", values.name);
     formData.append("description", values.description);
-
-    if (!values.compound || values.compound.value === "not") {
-      formData.append("city", values.city);
-      formData.append("region", values.region);
-      formData.append("neighborhood", values.neighborhood);
-    }
     if (values.address) {
       formData.append("address", values.address);
     }
@@ -228,18 +236,8 @@ const UpdateEstate = ({
     description: string()
       .min(5, key("descValidation"))
       .required(key("fieldReq")),
-    city: string().when("compound", (compound, schema) =>
-      !compound || compound?.value === "not"
-        ? schema.required(key("fieldReq"))
-        : schema
-    ),
-
-    region: string().when("compound", (compound, schema) =>
-      !compound || compound?.value === "not"
-        ? schema.required(key("fieldReq"))
-        : schema
-    ),
-
+    region: string(),
+    city: string(),
     address: string(),
     neighborhood: string(),
     price: string().required(key("fieldReq")),
@@ -278,7 +276,7 @@ const UpdateEstate = ({
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
-    if (file?.size > 20 * 1024 * 1024) {
+    if (file?.size > maxFileSize) {
       notifyError(key("imgSizeError"));
       return;
     }

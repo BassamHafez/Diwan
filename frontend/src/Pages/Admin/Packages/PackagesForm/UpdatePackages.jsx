@@ -10,7 +10,10 @@ import Col from "react-bootstrap/esm/Col";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import Select from "react-select";
-import { maxEstatesInCompoundOriginalOptions } from "../../../../Components/Logic/StaticLists";
+import {
+  maxEstatesInCompoundOriginalOptions,
+  packagesDuration,
+} from "../../../../Components/Logic/StaticLists";
 
 const UpdatePackages = ({ pack, refetch, hideModal }) => {
   const notifySuccess = (message) => toast.success(message);
@@ -18,6 +21,7 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currentLang = isArLang ? "ar" : "en";
 
   const requiredLabel = <span className="text-danger">*</span>;
 
@@ -40,6 +44,9 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
     originalPrice: pack.originalPrice || 0,
     isBestOffer: pack.isBestOffer || false,
     isMostPopular: pack.isMostPopular || false,
+    duration: packagesDuration[currentLang]?.find(
+      (item) => item.value === pack?.duration
+    ),
     usersCount:
       Number(findFeaturesValue("allowedUsers").toLowerCase().trim()) || 0,
     compoundsCount:
@@ -78,6 +85,7 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
       arTitle: values.arTitle,
       enTitle: values.enTitle,
       price: values.price,
+      duration: values.duration?.value,
       originalPrice: values.originalPrice,
       isBestOffer: values.isBestOffer,
       isMostPopular: values.isMostPopular,
@@ -120,6 +128,12 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
     usersCount: number(),
     compoundsCount: number(),
     estatesCount: number(),
+    duration: object()
+      .shape({
+        label: string(),
+        value: number(),
+      })
+      .required(key("fieldReq")),
     maxEstatesInCompound: object()
       .shape({
         label: string(),
@@ -198,16 +212,7 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
                 />
               </div>
             </Col>
-            <Col sm={6}>
-              <div className="field">
-                <label htmlFor="estatesCount">{key("estatesCount")}</label>
-                <Field type="number" id="estatesCount" name="estatesCount" />
-                <ErrorMessage
-                  name="estatesCount"
-                  component={InputErrorMessage}
-                />
-              </div>
-            </Col>
+
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="maxEstatesInCompound">
@@ -226,6 +231,33 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
                 />
                 <ErrorMessage
                   name="maxEstatesInCompound"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="packDuration">{key("packDuration")}</label>
+                <Select
+                  options={packagesDuration[currentLang]}
+                  value={values.duration}
+                  onChange={(val) =>
+                    setFieldValue("duration", val ? val : null)
+                  }
+                  className={`${isArLang ? "text-end" : "text-start"} my-3`}
+                  isRtl={isArLang ? true : false}
+                  placeholder=""
+                  id="packDuration"
+                />
+                <ErrorMessage name="duration" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="estatesCount">{key("estatesCount")}</label>
+                <Field type="number" id="estatesCount" name="estatesCount" />
+                <ErrorMessage
+                  name="estatesCount"
                   component={InputErrorMessage}
                 />
               </div>

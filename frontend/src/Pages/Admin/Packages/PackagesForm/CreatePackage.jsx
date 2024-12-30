@@ -10,7 +10,10 @@ import Col from "react-bootstrap/esm/Col";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import Select from "react-select";
-import { maxEstatesInCompoundOriginalOptions } from "../../../../Components/Logic/StaticLists";
+import {
+  maxEstatesInCompoundOriginalOptions,
+  packagesDuration,
+} from "../../../../Components/Logic/StaticLists";
 
 const CreatePackage = ({ refetch, hideModal }) => {
   const notifySuccess = (message) => toast.success(message);
@@ -18,7 +21,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
+  const currentLang = isArLang ? "ar" : "en";
   const requiredLabel = <span className="text-danger">*</span>;
 
   const { mutate, isPending } = useMutation({
@@ -36,6 +39,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
     compoundsCount: "",
     estatesCount: "",
     maxEstatesInCompound: "",
+    duration: "",
     isFavoriteAllowed: false,
     isRemindersAllowed: false,
   };
@@ -63,6 +67,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
       arTitle: values.arTitle,
       enTitle: values.enTitle,
       price: values.price,
+      duration: values.duration?.value,
       originalPrice: values.originalPrice,
       isBestOffer: values.isBestOffer,
       isMostPopular: values.isMostPopular,
@@ -107,6 +112,12 @@ const CreatePackage = ({ refetch, hideModal }) => {
     usersCount: number(),
     compoundsCount: number(),
     estatesCount: number(),
+    duration: object()
+      .shape({
+        label: string(),
+        value: number(),
+      })
+      .required(key("fieldReq")),
     maxEstatesInCompound: object()
       .shape({
         label: string(),
@@ -124,7 +135,6 @@ const CreatePackage = ({ refetch, hideModal }) => {
       {({ setFieldValue }) => (
         <Form>
           <Row>
-
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="arTitle">
@@ -187,16 +197,6 @@ const CreatePackage = ({ refetch, hideModal }) => {
             </Col>
             <Col sm={6}>
               <div className="field">
-                <label htmlFor="estatesCount">{key("estatesCount")}</label>
-                <Field type="number" id="estatesCount" name="estatesCount" />
-                <ErrorMessage
-                  name="estatesCount"
-                  component={InputErrorMessage}
-                />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field">
                 <label htmlFor="maxEstatesInCompound">
                   {key("maxEstatesInCompound")}
                 </label>
@@ -211,6 +211,32 @@ const CreatePackage = ({ refetch, hideModal }) => {
                 />
                 <ErrorMessage
                   name="maxEstatesInCompound"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="packDuration">{key("packDuration")}</label>
+                <Select
+                  options={packagesDuration[currentLang]}
+                  onChange={(val) =>
+                    setFieldValue("duration", val ? val : null)
+                  }
+                  className={`${isArLang ? "text-end" : "text-start"} my-3`}
+                  isRtl={isArLang ? true : false}
+                  placeholder=""
+                  id="packDuration"
+                />
+                <ErrorMessage name="duration" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="estatesCount">{key("estatesCount")}</label>
+                <Field type="number" id="estatesCount" name="estatesCount" />
+                <ErrorMessage
+                  name="estatesCount"
                   component={InputErrorMessage}
                 />
               </div>
@@ -268,7 +294,6 @@ const CreatePackage = ({ refetch, hideModal }) => {
                 </label>
               </div>
             </Col>
-
             <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
               <button onClick={hideModal} className="cancel_btn my-2">
                 {key("cancel")}
@@ -282,7 +307,6 @@ const CreatePackage = ({ refetch, hideModal }) => {
                 )}
               </button>
             </div>
-            
           </Row>
         </Form>
       )}

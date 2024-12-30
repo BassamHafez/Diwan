@@ -20,6 +20,7 @@ import {
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
+  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
@@ -180,7 +181,7 @@ const AddCompound = ({ hideModal, refetch }) => {
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
-    if (file?.size > 20 * 1024 * 1024) {
+    if (file?.size > maxFileSize) {
       notifyError(key("imgSizeError"));
       return;
     }

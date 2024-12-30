@@ -14,20 +14,26 @@ import paid from "../../../assets/icons/paid.png";
 import homeKey from "../../../assets/icons/home-key.png";
 import RevenuesByMonth from "../../../Components/Charts/RevenuesByMonth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import {
+  faCircleInfo,
+  faTriangleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
+import {
+  convertISoIntoDate,
   convertNumbersToFixedTwo,
   formattedDate,
   renamedExpensesStatusMethod,
   renamedRevenuesStatus,
 } from "../../../Components/Logic/LogicFun";
 import { faEye } from "@fortawesome/free-regular-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TaskContent from "../Tasks/TaskContent";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
+import Alert from "react-bootstrap/Alert";
 
 const UserHome = () => {
   const token = useSelector((state) => state.userInfo.token);
+  const isTimeExpired = useSelector((state) => state.packageTime.isTimeExpired);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
@@ -150,14 +156,14 @@ const UserHome = () => {
     }
   };
 
-  const today = new Date().toISOString().split("T")[0];
+  const today = new Date().setHours(0, 0, 0, 0);
 
   const todayTasks = myData?.todayAndBeforeTasks?.filter(
-    (task) => task.date.split("T")[0] === today
+    (task) => convertISoIntoDate(task?.date) === today
   );
-  
+
   const overdueTasks = myData?.todayAndBeforeTasks?.filter(
-    (task) => task.date.split("T")[0] < today
+    (task) => convertISoIntoDate(task?.date) < today
   );
 
   return (
@@ -182,6 +188,15 @@ const UserHome = () => {
         </Col>
         <Col xl={9} md={8}>
           <Row className="g-3 w-100">
+            {isTimeExpired && (
+              <Alert variant="warning" className="mt-4">
+                <FontAwesomeIcon
+                  className="fa-fade mx-2"
+                  icon={faTriangleExclamation}
+                />
+                {key("subExpired")} <Link to={"/packages"}>{key("here")}</Link>
+              </Alert>
+            )}
             <Col md={12} className="my-3">
               <div className={styles.information_section}>
                 <h4 className="fw-bold mb-4">{key("financialOverview")}</h4>
@@ -197,7 +212,9 @@ const UserHome = () => {
                         <div
                           className={`${styles.box_img} ${
                             isArLang ? "ms-2" : "me-2"
-                          } ${isArLang?styles.box_img_ar:styles.box_img_en}`}
+                          } ${
+                            isArLang ? styles.box_img_ar : styles.box_img_en
+                          }`}
                         >
                           <img src={item.icon} alt="icon" />
                         </div>
@@ -205,8 +222,9 @@ const UserHome = () => {
                         <div className={styles.box_caption}>
                           <span>{key(item.label)}</span>
 
-                          <p style={{wordBreak:"break-all"}}>
-                            {convertNumbersToFixedTwo(item.value)} {item.isMoney ? key("sarSmall") : ""}
+                          <p style={{ wordBreak: "break-all" }}>
+                            {convertNumbersToFixedTwo(item.value)}{" "}
+                            {item.isMoney ? key("sarSmall") : ""}
                           </p>
                         </div>
                       </div>
