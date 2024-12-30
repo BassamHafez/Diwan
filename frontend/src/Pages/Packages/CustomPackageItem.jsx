@@ -21,6 +21,7 @@ const CustomPackageItem = ({
   title,
   btnText,
   chooseActiveActive,
+  remainingTime,
 }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
@@ -85,9 +86,16 @@ const CustomPackageItem = ({
       <div className={`${styles.package} ${styles.custom_border}`}>
         <div className={styles.package_type}>
           <img src={fire} alt="fire" />
-          <h4 className="text-center fw-bold">
-            {title ? title : key("customPackage")}
-          </h4>
+          <div className="d-flex flex-column">
+            <h4 className="text-center fw-bold">
+              {title ? title : key("customPackage")}{" "}
+            </h4>
+            {remainingTime && (
+              <span className={styles.time_span}>
+                {key("remainingTime")} {remainingTime}
+              </span>
+            )}
+          </div>
         </div>
         <div className={styles.features}>
           <ul>
@@ -114,7 +122,7 @@ const CustomPackageItem = ({
             )}
           </ul>
         </div>
-        <CheckPermissions btnActions={["UPDATE_ACCOUNT"]}>
+        <CheckPermissions btnActions={["UPDATE_ACCOUNT"]} noCheckingForExpired={true}>
           <div className="text-center pt-4 pb-2">
             <ButtonThree
               onClick={sendPackageData}

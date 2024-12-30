@@ -1,3 +1,7 @@
+.time_span{
+  font-size: 11px;
+  color: var(--dark_white);
+}
 .container {
   padding-inline: 0.625rem;
   position: relative;

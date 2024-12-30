@@ -20,6 +20,7 @@ import {
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
+  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
@@ -101,21 +102,32 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     console.log(values);
     const formData = new FormData();
 
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-    }
-    if (values.compound !== "not") {
-      formData.append("compound", values.compound);
+    if (values.compound) {
+      if (values.compound !== "not") {
+        formData.append("compound", values.compound);
+      }
     }
 
-    formData.append("name", values.name);
-    formData.append("description", values.description);
-
-    if (!values.compound || values.compound === "not") {
+    if (values.compound === "not") {
+      if (!values.region) {
+        notifyError(key("regionReq"));
+        return;
+      }
+      if (!values.city) {
+        notifyError(key("cityReq"));
+        return;
+      }
       formData.append("city", values.city);
       formData.append("region", values.region);
       formData.append("neighborhood", values.neighborhood);
     }
+  
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
+    formData.append("name", values.name);
+    formData.append("description", values.description);
+
     if (values.address) {
       formData.append("address", values.address);
     }
@@ -165,24 +177,25 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   };
 
   const validationSchema = object().shape({
-    compound: string().nullable(),
+    compound: string().required(key("fieldReq")),
     name: string().required(key("fieldReq")),
     description: string()
       .min(5, key("descValidation"))
       .required(key("fieldReq")),
 
-    city: string().when("compound", (compound, schema) =>
-      !compound || compound?.value !== "not"
-        ? schema.required(key("fieldReq"))
-        : schema
-    ),
+    // region: string().when("compound", {
+    //   is: (compound) => compound === "not",
+    //   then: (schema) => schema.required(key("fieldReq")),
+    //   otherwise: (schema) => schema,
+    // }),
 
-    region: string().when("compound", (compound, schema) =>
-      compound || compound?.value !== "not"
-        ? schema.required(key("fieldReq"))
-        : schema
-    ),
-
+    // city: string().when("compound", {
+    //   is: (compound) => compound === "not",
+    //   then: (schema) => schema.required(key("fieldReq")),
+    //   otherwise: (schema) => schema,
+    // }),
+    region: string(),
+    city: string(),
     address: string(),
     neighborhood: string(),
     price: string().required(key("fieldReq")),
@@ -191,7 +204,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
 
   const handleFileChange = (e) => {
     const file = e.currentTarget.files[0];
-    if (file?.size > 20 * 1024 * 1024) {
+    if (file?.size > maxFileSize) {
       notifyError(key("imgSizeError"));
       return;
     }
@@ -205,14 +218,14 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   };
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {
-    setFieldValue("region", selectedRegion?.value || "");
+    setFieldValue("region", selectedRegion || "");
     setFieldValue("city", "");
     setFieldValue("neighborhood", "");
     let cities;
     if (isArLang) {
-      cities = citiesByRegionAr[selectedRegion?.value] || [];
+      cities = citiesByRegionAr[selectedRegion] || [];
     } else {
-      cities = citiesByRegion[selectedRegion?.value] || [];
+      cities = citiesByRegion[selectedRegion] || [];
     }
     setCityOptions(cities);
     setDistrictOptions([]);
@@ -234,6 +247,14 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     setDistrictOptions(finalDistricts);
   };
 
+  const clearReigonsField = (val, setFieldValue) => {
+    if (val !== "not") {
+      setFieldValue("region", "");
+      setFieldValue("city", "");
+      setFieldValue("neighborhood", "");
+    }
+  };
+
   return (
     <Formik
       initialValues={initialValues}
@@ -246,12 +267,17 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
           <Row>
             <Col sm={6}>
               <div className="field mb-1">
-                <label htmlFor="compound">{key("compound")}</label>
+                <label htmlFor="compound">
+                  {key("compound")} {requiredLabel}
+                </label>
                 <Select
                   id="compound"
                   name="compound"
                   options={compoundsOptions}
-                  onChange={(val) => setFieldValue("compound", val.value)}
+                  onChange={(val) => {
+                    setFieldValue("compound", val ? val.value : "not");
+                    clearReigonsField(val ? val.value : "not", setFieldValue);
+                  }}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
                   isDisabled={compId ? true : false}
@@ -298,7 +324,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   onChange={(val) => setFieldValue("tags", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
+                  placeholder=""
                   formatCreateLabel={(inputValue) =>
                     isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
                   }
@@ -323,20 +349,20 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   id="region"
                   name="region"
                   options={isArLang ? SaudiRegionAr : SaudiRegion}
-                  onChange={(selected) =>
-                    handleRegionChange(selected, setFieldValue)
-                  }
                   value={
                     (isArLang ? SaudiRegionAr : SaudiRegion).find(
                       (opt) => opt.value === values.region
                     ) || null
+                  }
+                  onChange={(selected) =>
+                    handleRegionChange(selected?.value || null, setFieldValue)
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
                   isDisabled={
                     (values.compound && values.compound !== "not") || compId
                   }
-                  placeholder={isArLang ? "" : "select"}
+                  placeholder=""
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
               </div>
@@ -360,7 +386,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
+                  placeholder=""
                 />
                 <ErrorMessage name="city" component={InputErrorMessage} />
               </div>
@@ -384,7 +410,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
+                  placeholder=""
                 />
                 <ErrorMessage
                   name="neighborhood"
