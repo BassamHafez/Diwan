@@ -65,7 +65,7 @@ exports.getIncomeReport = catchAsync(async (req, res, next) => {
       { $match: match },
       {
         $group: {
-          _id: "$estate",
+          _id: { $ifNull: ["$estate", "$compound"] },
           total: { $sum: "$amount" },
         },
       },
@@ -81,7 +81,7 @@ exports.getIncomeReport = catchAsync(async (req, res, next) => {
         $lookup: {
           from: "compounds",
           localField: "_id",
-          foreignField: "estate",
+          foreignField: "_id",
           as: "compoundDetails",
         },
       },
@@ -89,9 +89,7 @@ exports.getIncomeReport = catchAsync(async (req, res, next) => {
         $project: {
           _id: 0,
           total: 1,
-          // estateId: "$_id",
           estateName: { $arrayElemAt: ["$estateDetails.name", 0] },
-          // compoundId: { $arrayElemAt: ["$compoundDetails._id", 0] },
           compoundName: { $arrayElemAt: ["$compoundDetails.name", 0] },
         },
       },
