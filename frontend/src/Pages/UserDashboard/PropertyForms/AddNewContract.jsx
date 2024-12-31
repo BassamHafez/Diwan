@@ -137,6 +137,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
             refetch();
             refetchDetails()
             queryClient.invalidateQueries(["revenuesData", token]);
+            queryClient.invalidateQueries(["estates", token]);
             resetForm();
             hideModal();
           } else {

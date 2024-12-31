@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
+import { number, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -102,6 +102,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
         return { label: tag, value: tag };
       }) || [],
     broker: compoundData?.broker?._id || "",
+    commissionPercentage: compoundData?.commissionPercentage,
     landlord: compoundData?.landlord?._id || "",
     waterAccountNumber: compoundData.waterAccountNumber || "",
     electricityAccountNumber: compoundData.electricityAccountNumber || "",
@@ -125,6 +126,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
     }
     if (values.broker) {
       formData.append("broker", values.broker);
+      formData.append("commissionPercentage", values.commissionPercentage||0);
     }
     if (values.waterAccountNumber) {
       formData.append(
@@ -190,6 +192,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
       /^\d{11}$/,
       key("elcMinValidation")
     ),
+    commissionPercentage: number(),
   });
 
   const handleFileChange = (e) => {
@@ -271,6 +274,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
         <Form>
           <Row>
             <Col sm={6}>
+              {" "}
               <div className="field mb-1">
                 <label htmlFor="name">
                   {key("name")} {requiredLabel}
@@ -278,76 +282,9 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                 <Field type="text" id="name" name="name" />
                 <ErrorMessage name="name" component={InputErrorMessage} />
               </div>
-
-              <div className="field mb-1">
-                <label htmlFor="description">
-                  {key("description")} {requiredLabel}
-                </label>
-                <Field
-                  className="text_area"
-                  as="textarea"
-                  id="description"
-                  name="description"
-                />
-                <ErrorMessage
-                  name="description"
-                  component={InputErrorMessage}
-                />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="tags">{key("searchKeys")}</label>
-                <CreatableSelect
-                  isClearable
-                  options={tagsOptions}
-                  isMulti
-                  onChange={(val) => setFieldValue("tags", val || [])}
-                  value={values.tags}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                  formatCreateLabel={(inputValue) =>
-                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                  }
-                />
-                <ErrorMessage name="tags" component={InputErrorMessage} />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="landlord">{key("landlord")}</label>
-                <Select
-                  id="landlord"
-                  name="landlord"
-                  options={landlordOptions}
-                  value={
-                    landlordOptions?.find(
-                      (landlord) => landlord.value === values.landlord
-                    ) || null
-                  }
-                  onChange={(val) => setFieldValue("landlord", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="landlord" component={InputErrorMessage} />
-              </div>
-
-              <div className="field">
-                <label htmlFor="electricityAccountNumber">
-                  {key("elecAccount")}
-                </label>
-                <Field
-                  type="number"
-                  id="electricityAccountNumber"
-                  name="electricityAccountNumber"
-                />
-                <ErrorMessage
-                  name="electricityAccountNumber"
-                  component={InputErrorMessage}
-                />
-              </div>
             </Col>
             <Col sm={6}>
+              {" "}
               <div className="field mb-1">
                 <label htmlFor="region">
                   {key("region")} {requiredLabel}
@@ -370,7 +307,9 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
+              {" "}
               <div className="field mb-1">
                 <label>
                   {key("city")} {requiredLabel}
@@ -390,7 +329,9 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                 />
                 <ErrorMessage name="city" component="div" className="error" />
               </div>
-
+            </Col>
+            <Col sm={6}>
+              {" "}
               <div className="field mb-1">
                 <label>{key("district")}</label>
                 <Select
@@ -414,13 +355,52 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                   className="error"
                 />
               </div>
-
+            </Col>
+            <Col sm={6}>
+              {" "}
               <div className="field mb-1">
                 <label htmlFor="address">{key("address")}</label>
                 <Field type="text" id="address" name="address" />
                 <ErrorMessage name="address" component={InputErrorMessage} />
               </div>
-
+              <div className="field mb-1">
+                <label htmlFor="tags">{key("searchKeys")}</label>
+                <CreatableSelect
+                  isClearable
+                  options={tagsOptions}
+                  isMulti
+                  onChange={(val) => setFieldValue("tags", val || [])}
+                  value={values.tags}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? true : false}
+                  placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
+                />
+                <ErrorMessage name="tags" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              {" "}
+              <div className="field mb-1">
+                <label htmlFor="description">
+                  {key("description")} {requiredLabel}
+                </label>
+                <Field
+                  className="text_area"
+                  as="textarea"
+                  id="description"
+                  name="description"
+                />
+                <ErrorMessage
+                  name="description"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={6}>
+              {" "}
               <div className="field mb-1">
                 <label htmlFor="broker">{key("broker")}</label>
                 <Select
@@ -439,7 +419,47 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                 />
                 <ErrorMessage name="broker" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
+              {" "}
+              <div className="field mb-1">
+                <label htmlFor="landlord">{key("landlord")}</label>
+                <Select
+                  id="landlord"
+                  name="landlord"
+                  options={landlordOptions}
+                  value={
+                    landlordOptions?.find(
+                      (landlord) => landlord.value === values.landlord
+                    ) || null
+                  }
+                  onChange={(val) => setFieldValue("landlord", val.value)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? true : false}
+                  placeholder={isArLang ? "" : "select"}
+                />
+                <ErrorMessage name="landlord" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              {" "}
+              <div className="field">
+                <label htmlFor="electricityAccountNumber">
+                  {key("elecAccount")}
+                </label>
+                <Field
+                  type="number"
+                  id="electricityAccountNumber"
+                  name="electricityAccountNumber"
+                />
+                <ErrorMessage
+                  name="electricityAccountNumber"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={6}>
+              {" "}
               <div className="field">
                 <label htmlFor="waterAccountNumber">
                   {key("waterAccount")}
@@ -455,34 +475,57 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                 />
               </div>
             </Col>
+            {values.broker && (
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="commissionPercentage">
+                    {key("commissionPercentage")} (%)
+                  </label>
+                  <Field
+                    type="number"
+                    id="commissionPercentage"
+                    name="commissionPercentage"
+                  />
+                  <ErrorMessage
+                    name="commissionPercentage"
+                    component={InputErrorMessage}
+                  />
+                </div>
+              </Col>
+            )}
+            <Col sm={12}>
+              <div className={styles.photo_field}>
+                <h6 className="mb-3">{key("compoundImage")}</h6>
+                <label
+                  className={styles.photo_label_img}
+                  htmlFor="compoundImage"
+                >
+                  {imagePreviewUrl ? (
+                    <img
+                      src={imagePreviewUrl}
+                      alt="Uploaded Preview"
+                      className={styles.image_preview}
+                    />
+                  ) : (
+                    <img
+                      src={`${import.meta.env.VITE_Host}${compoundData.image}`}
+                      alt="old_image_Preview"
+                      className={styles.image_preview}
+                    />
+                  )}
+                </label>
+                <input
+                  type="file"
+                  id="compoundImage"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="d-none"
+                />
+                <ErrorMessage name="image" component={InputErrorMessage} />
+              </div>
+            </Col>
           </Row>
-          <div className={styles.photo_field}>
-            <h6 className="mb-3">{key("compoundImage")}</h6>
-            <label className={styles.photo_label_img} htmlFor="compoundImage">
-              {imagePreviewUrl ? (
-                <img
-                  src={imagePreviewUrl}
-                  alt="Uploaded Preview"
-                  className={styles.image_preview}
-                />
-              ) : (
-                <img
-                  src={`${import.meta.env.VITE_Host}${compoundData.image}`}
-                  alt="old_image_Preview"
-                  className={styles.image_preview}
-                />
-              )}
-            </label>
-            <input
-              type="file"
-              id="compoundImage"
-              name="image"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="d-none"
-            />
-            <ErrorMessage name="image" component={InputErrorMessage} />
-          </div>
 
           <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
             <button onClick={hideModal} className="cancel_btn my-2">

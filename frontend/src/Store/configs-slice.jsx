@@ -5,12 +5,13 @@ const configsSlice = createSlice({
   initialState: {
     mainColor: "#b62026",
     subColor: "#2D3A58",
-    instagramLink: "5",
-    twitterLink: "5",
-    whatsappNumber:"0",
+    instagramLink: "",
+    twitterLink: "",
+    whatsappNumber:"",
     email:"",
     messageCodeReminder:"",
-    whatsappMessage:""
+    whatsappMessage:"",
+    VAT:"0",
   },
   reducers: {
     setMainColor(state, action) {
@@ -30,6 +31,9 @@ const configsSlice = createSlice({
     },
     setEmail(state, action) {
       state.email = action.payload;
+    },
+    setVAT(state, action) {
+      state.VAT = action.payload;
     },
   },
 });

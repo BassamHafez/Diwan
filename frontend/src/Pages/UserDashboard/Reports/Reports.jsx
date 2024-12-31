@@ -61,15 +61,17 @@ const Reports = () => {
 
   useEffect(() => {
     setLandlordOptions(convertTpOptionsFormate(landlords?.data));
-    const additionalLabel = { label: key("all"), value: "all" };
+    // const additionalLabel = { label: key("all"), value: "all" };
 
-    const estatesOptions = convertTpOptionsFormate(estates?.data);
-    const compoundsOptions = convertTpOptionsFormate(
+    const myEstatesOptions = convertTpOptionsFormate(estates?.data);
+    const myCompoundsOptions = convertTpOptionsFormate(
       compounds?.data?.compounds
     );
 
-    setEstatesOptions([additionalLabel, ...estatesOptions]);
-    setCompoundsOptions([additionalLabel, ...compoundsOptions]);
+    // setEstatesOptions([additionalLabel, ...myEstatesOptions]);
+    // setCompoundsOptions([additionalLabel, ...myCompoundsOptions]);
+    setEstatesOptions([...myEstatesOptions]);
+    setCompoundsOptions([...myCompoundsOptions]);
   }, [estates, compounds, landlords, key]);
 
   let iconClass = isArLang ? "ms-2" : "me-2";

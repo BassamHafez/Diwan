@@ -23,6 +23,7 @@ const ReportsForm = ({
   getSearchData,
   type,
 }) => {
+
   const [isCompound, setIsCompound] = useState(false);
   const { t: key } = useTranslation();
 
@@ -316,7 +317,7 @@ const ReportsForm = ({
 
             <div className="d-flex  align-items-center mt-3 px-4">
               <CheckPermissions btnActions={[permissionArr]}>
-                <button className="submit_btn bg-main" type="submit">
+                <button className="submit_btn" type="submit">
                   {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
                   ) : (
