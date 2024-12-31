@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
+import { number, object, string } from "yup";
 import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -105,6 +105,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     address: "",
     tags: [],
     broker: "",
+    commissionPercentage: "",
     landlord: "",
   };
 
@@ -129,7 +130,9 @@ const AddCompound = ({ hideModal, refetch }) => {
     }
     if (values.broker) {
       formData.append("broker", values.broker);
+      formData.append("commissionPercentage", values.commissionPercentage || 0);
     }
+
     if (values.tags?.length > 0) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
@@ -175,8 +178,9 @@ const AddCompound = ({ hideModal, refetch }) => {
     region: string().required(key("fieldReq")),
     neighborhood: string().required(key("fieldReq")),
     address: string(),
-    broker: string(),
     lessor: string(),
+    broker: string(),
+    commissionPercentage: number(),
   });
 
   const handleFileChange = (e) => {
@@ -241,53 +245,6 @@ const AddCompound = ({ hideModal, refetch }) => {
                 <Field type="text" id="name" name="name" />
                 <ErrorMessage name="name" component={InputErrorMessage} />
               </div>
-
-              <div className="field mb-1">
-                <label htmlFor="description">
-                  {key("description")} {requiredLabel}
-                </label>
-                <Field
-                  className="text_area"
-                  as="textarea"
-                  id="description"
-                  name="description"
-                />
-                <ErrorMessage
-                  name="description"
-                  component={InputErrorMessage}
-                />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="tags">{key("searchKeys")}</label>
-                <CreatableSelect
-                  isClearable
-                  options={tagsOptions}
-                  isMulti
-                  onChange={(val) => setFieldValue("tags", val)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                  formatCreateLabel={(inputValue) =>
-                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                  }
-                />
-                <ErrorMessage name="tags" component={InputErrorMessage} />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="landlord">{key("landlord")}</label>
-                <Select
-                  id="landlord"
-                  name="landlord"
-                  options={landlordOptions}
-                  onChange={(val) => setFieldValue("landlord", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="landlord" component={InputErrorMessage} />
-              </div>
             </Col>
             <Col sm={6}>
               <div className="field mb-1">
@@ -312,7 +269,8 @@ const AddCompound = ({ hideModal, refetch }) => {
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label>
                   {key("city")} {requiredLabel}
@@ -332,7 +290,8 @@ const AddCompound = ({ hideModal, refetch }) => {
                 />
                 <ErrorMessage name="city" component="div" className="error" />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label>{key("district")}</label>
                 <Select
@@ -356,15 +315,50 @@ const AddCompound = ({ hideModal, refetch }) => {
                   className="error"
                 />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label htmlFor="address">{key("address")}</label>
                 <Field type="text" id="address" name="address" />
                 <ErrorMessage name="address" component={InputErrorMessage} />
               </div>
-
               <div className="field mb-1">
-                <label htmlFor="broker">{key("broker")}</label>
+                <label htmlFor="tags">{key("searchKeys")}</label>
+                <CreatableSelect
+                  isClearable
+                  options={tagsOptions}
+                  isMulti
+                  onChange={(val) => setFieldValue("tags", val)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? true : false}
+                  placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
+                />
+                <ErrorMessage name="tags" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="description">
+                  {key("description")} {requiredLabel}
+                </label>
+                <Field
+                  className="text_area"
+                  as="textarea"
+                  id="description"
+                  name="description"
+                />
+                <ErrorMessage
+                  name="description"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="broker">{key("agent")}</label>
                 <Select
                   id="broker"
                   name="broker"
@@ -377,35 +371,75 @@ const AddCompound = ({ hideModal, refetch }) => {
                 <ErrorMessage name="broker" component={InputErrorMessage} />
               </div>
             </Col>
-          </Row>
-          <div className={styles.photo_field}>
-            <h6 className="mb-3">{key("compoundImage")}</h6>
-            <label
-              className={
-                imagePreviewUrl ? styles.photo_label_img : styles.photo_label
-              }
-              htmlFor="compoundImage"
-            >
-              {imagePreviewUrl ? (
-                <img
-                  src={imagePreviewUrl}
-                  alt="Uploaded_image"
-                  className={styles.image_preview}
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="landlord">{key("theLandlord")}</label>
+                <Select
+                  id="landlord"
+                  name="landlord"
+                  options={landlordOptions}
+                  onChange={(val) => setFieldValue("landlord", val.value)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? true : false}
+                  placeholder={isArLang ? "" : "select"}
                 />
-              ) : (
-                <FontAwesomeIcon className={styles.img_icon} icon={faImage} />
-              )}
-            </label>
-            <input
-              type="file"
-              id="compoundImage"
-              name="image"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="d-none"
-            />
-            <ErrorMessage name="image" component={InputErrorMessage} />
-          </div>
+                <ErrorMessage name="landlord" component={InputErrorMessage} />
+              </div>
+            </Col>
+            {values.broker && (
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="commissionPercentage">
+                    {key("commissionPercentage")} (%)
+                  </label>
+                  <Field
+                    type="number"
+                    id="commissionPercentage"
+                    name="commissionPercentage"
+                  />
+                  <ErrorMessage
+                    name="commissionPercentage"
+                    component={InputErrorMessage}
+                  />
+                </div>
+              </Col>
+            )}
+            <Col sm={12}>
+              <div className={styles.photo_field}>
+                <h6 className="mb-3">{key("compoundImage")}</h6>
+                <label
+                  className={
+                    imagePreviewUrl
+                      ? styles.photo_label_img
+                      : styles.photo_label
+                  }
+                  htmlFor="compoundImage"
+                >
+                  {imagePreviewUrl ? (
+                    <img
+                      src={imagePreviewUrl}
+                      alt="Uploaded_image"
+                      className={styles.image_preview}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      className={styles.img_icon}
+                      icon={faImage}
+                    />
+                  )}
+                </label>
+                <input
+                  type="file"
+                  id="compoundImage"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="d-none"
+                />
+                <ErrorMessage name="image" component={InputErrorMessage} />
+              </div>
+            </Col>
+          </Row>
 
           <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
             <button onClick={hideModal} className="cancel_btn my-2">

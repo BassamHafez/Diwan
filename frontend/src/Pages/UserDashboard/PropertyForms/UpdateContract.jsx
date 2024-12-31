@@ -96,7 +96,6 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-    console.log(values);
     const updatedValues = {
       startDate: values.startDate,
       endDate: values.endDate,
@@ -127,6 +126,7 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
             refetch();
             refetchDetails();
             queryClient.invalidateQueries(["revenuesData", token]);
+            queryClient.invalidateQueries(["estates", token]);
             resetForm();
             hideModal();
           } else {

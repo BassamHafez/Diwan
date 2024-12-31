@@ -42,6 +42,9 @@ const fetchConfigs = () => {
       dispatch(
         configActions.setEmail(findConfigByKey(res?.data, "EMAIL")?.value)
       );
+      dispatch(
+        configActions.setVAT(findConfigByKey(res?.data, "VAT")?.value)
+      );
     } catch (error) {
       console.error(error);
     }

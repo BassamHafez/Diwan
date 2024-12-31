@@ -113,13 +113,25 @@ const CompoundDetails = () => {
 
   const compDetails = data?.data;
   const totalRev = Number(compDetails?.totalRevenue);
-  const totalEx = Number(compDetails?.totalExpense);
+  // const totalEx = Number(compDetails?.totalExpense);
+  const totalPaidEx = Number(compDetails?.totalPaidExpenses);
   const totalPaidRev = Number(compDetails?.totalPaidRevenues);
   const totalMonthRev = Number(compDetails?.totalMonthRevenue);
   const totalMonthPaidRev = Number(compDetails?.totalMonthPaidRevenues);
+  const commissionPercentage = Number(
+    compDetails?.compound?.commissionPercentage
+  );
+  const theCommissionVal = totalPaidRev * (commissionPercentage / 100);
+  const netIncomeVal =
+    totalRev > 0
+      ? convertNumbersToFixedTwo(totalPaidRev - totalPaidEx - theCommissionVal)
+      : 0;
 
   const checkIsAllowed = () => {
-    const isAllowed = checkAccountFeatures(accountInfo?.account, "allowedEstates");
+    const isAllowed = checkAccountFeatures(
+      accountInfo?.account,
+      "allowedEstates"
+    );
     if (!isAllowed) {
       notifyError(key("featureEnded"));
       return;
@@ -253,6 +265,64 @@ const CompoundDetails = () => {
                           </p>
                         </div>
                       </Col>
+                      {/* <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("totalIncome2")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(
+                              theCommissionVal + netIncomeVal
+                            )}{" "}
+                            {key("sarSmall")}
+                          </p>
+                        </div>
+                      </Col> */}
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("theCommission")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(theCommissionVal)}{" "}
+                            {key("sarSmall")}
+                          </p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>
+                            {key("netIncome")} {key("forEstates")}
+                          </span>
+                          <p>
+                            {netIncomeVal} {key("sarSmall")}
+                          </p>
+                        </div>
+                      </Col>
+                      <Col
+                        xs={6}
+                        sm={4}
+                        md={6}
+                        className="d-flex justify-content-center align-items-center"
+                      >
+                        <div className={styles.main_details}>
+                          <span>{key("operatingRatio")}</span>
+                          <p>
+                            {convertNumbersToFixedTwo(commissionPercentage)}%
+                          </p>
+                        </div>
+                      </Col>
                       <Col
                         xs={6}
                         sm={4}
@@ -264,9 +334,9 @@ const CompoundDetails = () => {
                             {key("netReturns")} {key("forEstates")}
                           </span>
                           <p>
-                            {totalRev > 0
+                            {totalPaidRev > 0
                               ? convertNumbersToFixedTwo(
-                                  ((totalRev - totalEx) / totalRev) * 100
+                                  (netIncomeVal / totalPaidRev) * 100
                                 )
                               : 0}
                             %
@@ -289,17 +359,6 @@ const CompoundDetails = () => {
                           </p>
                         </div>
                       </Col>
-                      {/* <Col
-                        xs={6}
-                        sm={4}
-                        md={6}
-                        className="d-flex justify-content-center align-items-center"
-                      >
-                        <div className={styles.main_details}>
-                          <span>{key("operatingRatio")}</span>
-                          <p>0%</p>
-                        </div>
-                      </Col> */}
                     </Row>
                   </div>
                 </Col>
