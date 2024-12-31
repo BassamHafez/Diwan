@@ -39,4 +39,20 @@ router.post(
   reportController.getContractsReport
 );
 
+// Compounds Reports
+
+router.post(
+  "/compounds",
+  authController.checkPermission("COMPOUNDS_REPORTS"),
+  reportValidator.validateCompoundsReport,
+  reportController.getCompoundsReport
+);
+
+router.post(
+  "/compound-details",
+  authController.checkPermission("COMPOUNDS_REPORTS"),
+  reportValidator.validateCompoundDetailsReport,
+  reportController.getCompoundDetailsReport
+);
+
 module.exports = router;

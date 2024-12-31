@@ -148,3 +148,65 @@ exports.validateContractsReport = [
 
   validatorMiddleware,
 ];
+
+exports.validateCompoundsReport = [
+  check("startDate")
+    .exists()
+    .withMessage("Start date is required")
+    .isDate()
+    .withMessage("Start date must be a valid date"),
+
+  check("endDate")
+    .exists()
+    .withMessage("End date is required")
+    .isDate()
+    .withMessage("End date must be a valid date")
+    .custom((endDate, { req }) => {
+      if (endDate <= req.body.startDate) {
+        throw new Error("End date must be after start date");
+      }
+
+      return true;
+    }),
+
+  check("compoundsIds")
+    .exists()
+    .withMessage("Compounds ids are required")
+    .isArray()
+    .withMessage("Compounds ids must be an array"),
+
+  check("compoundsIds.*").isMongoId().withMessage("Invalid compound id"),
+
+  check("landlord").optional().isMongoId().withMessage("Invalid landlord ID"),
+
+  validatorMiddleware,
+];
+
+exports.validateCompoundDetailsReport = [
+  check("startDate")
+    .exists()
+    .withMessage("Start date is required")
+    .isDate()
+    .withMessage("Start date must be a valid date"),
+
+  check("endDate")
+    .exists()
+    .withMessage("End date is required")
+    .isDate()
+    .withMessage("End date must be a valid date")
+    .custom((endDate, { req }) => {
+      if (endDate <= req.body.startDate) {
+        throw new Error("End date must be after start date");
+      }
+
+      return true;
+    }),
+
+  check("compoundId")
+    .exists()
+    .withMessage("Compound ID is required")
+    .isMongoId()
+    .withMessage("Invalid compound ID"),
+
+  validatorMiddleware,
+];
