@@ -18,6 +18,7 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import PrintContractsReport from "../../../Components/Prints/PrintContractsReport";
 import Select from "react-select";
+import MainTitle from "../../../Components/UI/Words/MainTitle";
 
 const OperationalReport = ({
   compoundsOptions,
@@ -91,7 +92,9 @@ const OperationalReport = ({
   return (
     <>
       <div>
-        <h2 className="my-3">{key("contractsReport")}</h2>
+        <div className="my-3">
+          <MainTitle>{key("contractsReport")}</MainTitle>
+        </div>
         <div className="p-md-5">
           <ReportsForm
             landlordOptions={landlordOptions}
@@ -105,7 +108,7 @@ const OperationalReport = ({
         <hr />
 
         <div>
-          <h4>{key("contracts")}</h4>
+          <MainTitle>{key("contracts")}</MainTitle>
           <div className={styles.header}>
             <Select
               options={

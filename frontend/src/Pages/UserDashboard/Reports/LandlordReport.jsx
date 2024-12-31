@@ -18,6 +18,7 @@ import PrintFinancialReport from "../../../Components/Prints/PrintFinancialRepor
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Select from "react-select";
+import MainTitle from "../../../Components/UI/Words/MainTitle";
 
 const LandlordReport = ({
   compoundsOptions,
@@ -128,9 +129,11 @@ const LandlordReport = ({
   return (
     <>
       <div>
-        <h2 className="my-3">
-          {key(filterType)} ({key("theLandlord")})
-        </h2>
+        <div className="my-3">
+          <MainTitle>
+            {key(filterType)} ({key("theLandlord")})
+          </MainTitle>
+        </div>
         <div className="p-md-5">
           <ReportsForm
             landlordOptions={landlordOptions}
@@ -144,11 +147,14 @@ const LandlordReport = ({
         <hr />
 
         <div>
-          <h4>
-            {filterType === "paymentsReport"
-              ? key("revenuesAndExpenses")
-              : key("incomePerEstate")}
-          </h4>
+          <div className="my-3">
+            <MainTitle>
+              {filterType === "paymentsReport"
+                ? key("revenuesAndExpenses")
+                : key("incomePerEstate")}
+            </MainTitle>
+          </div>
+
           {combinedData && combinedData?.length > 0 && (
             <div className={styles.header}>
               <Select

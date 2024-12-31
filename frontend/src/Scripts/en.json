@@ -139,6 +139,7 @@
   "noDetails": "No details right now",
 
   "totalIncome": "Total Income",
+  "totalIncome2":"Total Income",
   "totalPaidCosts": "Paid Expenses",
   "totalUnPaidCosts": "Unpaid Expenses",
   "collectionRatio": "Collection Ratio",
@@ -595,6 +596,10 @@
   "noSubscription": "No active subscription",
   "remainingTime":"Remaining Time",
   "subExpired":"Your current package has ended. To continue enjoying our services, please renew your package",
+  "commissionPercentage":"Commission Percentage",
+  "netIncome":"Net Income",
+  "VAT":"VAT",
+  "positiveValidation":"only positive numbers",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
+import { number, object, string } from "yup";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner, faSquare } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -33,12 +33,17 @@ const UpdateConfigs = () => {
     TWITTER: configs?.twitterLink || "",
     WHATSAPP: configs?.whatsappNumber || "",
     EMAIL: configs?.email || "",
+    VAT:Number(configs?.VAT?.trim()) || 0
   };
 
   const onSubmit = (values, { resetForm }) => {
+
+    const updatedValues={...values};
+    updatedValues.VAT=updatedValues.VAT?.toString();
+
     mutate(
       {
-        formData: values,
+        formData: updatedValues,
         token: token,
         method: "patch",
         type: "configs",
@@ -86,6 +91,7 @@ const UpdateConfigs = () => {
       .matches(/^((966)|00966)?5\d{8}$/, key("invalidWhatsApp"))
       .nullable(),
     EMAIL: string().email(key("invalidEmail")).nullable(),
+    VAT: number().min(0,key("positiveValidation")).nullable(),
   });
 
   return (
@@ -156,6 +162,13 @@ const UpdateConfigs = () => {
                 <label htmlFor="WHATSAPP">{key("WHATSAPP")}</label>
                 <Field type="text" id="WHATSAPP" name="WHATSAPP" />
                 <ErrorMessage name="WHATSAPP" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field ltr_input">
+                <label htmlFor="VAT">{key("VAT")} (%)</label>
+                <Field type="number" id="VAT" name="VAT" />
+                <ErrorMessage name="VAT" component={InputErrorMessage} />
               </div>
             </Col>
           </Row>

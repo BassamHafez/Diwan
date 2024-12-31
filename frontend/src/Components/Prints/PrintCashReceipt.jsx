@@ -1,8 +1,13 @@
 import { useTranslation } from "react-i18next";
 import styles from "./PrintContract.module.css";
-import { formattedDate, renamedPaymentMethod } from "../Logic/LogicFun";
+import {
+  convertNumbersToFixedTwo,
+  formattedDate,
+  renamedPaymentMethod,
+} from "../Logic/LogicFun";
 import PrintHeader from "./PrintHeader";
 import MainTitle from "../UI/Words/MainTitle";
+import { useSelector } from "react-redux";
 
 const PrintCashReceipt = ({
   revDetails,
@@ -15,11 +20,18 @@ const PrintCashReceipt = ({
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const mainTitle = isTax ? key("taxInvoice") : key("cashReceipt");
-  const calculateTotalAmount = (baseAmount) => {
-    const taxNumber = 15;
+  const VAT = useSelector((state) => state.configs?.VAT);
+
+  const calculateTotalAmount = (baseAmount, type) => {
     const baseNum = Number(baseAmount);
-    return baseNum + (taxNumber / 100) * baseNum;
+    const VATVal = (Number(VAT) / 100) * baseNum;
+    if (type === "vat") {
+      return VATVal;
+    } else {
+      return baseNum + VATVal;
+    }
   };
+
   return (
     <div className={styles.container_body} id={id}>
       <PrintHeader
@@ -52,7 +64,12 @@ const PrintCashReceipt = ({
                     ? key("baseAmount")
                     : `${key("amount")} ${key("sarSmall")}`}
                 </th>
-                {isTax && <th>{key("total")}</th>}
+                {isTax && (
+                  <>
+                    <th>{key("VAT")}</th>
+                    <th>{key("total")}</th>
+                  </>
+                )}
                 <th>{key("dueDate")}</th>
                 <th>{key("paidAt")}</th>
                 <th>{key("paymentMethod")}</th>
@@ -61,7 +78,16 @@ const PrintCashReceipt = ({
             <tbody className={styles.table_body}>
               <tr>
                 <td>{revDetails?.amount}</td>
-                {isTax && <td>{calculateTotalAmount(revDetails?.amount)}</td>}
+                {isTax && (
+                  <>
+                    <td>{calculateTotalAmount(revDetails?.amount, "vat")}</td>
+                    <td>
+                      {convertNumbersToFixedTwo(
+                        calculateTotalAmount(revDetails?.amount)
+                      )}
+                    </td>
+                  </>
+                )}
                 <td>{formattedDate(revDetails?.dueDate)}</td>
                 <td>{formattedDate(revDetails?.paidAt)}</td>
                 <td>
