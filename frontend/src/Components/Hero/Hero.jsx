@@ -59,6 +59,7 @@ const Hero = () => {
                 height="25rem"
                 hash={imgHash.hero1}
                 alt="heroBuilding"
+                lazyLoad={false}
               />
             </div>
           </div>
@@ -76,6 +77,7 @@ const Hero = () => {
                 height="18.75rem"
                 hash={imgHash.hero2}
                 alt="heroBuilding2"
+                lazyLoad={false}
               />
             </div>
           </div>

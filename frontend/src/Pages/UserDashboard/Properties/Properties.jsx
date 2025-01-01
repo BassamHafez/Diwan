@@ -52,15 +52,15 @@ const Properties = () => {
   const token = JSON.parse(localStorage.getItem("token"));
   const role = useSelector((state) => state.userInfo.role);
   const accountInfo = useSelector((state) => state.accountInfo.data);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const notifyError = (message) => toast.error(message);
-  
-  useEffect(()=>{
-    if(role==="admin"){
-      navigate("/admin-packages")
+
+  useEffect(() => {
+    if (role === "admin") {
+      navigate("/admin-packages");
     }
-  },[role,navigate])
-  
+  }, [role, navigate]);
+
   const {
     data: compounds,
     isFetching: fetchingCompounds,
@@ -69,7 +69,7 @@ const Properties = () => {
     queryKey: ["compounds", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: selectedFilter === "compounds" &&!!token,
+    enabled: selectedFilter === "compounds" && !!token,
     staleTime: Infinity,
   });
 
@@ -117,9 +117,9 @@ const Properties = () => {
       if (val === "bookmarked") {
         refetchBookmarked();
       }
-      if(val==="compounds"){
-        refetchCompound()
-      }
+      // if(val==="compounds"){
+      //   refetchCompound()
+      // }
     }
   };
 
@@ -272,6 +272,11 @@ const Properties = () => {
         type="estate"
       />
     );
+  };
+
+  const refetchEstatesAndCompounds = () => {
+    refetchEstate();
+    refetchCompound();
   };
 
   return (
@@ -829,7 +834,7 @@ const Properties = () => {
         >
           <AddEstate
             hideModal={() => setShowAddEstateModal(false)}
-            refetch={refetchEstate}
+            refetch={refetchEstatesAndCompounds}
           />
         </ModalForm>
       )}

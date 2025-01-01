@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "../Auth.module.css";
 import LoginForm from "./LoginForm";
-import loginImg from "../../../assets/signin.png";
+import loginImg from "../../../assets/signin.webp";
 import { useEffect } from "react";
 import AOS from "aos";
 

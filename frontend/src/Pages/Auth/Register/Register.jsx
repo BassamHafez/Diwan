@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styles from "../Auth.module.css";
-import registerImg from "../../../assets/register.png";
+import registerImg from "../../../assets/register.webp";
 import { useEffect } from "react";
 import AOS from "aos";
 import RegisterForm from "./RegisterForm";

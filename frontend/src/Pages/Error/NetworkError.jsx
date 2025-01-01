@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import noConnectionImg from "../../assets/noConnection.png";
+import noConnectionImg from "../../assets/noConnection.webp";
 import ButtonOne from "../../Components/UI/Buttons/ButtonOne";
 
 const NetworkError = (props) => {

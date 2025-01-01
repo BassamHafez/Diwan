@@ -28,7 +28,8 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "../Contacts/ContactForms/AddContactForm";
 
-const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
+const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) => {
+
   const [tenantsOptions, setTenantsOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
@@ -115,6 +116,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
 
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
+    settingIsLoading(true)
     mutate(
       {
         formData: values,
@@ -135,9 +137,9 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
           if (data?.status === "success") {
             notifySuccess(key("addedSuccess"));
             refetch();
-            refetchDetails()
-            queryClient.invalidateQueries(["revenuesData", token]);
+            refetchDetails();
             queryClient.invalidateQueries(["estates", token]);
+            queryClient.invalidateQueries(["compounds", token]);
             resetForm();
             hideModal();
           } else {
@@ -150,6 +152,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
         },
       }
     );
+    settingIsLoading(false)
   };
 
   const validationSchema = object({
@@ -205,6 +208,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails }) => {
       notifyError("fillReq");
     }
   };
+
   return (
     <>
       <Formik

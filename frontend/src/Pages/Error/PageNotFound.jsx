@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import notFoundImg from "../../assets/error404.png";
+import notFoundImg from "../../assets/error404.webp";
 
 const PageNotFound = () => {
   const { t: key } = useTranslation();

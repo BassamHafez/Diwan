@@ -6,6 +6,11 @@ import { mainAlertTime } from "./StaticLists";
 
 // main fun
 
+export const preloadImage = (src) => {
+  const img = new Image();
+  img.src = src;
+};
+
 const notifyAlert = () =>
   toast.warn(<VerifyPhoneAlert isModalAlert={true} />, {
     autoClose: false,

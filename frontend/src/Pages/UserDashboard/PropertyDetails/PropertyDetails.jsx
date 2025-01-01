@@ -30,10 +30,10 @@ import {
 } from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import TaskContent from "../Tasks/TaskContent";
-import defaultHouseImage from "../../../assets/default-estate.png";
 
 const PropertyDetails = () => {
   const { t: key } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
   const token = useSelector((state) => state.userInfo.token);
   const { propId } = useParams();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -124,7 +124,7 @@ const PropertyDetails = () => {
         token: token,
       });
       console.log(res);
-      if (res.data.status === "success") {
+      if (res?.data?.status === "success") {
         setIsMarked(false);
         refetch();
         notifySuccess(key("removedSucc"));
@@ -149,12 +149,14 @@ const PropertyDetails = () => {
   };
 
   const myData = data?.data;
-
+  const settingIsLoading = (bol) => {
+    setIsLoading(bol);
+  };
   return (
     <>
       <ScrollTopBtn />
       <div className="height_container">
-        {!data ? (
+        {!data || isLoading ? (
           <LoadingOne />
         ) : data ? (
           <div className={styles.detials_content}>
@@ -210,13 +212,9 @@ const PropertyDetails = () => {
                     data-aos-duration="1000"
                   >
                     <img
-                      src={
+                      src={`${import.meta.env.VITE_Host}${
                         myData?.estate?.image
-                          ? `${import.meta.env.VITE_Host}${
-                              myData?.estate?.image
-                            }`
-                          : defaultHouseImage
-                      }
+                      }`}
                       alt="unit_img"
                     />
                   </div>
@@ -437,6 +435,7 @@ const PropertyDetails = () => {
                     details={myData?.estate}
                     estateParentCompound={myData?.compound}
                     refetch={refetch}
+                    settingIsLoading={settingIsLoading}
                   />
                 </Tab>
 

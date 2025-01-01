@@ -1,6 +1,5 @@
 import Col from "react-bootstrap/esm/Col";
 import styles from "./Property.module.css";
-import defaultHouseImg from "../../assets/default-estate.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
@@ -24,7 +23,7 @@ const Property = ({
   rentedEstatesCountObj,
 }) => {
   const parentCompound = property.compound ? property.compound : property;
-  const isTimeExpired= useSelector((state) => state.packageTime.isTimeExpired);
+  const isTimeExpired = useSelector((state) => state.packageTime.isTimeExpired);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
   const navigate = useNavigate();
@@ -84,7 +83,9 @@ const Property = ({
         className="d-flex justify-content-center align-items-center"
       >
         <div
-          className={`${styles.property_body} ${isTimeExpired===true?"expired":""}`}
+          className={`${styles.property_body} ${
+            isTimeExpired === true ? "expired" : ""
+          }`}
           data-aos="fade-up"
           data-aos-duration="1000"
         >
@@ -100,17 +101,13 @@ const Property = ({
             <ImgComponent
               width="22.5rem"
               height="15rem"
-              src={
-                property.image
-                  ? `${import.meta.env.VITE_Host}${property?.image}`
-                  : defaultHouseImg
-              }
+              src={`${import.meta.env.VITE_Host}${property?.image}`}
               lazyLoad={true}
               hash={imgHash.defaultImg}
               alt={"propertyImage"}
             />
           </div>
-
+          {/* `${import.meta.env.VITE_Host}${property?.image}` */}
           <div className={styles.card_caption}>
             <h4>{property.name}</h4>
             {!hideStatus && (
