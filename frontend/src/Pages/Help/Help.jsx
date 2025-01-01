@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import help from "../../assets/help.jpg";
+import help from "../../assets/help.webp";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 

@@ -44,6 +44,7 @@ const GeneralDetails = memo(
     compoundEstates,
     showAddEstatesModal,
     refetch,
+    settingIsLoading
   }) => {
     const parentCompound =
       !isCompound && estateParentCompound ? estateParentCompound : details;
@@ -329,8 +330,8 @@ const GeneralDetails = memo(
                   <FontAwesomeIcon className="color-main" icon={faCaretDown} />
                 </div>
                 <Row>
-                  {details.tags?.length > 0 ? (
-                    details.tags.map((tag, index) => (
+                  {details?.tags?.length > 0 ? (
+                    details?.tags.map((tag, index) => (
                       <Col key={`${tag}_${index}`} sm={3}>
                         <div className={styles.tag}>
                           <span>{tag}</span>
@@ -366,6 +367,7 @@ const GeneralDetails = memo(
                 details={details}
                 estateParentCompound={estateParentCompound}
                 refetchDetails={refetch}
+                settingIsLoading={settingIsLoading}
               />
               <Revenue
                 refetchDetails={refetch}

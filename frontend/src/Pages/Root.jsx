@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useIsOnline from "../hooks/useIsOnline";
 import AdminMainContainer from "./Admin/AdminMainContainer/AdminMainContainer";
 import NetworkError from "./Error/NetworkError";
-import noConnectionImg from "../assets/noConnection.png";
+import noConnectionImg from "../assets/noConnection.webp";
 import { useEffect } from "react";
 import {
   calculateRemainingTime,

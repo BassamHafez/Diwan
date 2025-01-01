@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import notFoundImg from "../../assets/mainError.png";
+import notFoundImg from "../../assets/mainError.webp";
 import { Link, useNavigate } from "react-router-dom";
 
 const MainError = () => {

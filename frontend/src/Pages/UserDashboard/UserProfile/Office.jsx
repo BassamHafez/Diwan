@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import UpdateAccountData from "./ProfileForms/UpdateAccountData";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import officeImg from "../../../assets/office.png";
+import officeImg from "../../../assets/office.webp";
 
 const Office = () => {
   const { t: key } = useTranslation();
@@ -20,7 +20,7 @@ const Office = () => {
   let myAccount = accountInfo?.account;
 
   return (
-    <>  
+    <>
       {myAccount?.name ? (
         <>
           <div className={`${styles.container} d-flex align-items-center`}>
@@ -86,7 +86,7 @@ const Office = () => {
         </>
       ) : (
         <div className="d-flex align-items-center justify-content-center flex-column">
-          <img className={styles.officeImg} src={officeImg} alt="officeImg"/>
+          <img className={styles.officeImg} src={officeImg} alt="officeImg" />
           <h5 className="my-4 text-secondary">{key("updateYourOffice")}</h5>
           <ButtonOne
             text={`${key("update")} ${key("office")}`}

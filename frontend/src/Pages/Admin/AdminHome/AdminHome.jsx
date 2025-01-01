@@ -27,8 +27,8 @@ import cash from "../../../assets/icons/cash.png";
 import transaction from "../../../assets/icons/transaction.png";
 import office from "../../../assets/icons/office.png";
 import accounts from "../../../assets/icons/accounts.png";
-import topOffice from "../../../assets/topOffice.jpg";
-import popular from "../../../assets/popular.jpg";
+import topOffice from "../../../assets/topOffice.webp";
+import popular from "../../../assets/popular.webp";
 import NoData from "../../../Components/UI/Blocks/NoData";
 
 const AdminHome = () => {

@@ -7,7 +7,7 @@ import { contractStatusOptions } from "../../../Components/Logic/StaticLists";
 import { useCallback, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   mainDeleteFunHandler,
   mainFormsHandlerTypeFormData,
@@ -31,7 +31,7 @@ import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
+const Contracts = ({ details, estateParentCompound, refetchDetails,settingIsLoading }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -48,6 +48,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const currentLang = isArLang ? "ar" : "en";
+  const queryClient=useQueryClient();
 
   const {
     data: contractsData,
@@ -90,6 +91,8 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
       if (res.status === 204 || res.status === 200) {
         refetch();
         refetchDetails();
+        queryClient.invalidateQueries(["estates", token]);
+        queryClient.invalidateQueries(["compounds", token]);
         notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -323,6 +326,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
             hideModal={() => setShowAddContractModal(false)}
             refetch={refetch}
             refetchDetails={refetchDetails}
+            settingIsLoading={settingIsLoading}
           />
         </ModalForm>
       )}
