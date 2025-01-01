@@ -59,6 +59,7 @@ exports.getStats = catchAsync(async (req, res, next) => {
 
   const tasksFilter = {
     account: accountId,
+    isCompleted: false,
     date: {
       $lte: new Date().setHours(23, 59, 59, 999),
     },
