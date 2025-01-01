@@ -1,7 +1,7 @@
-import noDataImg from "../../../assets/noData.jpg";
+import noDataImg from "../../../assets/noData.webp";
 import finishTasks from "../../../assets/finishTasks.jpg";
-import noExpenses from "../../../assets/noExpenses.png";
-import estate from "../../../assets/estate.jpg";
+import noExpenses from "../../../assets/noExpenses.webp";
+import estate from "../../../assets/estate.webp";
 
 import styles from "./NoData.module.css";
 
