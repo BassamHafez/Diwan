@@ -127,6 +127,7 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
             refetchDetails();
             queryClient.invalidateQueries(["revenuesData", token]);
             queryClient.invalidateQueries(["estates", token]);
+            queryClient.invalidateQueries(["compounds", token]);
             resetForm();
             hideModal();
           } else {
