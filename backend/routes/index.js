@@ -19,6 +19,7 @@ const reportRoutes = require("../routes/reportRoutes");
 const statsRoutes = require("../routes/statsRoutes");
 const configRoutes = require("../routes/configRoutes");
 const testimonialRoutes = require("../routes/testimonialRoutes");
+const supportRoutes = require("../routes/supportRoutes");
 
 const mountRoutes = (app) => {
   app.use("/api/v1/auth", authRoutes);
@@ -42,6 +43,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/stats", statsRoutes);
   app.use("/api/v1/configs", configRoutes);
   app.use("/api/v1/testimonials", testimonialRoutes);
+  app.use("/api/v1/support", supportRoutes);
 };
 
 module.exports = mountRoutes;
