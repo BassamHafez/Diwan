@@ -214,7 +214,7 @@ const CompoundDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("totalProperties")}</span>
-                          <p>{compDetails?.estates?.length}</p>
+                          <p>{compDetails?.estates?.length||compDetails?.compound?.estatesCount||0}</p>
                         </div>
                       </Col>
                       <Col

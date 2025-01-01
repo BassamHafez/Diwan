@@ -17,6 +17,7 @@ const PrintFinancialReport = ({
   expenses,
   combinedData,
   dataEnteried,
+  isCompoundsReport,
 }) => {
   const { t: key } = useTranslation();
 
@@ -39,11 +40,16 @@ const PrintFinancialReport = ({
   );
 
   return (
-    <div className={styles.container_body} id={filterType}>
-      <PrintNavBar title={key("contractsReport")} />
+    <div
+      className={styles.container_body}
+      id={isCompoundsReport ? "compoundsReport" : filterType}
+    >
+      <PrintNavBar title={isCompoundsReport?key("compoundsReport"):key(filterType)} />
       <ReportsDetailsHeader dataEnteried={dataEnteried} />
       <div className={styles.information}>
-        <h5 className="my-4">{key("incomePerEstate")}</h5>
+        <h5 className="my-4">
+          {isCompoundsReport ? key("compounds") : key("incomePerEstate")}
+        </h5>
 
         <div className="scrollableTable">
           <table className={`${styles.contract_table} table`}>
@@ -64,7 +70,11 @@ const PrintFinancialReport = ({
                   filterType === "incomeReport" ? (
                     <tr key={index}>
                       <td>{key(item.category)}</td>
-                      <td>{item.estateName || "-"}</td>
+                      <td>
+                        {(isCompoundsReport
+                          ? item.compoundName
+                          : item.estateName) || "-"}
+                      </td>
                       <td>{item.total}</td>
                     </tr>
                   ) : filterType === "incomeReportDetails" ? (

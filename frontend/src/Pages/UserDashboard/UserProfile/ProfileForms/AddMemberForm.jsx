@@ -9,7 +9,7 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { useDispatch, useSelector } from "react-redux";
 import fetchAccountData from "../../../../Store/accountInfo-actions";
-import CreatableSelect from "react-select/creatable";
+import Select from "react-select";
 import { useEffect, useState } from "react";
 import {
   mainFormsHandlerTypeFormData,
@@ -71,11 +71,12 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-
-    const updatedValues={...values};
+    const updatedValues = { ...values };
 
     if (updatedValues.permissions) {
-      updatedValues.permissions = updatedValues.permissions.map((perm) => perm.value);
+      updatedValues.permissions = updatedValues.permissions.map(
+        (perm) => perm.value
+      );
     }
     if (updatedValues.permittedCompounds) {
       updatedValues.permittedCompounds = updatedValues.permittedCompounds.map(
@@ -182,17 +183,14 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
                 <label htmlFor="permissions">
                   {key("permissions")} {requiredLabel}
                 </label>
-                <CreatableSelect
+                <Select
                   isClearable
                   options={permissionsOptions}
                   isMulti
                   onChange={(val) => setFieldValue("permissions", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                  formatCreateLabel={(inputValue) =>
-                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                  }
+                  placeholder=""
                 />
                 <ErrorMessage
                   name="permissions"
@@ -205,17 +203,14 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
                 <label htmlFor="permittedCompounds">
                   {key("permittedCompounds")}
                 </label>
-                <CreatableSelect
+                <Select
                   isClearable
                   options={compoundsOptions}
                   isMulti
                   onChange={(val) => setFieldValue("permittedCompounds", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                  formatCreateLabel={(inputValue) =>
-                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                  }
+                  placeholder=""
                 />
                 <ErrorMessage
                   name="permittedCompounds"

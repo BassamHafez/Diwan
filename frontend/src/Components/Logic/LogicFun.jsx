@@ -456,7 +456,9 @@ export const calculateRemainingTime = (
 
   if (monthsLeft > 0) {
     return monthsLeft > 1
-      ? `${monthsLeft} ${months || ""} (${remainingDays} ${days || ""})`
+      ? `${monthsLeft} ${months || ""} ${
+          remainingDays > 0 ? `(${remainingDays} ${days || ""})` : ""
+        }`
       : `${oneMonth || ""} ${
           remainingDays > 0 ? `(${remainingDays} ${days || ""})` : ""
         }`;

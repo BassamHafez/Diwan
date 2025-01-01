@@ -23,7 +23,6 @@ const ReportsForm = ({
   getSearchData,
   type,
 }) => {
-
   const [isCompound, setIsCompound] = useState(false);
   const { t: key } = useTranslation();
 
@@ -106,9 +105,9 @@ const ReportsForm = ({
         break;
     }
 
-    const printDataValues={
-      ...updatedValues
-    }
+    const printDataValues = {
+      ...updatedValues,
+    };
     if (!isCompound && values.estate) {
       printDataValues.estate = values.estate?.label;
     } else if (isCompound && values.compound) {
@@ -127,7 +126,7 @@ const ReportsForm = ({
           console.log(data);
           if (data?.status === "success") {
             if (type === "contractsReport") {
-              getSearchData(data.data, printDataValues);
+              getSearchData(data?.data, printDataValues);
             } else {
               getSearchData(
                 data.data?.expenses,
