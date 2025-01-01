@@ -17,14 +17,10 @@ exports.createContractValidator = [
   check("startDate")
     .exists()
     .withMessage("Start date is required")
-    .isISO8601()
-    .withMessage("Start date must be a valid date in the format YYYY-MM-DD")
+    .isDate()
+    .withMessage("Start date must be a valid date")
     .custom((startDate, { req }) => {
-      if (startDate < Date.now()) {
-        throw new Error("Start date must be a future date");
-      }
-
-      if (startDate > req.body.endDate) {
+      if (new Date(startDate) >= new Date(req.body.endDate)) {
         throw new Error("Start date must be before end date");
       }
 
@@ -34,14 +30,14 @@ exports.createContractValidator = [
   check("endDate")
     .exists()
     .withMessage("End date is required")
-    .isISO8601()
-    .withMessage("End date must be a valid date in the format YYYY-MM-DD")
+    .isDate()
+    .withMessage("End date must be a valid date")
     .custom((endDate, { req }) => {
-      if (endDate < Date.now()) {
+      if (new Date(endDate) <= new Date().setHours(23, 59, 59, 999)) {
         throw new Error("End date must be a future date");
       }
 
-      if (endDate < req.body.startDate) {
+      if (new Date(endDate) <= new Date(req.body.startDate)) {
         throw new Error("End date must be after start date");
       }
 
