@@ -61,8 +61,7 @@ const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
     [key("estate")]: compoundInfo?.name || "-",
     [key("region")]: compoundInfo?.region || "-",
     [key("totalProperties")]: compoundInfo?.estatesCount || "-",
-    [`${key("collectionRatio")} (%)`]:
-      collectionRatioVal || "-",
+    [`${key("collectionRatio")} (%)`]: collectionRatioVal || "-",
     [`${key("theCommission")} (${key("sarSmall")})`]: theCommissionVal || "0",
     [`${key("netIncome")} (${key("sarSmall")})`]: netIncomeVal || "-",
     [`${key("operatingRatio")} (%)`]:

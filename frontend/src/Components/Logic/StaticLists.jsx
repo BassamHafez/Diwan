@@ -464,16 +464,6 @@ export const contractsReportTable = [
 ];
 
 export const compoundsReportTable = ["category", "estate", "total"];
-export const compoundDetailsReport = [
-  "estate",
-  "region",
-  "totalProperties",
-  "collectionRatio",
-  "theCommission",
-  "netIncome",
-  "operatingRatio",
-  "netReturns",
-];
 
 //dummy data
 export const chartsData = [

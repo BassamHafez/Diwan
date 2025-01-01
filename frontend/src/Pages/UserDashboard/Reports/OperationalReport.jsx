@@ -89,6 +89,56 @@ const OperationalReport = ({
     };
   });
 
+  const operationalTable = (
+    <table className={`${styles.contract_table} table`}>
+      <thead className={styles.table_head}>
+        <tr>
+          {contractsReportTable?.map((title, index) => (
+            <th key={`${title}_${index}`}>{key(title)}</th>
+          ))}
+        </tr>
+      </thead>
+
+      <tbody className={styles.table_body}>
+        {filteredResults?.length > 0 ? (
+          filteredResults?.map((item, index) => (
+            <tr key={index}>
+              <td>{item.estate?.name || item.compound?.name || "-"}</td>
+              <td>{item.tenant?.name || "-"}</td>
+              <td>{formattedDate(item.startDate || "-")}</td>
+              <td>{formattedDate(item.endDate || "-")}</td>
+              <td>{item.totalAmount}</td>
+              <td>
+                <span
+                  className={`${getStatusBgColor(item.status)} ${
+                    styles.status_span
+                  }`}
+                >
+                  {renamedContractStatus(item.status, currentLang)}
+                </span>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td
+              colSpan={`${contractsReportTable.length || "5"}`}
+              className="py-5"
+            >
+              <div className="d-flex flex-column justify-content-center align-items-center">
+                <FontAwesomeIcon
+                  className="fs-1 text-secondary mb-3"
+                  icon={faCircleInfo}
+                />
+                <span className="mini_word">{key("noDetails")}</span>
+              </div>
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  );
+
   return (
     <>
       <div>
@@ -160,55 +210,7 @@ const OperationalReport = ({
               )}
             </div>
           </div>
-          <div className="scrollableTable">
-            <table className={`${styles.contract_table} table`}>
-              <thead className={styles.table_head}>
-                <tr>
-                  {contractsReportTable.map((title, index) => (
-                    <th key={`${title}_${index}`}>{key(title)}</th>
-                  ))}
-                </tr>
-              </thead>
-
-              <tbody className={styles.table_body}>
-                {filteredResults.length > 0 ? (
-                  filteredResults.map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.estate?.name || item.compound?.name || "-"}</td>
-                      <td>{item.tenant?.name || "-"}</td>
-                      <td>{formattedDate(item.startDate || "-")}</td>
-                      <td>{formattedDate(item.endDate || "-")}</td>
-                      <td>{item.totalAmount}</td>
-                      <td>
-                        <span
-                          className={`${getStatusBgColor(item.status)} ${
-                            styles.status_span
-                          }`}
-                        >
-                          {renamedContractStatus(item.status, currentLang)}
-                        </span>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={`${contractsReportTable.length || "5"}`}
-                      className="py-5"
-                    >
-                      <div className="d-flex flex-column justify-content-center align-items-center">
-                        <FontAwesomeIcon
-                          className="fs-1 text-secondary mb-3"
-                          icon={faCircleInfo}
-                        />
-                        <span className="mini_word">{key("noDetails")}</span>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+          <div className="scrollableTable">{operationalTable}</div>
         </div>
       </div>
       <div className="d-none">
@@ -216,6 +218,7 @@ const OperationalReport = ({
           id={`contractsReport_${dataEnteried?.startDueDate}`}
           contractsData={contractsData}
           dataEnteried={dataEnteried}
+          operationalTable={operationalTable}
         />
       </div>
     </>
