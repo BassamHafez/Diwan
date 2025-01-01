@@ -43,7 +43,9 @@ exports.createContract = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
   const newStartDate = new Date(req.body.startDate);
+  newStartDate.setHours(0, 0, 0, 0);
   const newEndDate = new Date(req.body.endDate);
+  newEndDate.setHours(23, 59, 59, 999);
 
   if (newStartDate >= newEndDate) {
     return next(new ApiError("Start date must be before end date", 400));
@@ -52,8 +54,8 @@ exports.createContract = catchAsync(async (req, res, next) => {
   const [overlappingContract, tenant] = await Promise.all([
     Contract.findOne({
       estate: estateId,
-      startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
-      endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
+      startDate: { $lte: newEndDate },
+      endDate: { $gte: newStartDate },
       isCanceled: false,
     })
       .select("_id")
@@ -75,14 +77,9 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("No tenant found with that ID", 404));
   }
 
-  // const isActiveContract =
-  //   newStartDate <= Date.now() && newEndDate >= Date.now();
+  const now = new Date();
 
-  const today = new Date().toLocaleDateString();
-
-  const isActiveContract =
-    newStartDate.toLocaleDateString() <= today &&
-    newEndDate.toLocaleDateString() >= today;
+  const isActiveContract = newStartDate <= now && newEndDate >= now;
 
   const estate = isActiveContract
     ? await Estate.findByIdAndUpdate(estateId, { status: "rented" })
@@ -106,8 +103,8 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const contract = await Contract.create({
     ...req.body,
-    startDate: newStartDate.setHours(0, 0, 0, 0),
-    endDate: newEndDate.setHours(23, 59, 59, 999),
+    startDate: newStartDate,
+    endDate: newEndDate,
     status: isActiveContract ? "active" : "upcoming",
     estate: estateId,
     account: req.user.account,
@@ -115,11 +112,8 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
   const scheduledMissionPromise = ScheduledMission.create({
     type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
-    // scheduledAt: isActiveContract ? newEndDate : newStartDate,
-    scheduledAt: isActiveContract
-      ? newEndDate.setHours(23, 59, 59, 999)
-      : newStartDate.setHours(0, 0, 0, 0),
-    contractEndDate: newEndDate.setHours(23, 59, 59, 999),
+    scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    contractEndDate: newEndDate,
     estate: estateId,
     contract: contract._id,
   });
@@ -229,7 +223,9 @@ exports.updateContract = catchAsync(async (req, res, next) => {
   const { estateId, id } = req.params;
 
   const newStartDate = new Date(req.body.startDate);
+  newStartDate.setHours(0, 0, 0, 0);
   const newEndDate = new Date(req.body.endDate);
+  newEndDate.setHours(23, 59, 59, 999);
 
   if (newStartDate >= newEndDate) {
     return next(new ApiError("Start date must be before end date", 400));
@@ -238,8 +234,8 @@ exports.updateContract = catchAsync(async (req, res, next) => {
   const overlappingContract = await Contract.findOne({
     _id: { $ne: id },
     estate: estateId,
-    startDate: { $lte: new Date(newEndDate).setHours(23, 59, 59, 999) },
-    endDate: { $gte: new Date(newStartDate).setHours(0, 0, 0, 0) },
+    startDate: { $lte: newEndDate },
+    endDate: { $gte: newStartDate },
     isCanceled: false,
   })
     .select("_id")
@@ -254,14 +250,9 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     );
   }
 
-  // const isActiveContract =
-  //   newStartDate <= Date.now() && newEndDate >= Date.now();
+  const now = new Date();
 
-  const today = new Date().toLocaleDateString();
-
-  const isActiveContract =
-    newStartDate.toLocaleDateString() <= today &&
-    newEndDate.toLocaleDateString() >= today;
+  const isActiveContract = newStartDate <= now && newEndDate >= now;
 
   const estate = isActiveContract
     ? await Estate.findByIdAndUpdate(estateId, { status: "rented" })
@@ -301,11 +292,8 @@ exports.updateContract = catchAsync(async (req, res, next) => {
 
   const scheduledMissionPromise = ScheduledMission.create({
     type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
-    // scheduledAt: isActiveContract ? newEndDate : newStartDate,
-    scheduledAt: isActiveContract
-      ? newEndDate.setHours(23, 59, 59, 999)
-      : newStartDate.setHours(0, 0, 0, 0),
-    contractEndDate: newEndDate.setHours(23, 59, 59, 999),
+    scheduledAt: isActiveContract ? newEndDate : newStartDate,
+    contractEndDate: newEndDate,
     estate: estateId,
     contract: updatedContract._id,
   });
