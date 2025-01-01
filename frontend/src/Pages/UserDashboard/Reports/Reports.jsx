@@ -18,11 +18,14 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 import OperationalReport from "./OperationalReport";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CompoundsReport from "./CompoundsReport";
+import CompoundDetailsReports from "./CompoundDetailsReports";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
   const [landlordFilter, setLandlordFilter] = useState("incomeReport");
   const [operationalFilter, setOperationalFilter] = useState("contractsReport");
+  const [compoundsFilter, setCompoundsFilter] = useState("compoundsReport");
 
   const [landlordOptions, setLandlordOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
@@ -61,15 +64,10 @@ const Reports = () => {
 
   useEffect(() => {
     setLandlordOptions(convertTpOptionsFormate(landlords?.data));
-    // const additionalLabel = { label: key("all"), value: "all" };
-
     const myEstatesOptions = convertTpOptionsFormate(estates?.data);
     const myCompoundsOptions = convertTpOptionsFormate(
       compounds?.data?.compounds
     );
-
-    // setEstatesOptions([additionalLabel, ...myEstatesOptions]);
-    // setCompoundsOptions([additionalLabel, ...myCompoundsOptions]);
     setEstatesOptions([...myEstatesOptions]);
     setCompoundsOptions([...myCompoundsOptions]);
   }, [estates, compounds, landlords, key]);
@@ -115,6 +113,19 @@ const Reports = () => {
                     >
                       {circleIcon}
                       {key("operationalReport")}
+                    </li>
+                  </CheckPermissions>
+                  <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+                    <li
+                      className={
+                        reportTypeFilter === "compoundsReport"
+                          ? styles.active
+                          : ""
+                      }
+                      onClick={() => setReportTypeFilter("compoundsReport")}
+                    >
+                      {circleIcon}
+                      {key("COMPOUNDS_REPORTS")}
                     </li>
                   </CheckPermissions>
                 </ul>
@@ -191,6 +202,43 @@ const Reports = () => {
                     </ul>
                   )}
                 </CheckPermissions>
+
+                <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+                  {reportTypeFilter === "compoundsReport" && (
+                    <ul className={styles.filter_list}>
+                      <li
+                        className={
+                          compoundsFilter === "compoundsReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setCompoundsFilter("compoundsReport")}
+                      >
+                        <FontAwesomeIcon
+                          className={`${iconClass}`}
+                          icon={faFileContract}
+                        />
+                        {key("compoundsReport")}
+                      </li>
+                      <li
+                        className={
+                          compoundsFilter === "compoundDetailsReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() =>
+                          setCompoundsFilter("compoundDetailsReport")
+                        }
+                      >
+                        <FontAwesomeIcon
+                          className={`${iconClass}`}
+                          icon={faFileContract}
+                        />
+                        {key("compoundDetailsReport")}
+                      </li>
+                    </ul>
+                  )}
+                </CheckPermissions>
               </div>
             </div>
           </Col>
@@ -213,6 +261,22 @@ const Reports = () => {
                   estatesOptions={estatesOptions}
                   filterType={operationalFilter}
                 />
+              )}
+
+              {reportTypeFilter === "compoundsReport" &&
+              compoundsFilter === "compoundsReport" ? (
+                <CompoundsReport
+                  landlordOptions={landlordOptions}
+                  compoundsOptions={compoundsOptions}
+                  filterType={compoundsFilter}
+                />
+              ) : (
+                compoundsFilter === "compoundDetailsReport" && (
+                  <CompoundDetailsReports
+                    compoundsOptions={compoundsOptions}
+                    filterType={compoundsFilter}
+                  />
+                )
               )}
             </div>
           </Col>
