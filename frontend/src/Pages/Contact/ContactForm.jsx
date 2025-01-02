@@ -8,18 +8,21 @@ import { toast } from "react-toastify";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { useMutation } from "@tanstack/react-query";
 import { object, string } from "yup";
+import { useSelector } from "react-redux";
 
 const ContactForm = () => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
+  const requiredLabel = <span className="text-danger">*</span>;
 
   const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
-
   const initialValues = {
-    name: "",
-    email: "",
+    name: profileInfo?.name || "",
+    email: profileInfo?.email || "",
+    phone: profileInfo?.phone || "",
     subject: "",
     message: "",
   };
@@ -32,7 +35,7 @@ const ContactForm = () => {
             formData: values,
             token: token,
             method: "add",
-            type: `contactUs`,
+            type: `support/messages`,
           },
           {
             onSuccess: (data) => {
@@ -67,6 +70,7 @@ const ContactForm = () => {
     message: string()
       .min(5, key("min5"))
       .required(`${key("fieldReq")}`),
+    phone: string().matches(/^05\d{8}$/, key("invalidPhone")),
   });
 
   return (
@@ -74,35 +78,60 @@ const ContactForm = () => {
       initialValues={initialValues}
       onSubmit={onSubmit}
       validationSchema={validationSchema}
+      enableReinitialize
     >
       <Form>
         <Row>
           <Col md={6}>
             <div className="field">
-              <Field type="text" placeholder={key("name")} name="name" />
+              <label htmlFor="name">{key("name")} {requiredLabel}</label>
+              <Field id="name" type="text" name="name" />
               <ErrorMessage name="name" component={InputErrorMessage} />
             </div>
           </Col>
           <Col md={6}>
             <div className="field">
-              <Field type="email" placeholder={key("email")} name="email" />
+              <label htmlFor="email">{key("email")} {requiredLabel}</label>
+              <Field
+                id="email"
+                type="email"
+                name="email"
+              />
               <ErrorMessage name="email" component={InputErrorMessage} />
             </div>
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <div className="field">
-              <Field type="text" placeholder={key("subject")} name="subject" />
+              <label htmlFor="phoneInput">{key("phone")}</label>
+              <Field
+                type="tel"
+                id="phoneInput"
+                name="phone"
+                placeholder="05XXXXXXXX"
+              />
+              <ErrorMessage name="phone" component={InputErrorMessage} />
+            </div>
+          </Col>
+          <Col md={6}>
+            <label htmlFor="subject">{key("subject")} {requiredLabel}</label>
+            <div className="field">
+              <Field
+                id="subject"
+                type="text"
+                name="subject"
+              />
               <ErrorMessage name="subject" component={InputErrorMessage} />
             </div>
           </Col>
           <Col md={12}>
             <div className="field">
+              <label htmlFor="message">{key("message")} {requiredLabel}</label>
               <Field
+                id="message"
                 as="textarea"
                 className="text_area"
                 name="message"
                 rows="3"
-                placeholder={key("message")}
               />
               <ErrorMessage name="message" component={InputErrorMessage} />
             </div>
