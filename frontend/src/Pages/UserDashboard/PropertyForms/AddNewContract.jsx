@@ -28,8 +28,12 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "../Contacts/ContactForms/AddContactForm";
 
-const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) => {
-
+const AddNewContract = ({
+  hideModal,
+  refetch,
+  refetchDetails,
+  settingIsLoading,
+}) => {
   const [tenantsOptions, setTenantsOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
@@ -116,7 +120,7 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) 
 
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
-    settingIsLoading(true)
+    settingIsLoading(true);
     mutate(
       {
         formData: values,
@@ -152,22 +156,23 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) 
         },
       }
     );
-    settingIsLoading(false)
+    settingIsLoading(false);
   };
 
   const validationSchema = object({
     tenant: string().required(key("fieldReq")),
-    startDate: date().required(key("fieldReq")).test(
-      "is-present-or-future",
-      key("startDateValidation"),
-      function (value) {
-        if (!value) return false;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return new Date(value) >= today;
-      }
-    ),
+    startDate: date().required(key("fieldReq")),
     endDate: date()
+      .test(
+        "is-present-or-future",
+        key("startDateValidation"),
+        function (value) {
+          if (!value) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return new Date(value) >= today;
+        }
+      )
       .required(key("fieldReq"))
       .test("is-greater", key("endDateValidation"), function (value) {
         const { startDate } = this.parent;
