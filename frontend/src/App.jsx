@@ -43,6 +43,7 @@ import Configs from "./Pages/Admin/Configs/Configs";
 import VerifyPhonePage from "./Components/VerifyPhone/VerifyPhonePage";
 import AdminTestimonials from "./Pages/Admin/AdminTestimonials/AdminTestimonials";
 import fetchConfigs from "./Store/configs-actions";
+import Support from "./Pages/Admin/Support/Support";
 
 const router = createBrowserRouter(
   [
@@ -82,6 +83,7 @@ const router = createBrowserRouter(
         { path: "admin-settings", element: <AdminAccountSetting /> },
         { path: "admin-configs", element: <Configs /> },
         { path: "admin-testimonials", element: <AdminTestimonials /> },
+        { path: "admin-support", element: <Support /> },
 
         //else
         { path: "*", element: <PageNotFound /> },

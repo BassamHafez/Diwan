@@ -3,9 +3,9 @@ import avatar from "../../assets/default.png";
 import logo from "../../assets/smallLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCircleInfo,
   faCrown,
   faGears,
+  faHeadset,
 } from "@fortawesome/free-solid-svg-icons";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 import { useTranslation } from "react-i18next";
@@ -30,8 +30,8 @@ const AdminNav = () => {
   ];
 
   const supportLinks = [
+    { to: "/admin-support",icon: faHeadset, label: key("support") },
     { to: "/admin-settings", icon: faGears, label: key("accSetting") },
-    { to: "/help", icon: faCircleInfo, label: key("help") },
   ];
 
   const tag = profileInfo?.isKing ? key("superAdmin") : key("admin");
