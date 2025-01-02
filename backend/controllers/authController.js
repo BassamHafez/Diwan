@@ -54,6 +54,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     members: [
       {
         user: userId,
+        tag: "owner",
         permissions: USER_ACCESS_PERMISSIONS,
       },
     ],

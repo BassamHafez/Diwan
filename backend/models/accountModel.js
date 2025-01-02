@@ -20,6 +20,10 @@ const accountSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
         },
+        tag: {
+          type: String,
+          default: "member",
+        },
         permissions: {
           type: [String],
           default: [],

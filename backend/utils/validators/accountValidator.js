@@ -174,6 +174,8 @@ exports.addMemberValidator = [
     .isMongoId()
     .withMessage("Invalid account ID"),
 
+  check("tag").notEmpty().withMessage("Tag required"),
+
   check("name")
     .notEmpty()
     .withMessage("User name required")
@@ -240,6 +242,8 @@ exports.updateMemberValidator = [
     .isMongoId()
     .withMessage("Invalid user ID"),
 
+  check("tag").optional().notEmpty().withMessage("Tag must not be empty"),
+
   check("permittedCompounds")
     .optional()
     .isArray()
@@ -248,8 +252,7 @@ exports.updateMemberValidator = [
   check("permittedCompounds.*").isMongoId().withMessage("Invalid compound ID"),
 
   check("permissions")
-    .exists()
-    .withMessage("Permissions required")
+    .optional()
     .isArray({ min: 1 })
     .withMessage("Permissions must be an array with at least one permission"),
 

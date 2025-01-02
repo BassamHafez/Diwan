@@ -367,6 +367,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
       $push: {
         members: {
           user: user._id,
+          tag: req.body.tag,
           permissions: req.body.permissions,
           permittedCompounds: req.body.permittedCompounds || [],
         },
@@ -412,21 +413,28 @@ exports.updateMember = catchAsync(async (req, res, next) => {
     return next(new ApiError("Owner of the account can't be updated", 403));
   }
 
+  const modifiedUserFields = {};
+  const modifiedAccountFields = {};
+
+  if (req.body.tag) {
+    modifiedAccountFields["members.$.tag"] = req.body.tag;
+  }
+  if (req.body.permissions) {
+    modifiedAccountFields["members.$.permissions"] = req.body.permissions;
+    modifiedUserFields.permissions = req.body.permissions;
+  }
+  if (req.body.permittedCompounds) {
+    modifiedAccountFields["members.$.permittedCompounds"] =
+      req.body.permittedCompounds;
+    modifiedUserFields.permittedCompounds = req.body.permittedCompounds;
+  }
+
   const [user] = await Promise.all([
-    User.findOneAndUpdate(
-      { _id: userId, account: id },
-      {
-        permissions: req.body.permissions,
-        permittedCompounds: req.body.permittedCompounds || [],
-      }
-    ),
+    User.findOneAndUpdate({ _id: userId, account: id }, modifiedUserFields),
 
     Account.updateOne(
       { _id: id, "members.user": userId },
-      {
-        "members.$.permissions": req.body.permissions,
-        "members.$.permittedCompounds": req.body.permittedCompounds || [],
-      }
+      { $set: modifiedAccountFields }
     ),
   ]);
 
