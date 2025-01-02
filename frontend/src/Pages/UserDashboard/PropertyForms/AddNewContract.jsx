@@ -28,8 +28,7 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "../Contacts/ContactForms/AddContactForm";
 
-const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) => {
-
+const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
   const [tenantsOptions, setTenantsOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
@@ -42,8 +41,6 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) 
   const [revenues, setRevenues] = useState([]);
   const [showRevenuesTable, setShowRevenuesTable] = useState(false);
   const [showAddTenantModal, setShowAddTenantModal] = useState(false);
-
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -113,61 +110,68 @@ const AddNewContract = ({ hideModal, refetch,refetchDetails,settingIsLoading }) 
     paymentPeriodValue: "",
     paymentPeriodUnit: "",
   };
-
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = async (values, { resetForm }) => {
     console.log(values);
-    settingIsLoading(true)
-    mutate(
-      {
-        formData: values,
-        token: token,
-        method: "add",
-        type: `estates/${propId}/contracts`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (
-            data.response?.data?.message ===
-            "There is an contract overlapping with the selected dates"
-          ) {
-            notifyError(key("contractOverlapping"));
-            return;
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: values,
+            token: token,
+            method: "add",
+            type: `estates/${propId}/contracts`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (
+                data?.response?.data?.message ===
+                "There is an contract overlapping with the selected dates"
+              ) {
+                reject(key("contractOverlapping"));
+                return;
+              }
+              if (data?.status === "success") {
+                await refetch();
+                await refetchDetails();
+                await queryClient.invalidateQueries(["estates", token]);
+                await queryClient.invalidateQueries(["compounds", token]);
+                resetForm();
+                resolve(key("addedSuccess"));
+                hideModal();
+              } else {
+                reject(key("wrong"));
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject(key("wrong"));
+            },
           }
-          if (data?.status === "success") {
-            notifySuccess(key("addedSuccess"));
-            refetch();
-            refetchDetails();
-            queryClient.invalidateQueries(["estates", token]);
-            queryClient.invalidateQueries(["compounds", token]);
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
-          }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("wrong"),
       }
     );
-    settingIsLoading(false)
   };
 
   const validationSchema = object({
     tenant: string().required(key("fieldReq")),
-    startDate: date().required(key("fieldReq")).test(
-      "is-present-or-future",
-      key("startDateValidation"),
-      function (value) {
-        if (!value) return false;
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        return new Date(value) >= today;
-      }
-    ),
+    startDate: date().required(key("fieldReq")),
     endDate: date()
+      .test(
+        "is-present-or-future",
+        key("startDateValidation"),
+        function (value) {
+          if (!value) return false;
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          return new Date(value) >= today;
+        }
+      )
       .required(key("fieldReq"))
       .test("is-greater", key("endDateValidation"), function (value) {
         const { startDate } = this.parent;

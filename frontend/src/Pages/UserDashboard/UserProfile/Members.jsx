@@ -48,6 +48,7 @@ const Members = () => {
             userData={member?.user}
             permittedCompounds={member?.permittedCompounds}
             accountOwner={accountInfo?.account?.owner}
+            tag={member?.tag}
           />
         ))}
       </Row>

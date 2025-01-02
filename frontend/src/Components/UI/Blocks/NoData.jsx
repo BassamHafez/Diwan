@@ -2,6 +2,7 @@ import noDataImg from "../../../assets/noData.webp";
 import finishTasks from "../../../assets/finishTasks.jpg";
 import noExpenses from "../../../assets/noExpenses.webp";
 import estate from "../../../assets/estate.webp";
+import support from "../../../assets/svg/support.svg";
 
 import styles from "./NoData.module.css";
 
@@ -16,6 +17,9 @@ const NoData = ({text,type,smallSize}) => {
       break;
     case "estate":
       myImage=estate
+      break;
+    case "support":
+      myImage=support
       break;
 
     default:

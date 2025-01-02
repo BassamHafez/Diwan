@@ -63,11 +63,13 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
 
   const initialValues = {
     name: "",
+    tag:"",
     email: "",
     phone: "",
     password: "",
     permissions: [],
     permittedCompounds: [],
+
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -121,6 +123,7 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
 
   const validationSchema = object().shape({
     name: string().required(key("fieldReq")),
+    tag: string().required(key("fieldReq")),
     email: string()
       .email(`${key("emailValidation1")}`)
       .required(`${key("emailValidation2")}`),
@@ -231,6 +234,20 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
                   className={isArLang ? "ar_direction" : ""}
                 />
                 <ErrorMessage name="phone" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field">
+                <label htmlFor="tag">
+                  {key("tag")} {requiredLabel}
+                </label>
+                <Field
+                  type="text"
+                  id="tag"
+                  name="tag"
+                  className={isArLang ? "ar_direction" : ""}
+                />
+                <ErrorMessage name="tag" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>

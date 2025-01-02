@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik } from "formik";
 import { array, object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
@@ -22,6 +22,7 @@ const UpdatePermissionsForm = ({
   userPermissions,
   userId,
   permittedCompoundsArr,
+  tag,
 }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
@@ -77,6 +78,7 @@ const UpdatePermissionsForm = ({
   const initialValues = {
     permissions: myPermissionsOptions || [],
     permittedCompounds: myPermittedCompoundsOptions || [],
+    tag: tag || "",
   };
 
   const onSubmit = (values) => {
@@ -86,6 +88,11 @@ const UpdatePermissionsForm = ({
         (perm) => `${perm.value}`
       ),
     };
+
+    if (values.tag) {
+      updatedValues.tag = values.tag;
+    }
+
     mutate(
       {
         formData: updatedValues,
@@ -113,6 +120,7 @@ const UpdatePermissionsForm = ({
   };
 
   const validationSchema = object().shape({
+    tag: string(),
     permissions: array()
       .of(
         object().shape({
@@ -180,6 +188,17 @@ const UpdatePermissionsForm = ({
                 name="permittedCompounds"
                 component={InputErrorMessage}
               />
+            </div>
+
+            <div className="field">
+              <label htmlFor="tag">{key("tag")}</label>
+              <Field
+                type="text"
+                id="tag"
+                name="tag"
+                className={isArLang ? "ar_direction" : ""}
+              />
+              <ErrorMessage name="tag" component={InputErrorMessage} />
             </div>
             <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
               <button onClick={hideModal} className="cancel_btn my-2">
