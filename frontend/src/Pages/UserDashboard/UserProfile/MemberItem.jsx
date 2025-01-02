@@ -20,7 +20,8 @@ const MemberItem = ({
   userData,
   accountId,
   accountOwner,
-  permittedCompounds
+  permittedCompounds,
+  tag
 }) => {
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -78,7 +79,7 @@ const MemberItem = ({
               </div>
               <div className={isArLang ? "me-3" : "ms-3"}>
                 <h5 className="m-0 fw-bold">{userData?.name}</h5>
-                <span className="mini_word">Estate Manager</span>
+                <span className="mini_word">{tag||key("member")}</span>
               </div>
             </div>
             <div
@@ -154,6 +155,7 @@ const MemberItem = ({
           <UpdatePermissionsForm
             allPermissions={allPermissions}
             userPermissions={userPermissions}
+            tag={tag}
             userId={userData?._id}
             permittedCompoundsArr={permittedCompounds}
             hideModal={() => setShowUpdatePermissionModal(false)}
