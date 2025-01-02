@@ -39,7 +39,7 @@ const ContactsIcon = ({ type }) => {
         )}
 
         {configs?.email && (
-          <Link target="_blank" to={`mailto:bassamhafez791@gmail.com`}>
+          <Link target="_blank" to={`mailto:${configs.email}`}>
             <FontAwesomeIcon className={`${classes} mx-3`} icon={faEnvelope} />
           </Link>
         )}

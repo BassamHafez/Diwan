@@ -462,8 +462,23 @@ export const contractsReportTable = [
   "amount",
   "status",
 ];
-
 export const compoundsReportTable = ["category", "estate", "total"];
+
+//support
+export const supportMessagesStatusOptions = {
+  en: [
+    { label: "processing", value: "processing" },
+    { label: "Pending", value: "pending" },
+    { label: "Completed", value: "completed" },
+    { label: "Archived", value: "archived" },
+  ],
+  ar: [
+    { label: "جارية", value: "processing" },
+    { label: "معلقة", value: "pending" },
+    { label: "مكتملة", value: "completed" },
+    { label: "مؤرشفة", value: "archived" },
+  ],
+};
 
 //dummy data
 export const chartsData = [

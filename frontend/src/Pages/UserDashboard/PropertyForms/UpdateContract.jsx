@@ -23,7 +23,7 @@ import {
 import ContractRevenues from "../PropertyDetails/ContractRevenues";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 
-const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
+const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState(
     contract.paymentPeriodUnit || ""
@@ -144,8 +144,8 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
 
   const validationSchema = object({
     tenant: string().required(key("fieldReq")),
-    startDate: date()
-      .required(key("fieldReq"))
+    startDate: date().required(key("fieldReq")),
+    endDate: date()
       .test(
         "is-present-or-future",
         key("startDateValidation"),
@@ -155,8 +155,7 @@ const UpdateContract = ({ contract, hideModal, refetch,refetchDetails }) => {
           today.setHours(0, 0, 0, 0);
           return new Date(value) >= today;
         }
-      ),
-    endDate: date()
+      )
       .required(key("fieldReq"))
       .test("is-greater", key("endDateValidation"), function (value) {
         const { startDate } = this.parent;

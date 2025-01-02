@@ -4,13 +4,7 @@ import VerifyPhoneAlert from "../VerifyPhone/VerifyPhoneAlert";
 import { toast } from "react-toastify";
 import { mainAlertTime } from "./StaticLists";
 
-// main fun
-
-export const preloadImage = (src) => {
-  const img = new Image();
-  img.src = src;
-};
-
+// main func
 const notifyAlert = () =>
   toast.warn(<VerifyPhoneAlert isModalAlert={true} />, {
     autoClose: false,
@@ -170,6 +164,9 @@ export const renameContactType = (type, language) => {
 };
 
 export const formatPhoneNumber = (phone) => {
+  if(!phone){
+    return undefined
+  }
   const countryCode = "+966";
   if (phone.startsWith("0") && phone.length === 10) {
     return `${countryCode}${phone.substring(1)}`;
@@ -178,6 +175,9 @@ export const formatPhoneNumber = (phone) => {
 };
 
 export const formatWhatsAppLink = (phone) => {
+  if(!phone){
+    return undefined
+  }
   const countryCode = "966";
   if (phone.startsWith("0") && phone.length === 10) {
     phone = phone.substring(1);

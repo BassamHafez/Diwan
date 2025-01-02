@@ -31,7 +31,12 @@ import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 
-const Contracts = ({ details, estateParentCompound, refetchDetails,settingIsLoading }) => {
+const Contracts = ({
+  details,
+  estateParentCompound,
+  refetchDetails,
+  settingIsLoading,
+}) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -48,7 +53,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails,settingIsLoad
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const currentLang = isArLang ? "ar" : "en";
-  const queryClient=useQueryClient();
+  const queryClient = useQueryClient();
 
   const {
     data: contractsData,
@@ -193,11 +198,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails,settingIsLoad
               <SearchField onSearch={onSearch} text={key("searchContract")} />
             </div>
             <Select
-              options={
-                isArLang
-                  ? contractStatusOptions["ar"]
-                  : contractStatusOptions["en"]
-              }
+              options={contractStatusOptions[currentLang]}
               onChange={(val) =>
                 filterChangeHandler(val ? val.value : null, "status")
               }

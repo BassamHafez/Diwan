@@ -8,7 +8,7 @@ const ContractRevenues = (props) => {
 
   return (
     <div className="position-relative">
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center mb-2">
         <MainTitle small={true} title={key("revenues")} />
       </div>
       <div className="scrollableTable">
