@@ -2,7 +2,7 @@ const TenantContact = require("../models/tenantContactModel");
 const factory = require("./handlerFactory");
 
 const tenantFields =
-  "type name phone phone2 notes nationalId address email commercialRecord taxNumber";
+  "type name phone phone2 notes birthDate nationalId nationality address email commercialRecord taxNumber";
 
 exports.getAllTenantContacts = factory.getAll(TenantContact, [], tenantFields);
 exports.getTenantContact = factory.getOne(TenantContact, [], tenantFields);
