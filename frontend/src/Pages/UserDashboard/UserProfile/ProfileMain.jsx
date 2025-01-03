@@ -31,7 +31,7 @@ const ProfileMain = () => {
         </div>
         <div className={isArLang ? "me-3" : "ms-3"}>
           <h5 className="m-0 fw-bold">{profileInfo?.name}</h5>
-          <span className="mini_word">Estate Manager</span>
+          <span className="mini_word">{profileInfo?.email}</span>
         </div>
       </div>
       <div className={styles.container}>
@@ -51,12 +51,12 @@ const ProfileMain = () => {
             </div>
           </Col>
 
-          <Col md={4}>
+          {/* <Col md={4}>
             <div className={styles.info}>
               <span>{key("tag")}</span>
               <h6>Estate Manager</h6>
             </div>
-          </Col>
+          </Col> */}
           <Col md={6}>
             <div className={styles.info}>
               <span>{key("email")}</span>
