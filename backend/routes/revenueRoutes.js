@@ -49,6 +49,7 @@ router.patch(
 
 router.put(
   "/:id/split",
+  authController.checkPermission("ADD_REVENUE"),
   revenueValidator.splitRevenueValidator,
   revenueController.splitRevenue
 );
