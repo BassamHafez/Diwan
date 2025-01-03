@@ -37,12 +37,12 @@
 
 .note p {
   margin: 0;
-  display: -webkit-box; 
+  display: -webkit-box;
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: normal; 
+  white-space: normal;
 }
 
 .note:hover p {
@@ -50,7 +50,6 @@
   white-space: normal;
   overflow: visible;
 }
-
 
 .noAvatar {
   width: 50px;
@@ -146,6 +145,30 @@
 .select_contact_type div:hover {
   transform: translateY(-0.625rem);
   background-color: var(--main_color);
+}
+
+.date_type_list {
+  display: flex;
+  justify-content: end;
+  margin: 0;
+}
+
+.date_type_list li {
+  margin-inline: 5px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  min-width: 40px;
+  text-align: center;
+  border: 1px solid var(--deep_navy);
+  transition: all 0.4s;
+  cursor: pointer;
+}
+.date_type_list li:hover {
+  scale: 1.05;
+}
+.active_date_type {
+  background-color: var(--deep_navy);
+  color: white;
 }
 
 @media screen and (max-width: 576px) {

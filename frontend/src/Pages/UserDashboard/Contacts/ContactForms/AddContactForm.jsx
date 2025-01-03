@@ -8,6 +8,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import Select from "react-select";
+import DateField from "../../../../Components/Fields/DateField";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
 
 const AddContactForm = ({
   hideModal,
@@ -36,12 +39,15 @@ const AddContactForm = ({
     phone: "",
     phone2: "",
     notes: "",
-    //related to tenant
-    type: "", //organization or individual
-    nationalId: "", //individual
-    address: "", //organization
-    commercialRecord: "", //organization
-    taxNumber: "", //organization,
+
+    type: "",
+    nationalId: "",
+    dateOfBirth: "",
+    gender: "male",
+
+    address: "",
+    commercialRecord: "",
+    taxNumber: "",
     contactType: contactType,
   };
 
@@ -131,6 +137,16 @@ const AddContactForm = ({
           .required(key("fieldReq")),
       otherwise: (schema) => schema,
     }),
+    dateOfBirth: string().when("type", {
+      is: (type) => type === "individual",
+      then: (schema) => schema.required(key("fieldReq")),
+      otherwise: (schema) => schema,
+    }),
+    gender: string().when("type", {
+      is: (type) => type === "individual",
+      then: (schema) => schema.required(key("fieldReq")),
+      otherwise: (schema) => schema,
+    }),
   });
 
   return (
@@ -167,60 +183,121 @@ const AddContactForm = ({
               </div>
 
               {values.type === "individual" && (
-                <div className="field">
-                  <label htmlFor="nationalId">
-                    {key("nationalId")} {requiredLabel}
-                  </label>
-                  <Field type="text" id="nationalId" name="nationalId" />
-                  <ErrorMessage
-                    name="nationalId"
-                    component={InputErrorMessage}
-                  />
-                </div>
+                <>
+                  <Row>
+                    <Col sm={6}>
+                      <div className="field">
+                        <label htmlFor="nationalId">
+                          {key("nationalId")} {requiredLabel}
+                        </label>
+                        <Field type="text" id="nationalId" name="nationalId" />
+                        <ErrorMessage
+                          name="nationalId"
+                          component={InputErrorMessage}
+                        />
+                      </div>
+                    </Col>
+                    <Col sm={6}>
+                      <div className="d-flex flex-column align-items-start field">
+                        <label>
+                          {key("gender")} {requiredLabel}
+                        </label>
+                        <div className="btn-group w-100 flex-wrap">
+                          <Field
+                            type="radio"
+                            name="gender"
+                            value="male"
+                            id="male"
+                            className="btn-check"
+                          />
+                          <label
+                            htmlFor="male"
+                            className="btn btn-outline-dark m-1 rounded text-center"
+                          >
+                            {key("male")}
+                          </label>
+
+                          <Field
+                            type="radio"
+                            name="gender"
+                            value="female"
+                            id="female"
+                            className="btn-check"
+                          />
+                          <label
+                            htmlFor="female"
+                            className="btn btn-outline-dark m-1 rounded text-center"
+                          >
+                            {key("female")}
+                          </label>
+                        </div>
+                      </div>
+                    </Col>
+                    <Col sm={12}>
+                      <div className="field">
+                        <DateField
+                          setFieldValue={setFieldValue}
+                          value="dateOfBirth"
+                          labelText={key("dob")}
+                        />
+                        <ErrorMessage
+                          name="dateOfBirth"
+                          component={InputErrorMessage}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                </>
               )}
               {values.type === "organization" && (
-                <>
-                  <div className="field">
-                    <label htmlFor="address">
-                      {key("address")} {requiredLabel}
-                    </label>
-                    <Field type="text" id="address" name="address" />
-                    <ErrorMessage
-                      name="address"
-                      component={InputErrorMessage}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="commercialRecord">
-                      {key("commercialRecord")} {requiredLabel}
-                    </label>
-                    <Field
-                      type="number"
-                      placeholder="XXXXXXXXXX"
-                      id="commercialRecord"
-                      name="commercialRecord"
-                    />
-                    <ErrorMessage
-                      name="commercialRecord"
-                      component={InputErrorMessage}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="taxNumber">
-                      {key("taxNumber")} {requiredLabel}
-                    </label>
-                    <Field
-                      type="number"
-                      placeholder="3XXXXXXXXXXXXXX"
-                      id="taxNumber"
-                      name="taxNumber"
-                    />
-                    <ErrorMessage
-                      name="taxNumber"
-                      component={InputErrorMessage}
-                    />
-                  </div>
-                </>
+                <Row>
+                  <Col sm={6}>
+                    <div className="field">
+                      <label htmlFor="address">
+                        {key("address")} {requiredLabel}
+                      </label>
+                      <Field type="text" id="address" name="address" />
+                      <ErrorMessage
+                        name="address"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                  <Col sm={6}>
+                    <div className="field">
+                      <label htmlFor="commercialRecord">
+                        {key("commercialRecord")} {requiredLabel}
+                      </label>
+                      <Field
+                        type="number"
+                        placeholder="XXXXXXXXXX"
+                        id="commercialRecord"
+                        name="commercialRecord"
+                      />
+                      <ErrorMessage
+                        name="commercialRecord"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                  <Col sm={12}>
+                    <div className="field">
+                      <label htmlFor="taxNumber">
+                        {key("taxNumber")} {requiredLabel}
+                      </label>
+                      <Field
+                        type="number"
+                        placeholder="3XXXXXXXXXXXXXX"
+                        id="taxNumber"
+                        name="taxNumber"
+                      />
+                      <ErrorMessage
+                        name="taxNumber"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                </Row>
               )}
             </>
           )}
