@@ -259,7 +259,7 @@ const contractStatus = {
     active: "Active",
     upcoming: "Upcoming",
     canceled: "Canceled",
-    completed: "completed",
+    completed: "Completed",
   },
   ar: {
     active: "ساري",
