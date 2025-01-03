@@ -625,6 +625,7 @@
   "totallyAmount":"Total Amount",
   "extendContract":"Extend Contract",
   "newEndDate":"New End Date",
+  "deleting":"Deleting...",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",
