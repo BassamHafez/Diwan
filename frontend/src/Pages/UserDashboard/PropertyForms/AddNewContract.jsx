@@ -110,7 +110,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
     paymentPeriodValue: "",
     paymentPeriodUnit: "",
   };
-  
+
   const onSubmit = async (values, { resetForm }) => {
     console.log(values);
     toast.promise(
@@ -129,8 +129,8 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
                 data?.response?.data?.message ===
                 "There is an contract overlapping with the selected dates"
               ) {
-                reject(key("contractOverlapping"));
-                return;
+                notifyError(key("contractOverlapping"));
+                resolve();
               }
               if (data?.status === "success") {
                 await refetch();
