@@ -200,6 +200,12 @@ exports.splitRevenue = catchAsync(async (req, res, next) => {
     return next(new ApiError("No revenue found with that ID", 404));
   }
 
+  if (+splitedAmount >= +revenue.amount) {
+    return next(
+      new ApiError("Splited amount must be less than the original amount", 400)
+    );
+  }
+
   const newRevenueData = {
     amount: splitedAmount,
     dueDate,
