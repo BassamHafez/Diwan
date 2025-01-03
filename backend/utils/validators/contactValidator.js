@@ -122,20 +122,22 @@ exports.createTenantContactValidator = [
     .isMobilePhone("ar-SA")
     .withMessage("Invalid Saudi phone number"),
 
+  check("birthDate").optional().isDate().withMessage("Invalid birth date"),
+
+  // check("hijriBirthDate")
+  //   .optional()
+  //   .isDate()
+  //   .withMessage("Invalid Hijri birth date"),
+
   check("nationalId")
     .optional()
-    .isString()
-    .withMessage("Invalid national ID")
-    .matches(/^\d{10}$/)
-    .withMessage("Invalid national ID")
-    .matches(/^[12]/)
-    .withMessage("Invalid national ID"),
+    .notEmpty()
+    .withMessage("National ID must be not empty string"),
 
-  check("address")
+  check("nationality")
     .optional()
-    .isString()
-    .withMessage("Address must be a string")
-    .trim(),
+    .notEmpty()
+    .withMessage("Nationality must be not empty string"),
 
   check("email").optional().isEmail().withMessage("Invalid email").trim(),
 
@@ -189,14 +191,22 @@ exports.updateTenantContactValidator = [
     .isMobilePhone("ar-SA")
     .withMessage("Invalid Saudi phone number"),
 
+  check("birthDate").optional().isDate().withMessage("Invalid birth date"),
+
+  // check("hijriBirthDate")
+  //   .optional()
+  //   .isDate()
+  //   .withMessage("Invalid Hijri birth date"),
+
   check("nationalId")
     .optional()
-    .isString()
-    .withMessage("Invalid national ID")
-    .matches(/^\d{10}$/)
-    .withMessage("Invalid national ID")
-    .matches(/^[12]/)
-    .withMessage("Invalid national ID"),
+    .notEmpty()
+    .withMessage("National ID must be not empty string"),
+
+  check("nationality")
+    .optional()
+    .notEmpty()
+    .withMessage("Nationality must be not empty string"),
 
   check("address")
     .optional()

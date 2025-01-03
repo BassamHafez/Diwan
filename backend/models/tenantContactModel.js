@@ -16,6 +16,8 @@ const tenantContactSchema = new mongoose.Schema(
       required: true,
     },
     phone2: String,
+    birthDate: Date,
+    // hijriBirthDate: Date,
     notes: String,
     account: {
       type: mongoose.Schema.Types.ObjectId,
@@ -23,6 +25,7 @@ const tenantContactSchema = new mongoose.Schema(
       required: true,
     },
     nationalId: String,
+    nationality: String,
     address: String,
     email: String,
     commercialRecord: String,
