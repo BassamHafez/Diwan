@@ -267,6 +267,10 @@ p {
   opacity: .7 !important;
 }
 
+.date_picker input{
+  padding: 10px !important;
+}
+
 @media screen and (max-width: 1150px) {
   .scrollableTable {
     overflow-x: auto;

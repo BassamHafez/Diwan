@@ -4,6 +4,7 @@ import noAvatarGray from "../../../assets/noAvatar.png";
 import styles from "./Contacts.module.css";
 import {
   formatPhoneNumber,
+  formattedDate,
   formatWhatsAppLink,
   renameContactType,
 } from "../../../Components/Logic/LogicFun";
@@ -55,7 +56,7 @@ const ContactItem = ({
     : null;
 
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
   }, []);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ const ContactItem = ({
 
   const gridXXLSystem = isListView ? 12 : 4;
   const gridLgSystem = isListView ? 12 : 6;
-
+  const detailsSpanClass = `${isArLang ? "me-auto" : "ms-auto"} ${styles.details_span}`;
   return (
     <>
       <Col lg={gridLgSystem} xxl={gridXXLSystem}>
@@ -202,33 +203,44 @@ const ContactItem = ({
           </div>
           {type === "tenant" && showTenantDetials && (
             <>
-              {contact.nationalId && (
-                <div>
-                  <h6 className="text-secondary">{key("nationalId")}</h6>
-                  <span
-                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
-                  >
-                    {contact.nationalId}
+              <hr />
+              {contact?.nationalId && (
+                <div className="mb-1 d-flex flex-wrap">
+                  <span className="text-secondary">⭐ {key("nationalId")}:</span>
+                  <span className={detailsSpanClass}>
+                    {contact?.nationalId}
                   </span>
                 </div>
               )}
-              {contact.taxNumber && (
-                <div>
-                  <h6 className="text-secondary">{key("taxNumber")}</h6>
-                  <span
-                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
-                  >
-                    {contact.taxNumber}
+              {contact?.birthDate && (
+                <div className="mb-1 d-flex flex-wrap">
+                  <span className="text-secondary">⭐ {key("dob")}:</span>
+                  <span className={detailsSpanClass}>
+                    {formattedDate(contact?.birthDate)}
                   </span>
                 </div>
               )}
-              {contact.commercialRecord && (
-                <div className="mt-2">
-                  <h6 className="text-secondary">{key("commercialRecord")}</h6>
-                  <span
-                    className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}
-                  >
-                    {contact.commercialRecord}
+              {contact?.nationality && (
+                <div className="mb-1 d-flex flex-wrap">
+                  <span className="text-secondary">⭐ {key("nationality")}:</span>
+                  <span className={detailsSpanClass}>
+                    {contact?.nationality?.split("-")[isArLang ? 1 : 0]}
+                  </span>
+                </div>
+              )}
+              {contact?.taxNumber && (
+                <div className="mb-1 d-flex flex-wrap">
+                  <span className="text-secondary">⭐ {key("taxNumber")}:</span>
+                  <span className={detailsSpanClass}>{contact?.taxNumber}</span>
+                </div>
+              )}
+              {contact?.commercialRecord && (
+                <div className="d-flex flex-wrap">
+                  <span className="text-secondary">
+                    {key("commercialRecord")}:
+                  </span>
+                  <span className={detailsSpanClass}>
+                    {contact?.commercialRecord}
                   </span>
                 </div>
               )}
@@ -236,7 +248,7 @@ const ContactItem = ({
           )}
           {showNotes && type !== "tenant" && (
             <div className={styles.note}>
-              <p>{contact.notes ? contact.notes : key("noNotes")}</p>
+              <p>{contact?.notes ? contact?.notes : key("noNotes")}</p>
             </div>
           )}
         </div>

@@ -29,7 +29,7 @@ const Contacts = () => {
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
   const [searchFilter, setSearchFilter] = useState("");
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  
+
   const {
     data: allContacts,
     isFetching: isFetchingContacts,
@@ -132,7 +132,7 @@ const Contacts = () => {
           return refetchAllContacts;
       }
     };
-    console.log("contracts", contacts);
+
     const filteredData =
       contacts && Array.isArray(contacts.data)
         ? contacts.data.filter((contact) => {
@@ -158,7 +158,6 @@ const Contacts = () => {
             return isNameMatch || isPhoneMatch || isPhone2Match;
           })
         : [];
-    console.log("filteredData", filteredData);
 
     return filteredData.map((contact) => (
       <ContactItem
