@@ -172,3 +172,32 @@ exports.updateContractValidator = [
 
   validatorMiddleware,
 ];
+
+exports.extendContractValidator = [
+  check("estateId")
+    .exists()
+    .withMessage("Estate ID is required")
+    .isMongoId()
+    .withMessage("Invalid Estate ID"),
+
+  check("id")
+    .exists()
+    .withMessage("Contract ID is required")
+    .isMongoId()
+    .withMessage("Invalid Contract ID"),
+
+  check("endDate")
+    .exists()
+    .withMessage("End date is required")
+    .isDate()
+    .withMessage("End date must be a valid date")
+    .custom((endDate, { req }) => {
+      if (new Date(endDate) <= new Date().setHours(23, 59, 59, 999)) {
+        throw new Error("End date must be a future date");
+      }
+
+      return true;
+    }),
+
+  validatorMiddleware,
+];
