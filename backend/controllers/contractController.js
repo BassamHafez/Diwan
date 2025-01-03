@@ -358,3 +358,97 @@ exports.getCurrentContract = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.extendContract = catchAsync(async (req, res, next) => {
+  const { estateId, id } = req.params;
+  const { endDate } = req.body;
+
+  const newEndDate = new Date(endDate);
+  newEndDate.setHours(23, 59, 59, 999);
+
+  const [estate, contract] = await Promise.all([
+    Estate.findById(estateId).select("_id name").lean(),
+
+    Contract.findOne({
+      _id: id,
+      account: req.user.account,
+    })
+      .select("status estate startDate endDate")
+      .populate(contractPopOptions)
+      .lean(),
+  ]);
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  if (!contract) {
+    return next(new ApiError("No contract found with that ID", 404));
+  }
+
+  if (estate._id.toString() !== contract.estate._id.toString()) {
+    return next(new ApiError("Contract does not belong to that estate", 400));
+  }
+
+  if (contract.status === "completed") {
+    return next(new ApiError("Contract is already completed", 400));
+  }
+
+  if (contract.status === "canceled") {
+    return next(new ApiError("Contract is already canceled", 400));
+  }
+
+  if (newEndDate <= contract.startDate) {
+    return next(new ApiError("End date must be after start date", 400));
+  }
+
+  const overlappingContract = await Contract.findOne({
+    _id: { $ne: id },
+    estate: estateId,
+    startDate: { $lte: newEndDate },
+    endDate: { $gte: contract.startDate },
+    isCanceled: false,
+  })
+    .select("_id")
+    .lean();
+
+  if (overlappingContract) {
+    return next(
+      new ApiError(
+        "There is an contract overlapping with the selected dates",
+        400
+      )
+    );
+  }
+
+  const isActiveContract = contract.status === "active" ? true : false;
+
+  const updateContractPromise = Contract.updateOne(
+    { _id: id },
+    { endDate: newEndDate }
+  );
+
+  const deleteOldScheduledMissionPromise = ScheduledMission.deleteOne({
+    contract: id,
+    isDone: false,
+  });
+
+  const newScheduledMissionPromise = ScheduledMission.create({
+    type: isActiveContract ? "CONTRACT_EXPIRATION" : "CONTRACT_ACTIVATION",
+    scheduledAt: isActiveContract ? newEndDate : contract.startDate,
+    contractEndDate: newEndDate,
+    estate: estateId,
+    contract: id,
+  });
+
+  await Promise.all([
+    updateContractPromise,
+    deleteOldScheduledMissionPromise,
+    newScheduledMissionPromise,
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    message: "Contract extended successfully",
+  });
+});

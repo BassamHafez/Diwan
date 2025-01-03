@@ -43,4 +43,11 @@ router
     contractController.cancelContract
   );
 
+router.put(
+  "/:id/extend",
+  authController.checkPermission("UPDATE_CONTRACT"),
+  contractValidator.extendContractValidator,
+  contractController.extendContract
+);
+
 module.exports = router;
