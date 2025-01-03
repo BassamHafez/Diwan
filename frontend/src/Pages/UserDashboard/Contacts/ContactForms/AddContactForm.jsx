@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
+import {object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -11,6 +11,7 @@ import Select from "react-select";
 import DateField from "../../../../Components/Fields/DateField";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import { countriesOptions } from "../../../../Components/Logic/StaticLists";
 
 const AddContactForm = ({
   hideModal,
@@ -24,6 +25,7 @@ const AddContactForm = ({
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currenLang = isArLang ? "ar" : "en";
 
   const tenantTypeOptions = [
     { label: key("individual"), value: "individual" },
@@ -42,8 +44,8 @@ const AddContactForm = ({
 
     type: "",
     nationalId: "",
-    dateOfBirth: "",
-    gender: "male",
+    nationality: "",
+    birthDate: "",
 
     address: "",
     commercialRecord: "",
@@ -52,8 +54,34 @@ const AddContactForm = ({
   };
 
   const onSubmit = (values, { resetForm }) => {
-    const { contactType, commercialRecord, taxNumber, ...updatedValues } =
-      values;
+    const {
+      contactType,
+      commercialRecord,
+      taxNumber,
+      birthDate,
+      ...updatedValues
+    } = values;
+
+    if (birthDate) {
+      const today = new Date();
+      const selectedDate = new Date(birthDate);
+      const age = today.getFullYear() - selectedDate.getFullYear();
+      const isBirthdayPassed =
+        today.getMonth() > selectedDate.getMonth() ||
+        (today.getMonth() === selectedDate.getMonth() &&
+          today.getDate() >= selectedDate.getDate());
+
+      if (selectedDate > today) {
+        notifyError(key("noFutureDate"));
+        return;
+      }
+      if (age < 18 || (age === 18 && !isBirthdayPassed)) {
+        notifyError(key("atLeast18"));
+        return;
+      }
+
+      updatedValues.birthDate = birthDate;
+    }
 
     if (commercialRecord)
       updatedValues.commercialRecord = String(commercialRecord);
@@ -110,10 +138,7 @@ const AddContactForm = ({
     }),
     nationalId: string().when("type", {
       is: (type) => type === "individual",
-      then: (schema) =>
-        schema
-          .matches(/^(1|2)\d{9}$/, key("nationalIdValidation"))
-          .required(key("fieldReq")),
+      then: (schema) => schema.required(key("fieldReq")),
       otherwise: (schema) => schema,
     }),
     address: string().when("type", {
@@ -137,12 +162,7 @@ const AddContactForm = ({
           .required(key("fieldReq")),
       otherwise: (schema) => schema,
     }),
-    dateOfBirth: string().when("type", {
-      is: (type) => type === "individual",
-      then: (schema) => schema.required(key("fieldReq")),
-      otherwise: (schema) => schema,
-    }),
-    gender: string().when("type", {
+    nationality: string().when("type", {
       is: (type) => type === "individual",
       then: (schema) => schema.required(key("fieldReq")),
       otherwise: (schema) => schema,
@@ -175,9 +195,9 @@ const AddContactForm = ({
                   name="type"
                   options={tenantTypeOptions}
                   onChange={(val) => setFieldValue("type", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  className={isArLang ? "text-end" : "text-start"}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
+                  placeholder=""
                 />
                 <ErrorMessage name="type" component={InputErrorMessage} />
               </div>
@@ -198,51 +218,33 @@ const AddContactForm = ({
                       </div>
                     </Col>
                     <Col sm={6}>
-                      <div className="d-flex flex-column align-items-start field">
-                        <label>
-                          {key("gender")} {requiredLabel}
+                      <div className="field">
+                        <label htmlFor="nationality">
+                          {key("nationality")} {requiredLabel}
                         </label>
-                        <div className="btn-group w-100 flex-wrap">
-                          <Field
-                            type="radio"
-                            name="gender"
-                            value="male"
-                            id="male"
-                            className="btn-check"
-                          />
-                          <label
-                            htmlFor="male"
-                            className="btn btn-outline-dark m-1 rounded text-center"
-                          >
-                            {key("male")}
-                          </label>
-
-                          <Field
-                            type="radio"
-                            name="gender"
-                            value="female"
-                            id="female"
-                            className="btn-check"
-                          />
-                          <label
-                            htmlFor="female"
-                            className="btn btn-outline-dark m-1 rounded text-center"
-                          >
-                            {key("female")}
-                          </label>
-                        </div>
+                        <Select
+                          id="nationality"
+                          name="nationality"
+                          options={countriesOptions[currenLang]}
+                          onChange={(val) =>
+                            setFieldValue("nationality", val ? val.value : null)
+                          }
+                          className={isArLang ? "text-end" : "text-start"}
+                          isRtl={isArLang ? true : false}
+                          placeholder=""
+                        />
+                        <ErrorMessage
+                          name="nationality"
+                          component={InputErrorMessage}
+                        />
                       </div>
                     </Col>
                     <Col sm={12}>
                       <div className="field">
                         <DateField
                           setFieldValue={setFieldValue}
-                          value="dateOfBirth"
+                          value="birthDate"
                           labelText={key("dob")}
-                        />
-                        <ErrorMessage
-                          name="dateOfBirth"
-                          component={InputErrorMessage}
                         />
                       </div>
                     </Col>

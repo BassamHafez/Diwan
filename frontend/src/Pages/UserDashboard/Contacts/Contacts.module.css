@@ -107,6 +107,9 @@
 .number {
   font-size: 1.125rem;
 }
+.details_span{
+  min-width: 6.25rem;
+}
 .label_checked {
   background-color: var(--main_color) !important;
   border: none !important;
