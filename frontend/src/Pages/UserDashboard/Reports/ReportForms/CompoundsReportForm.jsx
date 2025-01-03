@@ -11,6 +11,7 @@ import Col from "react-bootstrap/esm/Col";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import CheckPermissions from "../../../../Components/CheckPermissions/CheckPermissions";
+import { cleanUpData } from "../../../../Components/Logic/LogicFun";
 
 const CompoundsReportForm = ({
   compoundsOptions,
@@ -52,9 +53,8 @@ const CompoundsReportForm = ({
       updatedValues.compoundId = updatedValues.compoundId.value;
     }
 
-    const cleanedValues = Object.fromEntries(
-      Object.entries(updatedValues).filter(([, value]) => value !== "")
-    );
+    const cleanedValues =cleanUpData(updatedValues)
+
     const endPoint = isDetails ? "compound-details" : "compounds";
 
     const printDataValues = { ...updatedValues };

@@ -23,7 +23,10 @@ import {
   taskTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
 import styles from "./TaskForms.module.css";
-import { convertTpOptionsFormate } from "../../../../Components/Logic/LogicFun";
+import {
+  cleanUpData,
+  convertTpOptionsFormate,
+} from "../../../../Components/Logic/LogicFun";
 
 const AddTask = ({ hideModal, refetch, propId, compId }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
@@ -102,9 +105,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
       updatedValues.compound = updatedValues.compound.value;
     }
 
-    const cleanedValues = Object.fromEntries(
-      Object.entries(updatedValues).filter(([, value]) => value !== "")
-    );
+    const cleanedValues = cleanUpData(updatedValues);
     console.log(cleanedValues);
 
     mutate(
