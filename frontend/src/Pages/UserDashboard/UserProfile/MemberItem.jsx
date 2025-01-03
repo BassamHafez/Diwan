@@ -11,7 +11,7 @@ import fetchAccountData from "../../../Store/accountInfo-actions";
 import { toast } from "react-toastify";
 import PermissionControl from "./PermissionControl";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { faCrown, faEye, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import UpdatePermissionsForm from "./ProfileForms/UpdatePermissionsForm";
 
 const MemberItem = ({
@@ -21,7 +21,7 @@ const MemberItem = ({
   accountId,
   accountOwner,
   permittedCompounds,
-  tag
+  tag,
 }) => {
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -34,6 +34,7 @@ const MemberItem = ({
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const dispatch = useDispatch();
+  const isIamOwner = userData?._id === accountOwner;
 
   const deleteMember = async () => {
     setShowDeleteModal(false);
@@ -79,12 +80,19 @@ const MemberItem = ({
               </div>
               <div className={isArLang ? "me-3" : "ms-3"}>
                 <h5 className="m-0 fw-bold">{userData?.name}</h5>
-                <span className="mini_word">{tag||key("member")}</span>
+                <span className="mini_word">
+                  {isIamOwner ? (
+                    <FontAwesomeIcon className="text-warning" icon={faCrown} />
+                  ) : (
+                    ""
+                  )}{" "}
+                  {tag || isIamOwner ? key("owner") : key("member")}
+                </span>
               </div>
             </div>
             <div
               className={`d-flex ${isArLang ? "me-auto" : "ms-auto"} ${
-                accountOwner === userData?._id ? "d-none" : ""
+                isIamOwner ? "d-none" : ""
               }`}
             >
               <FontAwesomeIcon

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
+import {object, string } from "yup";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import Select from "react-select";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+import DateField from "../../../../Components/Fields/DateField";
+import { countriesOptions } from "../../../../Components/Logic/StaticLists";
+import { formattedDate } from "../../../../Components/Logic/LogicFun";
 
 const UpdateContactForm = ({
   hideModal,
@@ -22,6 +27,7 @@ const UpdateContactForm = ({
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currenLang = isArLang ? "ar" : "en";
 
   const tenantTypeOptions = [
     { label: key("individual"), value: "individual" },
@@ -33,26 +39,61 @@ const UpdateContactForm = ({
   });
 
   const initialValues = {
-    name: contact.name || "",
-    phone: contact.phone || "",
-    phone2: contact.phone2 || "",
-    notes: contact.notes || "",
-    type: contact.type || "",
-    nationalId: contact.nationalId || "",
-    address: contact.address || "",
-    commercialRecord: contact.commercialRecord || "",
-    taxNumber: contact.taxNumber || "",
+    name: contact?.name || "",
+    phone: contact?.phone || "",
+    phone2: contact?.phone2 || "",
+    notes: contact?.notes || "",
+    type: contact?.type || "",
+    nationalId: contact?.nationalId || "",
+    address: contact?.address || "",
+    commercialRecord: contact?.commercialRecord || "",
+    taxNumber: contact?.taxNumber || "",
     contactType: contactType || "",
+    nationality:
+      countriesOptions[currenLang]?.find(
+        (country) => country.value === contact?.nationality
+      ) || "",
+    birthDate: formattedDate(contact?.birthDate) || "",
   };
 
   const onSubmit = (values, { resetForm }) => {
-    const { contactType, commercialRecord, taxNumber, ...updatedValues } =
-      values;
+    const {
+      contactType,
+      commercialRecord,
+      taxNumber,
+      nationality,
+      birthDate,
+      ...updatedValues
+    } = values;
 
     if (commercialRecord)
       updatedValues.commercialRecord = String(commercialRecord);
     if (taxNumber) updatedValues.taxNumber = String(taxNumber);
+    if (nationality) {
+      updatedValues.nationality = nationality.value;
+    }
 
+    if (birthDate) {
+      const today = new Date();
+      const selectedDate = new Date(birthDate);
+      const age = today.getFullYear() - selectedDate.getFullYear();
+      const isBirthdayPassed =
+        today.getMonth() > selectedDate.getMonth() ||
+        (today.getMonth() === selectedDate.getMonth() &&
+          today.getDate() >= selectedDate.getDate());
+
+      if (selectedDate > today) {
+        notifyError(key("noFutureDate"));
+        return;
+      }
+      if (age < 18 || (age === 18 && !isBirthdayPassed)) {
+        notifyError(key("atLeast18"));
+        return;
+      }
+
+      updatedValues.birthDate = birthDate;
+    }
+    
     const filteredValues = Object.fromEntries(
       Object.entries(updatedValues).filter(([, value]) => value !== "")
     );
@@ -128,6 +169,16 @@ const UpdateContactForm = ({
           .required(key("fieldReq")),
       otherwise: (schema) => schema,
     }),
+    nationality: object()
+      .shape({
+        label: string(),
+        value: string(),
+      })
+      .when("type", {
+        is: (type) => type === "individual",
+        then: (schema) => schema.required(key("fieldReq")),
+        otherwise: (schema) => schema,
+      }),
   });
 
   return (
@@ -137,7 +188,7 @@ const UpdateContactForm = ({
       validationSchema={validationSchema}
       enableReinitialize
     >
-      {({ setFieldValue }) => (
+      {({ setFieldValue, values }) => (
         <Form>
           <div className="field">
             <label htmlFor="name">
@@ -169,60 +220,104 @@ const UpdateContactForm = ({
               </div>
 
               {contact?.type === "individual" && (
-                <div className="field">
-                  <label htmlFor="nationalId">
-                    {key("nationalId")} {requiredLabel}
-                  </label>
-                  <Field type="text" id="nationalId" name="nationalId" />
-                  <ErrorMessage
-                    name="nationalId"
-                    component={InputErrorMessage}
-                  />
-                </div>
+                <Row>
+                  <Col sm={6}>
+                    <div className="field">
+                      <label htmlFor="nationalId">
+                        {key("nationalId")} {requiredLabel}
+                      </label>
+                      <Field type="text" id="nationalId" name="nationalId" />
+                      <ErrorMessage
+                        name="nationalId"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+
+                  <Col sm={6}>
+                    <div className="field">
+                      <label htmlFor="nationality">
+                        {key("nationality")} {requiredLabel}
+                      </label>
+                      <Select
+                        id="nationality"
+                        name="nationality"
+                        value={values.nationality}
+                        options={countriesOptions[currenLang]}
+                        onChange={(val) =>
+                          setFieldValue("nationality", val ? val : null)
+                        }
+                        className={isArLang ? "text-end" : "text-start"}
+                        isRtl={isArLang ? true : false}
+                        placeholder=""
+                      />
+                      <ErrorMessage
+                        name="nationality"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                  <Col sm={12}>
+                    <div className="field">
+                      <DateField
+                        setFieldValue={setFieldValue}
+                        value="birthDate"
+                        defaultVal={values.birthDate}
+                        labelText={key("dob")}
+                      />
+                    </div>
+                  </Col>
+                </Row>
               )}
               {contact?.type === "organization" && (
-                <>
-                  <div className="field">
-                    <label htmlFor="address">
-                      {key("address")} {requiredLabel}
-                    </label>
-                    <Field type="text" id="address" name="address" />
-                    <ErrorMessage
-                      name="address"
-                      component={InputErrorMessage}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="commercialRecord">
-                      {key("commercialRecord")} {requiredLabel}
-                    </label>
-                    <Field
-                      type="number"
-                      placeholder="XXXXXXXXXX"
-                      id="commercialRecord"
-                      name="commercialRecord"
-                    />
-                    <ErrorMessage
-                      name="commercialRecord"
-                      component={InputErrorMessage}
-                    />
-                  </div>
-                  <div className="field">
-                    <label htmlFor="taxNumber">
-                      {key("taxNumber")} {requiredLabel}
-                    </label>
-                    <Field
-                      type="number"
-                      placeholder="3XXXXXXXXXXXXXX"
-                      id="taxNumber"
-                      name="taxNumber"
-                    />
-                    <ErrorMessage
-                      name="taxNumber"
-                      component={InputErrorMessage}
-                    />
-                  </div>
-                </>
+                <Row>
+                  <Col sm={6}>
+                    <div className="field">
+                      <label htmlFor="address">
+                        {key("address")} {requiredLabel}
+                      </label>
+                      <Field type="text" id="address" name="address" />
+                      <ErrorMessage
+                        name="address"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                  <Col sm={6}>
+                    <div className="field">
+                      <label htmlFor="commercialRecord">
+                        {key("commercialRecord")} {requiredLabel}
+                      </label>
+                      <Field
+                        type="number"
+                        placeholder="XXXXXXXXXX"
+                        id="commercialRecord"
+                        name="commercialRecord"
+                      />
+                      <ErrorMessage
+                        name="commercialRecord"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                  <Col sm={12}>
+                    <div className="field">
+                      <label htmlFor="taxNumber">
+                        {key("taxNumber")} {requiredLabel}
+                      </label>
+                      <Field
+                        type="number"
+                        placeholder="3XXXXXXXXXXXXXX"
+                        id="taxNumber"
+                        name="taxNumber"
+                      />
+                      <ErrorMessage
+                        name="taxNumber"
+                        component={InputErrorMessage}
+                      />
+                    </div>
+                  </Col>
+                </Row>
               )}
             </>
           )}
