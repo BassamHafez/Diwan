@@ -110,6 +110,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
     paymentPeriodValue: "",
     paymentPeriodUnit: "",
   };
+  
   const onSubmit = async (values, { resetForm }) => {
     console.log(values);
     toast.promise(
