@@ -109,3 +109,33 @@ exports.payRevenueValidator = [
 
   validatorMiddleware,
 ];
+
+exports.splitRevenueValidator = [
+  check("estateId")
+    .exists()
+    .withMessage("estateId param is required")
+    .isMongoId()
+    .withMessage("Invalid estateId param"),
+
+  check("id")
+    .exists()
+    .withMessage("Revenue ID is required")
+    .isMongoId()
+    .withMessage("Invalid Revenue ID"),
+
+  check("splitedAmount")
+    .exists()
+    .withMessage("Splited amount is required")
+    .isFloat({ min: 0 })
+    .withMessage("Splited amount must be a positive number"),
+
+  check("dueDate")
+    .exists()
+    .withMessage("Due date is required")
+    .isDate()
+    .withMessage("Due date must be a valid date"),
+
+  check("note").optional().notEmpty().withMessage("Note must be a string"),
+
+  validatorMiddleware,
+];

@@ -186,3 +186,41 @@ exports.deleteRevenue = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+exports.splitRevenue = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { splitedAmount, dueDate, note = "" } = req.body;
+
+  const revenue = await Revenue.findOne({
+    _id: id,
+    account: req.user.account,
+  }).lean();
+
+  if (!revenue) {
+    return next(new ApiError("No revenue found with that ID", 404));
+  }
+
+  const newRevenueData = {
+    amount: splitedAmount,
+    dueDate,
+    type: revenue.type,
+    note,
+    estate: revenue.estate,
+    account: revenue.account,
+  };
+
+  if (revenue.compound) newRevenueData.compound = revenue.compound;
+  if (revenue.landlord) newRevenueData.landlord = revenue.landlord;
+  if (revenue.tenant) newRevenueData.tenant = revenue.tenant;
+  if (revenue.contract) newRevenueData.contract = revenue.contract;
+
+  await Promise.all([
+    Revenue.create(newRevenueData),
+    Revenue.updateOne({ _id: id }, { $inc: { amount: -1 * splitedAmount } }),
+  ]);
+
+  res.status(201).json({
+    status: "success",
+    message: "Revenue splited successfully",
+  });
+});
