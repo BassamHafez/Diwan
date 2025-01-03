@@ -152,28 +152,39 @@ exports.createContract = catchAsync(async (req, res, next) => {
 });
 
 exports.cancelContract = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+  const { id, estateId } = req.params;
 
-  const contract = await Contract.findOne({
-    _id: id,
-    account: req.user.account,
-  })
-    .select("status")
-    .populate(contractPopOptions)
-    .lean();
+  const [estate, contract] = await Promise.all([
+    Estate.findById(estateId).select("_id name").lean(),
+
+    Contract.findOne({
+      _id: id,
+      account: req.user.account,
+    })
+      .select("status estate startDate endDate")
+      .populate(contractPopOptions)
+      .lean(),
+  ]);
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
 
   if (!contract) {
     return next(new ApiError("No contract found with that ID", 404));
   }
 
-  if (contract.status === "completed") {
-    return next(new ApiError("Cannot cancel a completed contract", 400));
+  if (estate._id.toString() !== contract.estate._id.toString()) {
+    return next(new ApiError("Contract does not belong to that estate", 400));
   }
 
-  const updateContractPromise = Contract.findByIdAndUpdate(
-    id,
-    { isCanceled: true, status: "canceled" },
-    { new: true }
+  if (contract.status === "completed") {
+    return next(new ApiError("Contract is already completed", 400));
+  }
+
+  const updateContractPromise = Contract.updateOne(
+    { _id: id },
+    { isCanceled: true, status: "canceled" }
   );
 
   const cancelOldRevenuesPromise = Revenue.updateMany(
@@ -181,41 +192,33 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
     { status: "canceled" }
   );
 
-  const deleteOldScheduledMissionPromise = ScheduledMission.findOneAndDelete({
+  const deleteOldScheduledMissionPromise = ScheduledMission.deleteOne({
     contract: id,
     isDone: false,
   });
 
-  const [updatedContract] = await Promise.all([
+  await Promise.all([
     updateContractPromise,
     deleteOldScheduledMissionPromise,
     cancelOldRevenuesPromise,
   ]);
 
-  // const isActiveContract =
-  //   updatedContract.startDate <= Date.now() &&
-  //   updatedContract.endDate >= Date.now();
-
-  const today = new Date().toLocaleDateString();
-
+  const now = new Date();
   const isActiveContract =
-    new Date(updatedContract.startDate).toLocaleDateString() <= today &&
-    new Date(updatedContract.endDate).toLocaleDateString() >= today;
+    new Date(contract.startDate) <= now && new Date(contract.endDate) >= now;
 
   if (isActiveContract) {
-    await Estate.findByIdAndUpdate(updatedContract.estate, {
-      status: "available",
-    });
+    await Estate.updateOne({ _id: estateId }, { status: "available" });
   }
 
   sendWAText(
     `966${contract.tenant.phone}`,
-    `Hello ${contract.tenant.name}, Your contract at "${contract.estate.name}" has been canceled.`
+    `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been canceled.`
   );
 
   res.status(200).json({
     status: "success",
-    data: updatedContract,
+    message: "Contract canceled successfully",
   });
 });
 

@@ -47,4 +47,10 @@ router.patch(
   revenueController.unpayRevenue
 );
 
+router.put(
+  "/:id/split",
+  revenueValidator.splitRevenueValidator,
+  revenueController.splitRevenue
+);
+
 module.exports = router;
