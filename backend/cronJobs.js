@@ -112,7 +112,7 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Revenue.findById(task.revenue)
-            .select("tenant landlord amount estate compound status")
+            .select("tenant landlord amount estate compound status dueDate")
             .populate(revenuePopOptions)
             .lean()
             .then(async (revenue) => {
@@ -130,7 +130,7 @@ const checkScheduledMissions = async () => {
                     }, diwan reminder for payment of ${
                       revenue.amount
                     } for the estate "${
-                      estateName || compoundName || "your property"
+                      estateName || compoundName || "Diwan property"
                     }".`
                   );
                 }
@@ -140,8 +140,8 @@ const checkScheduledMissions = async () => {
                     `966${landlordPhone}`,
                     `Diwan Reminder: ${revenue.tenant.name} payment of ${
                       revenue.amount
-                    } is due for the estate "${
-                      estateName || compoundName || "your property"
+                    } is due on ${revenue.dueDate.toDateString()} for the estate "${
+                      estateName || compoundName || "Diwan property"
                     }".`
                   );
                 }
@@ -173,7 +173,7 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Expense.findById(task.expense)
-            .select("contact landlord amount estate compound status")
+            .select("contact landlord amount estate compound status dueDate")
             .populate(expensePopOptions)
             .lean()
             .then(async (expense) => {
@@ -191,8 +191,8 @@ const checkScheduledMissions = async () => {
                     } should receive payment of ${
                       expense.amount
                     } for the estate "${
-                      estateName || compoundName || "your property"
-                    }".`
+                      estateName || compoundName || "Diwan property"
+                    }" by ${expense.dueDate.toDateString()}.`
                   );
                 }
               }
