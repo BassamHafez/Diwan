@@ -30,6 +30,7 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import ExtendContract from "../PropertyForms/ExtendContract";
 
 const Contracts = ({
   details,
@@ -39,6 +40,7 @@ const Contracts = ({
 }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
+  const [showExtendContractModal, setShowExtendContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [contractDetails, setContractDetails] = useState({});
@@ -93,12 +95,12 @@ const Contracts = ({
         token: token,
         type: `estates/${propId}/contracts`,
       });
-      if (res.status === 204 || res.status === 200) {
-        refetch();
-        refetchDetails();
+      if ([200, 204].includes(res.status)) {
+        await refetch();
+        await refetchDetails();
+        notifySuccess(key("deletedSucc"));
         queryClient.invalidateQueries(["estates", token]);
         queryClient.invalidateQueries(["compounds", token]);
-        notifySuccess(key("deletedSucc"));
       } else {
         notifyError(key("wrong"));
       }
@@ -241,7 +243,7 @@ const Contracts = ({
                                   contract.isCanceled,
                                   contract.startDate,
                                   contract.endDate
-                                )
+                                ) || contract.status
                               )} ${styles.status_span}`}
                             >
                               {renamedContractStatus(
@@ -249,7 +251,7 @@ const Contracts = ({
                                   contract.isCanceled,
                                   contract.startDate,
                                   contract.endDate
-                                ),
+                                ) || contract.status,
                                 currentLang
                               )}
                             </span>
@@ -264,33 +266,47 @@ const Contracts = ({
                               </Dropdown.Toggle>
 
                               <Dropdown.Menu>
-                                <CheckPermissions
-                                  btnActions={["UPDATE_CONTRACT"]}
-                                >
-                                  <Dropdown.Item
-                                    onClick={() => {
-                                      setContractDetails(contract);
-                                      setShowUpdateContractModal(true);
-                                    }}
-                                    className="text-center"
-                                  >
-                                    {key("ediet")}
-                                  </Dropdown.Item>
-                                </CheckPermissions>
+                                {contract.status !== "completed" &&
+                                  contract.status !== "canceled" && (
+                                    <>
+                                      <CheckPermissions
+                                        btnActions={["UPDATE_CONTRACT"]}
+                                      >
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setContractDetails(contract);
+                                            setShowUpdateContractModal(true);
+                                          }}
+                                          className="text-center"
+                                        >
+                                          {key("ediet")}
+                                        </Dropdown.Item>
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setContractDetails(contract);
+                                            setShowExtendContractModal(true);
+                                          }}
+                                          className="text-center"
+                                        >
+                                          {key("extendContract")}
+                                        </Dropdown.Item>
+                                      </CheckPermissions>
 
-                                <CheckPermissions
-                                  btnActions={["CANCEL_CONTRACT"]}
-                                >
-                                  <Dropdown.Item
-                                    onClick={() => {
-                                      setContractId(contract._id);
-                                      setShowDeleteModal(true);
-                                    }}
-                                    className="text-center"
-                                  >
-                                    {key("cancel")}
-                                  </Dropdown.Item>
-                                </CheckPermissions>
+                                      <CheckPermissions
+                                        btnActions={["CANCEL_CONTRACT"]}
+                                      >
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setContractId(contract._id);
+                                            setShowDeleteModal(true);
+                                          }}
+                                          className="text-center"
+                                        >
+                                          {key("cancel")}
+                                        </Dropdown.Item>
+                                      </CheckPermissions>
+                                    </>
+                                  )}
 
                                 <Dropdown.Item
                                   onClick={() => {
@@ -341,6 +357,21 @@ const Contracts = ({
             refetch={refetch}
             contract={contractDetails}
             refetchDetails={refetchDetails}
+          />
+        </ModalForm>
+      )}
+
+      {showExtendContractModal && (
+        <ModalForm
+          show={showExtendContractModal}
+          onHide={() => setShowExtendContractModal(false)}
+          modalSize={"lg"}
+        >
+          <ExtendContract
+            hideModal={() => setShowExtendContractModal(false)}
+            refetch={refetch}
+            refetchDetails={refetchDetails}
+            contractDetails={contractDetails}
           />
         </ModalForm>
       )}

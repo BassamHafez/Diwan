@@ -12,6 +12,14 @@ const notifyAlert = () =>
     position: "top-right",
   });
 
+export const cleanUpData = (data) => {
+  if (!data) {
+    return;
+  }
+  return Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== "")
+  );
+};
 export const showPhoneAlertNotification = () => {
   const lastNotificationTime = localStorage.getItem("lastNotificationTime");
   const currentTime = new Date().getTime();
@@ -164,8 +172,8 @@ export const renameContactType = (type, language) => {
 };
 
 export const formatPhoneNumber = (phone) => {
-  if(!phone){
-    return undefined
+  if (!phone) {
+    return undefined;
   }
   const countryCode = "+966";
   if (phone.startsWith("0") && phone.length === 10) {
@@ -175,8 +183,8 @@ export const formatPhoneNumber = (phone) => {
 };
 
 export const formatWhatsAppLink = (phone) => {
-  if(!phone){
-    return undefined
+  if (!phone) {
+    return undefined;
   }
   const countryCode = "966";
   if (phone.startsWith("0") && phone.length === 10) {
@@ -251,7 +259,7 @@ const contractStatus = {
     active: "Active",
     upcoming: "Upcoming",
     canceled: "Canceled",
-    completed: "completed",
+    completed: "Completed",
   },
   ar: {
     active: "ساري",
