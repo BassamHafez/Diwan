@@ -541,13 +541,9 @@ exports.settleContract = catchAsync(async (req, res, next) => {
   ]);
 
   sendWAText(
-    `201069262663`,
+    `966${contract.tenant.phone}`,
     `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.`
   );
-  // sendWAText(
-  //   `966${contract.tenant.phone}`,
-  //   `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.`
-  // );
 
   res.status(200).json({
     status: "success",
