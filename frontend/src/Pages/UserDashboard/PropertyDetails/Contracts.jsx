@@ -18,7 +18,6 @@ import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
   generatePDF,
-  getContractStatus,
   handleDownloadExcelSheet,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
@@ -31,6 +30,7 @@ import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ExtendContract from "../PropertyForms/ExtendContract";
+import SettleContract from "../PropertyForms/SettleContract";
 
 const Contracts = ({
   details,
@@ -41,6 +41,7 @@ const Contracts = ({
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showExtendContractModal, setShowExtendContractModal] = useState(false);
+  const [showSettleContractModal, setShowSettleContractModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [contractDetails, setContractDetails] = useState({});
@@ -239,19 +240,11 @@ const Contracts = ({
                           <td>
                             <span
                               className={`${getStatusBgColor(
-                                getContractStatus(
-                                  contract.isCanceled,
-                                  contract.startDate,
-                                  contract.endDate
-                                ) || contract.status
+                                contract.status
                               )} ${styles.status_span}`}
                             >
                               {renamedContractStatus(
-                                getContractStatus(
-                                  contract.isCanceled,
-                                  contract.startDate,
-                                  contract.endDate
-                                ) || contract.status,
+                                contract.status,
                                 currentLang
                               )}
                             </span>
@@ -281,6 +274,7 @@ const Contracts = ({
                                         >
                                           {key("ediet")}
                                         </Dropdown.Item>
+
                                         <Dropdown.Item
                                           onClick={() => {
                                             setContractDetails(contract);
@@ -289,6 +283,16 @@ const Contracts = ({
                                           className="text-center"
                                         >
                                           {key("extendContract")}
+                                        </Dropdown.Item>
+
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setContractDetails(contract);
+                                            setShowSettleContractModal(true);
+                                          }}
+                                          className="text-center"
+                                        >
+                                          {key("contractSettlement")}
                                         </Dropdown.Item>
                                       </CheckPermissions>
 
@@ -344,6 +348,21 @@ const Contracts = ({
             refetch={refetch}
             refetchDetails={refetchDetails}
             settingIsLoading={settingIsLoading}
+          />
+        </ModalForm>
+      )}
+
+      {showSettleContractModal && (
+        <ModalForm
+          show={showSettleContractModal}
+          onHide={() => setShowSettleContractModal(false)}
+          modalSize="md"
+        >
+          <SettleContract
+            hideModal={() => setShowSettleContractModal(false)}
+            refetch={refetch}
+            refetchDetails={refetchDetails}
+            contractDetails={contractDetails}
           />
         </ModalForm>
       )}

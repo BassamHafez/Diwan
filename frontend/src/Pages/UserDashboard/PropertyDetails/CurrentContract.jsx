@@ -13,7 +13,6 @@ import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
   generatePDF,
-  getContractStatus,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -51,7 +50,7 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
-    enabled: !!token,
+    enabled: propId && !!token,
     staleTime: Infinity,
   });
 
@@ -89,12 +88,6 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
       notifyError(key("deleteWrong"));
     }
   };
-
-  const contractStatus = getContractStatus(
-    currentContract?.data?.contract?.isCanceled,
-    currentContract?.data?.contract?.startDate,
-    currentContract?.data?.contract?.endDate
-  );
 
   const language = isArLang ? "ar" : "en";
 
@@ -137,11 +130,14 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
                       <td>{currentContract?.data?.contract?.totalAmount}</td>
                       <td>
                         <span
-                          className={`${getStatusBgColor(contractStatus)} ${
-                            styles.status_span
-                          }`}
+                          className={`${getStatusBgColor(
+                            currentContract?.data?.contract?.status
+                          )} ${styles.status_span}`}
                         >
-                          {renamedContractStatus(contractStatus, language)}
+                          {renamedContractStatus(
+                            currentContract?.data?.contract?.status,
+                            language
+                          )}
                         </span>
                       </td>
                       <td>

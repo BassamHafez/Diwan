@@ -1,20 +1,7 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, number, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Select from "react-select";
-import { useParams } from "react-router-dom";
 import { unitOptions } from "../../../Components/Logic/StaticLists";
 import {
   calculateDaysDifference,
@@ -24,9 +11,37 @@ import {
   generatePeriodOptions,
 } from "../../../Components/Logic/LogicFun";
 import ContractRevenues from "../PropertyDetails/ContractRevenues";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "../Contacts/ContactForms/AddContactForm";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  date,
+  number,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useTranslation,
+  useParams,
+} from "../../../shared/hooks";
+import { InputErrorMessage,MainModal,ModalForm } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+
+
 
 const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
   const [tenantsOptions, setTenantsOptions] = useState([]);
@@ -129,24 +144,23 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
                 data?.response?.data?.message ===
                 "There is an contract overlapping with the selected dates"
               ) {
-                notifyError(key("contractOverlapping"));
-                resolve();
+                reject();
               }
               if (data?.status === "success") {
                 await refetch();
                 await refetchDetails();
-                queryClient.invalidateQueries(["estates", token]);
-                queryClient.invalidateQueries(["compounds", token]);
+                await queryClient.invalidateQueries(["estates", token]);
+                await queryClient.invalidateQueries(["compounds", token]);
                 resetForm();
-                resolve(key("addedSuccess"));
+                resolve();
                 hideModal();
               } else {
-                reject(key("wrong"));
+                reject();
               }
             },
             onError: (error) => {
               console.log(error);
-              reject(key("wrong"));
+              reject();
             },
           }
         );
@@ -154,7 +168,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
       {
         pending: key(key("saving")),
         success: key("addedSuccess"),
-        error: key("wrong"),
+        error: key("contractOverlapping"),
       }
     );
   };

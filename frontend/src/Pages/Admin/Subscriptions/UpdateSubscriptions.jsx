@@ -1,12 +1,15 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { number, object } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../shared/index";
+import { faSpinner, toast, object, number } from "../../../shared/constants";
+import { useMutation, useTranslation } from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
 
 const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
   const notifySuccess = (message) => toast.success(message);

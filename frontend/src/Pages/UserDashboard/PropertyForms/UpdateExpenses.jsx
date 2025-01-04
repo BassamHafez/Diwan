@@ -1,28 +1,40 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, number, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "react-select";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
 import {
   convertTpOptionsFormate,
   formattedDate,
 } from "../../../Components/Logic/LogicFun";
-import { useEffect, useState } from "react";
 
-const UpdateExpenses = ({ hideModal, refetch, exDetails,refetchDetails }) => {
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  date,
+  number,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useTranslation,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+
+const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -79,30 +91,40 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails,refetchDetails }) => {
     }
 
     console.log(updatedValues);
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "patch",
-        type: `expenses/${exDetails._id}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            refetchDetails()
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "patch",
+            type: `expenses/${exDetails._id}`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                await refetchDetails();
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };

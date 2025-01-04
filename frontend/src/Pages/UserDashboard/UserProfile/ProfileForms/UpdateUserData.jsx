@@ -1,25 +1,31 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import {faCamera, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeFormData } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import styles from "./ProfileForms.module.css";
-import { useDispatch } from "react-redux";
 import fetchProfileData from "../../../../Store/profileInfo-actions";
-import { useState } from "react";
-import { maxFileSize } from "../../../../Components/Logic/StaticLists";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  faCamera,
+  toast,
+  object,
+  string,
+} from "../../../../shared/constants";
+import {
+  useDispatch,
+  useMutation,
+  useTranslation,
+  useFileHandler,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
 
 const UpdateUserData = ({ profileInfo, hideModal }) => {
-
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const token = JSON.parse(localStorage.getItem("token"));
   const dispatch = useDispatch();
 
@@ -47,32 +53,38 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
     formData.append("name", values.name);
     formData.append("email", values.email);
     formData.append("phone", values.phone);
-
-    mutate(
-      {
-        formData: formData,
-        token: token,
-        method: "patch",
-        type: `users/me`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            dispatch(fetchProfileData(token));
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-            setSelectedFile(null);
-            setImagePreviewUrl(null);
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: formData,
+            token: token,
+            method: "patch",
+            type: `users/me`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                dispatch(fetchProfileData(token));
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -87,20 +99,6 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
       .required(key("fieldReq")),
   });
 
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-    setSelectedFile(file);
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(previewUrl);
-    }
-    e.target.value = null;
-  };
-
   return (
     <Formik
       initialValues={initialValues}
@@ -112,7 +110,7 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
         <div className={styles.photo_field}>
           <h6 className="mb-3">{key("avatar")} (1/1)</h6>
           <label className={styles.photo_label_img} htmlFor="avatar">
-            <FontAwesomeIcon title={key("changePhoto")} icon={faCamera}/>
+            <FontAwesomeIcon title={key("changePhoto")} icon={faCamera} />
             {imagePreviewUrl ? (
               <img
                 src={imagePreviewUrl}

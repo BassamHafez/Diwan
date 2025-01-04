@@ -1,6 +1,6 @@
 import { paymentMethodOptions } from "../../../Components/Logic/StaticLists";
-import { formattedDate } from "../../../Components/Logic/LogicFun";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
+import { formattedDate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -16,21 +16,29 @@ import {
   object,
   string,
   date,
+  number,
 } from "../../../shared/constants";
-import { useMutation, useTranslation, useParams } from "../../../shared/hooks";
+import {
+  useMutation,
+  useQueryClient,
+  useTranslation,
+  useParams,
+} from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
-const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
+const SettleContract = ({
+  contractDetails,
+  refetch,
+  refetchDetails,
+  hideModal,
+}) => {
   const token = JSON.parse(localStorage.getItem("token"));
+  const { propId } = useParams();
   const { t: key } = useTranslation();
-  const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const param = useParams();
-
-  const endPoint =
-    type === "rev"
-      ? `estates/${param.propId}/revenues/${Id}/pay`
-      : `expenses/${Id}/pay`;
+  const currentLang = isArLang ? "ar" : "en";
+  const requiredLabel = <span className="text-danger">*</span>;
+  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -38,7 +46,8 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
 
   const initialValues = {
     paymentMethod: "",
-    paidAt: `${formattedDate(new Date())}`,
+    paidAt: formattedDate(new Date()),
+    settlementAmount: "",
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -48,8 +57,8 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
           {
             formData: values,
             token: token,
-            method: "patch",
-            type: endPoint,
+            method: "put",
+            type: `estates/${propId}/contracts/${contractDetails?._id}/settle`,
           },
           {
             onSuccess: async (data) => {
@@ -57,23 +66,25 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
               if (data?.status === "success") {
                 await refetch();
                 await refetchDetails();
+                await queryClient.invalidateQueries(["estates", token]);
+                await queryClient.invalidateQueries(["compounds", token]);
                 resetForm();
-                resolve(key("paidSucc"));
+                resolve(key("setteledSucc"));
                 hideModal();
               } else {
-                reject(key("wrong"));
+                reject();
               }
             },
             onError: (error) => {
               console.log(error);
-              reject(key("wrong"));
+              reject();
             },
           }
         );
       }),
       {
         pending: key(key("saving")),
-        success: key("paidSucc"),
+        success: key("setteledSucc"),
         error: key("wrong"),
       }
     );
@@ -82,6 +93,9 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
   const validationSchema = object({
     paymentMethod: string().required(key("fieldReq")),
     paidAt: date(),
+    settlementAmount: number()
+      .min(0, key("positiveOnlyValidation"))
+      .required(key("fieldReq")),
   });
 
   return (
@@ -93,18 +107,26 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
     >
       {({ setFieldValue }) => (
         <Form>
-          <div className="field mb-1">
+          <div className="field">
+            <label htmlFor="settlementAmount">{key("settlementAmount")}</label>
+            <Field
+              type="number"
+              id="settlementAmount"
+              name="settlementAmount"
+            />
+            <ErrorMessage
+              name="settlementAmount"
+              component={InputErrorMessage}
+            />
+          </div>
+          <div className="field">
             <label htmlFor="paymentMethod">
               {key("paymentMethod")} {requiredLabel}
             </label>
             <Select
               id="paymentMethod"
               name="paymentMethod"
-              options={
-                isArLang
-                  ? paymentMethodOptions["ar"]
-                  : paymentMethodOptions["en"]
-              }
+              options={paymentMethodOptions[currentLang]}
               onChange={(val) => setFieldValue("paymentMethod", val.value)}
               className={`${isArLang ? "text-end" : "text-start"}`}
               isRtl={isArLang ? true : false}
@@ -112,10 +134,9 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
             />
             <ErrorMessage name="paymentMethod" component={InputErrorMessage} />
           </div>
+
           <div className="field">
-            <label htmlFor="paidAt">
-              {key("paidAt")} {requiredLabel}
-            </label>
+            <label htmlFor="paidAt">{key("paidAt")}</label>
             <Field type="date" id="paidAt" name="paidAt" />
             <ErrorMessage name="paidAt" component={InputErrorMessage} />
           </div>
@@ -139,4 +160,4 @@ const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
   );
 };
 
-export default MainPayForm;
+export default SettleContract;

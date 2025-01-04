@@ -1,23 +1,23 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import {faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeFormData } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import styles from "../../Admin.module.css";
-import { useState } from "react";
-import { maxFileSize } from "../../../../Components/Logic/StaticLists";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../../shared/index";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import {
+  useMutation,
+  useTranslation,
+  useFileHandler,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateTestimonial = ({ hideModal, refetch, content }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -44,29 +44,38 @@ const UpdateTestimonial = ({ hideModal, refetch, content }) => {
     formData.append("title", values.title);
     formData.append("comment", values.comment);
 
-    mutate(
-      {
-        formData: formData,
-        token: token,
-        method: "patch",
-        type: `testimonials/${content?._id}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: formData,
+            token: token,
+            method: "patch",
+            type: `testimonials/${content?._id}`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -76,20 +85,6 @@ const UpdateTestimonial = ({ hideModal, refetch, content }) => {
     title: string().required(key("fieldReq")),
     comment: string().min(5, key("min5")).required(key("fieldReq")),
   });
-
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-    setSelectedFile(file);
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(previewUrl);
-    }
-    e.target.value = null;
-  };
 
   return (
     <Formik

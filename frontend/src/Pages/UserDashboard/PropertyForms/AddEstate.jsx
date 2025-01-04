@@ -1,40 +1,31 @@
-import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Select from "react-select";
 import {
   citiesByRegion,
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
-  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
-import CreatableSelect from "react-select/creatable";
 import fetchAccountData from "../../../Store/accountInfo-actions";
-import { useDispatch } from "react-redux";
+
+import { ErrorMessage, Field, Form, Formik,FontAwesomeIcon,Select,CreatableSelect } from "../../../shared/index";
+import { faImage, faSpinner,toast,object, string } from "../../../shared/constants";
+import { useEffect, useState,useMutation, useQuery,useTranslation,useDispatch,useFileHandler } from "../../../shared/hooks";
+import {InputErrorMessage} from "../../../shared/components";
+import {Row,Col} from "../../../shared/bootstrap";
+
 
 const AddEstate = ({ hideModal, refetch, compId }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -121,12 +112,10 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
       formData.append("region", values.region);
       formData.append("neighborhood", values.neighborhood);
     }
-  
+
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
-    formData.append("name", values.name);
-    formData.append("description", values.description);
 
     if (values.address) {
       formData.append("address", values.address);
@@ -138,6 +127,8 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
       });
     }
 
+    formData.append("name", values.name);
+    formData.append("description", values.description);
     formData.append("price", values.price);
     formData.append("area", values.area);
 
@@ -155,8 +146,6 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
             refetch();
             dispatch(fetchAccountData(token));
             notifySuccess(key("addedSuccess"));
-            setSelectedFile(null);
-            setImagePreviewUrl(null);
             resetForm();
             hideModal();
           } else if (
@@ -182,18 +171,6 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     description: string()
       .min(5, key("descValidation"))
       .required(key("fieldReq")),
-
-    // region: string().when("compound", {
-    //   is: (compound) => compound === "not",
-    //   then: (schema) => schema.required(key("fieldReq")),
-    //   otherwise: (schema) => schema,
-    // }),
-
-    // city: string().when("compound", {
-    //   is: (compound) => compound === "not",
-    //   then: (schema) => schema.required(key("fieldReq")),
-    //   otherwise: (schema) => schema,
-    // }),
     region: string(),
     city: string(),
     address: string(),
@@ -201,21 +178,6 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     price: string().required(key("fieldReq")),
     area: string().required(key("fieldReq")),
   });
-
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-
-    setSelectedFile(file);
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(previewUrl);
-    }
-    e.target.value = null;
-  };
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {
     setFieldValue("region", selectedRegion || "");
