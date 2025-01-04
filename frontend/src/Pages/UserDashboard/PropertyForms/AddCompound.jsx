@@ -1,36 +1,47 @@
-import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { number, object, string } from "yup";
-import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+  CreatableSelect,
+} from "../../../shared/index";
+import {
+  faImage,
+  faSpinner,
+  toast,
+  number,
+  object,
+  string,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useTranslation,
+  useDispatch,
+  useFileHandler,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Select from "react-select";
 import {
   citiesByRegion,
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
-  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
-import CreatableSelect from "react-select/creatable";
-import { useDispatch } from "react-redux";
 import fetchAccountData from "../../../Store/accountInfo-actions";
 
 const AddCompound = ({ hideModal, refetch }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
@@ -38,12 +49,12 @@ const AddCompound = ({ hideModal, refetch }) => {
   const [landlordOptions, setlandlordOptions] = useState([]);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const dispatch = useDispatch();
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
 
   const { data: tags, refetch: refetchTags } = useQuery({
     queryKey: ["tags", token],
@@ -51,6 +62,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     enabled: !!token,
     staleTime: Infinity,
   });
+
   const { data: landlords } = useQuery({
     queryKey: ["landlord", token],
     queryFn: () =>
@@ -121,6 +133,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     formData.append("description", values.description);
     formData.append("city", values.city);
     formData.append("region", values.region);
+
     if (values.address) {
       formData.append("address", values.address);
     }
@@ -138,33 +151,41 @@ const AddCompound = ({ hideModal, refetch }) => {
         formData.append(`tags[${index}]`, obj.value);
       });
     }
-    mutate(
-      {
-        formData: formData,
-        token: token,
-        method: "add",
-        type: "compounds",
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            refetchTags();
-            dispatch(fetchAccountData(token));
-            notifySuccess(key("addedSuccess"));
-            setSelectedFile(null);
-            setImagePreviewUrl(null);
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: formData,
+            token: token,
+            method: "add",
+            type: "compounds",
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                dispatch(fetchAccountData(token));
+                refetchTags();
+                resolve();
+                resetForm();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("wrong"),
       }
     );
   };
@@ -182,20 +203,6 @@ const AddCompound = ({ hideModal, refetch }) => {
     broker: string(),
     commissionPercentage: number(),
   });
-
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-    setSelectedFile(file);
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(previewUrl);
-    }
-    e.target.value = null;
-  };
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {
     setFieldValue("region", selectedRegion?.value || "");

@@ -1,20 +1,32 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, object, string } from "yup";
-import { faCouch, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "react-select";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import { useState } from "react";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import styles from "./ReportForm.module.css";
-import { faBuilding } from "@fortawesome/free-regular-svg-icons";
 import { contractStatusOptions } from "../../../../Components/Logic/StaticLists";
 import CheckPermissions from "../../../../Components/CheckPermissions/CheckPermissions";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  faBuilding,
+  faCouch,
+  toast,
+  object,
+  string,
+  date,
+} from "../../../../shared/constants";
+import {
+  useState,
+  useMutation,
+  useTranslation,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const ReportsForm = ({
   compoundsOptions,
@@ -33,9 +45,6 @@ const ReportsForm = ({
   const permissionArr =
     type !== "contractsReport" ? "FINANCIAL_REPORTS" : "CONTRACTS_REPORTS";
   const requiredLabel = <span className="text-danger">*</span>;
-
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const paymentStatusOptions = [
     { label: key("paid"), value: "paid" },
@@ -114,35 +123,44 @@ const ReportsForm = ({
       printDataValues.compound = values.compound?.label;
     }
 
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "add",
-        type: `reports/${endPoint}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (type === "contractsReport") {
-              getSearchData(data?.data, printDataValues);
-            } else {
-              getSearchData(
-                data.data?.expenses,
-                data.data?.revenues,
-                printDataValues
-              );
-            }
-            notifySuccess(key("searchSucc"));
-          } else {
-            notifyError(key("searchFailed"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "add",
+            type: `reports/${endPoint}`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (type === "contractsReport") {
+                  getSearchData(data?.data, printDataValues);
+                } else {
+                  getSearchData(
+                    data.data?.expenses,
+                    data.data?.revenues,
+                    printDataValues
+                  );
+                }
+                resolve();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("searching")),
+        success: key("searchSucc"),
+        error: key("searchFailed"),
       }
     );
   };

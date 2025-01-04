@@ -1,15 +1,23 @@
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import { useMutation } from "@tanstack/react-query";
-import { object, ref, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ButtonOne from "../../../../Components/UI/Buttons/ButtonOne";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 
-const SecurityForm = ({LogOutProcess}) => {
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  ref,
+} from "../../../../shared/constants";
+import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { InputErrorMessage, ButtonOne } from "../../../../shared/components";
+
+const SecurityForm = ({ LogOutProcess }) => {
   const { t: key } = useTranslation();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);

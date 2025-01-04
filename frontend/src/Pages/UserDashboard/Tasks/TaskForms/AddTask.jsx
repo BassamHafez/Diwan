@@ -1,40 +1,50 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, number, object, string } from "yup";
-import {
-  faBuilding,
-  faCouch,
-  faSpinner,
-} from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import styles from "./TaskForms.module.css";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import Select from "react-select";
-import { useEffect, useState } from "react";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import {
   prioritysOptions,
   taskTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
-import styles from "./TaskForms.module.css";
 import {
   cleanUpData,
   convertTpOptionsFormate,
 } from "../../../../Components/Logic/LogicFun";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  faBuilding,
+  faCouch,
+  toast,
+  object,
+  string,
+  date,
+  number,
+} from "../../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useTranslation,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddTask = ({ hideModal, refetch, propId, compId }) => {
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [estatesOptions, setEstatesOptions] = useState([]);
   const [contactsOptions, setContactsOptions] = useState([]);
   const [isCompound, setIsCompound] = useState(compId ? true : false);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -107,35 +117,43 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
 
     const cleanedValues = cleanUpData(updatedValues);
     console.log(cleanedValues);
-
-    mutate(
-      {
-        formData: cleanedValues,
-        token: token,
-        method: "add",
-        type: `tasks`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (refetch) {
-              refetch();
-            }
-            if (compId || propId) {
-              queryClient.invalidateQueries(["tasks", token]);
-            }
-            notifySuccess(key("addedSuccess"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: cleanedValues,
+            token: token,
+            method: "add",
+            type: `tasks`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (refetch) {
+                  refetch();
+                }
+                if (compId || propId) {
+                  queryClient.invalidateQueries(["tasks", token]);
+                }
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("wrong"),
       }
     );
   };

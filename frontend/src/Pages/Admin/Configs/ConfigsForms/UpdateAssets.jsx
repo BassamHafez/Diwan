@@ -1,15 +1,11 @@
-import { useMutation } from "@tanstack/react-query";
-import { Form, Formik } from "formik";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeFormData } from "../../../../util/Http";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import styles from "../../Admin.module.css";
-import { useState } from "react";
 import { maxFileSize } from "../../../../Components/Logic/StaticLists";
+
+import { Form, Formik, FontAwesomeIcon } from "../../../../shared/index";
+import { faSpinner, toast } from "../../../../shared/constants";
+import { useState, useMutation, useTranslation } from "../../../../shared/hooks";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateAssets = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -18,7 +14,6 @@ const UpdateAssets = () => {
   const [imagePreviewUrl2, setImagePreviewUrl2] = useState(null);
   const { t: key } = useTranslation();
   const token = JSON.parse(localStorage.getItem("token"));
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
@@ -43,27 +38,36 @@ const UpdateAssets = () => {
       }
     });
 
-    mutate(
-      {
-        formData: formData,
-        token: token,
-        method: "put",
-        type: "configs/banners",
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: formData,
+            token: token,
+            method: "put",
+            type: "configs/banners",
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                resolve();
+                resetForm();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };

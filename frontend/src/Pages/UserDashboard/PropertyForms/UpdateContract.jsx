@@ -1,17 +1,4 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, number, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Select from "react-select";
-import { useParams } from "react-router-dom";
 import { unitOptions } from "../../../Components/Logic/StaticLists";
 import {
   calculateDaysDifference,
@@ -21,7 +8,33 @@ import {
   generatePeriodOptions,
 } from "../../../Components/Logic/LogicFun";
 import ContractRevenues from "../PropertyDetails/ContractRevenues";
-import MainModal from "../../../Components/UI/Modals/MainModal";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  date,
+  number,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQueryClient,
+  useTranslation,
+  useParams,
+} from "../../../shared/hooks";
+import { InputErrorMessage, MainModal } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -39,7 +52,6 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
   const [revenues, setRevenues] = useState([]);
   const [showRevenuesTable, setShowRevenuesTable] = useState(false);
 
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -104,40 +116,49 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
       paymentPeriodUnit: values.paymentPeriodUnit,
     };
     console.log(updatedValues);
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "patch",
-        type: `estates/${propId}/contracts/${contract._id}`,
-      },
-      {
-        onSuccess: async (data) => {
-          console.log(data);
-          if (
-            data.response?.data?.message ===
-            "There is an contract overlapping with the selected dates"
-          ) {
-            notifyError(key("contractOverlapping"));
-            return;
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "patch",
+            type: `estates/${propId}/contracts/${contract._id}`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (
+                data.response?.data?.message ===
+                "There is an contract overlapping with the selected dates"
+              ) {
+                reject();
+                return;
+              }
+              if (data?.status === "success") {
+                await refetch();
+                await refetchDetails();
+                await queryClient.invalidateQueries(["estates", token]);
+                await queryClient.invalidateQueries(["compounds", token]);
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-          if (data?.status === "success") {
-            notifySuccess(key("updatedSucc"));
-            await refetch();
-            await refetchDetails();
-            await queryClient.invalidateQueries(["revenuesData", token]);
-            await queryClient.invalidateQueries(["estates", token]);
-            await queryClient.invalidateQueries(["compounds", token]);
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
-          }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("contractOverlapping"),
       }
     );
   };

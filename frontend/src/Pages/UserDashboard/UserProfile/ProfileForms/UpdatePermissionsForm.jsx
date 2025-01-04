@@ -1,20 +1,35 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { array, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Row from "react-bootstrap/esm/Row";
-import { useDispatch, useSelector } from "react-redux";
 import fetchAccountData from "../../../../Store/accountInfo-actions";
-import CreatableSelect from "react-select/creatable";
-import { useEffect, useState } from "react";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  CreatableSelect,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  array,
+} from "../../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useTranslation,
+  useDispatch,
+  useSelector,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row } from "../../../../shared/bootstrap";
 
 const UpdatePermissionsForm = ({
   hideModal,

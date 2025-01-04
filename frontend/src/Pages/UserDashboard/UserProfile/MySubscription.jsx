@@ -27,7 +27,7 @@ const MySubscription = ({ chooseActiveActive }) => {
     { label: "mySubPolicy", value: null },
     { label: "mySubPolicy2", value: null },
     { label: "mySubPolicy3", value: null },
-    { label: "mySubPolicy4", value: "/" },
+    { label: "mySubPolicy4", value: "/help" },
   ];
 
   return (

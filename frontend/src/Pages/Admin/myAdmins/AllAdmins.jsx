@@ -73,7 +73,7 @@ const AllAdmins = () => {
         <Row className="g-3">
           {filteredData?.length > 0 ? (
             filteredData?.map((user) => (
-              <UserItem key={user._id} userData={user} refetch={refetch} />
+              <UserItem key={user._id} userData={user} refetch={refetch} isAdminPage={true} />
             ))
           ) : (
             <NoData text={"noResults"} />

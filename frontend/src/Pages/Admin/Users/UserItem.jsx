@@ -12,7 +12,13 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const UserItem = ({ userData, refetch, selectUserHandler, selectedUsers }) => {
+const UserItem = ({
+  userData,
+  refetch,
+  selectUserHandler,
+  selectedUsers,
+  isAdminPage,
+}) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const token = JSON.parse(localStorage.getItem("token"));
   const profileInfo = useSelector((state) => state.profileInfo.data);
@@ -83,7 +89,6 @@ const UserItem = ({ userData, refetch, selectUserHandler, selectedUsers }) => {
           <div className="mt-4 px-2">
             <div className={styles.info}>
               <span>{key("phone")} :</span>
-              {/* <p className={isArLang?"me-3":"ms-3"}>{userData.phone}</p> */}
               <div className="d-flex align-items-center flex-wrap">
                 <p className={`${isArLang ? "me-2" : "ms-2"} ${styles.number}`}>
                   {userData.phone}
@@ -103,7 +108,13 @@ const UserItem = ({ userData, refetch, selectUserHandler, selectedUsers }) => {
             {userData?._id !== profileInfo?._id ? (
               !userData.isKing && (
                 <div
-                  className={`${styles.controller_div} d-flex justify-content-between align-items-center flex-wrap position-relative mt-3`}
+                  className={`${
+                    styles.controller_div
+                  } d-flex align-items-center flex-wrap position-relative mt-3 ${
+                    isAdminPage
+                      ? "justify-content-end"
+                      : "justify-content-between"
+                  }`}
                 >
                   <ButtonOne
                     text={key("delete")}
@@ -112,12 +123,14 @@ const UserItem = ({ userData, refetch, selectUserHandler, selectedUsers }) => {
                     onClick={() => setShowDeleteModal(true)}
                   />
 
-                  <ButtonOne
-                    text={!isIdExist ? key("select") : key("exclude")}
-                    classes="bg-navy m-2"
-                    borderd={true}
-                    onClick={selectHandler}
-                  />
+                  {!isAdminPage && (
+                    <ButtonOne
+                      text={!isIdExist ? key("select") : key("exclude")}
+                      classes="bg-navy m-2"
+                      borderd={true}
+                      onClick={selectHandler}
+                    />
+                  )}
                 </div>
               )
             ) : (

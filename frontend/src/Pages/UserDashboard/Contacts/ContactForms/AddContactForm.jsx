@@ -1,17 +1,20 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import {object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import Select from "react-select";
 import DateField from "../../../../Components/Fields/DateField";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import { countriesOptions } from "../../../../Components/Logic/StaticLists";
+import { cleanUpData } from "../../../../Components/Logic/LogicFun";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddContactForm = ({
   hideModal,
@@ -19,7 +22,6 @@ const AddContactForm = ({
   refetch,
   refetchAllContacts,
 }) => {
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -87,39 +89,47 @@ const AddContactForm = ({
       updatedValues.commercialRecord = String(commercialRecord);
     if (taxNumber) updatedValues.taxNumber = String(taxNumber);
 
-    const filteredValues = Object.fromEntries(
-      Object.entries(updatedValues).filter(([, value]) => value !== "")
-    );
+    const cleanedValues = cleanUpData(updatedValues);
 
-    console.log(filteredValues);
-    mutate(
-      {
-        formData: filteredValues,
-        token: token,
-        method: "add",
-        type: `contacts/${contactType}s`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (refetch) {
-              refetch();
-            }
-            if (refetchAllContacts) {
-              refetchAllContacts();
-            }
-            notifySuccess(key("addedSuccess"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    console.log(cleanedValues);
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: cleanedValues,
+            token: token,
+            method: "add",
+            type: `contacts/${contactType}s`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (refetch) {
+                  refetch();
+                }
+                if (refetchAllContacts) {
+                  refetchAllContacts();
+                }
+                resolve();
+                resetForm();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("wrong"),
       }
     );
   };

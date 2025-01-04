@@ -1,17 +1,26 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { array, date, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "react-select";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
 import CheckPermissions from "../../../../Components/CheckPermissions/CheckPermissions";
 import { cleanUpData } from "../../../../Components/Logic/LogicFun";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  date,
+  array,
+} from "../../../../shared/constants";
+import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const CompoundsReportForm = ({
   compoundsOptions,
@@ -26,9 +35,6 @@ const CompoundsReportForm = ({
 
   const requiredLabel = <span className="text-danger">*</span>;
   const isDetails = type === "compoundDetailsReport";
-
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -49,11 +55,7 @@ const CompoundsReportForm = ({
       );
     }
 
-    if (updatedValues.compoundId) {
-      updatedValues.compoundId = updatedValues.compoundId.value;
-    }
-
-    const cleanedValues =cleanUpData(updatedValues)
+    const cleanedValues = cleanUpData(updatedValues);
 
     const endPoint = isDetails ? "compound-details" : "compounds";
 
@@ -61,47 +63,52 @@ const CompoundsReportForm = ({
     if (printDataValues.compoundId) {
       printDataValues.compoundId = printDataValues.compoundId.label;
     }
-    mutate(
-      {
-        formData: cleanedValues,
-        token: token,
-        method: "add",
-        type: `reports/${endPoint}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (isDetails) {
-              getSearchData(data?.data, printDataValues);
-            } else {
-              getSearchData(
-                data.data?.expenses,
-                data.data?.revenues,
-                updatedValues
-              );
-            }
 
-            notifySuccess(key("searchSucc"));
-          } else {
-            notifyError(key("searchFailed"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: cleanedValues,
+            token: token,
+            method: "add",
+            type: `reports/${endPoint}`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (isDetails) {
+                  getSearchData(data?.data, printDataValues);
+                } else {
+                  getSearchData(
+                    data.data?.expenses,
+                    data.data?.revenues,
+                    updatedValues
+                  );
+                }
+
+                resolve();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("searching")),
+        success: key("searchSucc"),
+        error: key("searchFailed"),
       }
     );
   };
   const myValidationSchema = isDetails
     ? object({
-        compoundId: object()
-          .shape({
-            label: string(),
-            value: string(),
-          })
-          .required(key("fieldReq")),
+        compoundId: string().required(key("fieldReq")),
         startDate: date().required(key("fieldReq")),
         endDate: date()
           .required(key("fieldReq"))
@@ -143,11 +150,15 @@ const CompoundsReportForm = ({
             <Col sm={isDetails ? 12 : 6}>
               {isDetails ? (
                 <div className="field">
-                  <label htmlFor="compoundId">{key("compound")} {requiredLabel}</label>
+                  <label htmlFor="compoundId">
+                    {key("compound")} {requiredLabel}
+                  </label>
                   <Select
                     isClearable
                     options={compoundsOptions}
-                    onChange={(val) => setFieldValue("compoundId", val)}
+                    onChange={(val) =>
+                      setFieldValue("compoundId", val ? val.value : null)
+                    }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? true : false}
                     placeholder=""

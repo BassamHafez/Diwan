@@ -1,46 +1,58 @@
-import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { number, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Select from "react-select";
 import {
   citiesByRegion,
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
-  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
-import CreatableSelect from "react-select/creatable";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+  CreatableSelect,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  number,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useTranslation,
+  useFileHandler,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+
 const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
   const [brokersOptions, setBrokersOptions] = useState([]);
   const [landlordOptions, setlandlordOptions] = useState([]);
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const queryClient = useQueryClient();
-
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
+
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 
@@ -110,23 +122,25 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
 
   const onSubmit = (values, { resetForm }) => {
     const formData = new FormData();
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-    }
+
     formData.append("name", values.name);
     formData.append("description", values.description);
     formData.append("city", values.city);
     formData.append("region", values.region);
+    formData.append("neighborhood", values.neighborhood);
+
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
     if (values.address) {
       formData.append("address", values.address);
     }
-    formData.append("neighborhood", values.neighborhood);
     if (values.landlord) {
       formData.append("landlord", values.landlord);
     }
     if (values.broker) {
       formData.append("broker", values.broker);
-      formData.append("commissionPercentage", values.commissionPercentage||0);
+      formData.append("commissionPercentage", values.commissionPercentage || 0);
     }
     if (values.waterAccountNumber) {
       formData.append(
@@ -145,33 +159,41 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
         formData.append(`tags[${index}]`, obj.value);
       });
     }
-    mutate(
-      {
-        formData: formData,
-        token: token,
-        method: "patch",
-        type: `compounds/${compoundData._id}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            refetchTags();
-            queryClient.invalidateQueries(["compounds", token]);
-            notifySuccess(key("updatedSucc"));
-            setSelectedFile(null);
-            setImagePreviewUrl(null);
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: formData,
+            token: token,
+            method: "patch",
+            type: `compounds/${compoundData._id}`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                refetchTags();
+                queryClient.invalidateQueries(["compounds", token]);
+                resolve();
+                resetForm();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -194,20 +216,6 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
     ),
     commissionPercentage: number(),
   });
-
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-    setSelectedFile(file);
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(previewUrl);
-    }
-    e.target.value = null;
-  };
 
   useEffect(() => {
     const settingCityAndDistrictOptionsOptions = () => {
