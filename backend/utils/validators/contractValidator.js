@@ -221,11 +221,6 @@ exports.settleContractValidator = [
     .isFloat({ min: 0 })
     .withMessage("Settlement amount must be a positive number"),
 
-  check("paidAt")
-    .optional()
-    .isDate()
-    .withMessage("Paid at must be a valid date"),
-
   check("paymentMethod")
     .exists()
     .withMessage("Payment method is required")
