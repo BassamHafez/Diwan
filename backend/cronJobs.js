@@ -112,11 +112,11 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Revenue.findById(task.revenue)
-            .select("tenant landlord amount estate compound")
+            .select("tenant landlord amount estate compound status dueDate")
             .populate(revenuePopOptions)
             .lean()
             .then(async (revenue) => {
-              if (revenue) {
+              if (revenue && revenue.status === "pending") {
                 const tenantPhone = revenue.tenant?.phone;
                 const landlordPhone = revenue.landlord?.phone;
                 const estateName = revenue.estate?.name;
@@ -130,7 +130,7 @@ const checkScheduledMissions = async () => {
                     }, diwan reminder for payment of ${
                       revenue.amount
                     } for the estate "${
-                      estateName || compoundName || "your property"
+                      estateName || compoundName || "Diwan property"
                     }".`
                   );
                 }
@@ -140,8 +140,8 @@ const checkScheduledMissions = async () => {
                     `966${landlordPhone}`,
                     `Diwan Reminder: ${revenue.tenant.name} payment of ${
                       revenue.amount
-                    } is due for the estate "${
-                      estateName || compoundName || "your property"
+                    } is due on ${revenue.dueDate.toDateString()} for the estate "${
+                      estateName || compoundName || "Diwan property"
                     }".`
                   );
                 }
@@ -173,11 +173,11 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Expense.findById(task.expense)
-            .select("contact landlord amount estate compound")
+            .select("contact landlord amount estate compound status dueDate")
             .populate(expensePopOptions)
             .lean()
             .then(async (expense) => {
-              if (expense) {
+              if (expense && expense.status === "pending") {
                 const contactName = expense.contact?.name;
                 const landlordPhone = expense.landlord?.phone;
                 const estateName = expense.estate?.name;
@@ -191,8 +191,8 @@ const checkScheduledMissions = async () => {
                     } should receive payment of ${
                       expense.amount
                     } for the estate "${
-                      estateName || compoundName || "your property"
-                    }".`
+                      estateName || compoundName || "Diwan property"
+                    }" by ${expense.dueDate.toDateString()}.`
                   );
                 }
               }
