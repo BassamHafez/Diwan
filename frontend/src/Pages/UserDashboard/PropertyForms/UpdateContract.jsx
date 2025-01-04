@@ -95,7 +95,7 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
     paymentPeriodUnit: contract.paymentPeriodUnit || "",
   };
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = async (values, { resetForm }) => {
     const updatedValues = {
       startDate: values.startDate,
       endDate: values.endDate,
@@ -112,7 +112,7 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
         type: `estates/${propId}/contracts/${contract._id}`,
       },
       {
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
           console.log(data);
           if (
             data.response?.data?.message ===
@@ -123,11 +123,11 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
           }
           if (data?.status === "success") {
             notifySuccess(key("updatedSucc"));
-            refetch();
-            refetchDetails();
-            queryClient.invalidateQueries(["revenuesData", token]);
-            queryClient.invalidateQueries(["estates", token]);
-            queryClient.invalidateQueries(["compounds", token]);
+            await refetch();
+            await refetchDetails();
+            await queryClient.invalidateQueries(["revenuesData", token]);
+            await queryClient.invalidateQueries(["estates", token]);
+            await queryClient.invalidateQueries(["compounds", token]);
             resetForm();
             hideModal();
           } else {

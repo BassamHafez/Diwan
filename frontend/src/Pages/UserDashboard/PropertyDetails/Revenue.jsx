@@ -36,12 +36,14 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import PrintCashReceipt from "../../../Components/Prints/PrintCashReceipt";
 import { useSelector } from "react-redux";
 import PrintTaxInvoice from "../../../Components/Prints/PrintTaxInvoice";
+import SplitRevenue from "../PropertyForms/SplitRevenue";
 
 const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
   const [showPayRevenueModal, setShowPayRevenueModal] = useState(false);
   const [showTaxInvoiceModa, setShowTaxInvoiceModal] = useState(false);
   const [showCashReceiptModal, setShowCashReceiptModal] = useState(false);
+  const [showSplitModal, setShowSplitModal] = useState(false);
   const [revDetails, setRevDetails] = useState({});
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -148,6 +150,8 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
     } else if (type === "unPay") {
       setRevenueId("");
       unPayRevenue(revId);
+    } else if (type === "split") {
+      setShowSplitModal(true);
     }
   };
 
@@ -320,18 +324,32 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                               </Dropdown.Toggle>
                               <Dropdown.Menu className={styles.dropdown_list}>
                                 {rev.status === "pending" && (
-                                  <CheckPermissions
-                                    btnActions={["PAY_REVENUE"]}
-                                  >
-                                    <Dropdown.Item
-                                      onClick={() =>
-                                        mainpulateRev("pay", rev._id)
-                                      }
-                                      className="text-center"
+                                  <>
+                                    <CheckPermissions
+                                      btnActions={["PAY_REVENUE"]}
                                     >
-                                      {key("paid")}
-                                    </Dropdown.Item>
-                                  </CheckPermissions>
+                                      <Dropdown.Item
+                                        onClick={() =>
+                                          mainpulateRev("pay", rev._id)
+                                        }
+                                        className="text-center"
+                                      >
+                                        {key("paid")}
+                                      </Dropdown.Item>
+                                    </CheckPermissions>
+                                    <CheckPermissions
+                                      btnActions={["ADD_REVENUE"]}
+                                    >
+                                      <Dropdown.Item
+                                        onClick={() =>
+                                          mainpulateRev("split", rev)
+                                        }
+                                        className="text-center"
+                                      >
+                                        {key("splitPayment")}
+                                      </Dropdown.Item>
+                                    </CheckPermissions>
+                                  </>
                                 )}
                                 {rev.status === "paid" && (
                                   <>
@@ -446,6 +464,19 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
             refetchDetails={refetchDetails}
             Id={revenueId}
             type="rev"
+          />
+        </ModalForm>
+      )}
+      {showSplitModal && (
+        <ModalForm
+          show={showSplitModal}
+          onHide={() => setShowSplitModal(false)}
+        >
+          <SplitRevenue
+            hideModal={() => setShowSplitModal(false)}
+            refetch={refetch}
+            refetchDetails={refetchDetails}
+            revenueDetails={revenueId}
           />
         </ModalForm>
       )}
