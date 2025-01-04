@@ -15,7 +15,14 @@ const revenueSchema = new mongoose.Schema(
     type: {
       type: String,
       // مستحقات - عمولة إضافية - السعي - مستحق إضافي - أخرى
-      enum: ["dues", "extra-fee", "commission", "add-due", "other"],
+      enum: [
+        "dues",
+        "extra-fee",
+        "commission",
+        "add-due",
+        "settlement",
+        "other",
+      ],
       default: "dues",
       required: true,
     },
