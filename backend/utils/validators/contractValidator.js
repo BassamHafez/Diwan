@@ -201,3 +201,36 @@ exports.extendContractValidator = [
 
   validatorMiddleware,
 ];
+
+exports.settleContractValidator = [
+  check("estateId")
+    .exists()
+    .withMessage("Estate ID is required")
+    .isMongoId()
+    .withMessage("Invalid Estate ID"),
+
+  check("id")
+    .exists()
+    .withMessage("Contract ID is required")
+    .isMongoId()
+    .withMessage("Invalid Contract ID"),
+
+  check("settlementAmount")
+    .exists()
+    .withMessage("Settlement amount is required")
+    .isFloat({ min: 0 })
+    .withMessage("Settlement amount must be a positive number"),
+
+  check("paidAt")
+    .optional()
+    .isDate()
+    .withMessage("Paid at must be a valid date"),
+
+  check("paymentMethod")
+    .exists()
+    .withMessage("Payment method is required")
+    .isIn(["cash", "bank-transfer", "online"])
+    .withMessage("Payment method must be one of: cash, bank-transfer, online"),
+
+  validatorMiddleware,
+];

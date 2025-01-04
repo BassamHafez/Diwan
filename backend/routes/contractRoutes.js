@@ -50,4 +50,11 @@ router.put(
   contractController.extendContract
 );
 
+router.put(
+  "/:id/settle",
+  authController.checkPermission("UPDATE_CONTRACT"),
+  contractValidator.settleContractValidator,
+  contractController.settleContract
+);
+
 module.exports = router;

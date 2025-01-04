@@ -452,3 +452,105 @@ exports.extendContract = catchAsync(async (req, res, next) => {
     message: "Contract extended successfully",
   });
 });
+
+exports.settleContract = catchAsync(async (req, res, next) => {
+  const { estateId, id } = req.params;
+  const { settlementAmount, paymentMethod, paidAt = new Date() } = req.body;
+
+  const [estate, contract] = await Promise.all([
+    Estate.findById(estateId).select("_id name").lean(),
+
+    Contract.findOne({
+      _id: id,
+      account: req.user.account,
+    })
+      .populate(contractPopOptions)
+      .lean(),
+  ]);
+
+  if (!estate) {
+    return next(new ApiError("No estate found with that ID", 404));
+  }
+
+  if (!contract) {
+    return next(new ApiError("No contract found with that ID", 404));
+  }
+
+  if (estate._id.toString() !== contract.estate._id.toString()) {
+    return next(new ApiError("Contract does not belong to that estate", 400));
+  }
+
+  if (contract.status === "completed") {
+    return next(new ApiError("Contract is already completed", 400));
+  }
+
+  if (contract.status === "canceled") {
+    return next(new ApiError("Contract is already canceled", 400));
+  }
+
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+
+  // const isActiveContract = contract.status === "active" ? true : false;
+  const now = new Date();
+  const isActiveContract = contract.startDate <= now && contract.endDate >= now;
+
+  const cancelOldRevenuesPromise = Revenue.updateMany(
+    { contract: id, status: { $ne: "paid" } },
+    { status: "canceled" }
+  );
+
+  const updateContractPromise = Contract.updateOne(
+    { _id: id },
+    { status: "completed", endDate: endOfDay }
+  );
+
+  const updateEstatePromise = isActiveContract
+    ? Estate.updateOne({ _id: estateId }, { status: "available" })
+    : Promise.resolve();
+
+  await Promise.all([
+    cancelOldRevenuesPromise,
+    updateContractPromise,
+    updateEstatePromise,
+  ]);
+
+  const deleteOldScheduledMissionPromise = ScheduledMission.deleteOne({
+    contract: id,
+    isDone: false,
+  });
+
+  const settlementRevenuePromise = Revenue.create({
+    contract: id,
+    amount: settlementAmount,
+    type: "settlement",
+    dueDate: new Date(),
+    status: "paid",
+    paidAt,
+    paymentMethod,
+    account: contract.account,
+    tenant: contract.tenant,
+    estate: contract.estate,
+    compound: contract.compound || null,
+    landlord: contract.landlord || null,
+  });
+
+  await Promise.all([
+    deleteOldScheduledMissionPromise,
+    settlementRevenuePromise,
+  ]);
+
+  sendWAText(
+    `201069262663`,
+    `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.`
+  );
+  // sendWAText(
+  //   `966${contract.tenant.phone}`,
+  //   `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.`
+  // );
+
+  res.status(200).json({
+    status: "success",
+    message: "Contract settled successfully",
+  });
+});
