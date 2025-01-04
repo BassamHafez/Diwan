@@ -327,7 +327,7 @@ exports.getCurrentContract = catchAsync(async (req, res, next) => {
     estate: estateId,
     startDate: { $lte: new Date().setHours(23, 59, 59, 999) },
     endDate: { $gte: new Date().setHours(0, 0, 0, 0) },
-    isCanceled: false,
+    status: { $nin: ["canceled", "completed"] },
   })
     .populate(contractPopOptions)
     .select(
