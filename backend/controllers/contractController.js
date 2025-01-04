@@ -455,7 +455,7 @@ exports.extendContract = catchAsync(async (req, res, next) => {
 
 exports.settleContract = catchAsync(async (req, res, next) => {
   const { estateId, id } = req.params;
-  const { settlementAmount, paymentMethod, paidAt = new Date() } = req.body;
+  const { settlementAmount, paymentMethod } = req.body;
 
   const [estate, contract] = await Promise.all([
     Estate.findById(estateId).select("_id name").lean(),
@@ -526,7 +526,7 @@ exports.settleContract = catchAsync(async (req, res, next) => {
     type: "settlement",
     dueDate: new Date(),
     status: "paid",
-    paidAt,
+    paidAt: new Date(),
     paymentMethod,
     account: contract.account,
     tenant: contract.tenant,
