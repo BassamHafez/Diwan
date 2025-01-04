@@ -53,6 +53,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [revenueId, setRevenueId] = useState("");
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const curentLang = isArLang ? "ar" : "en";
   const token = JSON.parse(localStorage.getItem("token"));
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
@@ -252,11 +253,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
             </div>
             <div className="d-flex flex-wrap">
               <Select
-                options={
-                  isArLang
-                    ? revenueFilterTypeOptions["ar"]
-                    : revenueFilterTypeOptions["en"]
-                }
+                options={revenueFilterTypeOptions[curentLang]}
                 onChange={(val) =>
                   filterChangeHandler(val ? val.value : null, "type")
                 }
@@ -268,7 +265,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                 isClearable
               />
               <Select
-                options={isArLang ? revenuesStatus["ar"] : revenuesStatus["en"]}
+                options={revenuesStatus[curentLang]}
                 onChange={(val) =>
                   filterChangeHandler(val ? val.value : null, "status")
                 }

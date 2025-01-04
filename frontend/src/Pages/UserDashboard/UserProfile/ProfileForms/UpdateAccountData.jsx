@@ -1,27 +1,32 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import { useDispatch } from "react-redux";
 import fetchAccountData from "../../../../Store/accountInfo-actions";
-import Select from "react-select";
 import {
   citiesByRegion,
   citiesByRegionAr,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../../Components/Logic/StaticLists";
-import { useEffect, useState } from "react";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useTranslation,
+  useDispatch,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
 
 const UpdateAccountData = ({ accountInfo, hideModal }) => {
   const [cityOptions, setCityOptions] = useState([]);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const dispatch = useDispatch();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -44,43 +49,51 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-    
     const filteredValues = Object.fromEntries(
       Object.entries(values).filter(
         ([, value]) => value !== "" && value !== undefined
       )
     );
 
-    if(filteredValues.commercialRecord){
-      filteredValues.commercialRecord=filteredValues.commercialRecord.toString()
+    if (filteredValues.commercialRecord) {
+      filteredValues.commercialRecord =
+        filteredValues.commercialRecord.toString();
     }
-    if(filteredValues.taxNumber){
-      filteredValues.taxNumber=filteredValues.taxNumber.toString()
+    if (filteredValues.taxNumber) {
+      filteredValues.taxNumber = filteredValues.taxNumber.toString();
     }
-
-    mutate(
-      {
-        formData: filteredValues,
-        token: token,
-        method: "patch",
-        type: `accounts/${accountInfo?.account?._id}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            dispatch(fetchAccountData(token));
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: filteredValues,
+            token: token,
+            method: "patch",
+            type: `accounts/${accountInfo?.account?._id}`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                dispatch(fetchAccountData(token));
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -208,9 +221,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
           </div>
 
           <div className="field">
-            <label htmlFor="commercialRecord">
-              {key("commercialRecord")}
-            </label>
+            <label htmlFor="commercialRecord">{key("commercialRecord")}</label>
             <Field
               type="number"
               placeholder="XXXXXXXXXX"
@@ -223,9 +234,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
             />
           </div>
           <div className="field">
-            <label htmlFor="taxNumber">
-              {key("taxNumber")}
-            </label>
+            <label htmlFor="taxNumber">{key("taxNumber")}</label>
             <Field
               type="number"
               placeholder="3XXXXXXXXXXXXXX"

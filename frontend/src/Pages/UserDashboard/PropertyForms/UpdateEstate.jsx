@@ -1,32 +1,46 @@
-import { useEffect, useState } from "react";
 import styles from "./PropertyForms.module.css";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import { faImage, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Select from "react-select";
 import {
   citiesByRegion,
   citiesByRegionAr,
   districtsByCity,
   districtsByCityAr,
-  maxFileSize,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
-import CreatableSelect from "react-select/creatable";
-import { useParams } from "react-router-dom";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+  CreatableSelect,
+} from "../../../shared/index";
+import {
+  faImage,
+  faSpinner,
+  toast,
+  object,
+  string,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  useTranslation,
+  useFileHandler,
+  useParams,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateEstate = ({
   hideModal,
@@ -34,17 +48,15 @@ const UpdateEstate = ({
   estateData,
   estateParentCompound,
 }) => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
   const [compoundsOptions, setCompoundsOptions] = useState([]);
   const [brokersOptions, setBrokersOptions] = useState([]);
   const [landlordOptions, setlandlordOptions] = useState([]);
   const [tagsOptions, setTagsOptions] = useState([]);
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const queryClient = useQueryClient();
 
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -146,6 +158,7 @@ const UpdateEstate = ({
   const onSubmit = (values, { resetForm }) => {
     console.log(values);
     const formData = new FormData();
+
     if (values.compound === "not") {
       if (!values.region) {
         notifyError(key("regionReq"));
@@ -160,25 +173,22 @@ const UpdateEstate = ({
       formData.append("neighborhood", values.neighborhood);
     }
 
+    formData.append("name", values.name);
+    formData.append("description", values.description);
+    formData.append("price", values.price);
+    formData.append("area", values.area);
+
     if (selectedFile) {
       formData.append("image", selectedFile);
     }
-
-    formData.append("name", values.name);
-    formData.append("description", values.description);
     if (values.address) {
       formData.append("address", values.address);
     }
-
     if (values.tags?.length > 0) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
       });
     }
-
-    formData.append("price", values.price);
-    formData.append("area", values.area);
-
     if (values.landlord) {
       formData.append("landlord", values.landlord);
     }
@@ -197,33 +207,41 @@ const UpdateEstate = ({
         values.electricityAccountNumber.toString()
       );
     }
-    mutate(
-      {
-        formData: formData,
-        token: token,
-        method: "patch",
-        type: `estates/${propId}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            refetchTags();
-            queryClient.invalidateQueries(["estates", token]);
-            notifySuccess(key("updatedSucc"));
-            setSelectedFile(null);
-            setImagePreviewUrl(null);
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: formData,
+            token: token,
+            method: "patch",
+            type: `estates/${propId}`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                refetchTags();
+                queryClient.invalidateQueries(["estates", token]);
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -273,21 +291,6 @@ const UpdateEstate = ({
 
     settingCityAndDistrictOptionsOptions();
   }, [estateParent, isArLang, key]);
-
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-
-    setSelectedFile(file);
-    if (file) {
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreviewUrl(previewUrl);
-    }
-    e.target.value = null;
-  };
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {
     setFieldValue("region", selectedRegion?.value || "");

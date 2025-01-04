@@ -62,7 +62,7 @@ const Support = () => {
 
   return (
     <div className="admin_body height_container position-relative p-2">
-      {!messages || (isFetching && <LoadingOne />)}
+      {(!messages || isFetching) && <LoadingOne />}
       <div className="my-4">
         <MainTitle title={key("messages")} />
       </div>

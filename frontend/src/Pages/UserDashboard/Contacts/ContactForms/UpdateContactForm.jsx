@@ -1,18 +1,23 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import {object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import Select from "react-select";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import DateField from "../../../../Components/Fields/DateField";
 import { countriesOptions } from "../../../../Components/Logic/StaticLists";
-import { formattedDate } from "../../../../Components/Logic/LogicFun";
+import {
+  cleanUpData,
+  formattedDate,
+} from "../../../../Components/Logic/LogicFun";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateContactForm = ({
   hideModal,
@@ -21,7 +26,6 @@ const UpdateContactForm = ({
   refetchAllContacts,
   contact,
 }) => {
-  const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -93,42 +97,50 @@ const UpdateContactForm = ({
 
       updatedValues.birthDate = birthDate;
     }
-    
-    const filteredValues = Object.fromEntries(
-      Object.entries(updatedValues).filter(([, value]) => value !== "")
-    );
 
-    if ("type" in filteredValues) {
-      delete filteredValues.type;
+    const cleanedValues = cleanUpData(updatedValues);
+
+    if ("type" in cleanedValues) {
+      delete cleanedValues.type;
     }
 
-    console.log(filteredValues);
-    mutate(
-      {
-        formData: filteredValues,
-        token: token,
-        method: "patch",
-        type: `contacts/${contactType}s/${contact._id}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (refetch) {
-              refetch();
-            }
-            refetchAllContacts();
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    console.log(cleanedValues);
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: cleanedValues,
+            token: token,
+            method: "patch",
+            type: `contacts/${contactType}s/${contact._id}`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (refetch) {
+                  refetch();
+                }
+                refetchAllContacts();
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };

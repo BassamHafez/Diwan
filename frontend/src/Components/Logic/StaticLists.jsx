@@ -87,6 +87,7 @@ export const revenueFilterTypeOptions = {
     { label: "Add-due", value: "add-due" },
     { label: "Extra-Fee", value: "extra-fee" },
     { label: "Commission", value: "commission" },
+    { label: "Settlement", value: "settlement" },
     { label: "Other", value: "other" },
   ],
   ar: [
@@ -94,6 +95,7 @@ export const revenueFilterTypeOptions = {
     { label: "مستحقات اضافية", value: "add-due" },
     { label: "رسوم إضافية", value: "extra-fee" },
     { label: "عمولة", value: "commission" },
+    { label: "مخالصة", value: "settlement" },
     { label: "أخرى", value: "other" },
   ],
 };

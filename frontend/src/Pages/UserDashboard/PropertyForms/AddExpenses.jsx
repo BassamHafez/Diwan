@@ -1,27 +1,39 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, number, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Select from "react-select";
-import { useParams } from "react-router-dom";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
-import { useEffect, useState } from "react";
 import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
-const AddExpenses = ({ hideModal, refetch, isCompound,refetchDetails }) => {
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  date,
+  number,
+} from "../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useTranslation,
+  useParams,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+
+const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
   const [contactServicesOptions, setContactServicesOptions] = useState([]);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -77,30 +89,40 @@ const AddExpenses = ({ hideModal, refetch, isCompound,refetchDetails }) => {
     }
 
     console.log(updatedValues);
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "add",
-        type: `expenses`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            refetchDetails();
-            notifySuccess(key("addedSuccess"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "add",
+            type: `expenses`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                await refetchDetails();
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("wrong"),
       }
     );
   };
