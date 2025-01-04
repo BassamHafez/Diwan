@@ -1,16 +1,30 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { date, number, object, string } from "yup";
-import { faCoins, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useParams } from "react-router-dom";
 import { cleanUpData, formattedDate } from "../../../Components/Logic/LogicFun";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  faCoins,
+  toast,
+  object,
+  string,
+  date,
+  number,
+} from "../../../shared/constants";
+import {
+  useMutation,
+  useTranslation,
+  useParams,
+} from "../../../shared/hooks";
+import { InputErrorMessage} from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+
 
 const SplitRevenue = ({
   hideModal,
@@ -18,8 +32,6 @@ const SplitRevenue = ({
   refetchDetails,
   revenueDetails,
 }) => {
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -38,31 +50,39 @@ const SplitRevenue = ({
   const onSubmit = (values, { resetForm }) => {
     const cleanedValues = cleanUpData({ ...values });
     console.log(cleanedValues);
-
-    mutate(
-      {
-        formData: cleanedValues,
-        token: token,
-        method: "put",
-        type: `estates/${propId}/revenues/${revenueDetails?._id}/split`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            refetchDetails();
-            notifySuccess(key("splitedSucc"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: cleanedValues,
+            token: token,
+            method: "put",
+            type: `estates/${propId}/revenues/${revenueDetails?._id}/split`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                await refetchDetails();
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("splitedSucc"),
+        error: key("wrong"),
       }
     );
   };

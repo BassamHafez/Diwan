@@ -271,6 +271,7 @@ const Reports = () => {
                   filterType={compoundsFilter}
                 />
               ) : (
+                reportTypeFilter === "compoundsReport" &&
                 compoundsFilter === "compoundDetailsReport" && (
                   <CompoundDetailsReports
                     compoundsOptions={compoundsOptions}

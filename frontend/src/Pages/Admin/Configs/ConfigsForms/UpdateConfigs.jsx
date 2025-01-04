@@ -1,23 +1,33 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { number, object, string } from "yup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner, faSquare } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import { useDispatch, useSelector } from "react-redux";
 import fetchConfigs from "../../../../Store/configs-actions";
-import LoadingOne from "../../../../Components/UI/Loading/LoadingOne";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  faSquare,
+  toast,
+  object,
+  string,
+  number,
+} from "../../../../shared/constants";
+import {
+  useMutation,
+  useTranslation,
+  useDispatch,
+  useSelector,
+} from "../../../../shared/hooks";
+import { InputErrorMessage, LoadingOne } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateConfigs = () => {
   const { t: key } = useTranslation();
   const token = JSON.parse(localStorage.getItem("token"));
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const requiredLabel = <span className="text-danger">*</span>;
   const dispatch = useDispatch();
   const configs = useSelector((state) => state.configs);
@@ -33,36 +43,43 @@ const UpdateConfigs = () => {
     TWITTER: configs?.twitterLink || "",
     WHATSAPP: configs?.whatsappNumber || "",
     EMAIL: configs?.email || "",
-    VAT:Number(configs?.VAT?.trim()) || 0
+    VAT: Number(configs?.VAT?.trim()) || 0,
   };
 
   const onSubmit = (values, { resetForm }) => {
-
-    const updatedValues={...values};
-    updatedValues.VAT=updatedValues.VAT?.toString();
-
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "patch",
-        type: "configs",
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            dispatch(fetchConfigs());
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-          } else {
-            notifyError(key("wrong"));
+    const updatedValues = { ...values };
+    updatedValues.VAT = updatedValues.VAT?.toString();
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "patch",
+            type: "configs",
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                dispatch(fetchConfigs());
+                resolve();
+                resetForm();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -91,7 +108,7 @@ const UpdateConfigs = () => {
       .matches(/^((966)|00966)?5\d{8}$/, key("invalidWhatsApp"))
       .nullable(),
     EMAIL: string().email(key("invalidEmail")).nullable(),
-    VAT: number().min(0,key("positiveValidation")).nullable(),
+    VAT: number().min(0, key("positiveValidation")).nullable(),
   });
 
   return (

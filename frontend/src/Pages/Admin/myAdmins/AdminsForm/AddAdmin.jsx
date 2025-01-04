@@ -1,21 +1,27 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, ref, string } from "yup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  ref,
+} from "../../../../shared/constants";
+import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddAdmin = ({ refetch, hideModal }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -30,31 +36,44 @@ const AddAdmin = ({ refetch, hideModal }) => {
   };
 
   const onSubmit = (values, { resetForm }) => {
-    mutate(
-      {
-        formData: values,
-        token: token,
-        method: "add",
-        type: "users/admin",
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (refetch) {
-              refetch();
-            }
-            notifySuccess(key("addedSuccess"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: values,
+            token: token,
+            method: "add",
+            type: "users/admin",
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (refetch) {
+                  refetch();
+                }
+                resolve();
+                resetForm();
+                hideModal();
+              } else if (
+                data?.response?.data?.message?.split(" ")[0] === "Duplicate"
+              ) {
+                reject();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("duplicateError"),
       }
     );
   };

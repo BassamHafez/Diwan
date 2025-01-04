@@ -1,21 +1,35 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { array, object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import { useDispatch, useSelector } from "react-redux";
 import fetchAccountData from "../../../../Store/accountInfo-actions";
-import Select from "react-select";
-import { useEffect, useState } from "react";
 import {
   mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../../util/Http";
-import InputErrorMessage from "../../../../Components/UI/Words/InputErrorMessage";
+
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+} from "../../../../shared/index";
+import {
+  faSpinner,
+  toast,
+  object,
+  string,
+  array,
+} from "../../../../shared/constants";
+import {
+  useEffect,
+  useState,
+  useMutation,
+  useQuery,
+  useTranslation,
+  useSelector,
+  useDispatch,
+} from "../../../../shared/hooks";
+import { InputErrorMessage } from "../../../../shared/components";
+import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddMemberForm = ({ hideModal, allPermissions }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
@@ -27,8 +41,6 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
   const requiredLabel = <span className="text-danger">*</span>;
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const { data: compounds } = useQuery({
     queryKey: ["compounds", token],
@@ -63,13 +75,12 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
 
   const initialValues = {
     name: "",
-    tag:"",
+    tag: "",
     email: "",
     phone: "",
     password: "",
     permissions: [],
     permittedCompounds: [],
-
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -86,37 +97,49 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
       );
     }
     console.log(updatedValues);
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "add",
-        type: `accounts/${accountInfo?.account?._id}/members`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            dispatch(fetchAccountData(token));
-            notifySuccess(key("addedSuccess"));
-            resetForm();
-            hideModal();
-          } else if (
-            data?.response?.data?.message?.split(" ")[0] === "Duplicate"
-          ) {
-            notifyError(key("duplicateError"));
-          } else {
-            notifyError(key("wrong"));
+
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "add",
+            type: `accounts/${accountInfo?.account?._id}/members`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                dispatch(fetchAccountData(token));
+                resetForm();
+                resolve();
+                hideModal();
+              } else if (
+                data?.response?.data?.message?.split(" ")[0] === "Duplicate"
+              ) {
+                reject(key("duplicateError"));
+              } else {
+                reject(key("wrong"));
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              if (
+                error?.response?.data?.message?.split(" ")[0] === "Duplicate"
+              ) {
+                reject(key("duplicateError"));
+              } else {
+                reject(key("wrong"));
+              }
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          if (error?.response?.data?.message?.split(" ")[0] === "Duplicate") {
-            notifyError(key("duplicateError"));
-          } else {
-            notifyError(key("wrong"));
-          }
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("addedSuccess"),
+        error: key("duplicateError"),
       }
     );
   };

@@ -1,13 +1,21 @@
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEnvelope, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import { faSquareWhatsapp } from "@fortawesome/free-brands-svg-icons";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../shared/index";
+import {
+  faSpinner,
+  faEnvelope,
+  faSquareWhatsapp,
+  toast,
+  object,
+  string,
+} from "../../../shared/constants";
+import { useMutation, useTranslation } from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
 
 const SendMessaagesForm = ({
   selectedUsers,
@@ -96,7 +104,8 @@ const SendMessaagesForm = ({
               htmlFor="email_val"
               className="btn btn-outline-dark m-2 rounded"
             >
-             <FontAwesomeIcon className="mx-1" icon={faEnvelope}/> {key("email")}
+              <FontAwesomeIcon className="mx-1" icon={faEnvelope} />{" "}
+              {key("email")}
             </label>
 
             <Field
@@ -110,7 +119,8 @@ const SendMessaagesForm = ({
               htmlFor="whatsapp_val"
               className="btn btn-outline-dark m-2 rounded"
             >
-              <FontAwesomeIcon className="mx-1" icon={faSquareWhatsapp}/> {key("WHATSAPP")}
+              <FontAwesomeIcon className="mx-1" icon={faSquareWhatsapp} />{" "}
+              {key("WHATSAPP")}
             </label>
           </div>
         </div>

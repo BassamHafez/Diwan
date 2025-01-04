@@ -1,15 +1,9 @@
-import { useMutation } from "@tanstack/react-query";
-import { Field, Form, Formik } from "formik";
-import { object, string } from "yup";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
+import { Field, Form, Formik, FontAwesomeIcon } from "../../../../shared/index";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import { useMutation, useTranslation } from "../../../../shared/hooks";
 
 const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
 
@@ -22,28 +16,37 @@ const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
   };
 
   const onSubmit = (values) => {
-    mutate(
-      {
-        formData: values,
-        token: token,
-        method: "patch",
-        type: `support/messages/${msgId}`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            refetch();
-            notifySuccess(key("updatedSucc"));
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: values,
+            token: token,
+            method: "patch",
+            type: `support/messages/${msgId}`,
+          },
+          {
+            onSuccess: async (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                await refetch();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -61,7 +64,9 @@ const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
     >
       <Form>
         <div className="d-flex flex-column align-items-start my-4">
-          <h4>{key("update")} {key("status")}</h4>
+          <h4>
+            {key("update")} {key("status")}
+          </h4>
           <div className="btn-group flex-wrap w-100 my-3">
             <Field
               type="radio"

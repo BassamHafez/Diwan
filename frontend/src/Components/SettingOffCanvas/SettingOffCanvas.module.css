@@ -4,10 +4,10 @@
     color:black !important;
     border-radius: 2.5rem 0 0 2.5rem;
 }
-
 .profile_pic{   
     width: 4.375rem;
     height: 4.375rem;
+    object-fit: cover;
     border-radius: 50%;
     border: 2px solid transparent;
     transition: all .3s;
