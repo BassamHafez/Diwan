@@ -112,11 +112,11 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Revenue.findById(task.revenue)
-            .select("tenant landlord amount estate compound")
+            .select("tenant landlord amount estate compound status")
             .populate(revenuePopOptions)
             .lean()
             .then(async (revenue) => {
-              if (revenue) {
+              if (revenue && revenue.status === "pending") {
                 const tenantPhone = revenue.tenant?.phone;
                 const landlordPhone = revenue.landlord?.phone;
                 const estateName = revenue.estate?.name;
@@ -173,11 +173,11 @@ const checkScheduledMissions = async () => {
 
         promises.push(
           Expense.findById(task.expense)
-            .select("contact landlord amount estate compound")
+            .select("contact landlord amount estate compound status")
             .populate(expensePopOptions)
             .lean()
             .then(async (expense) => {
-              if (expense) {
+              if (expense && expense.status === "pending") {
                 const contactName = expense.contact?.name;
                 const landlordPhone = expense.landlord?.phone;
                 const estateName = expense.estate?.name;
