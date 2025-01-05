@@ -21,7 +21,7 @@ const TotalExAndRev = ({ type, paidAmount, total }) => {
           label: key("totalRentedEstate"),
           gradientColors: ["#d39833"],
         };
-  // #20E647
+
   const chartData = {
     options: {
       chart: {

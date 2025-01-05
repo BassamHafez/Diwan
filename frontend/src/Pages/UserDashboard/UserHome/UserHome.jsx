@@ -100,7 +100,7 @@ const UserHome = () => {
       icon: homeKey,
     },
   ];
-
+ 
   const ratioData = [
     {
       type: "esates",
@@ -174,7 +174,7 @@ const UserHome = () => {
         <Col xl={3} md={4} className="my-3">
           <div className={styles.information_section}>
             <Row className="g-3 w-100">
-              {ratioData.map((item, index) => (
+              {ratioData?.map((item, index) => (
                 <Col key={`${item.type}_${index}`} md={12} sm={4}>
                   <TotalExAndRev
                     type={item.type}
