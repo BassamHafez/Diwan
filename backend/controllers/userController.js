@@ -212,7 +212,7 @@ exports.sendUsersMessage = catchAsync(async (req, res, next) => {
     });
   } else if (type === "email") {
     users.forEach((user) => {
-      sendEmail(user.email, "Give A Gift Website", message);
+      sendEmail(user.email, "Diwan Website", message);
     });
   } else {
     return next(new ApiError("Invalid message type", 400));
