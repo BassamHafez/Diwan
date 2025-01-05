@@ -7,3 +7,4 @@ export { default as ButtonTwo } from "../Components/UI/Buttons/ButtonTwo";
 export { default as MainModal } from "../Components/UI/Modals/MainModal";
 export { default as ModalForm } from "../Components/UI/Modals/ModalForm";
 export { default as InputErrorMessage } from "../Components/UI/Words/InputErrorMessage";
+export { default as AccordionContent } from "../Components/UI/Tools/AccordionContent";

@@ -1,46 +1,47 @@
 import styles from "./Properties.module.css";
-import Container from "react-bootstrap/esm/Container";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import Accordion from "react-bootstrap/Accordion";
-import { useTranslation } from "react-i18next";
-import AccordionContent from "../../../Components/UI/Tools/AccordionContent";
 import Property from "../../../Components/Property/Property";
-import SearchField from "../../../Components/Search/SearchField";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import Select from "react-select";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import AddCompound from "../PropertyForms/AddCompound";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import AddEstate from "../PropertyForms/AddEstate";
+import { checkAccountFeatures } from "../../../Components/Logic/LogicFun";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import { FontAwesomeIcon, Select } from "../../../shared/index";
 import {
   faBuilding,
   faCubes,
   faFileSignature,
   faRotate,
-} from "@fortawesome/free-solid-svg-icons";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useCallback, useEffect, useState } from "react";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import AddCompound from "../PropertyForms/AddCompound";
-import { useQuery } from "@tanstack/react-query";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import AddEstate from "../PropertyForms/AddEstate";
-import NoData from "../../../Components/UI/Blocks/NoData";
-import PropertyPlaceholder from "../../../Components/Property/PropertyPlaceholder";
+  toast,
+} from "../../../shared/constants";
 import {
-  checkAccountFeatures,
-  convertTpOptionsFormate,
-} from "../../../Components/Logic/LogicFun";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+  useCallback,
+  useEffect,
+  useState,
+  useTranslation,
+  useNavigate,
+  useCompoundOptions,
+  useSelector,
+  useQuery,
+  useMemo,
+} from "../../../shared/hooks";
+import {
+  NoData,
+  ModalForm,
+  ButtonOne,
+  SearchField,
+  MainModal,
+  AccordionContent,
+  LoadingOne,
+} from "../../../shared/components";
+import { Row, Col, Accordion, Container } from "../../../shared/bootstrap";
 
 const Properties = () => {
   const { t: key } = useTranslation();
   const [showModal, setShowModal] = useState(false);
   const [showAddCompoundModal, setShowAddCompoundModal] = useState(false);
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
-
+  const { compoundsOptions, refetchCompound, fetchingCompounds, compounds } =
+    useCompoundOptions();
   //filters
   const [selectedCompoundId, setSelectedCompoundId] = useState(null);
   const [selectedFilter, setSelectedFilter] = useState("estates");
@@ -62,24 +63,6 @@ const Properties = () => {
   }, [role, navigate]);
 
   const {
-    data: compounds,
-    isFetching: fetchingCompounds,
-    refetch: refetchCompound,
-  } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled:!!token,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    if (compounds) {
-      setCompoundsOptions(convertTpOptionsFormate(compounds?.data?.compounds));
-    }
-  }, [compounds]);
-
-  const {
     data: estates,
     isFetching: fetchingEstates,
     refetch: refetchEstate,
@@ -91,11 +74,7 @@ const Properties = () => {
     staleTime: Infinity,
   });
 
-  const {
-    data: bookmarked,
-    isFetching: fetchingBookmarked,
-    refetch: refetchBookmarked,
-  } = useQuery({
+  const { data: bookmarked, isFetching: fetchingBookmarked } = useQuery({
     queryKey: ["bookmarked", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
@@ -114,9 +93,6 @@ const Properties = () => {
       setCompoundStatusFiltering(val);
     } else {
       setSelectedFilter(val);
-      if (val === "bookmarked") {
-        refetchBookmarked();
-      }
     }
   };
 
@@ -145,59 +121,67 @@ const Properties = () => {
   }, []);
 
   //filtering
-  const filteredEstates = estates
-    ? estates.data?.filter(
-        (estate) =>
-          (!selectedCompoundId ||
-            estate.compound?._id === selectedCompoundId) &&
-          (statusFiltering === "all" || estate.status === statusFiltering)
-      )
-    : [];
+  const filteredEstates = useMemo(() => {
+    const estatesData = estates?.data;
+    return estates && Array.isArray(estatesData)
+      ? estatesData?.filter(
+          (estate) =>
+            (!selectedCompoundId ||
+              estate.compound?._id === selectedCompoundId) &&
+            (statusFiltering === "all" || estate.status === statusFiltering)
+        )
+      : [];
+  }, [estates, statusFiltering, selectedCompoundId]);
 
-  const filteredBookmarked = bookmarked
-    ? bookmarked.data?.filter(
-        (fav) =>
-          (!selectedCompoundId || fav.compound?._id === selectedCompoundId) &&
-          (statusFiltering === "all" || fav.status === statusFiltering)
-      )
-    : [];
+  const filteredBookmarked = useMemo(() => {
+    const bookMarkData = bookmarked?.data;
+    return bookmarked && Array.isArray(bookMarkData)
+      ? bookMarkData?.filter(
+          (fav) =>
+            (!selectedCompoundId || fav.compound?._id === selectedCompoundId) &&
+            (statusFiltering === "all" || fav.status === statusFiltering)
+        )
+      : [];
+  }, [bookmarked, statusFiltering, selectedCompoundId]);
 
-  const getCompoundRentedCount = (compId) => {
-    let rentedEstate = [];
-    rentedEstate = compounds?.data?.rentedEstatesCount.find(
-      (comp) => comp.compoundId === compId
-    );
-    return rentedEstate?.rentedCount || 0;
-  };
-
-  const filteredCompounds = compounds
-    ? compounds.data?.compounds?.filter((comp) => {
-        switch (compoundStatusFiltering) {
-          case "all":
-            return true;
-          case "noEstates":
-            return comp.estatesCount === 0;
-          case "available":
-            return (
-              comp.estatesCount > 0 && getCompoundRentedCount(comp._id) === 0
-            );
-          case "rented":
-            return (
-              getCompoundRentedCount(comp._id) > 0 &&
-              comp.estatesCount > 0 &&
-              getCompoundRentedCount(comp._id) === comp.estatesCount
-            );
-          case "partiallyRented":
-            return (
-              comp.estatesCount > 0 &&
-              getCompoundRentedCount(comp._id) > 0 &&
-              getCompoundRentedCount(comp._id) < comp.estatesCount
-            );
-          default:
-            return false;
-        }
-      })
-    : [];
+  const filteredCompounds = useMemo(() => {
+    const getCompoundRentedCount = (compId) => {
+      let rentedEstate = [];
+      rentedEstate = compounds?.data?.rentedEstatesCount.find(
+        (comp) => comp.compoundId === compId
+      );
+      return rentedEstate?.rentedCount || 0;
+    };
+    const compData = compounds?.data?.compounds;
+    return compounds && Array.isArray(compData)
+      ? compData?.filter((comp) => {
+          switch (compoundStatusFiltering) {
+            case "all":
+              return true;
+            case "noEstates":
+              return comp.estatesCount === 0;
+            case "available":
+              return (
+                comp.estatesCount > 0 && getCompoundRentedCount(comp._id) === 0
+              );
+            case "rented":
+              return (
+                getCompoundRentedCount(comp._id) > 0 &&
+                comp.estatesCount > 0 &&
+                getCompoundRentedCount(comp._id) === comp.estatesCount
+              );
+            case "partiallyRented":
+              return (
+                comp.estatesCount > 0 &&
+                getCompoundRentedCount(comp._id) > 0 &&
+                getCompoundRentedCount(comp._id) < comp.estatesCount
+              );
+            default:
+              return false;
+          }
+        })
+      : [];
+  }, [compounds, compoundStatusFiltering]);
 
   //statics
   const cubes = <FontAwesomeIcon className={styles.acc_icon} icon={faCubes} />;
@@ -220,14 +204,10 @@ const Properties = () => {
     hideStatus = false,
     rentedEstatesCount
   ) => {
-    if (isFetching) {
-      return Array(6)
-        .fill(0)
-        .map((_, index) => (
-          <PropertyPlaceholder key={`placeholder-${index}`} />
-        ));
-    }
 
+    if (isFetching) {
+      return <LoadingOne />;
+    }
     const getRentedEstate = (itemId) => {
       if (!rentedEstatesCount) {
         return undefined;
