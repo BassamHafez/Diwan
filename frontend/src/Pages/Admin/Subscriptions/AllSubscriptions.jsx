@@ -1,15 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import NoData from "../../../Components/UI/Blocks/NoData";
 import styles from "../Admin.module.css";
-
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import PolicyList from "../../../Components/UI/Blocks/PolicyList";
 import SubscriptionItem from "./SubscriptionItem";
+import { useTranslation, useMemo, useQuery } from "../../../shared/hooks";
+import { MainTitle, LoadingOne, NoData } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const AllSubscriptions = () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -31,11 +26,14 @@ const AllSubscriptions = () => {
     enabled: !!token,
   });
 
-  const policyList = [
-    { label: "subCondition1", value: null },
-    { label: "subCondition2", value: null },
-    { label: "subCondition3", value: null },
-  ];
+  const policyList = useMemo(
+    () => [
+      { label: "subCondition1", value: null },
+      { label: "subCondition2", value: null },
+      { label: "subCondition3", value: null },
+    ],
+    []
+  );
 
   return (
     <>

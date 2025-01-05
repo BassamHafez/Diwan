@@ -1,8 +1,5 @@
 import styles from "./PropertyForms.module.css";
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
@@ -11,7 +8,6 @@ import {
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
-import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -33,10 +29,11 @@ import {
   useEffect,
   useState,
   useMutation,
-  useQuery,
   useQueryClient,
   useTranslation,
   useFileHandler,
+  useTagsOption,
+  useContactsOptions,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -44,10 +41,9 @@ import { Row, Col } from "../../../shared/bootstrap";
 const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
-  const [tagsOptions, setTagsOptions] = useState([]);
-  const [brokersOptions, setBrokersOptions] = useState([]);
-  const [landlordOptions, setlandlordOptions] = useState([]);
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const { tagsOptions, refetchTags } = useTagsOption();
+  const { brokersOptions, landlordOptions } = useContactsOptions();
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const queryClient = useQueryClient();
@@ -56,68 +52,27 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 
-  const { data: tags, refetch: refetchTags } = useQuery({
-    queryKey: ["tags", token],
-    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  const { data: landlords } = useQuery({
-    queryKey: ["landlord", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/landlords",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  const { data: brokers } = useQuery({
-    queryKey: ["brokers", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "contacts/brokers", token: token }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    let myTagsOptions = tags?.data?.map((tag) => {
-      return { label: tag, value: tag };
-    });
-    setTagsOptions(myTagsOptions);
-  }, [tags]);
-
-  useEffect(() => {
-    setlandlordOptions(convertTpOptionsFormate(landlords?.data));
-  }, [landlords]);
-
-  useEffect(() => {
-    setBrokersOptions(convertTpOptionsFormate(brokers?.data));
-  }, [brokers]);
-
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
   });
 
   const initialValues = {
     image: "",
-    name: compoundData.name || "",
-    description: compoundData.description || "",
-    region: compoundData.region || "",
-    city: compoundData.city || "",
-    neighborhood: compoundData.neighborhood || "",
-    address: compoundData.address || "",
+    name: compoundData?.name || "",
+    description: compoundData?.description || "",
+    region: compoundData?.region || "",
+    city: compoundData?.city || "",
+    neighborhood: compoundData?.neighborhood || "",
+    address: compoundData?.address || "",
     tags:
-      compoundData.tags.map((tag) => {
+      compoundData?.tags.map((tag) => {
         return { label: tag, value: tag };
       }) || [],
     broker: compoundData?.broker?._id || "",
-    commissionPercentage: compoundData?.commissionPercentage,
+    commissionPercentage: compoundData?.commissionPercentage || 0,
     landlord: compoundData?.landlord?._id || "",
-    waterAccountNumber: compoundData.waterAccountNumber || "",
-    electricityAccountNumber: compoundData.electricityAccountNumber || "",
+    waterAccountNumber: compoundData?.waterAccountNumber || "",
+    electricityAccountNumber: compoundData?.electricityAccountNumber || "",
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -154,7 +109,8 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
         values.electricityAccountNumber.toString()
       );
     }
-    if (values.tags?.length > 0) {
+    const isTagsExist = values.tags?.length > 0;
+    if (isTagsExist) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
       });
@@ -174,7 +130,9 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
               console.log(data);
               if (data?.status === "success") {
                 await refetch();
-                refetchTags();
+                if (isTagsExist) {
+                  refetchTags();
+                }
                 queryClient.invalidateQueries(["compounds", token]);
                 resolve();
                 resetForm();
@@ -214,7 +172,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
       /^\d{11}$/,
       key("elcMinValidation")
     ),
-    commissionPercentage: number(),
+    commissionPercentage: number().min(0, key("positiveValidation")),
   });
 
   useEffect(() => {

@@ -62,7 +62,7 @@ const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
   };
 
   const validationSchema = object({
-    price: number().required(key("fieldReq")),
+    price: number().min(0, key("positiveValidation")).required(key("fieldReq")),
   });
 
   return (

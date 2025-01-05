@@ -122,7 +122,10 @@ const CustomPackageItem = ({
             )}
           </ul>
         </div>
-        <CheckPermissions btnActions={["UPDATE_ACCOUNT"]} noCheckingForExpired={true}>
+        <CheckPermissions
+          btnActions={["UPDATE_ACCOUNT"]}
+          noCheckingForExpired={true}
+        >
           <div className="text-center pt-4 pb-2">
             <ButtonThree
               onClick={sendPackageData}
@@ -132,6 +135,7 @@ const CustomPackageItem = ({
           </div>
         </CheckPermissions>
       </div>
+
       {showLoginModal && (
         <MainModal
           show={showLoginModal}

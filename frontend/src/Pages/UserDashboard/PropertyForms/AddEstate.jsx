@@ -1,8 +1,5 @@
 import styles from "./PropertyForms.module.css";
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
@@ -12,20 +9,40 @@ import {
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
 import fetchAccountData from "../../../Store/accountInfo-actions";
-
-import { ErrorMessage, Field, Form, Formik,FontAwesomeIcon,Select,CreatableSelect } from "../../../shared/index";
-import { faImage, faSpinner,toast,object, string } from "../../../shared/constants";
-import { useEffect, useState,useMutation, useQuery,useTranslation,useDispatch,useFileHandler } from "../../../shared/hooks";
-import {InputErrorMessage} from "../../../shared/components";
-import {Row,Col} from "../../../shared/bootstrap";
-
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Select,
+  CreatableSelect,
+} from "../../../shared/index";
+import {
+  faImage,
+  faSpinner,
+  toast,
+  object,
+  string,
+} from "../../../shared/constants";
+import {
+  useState,
+  useMutation,
+  useTranslation,
+  useDispatch,
+  useFileHandler,
+  useTagsOption,
+  useCompoundOptions,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const AddEstate = ({ hideModal, refetch, compId }) => {
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
-  const [tagsOptions, setTagsOptions] = useState([]);
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const { tagsOptions, refetchTags } = useTagsOption();
+  const { compoundsOptionsWithNot } = useCompoundOptions();
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -35,45 +52,9 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const dispatch = useDispatch();
 
-  const { data: compounds } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    let compoundOptions = [];
-    if (compounds) {
-      compoundOptions = compounds?.data?.compounds?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    let allCompoundsOptions = [
-      { label: key("notSpecified"), value: "not" },
-      ...compoundOptions,
-    ];
-    setCompoundsOptions(allCompoundsOptions);
-  }, [compounds, key]);
-
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
   });
-
-  const { data: tags } = useQuery({
-    queryKey: ["tags", token],
-    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    const myTagsOptions = tags?.data?.map((tag) => {
-      return { label: tag, value: tag };
-    });
-    setTagsOptions(myTagsOptions);
-  }, [tags]);
 
   const initialValues = {
     image: "",
@@ -145,6 +126,9 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
           if (data?.status === "success") {
             refetch();
             dispatch(fetchAccountData(token));
+            if (values.tags?.length > 0) {
+              refetchTags();
+            }
             notifySuccess(key("addedSuccess"));
             resetForm();
             hideModal();
@@ -235,7 +219,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 <Select
                   id="compound"
                   name="compound"
-                  options={compoundsOptions}
+                  options={compoundsOptionsWithNot}
                   onChange={(val) => {
                     setFieldValue("compound", val ? val.value : "not");
                     clearReigonsField(val ? val.value : "not", setFieldValue);
@@ -245,8 +229,9 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                   isDisabled={compId ? true : false}
                   placeholder={
                     compId
-                      ? compoundsOptions?.find((comp) => comp.value === compId)
-                          ?.label || ""
+                      ? compoundsOptionsWithNot?.find(
+                          (comp) => comp.value === compId
+                        )?.label || ""
                       : ""
                   }
                 />

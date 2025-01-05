@@ -1,8 +1,5 @@
 import fetchAccountData from "../../../../Store/accountInfo-actions";
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 
 import {
   ErrorMessage,
@@ -23,17 +20,18 @@ import {
   useEffect,
   useState,
   useMutation,
-  useQuery,
   useTranslation,
   useSelector,
   useDispatch,
+  useCompoundOptions,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddMemberForm = ({ hideModal, allPermissions }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
+  const {compoundsOptions} = useCompoundOptions();
+
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -41,23 +39,6 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
   const requiredLabel = <span className="text-danger">*</span>;
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
-  const { data: compounds } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    let compoundOptions = [];
-    if (compounds) {
-      compoundOptions = compounds?.data?.compounds?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    setCompoundsOptions(compoundOptions);
-  }, [compounds]);
 
   useEffect(() => {
     if (allPermissions) {

@@ -1,7 +1,4 @@
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import {
   prioritysOptions,
   taskTypeOptions,
@@ -25,82 +22,26 @@ import {
   number,
 } from "../../../../shared/constants";
 import {
-  useEffect,
-  useState,
   useMutation,
-  useQuery,
   useQueryClient,
   useTranslation,
+  useEstatesOptions,
+  useCompoundOptions,
+  useServicesContact,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
-  const [contactsOptions, setContactsOptions] = useState([]);
-  const [estatesOptions, setEstatesOptions] = useState([]);
+  const estatesOptions = useEstatesOptions();
+  const {compoundsOptions} = useCompoundOptions();
+  const servicesOptions = useServicesContact();
+
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const queryClient = useQueryClient();
-
-  const { data: compounds } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  const { data: estates } = useQuery({
-    queryKey: ["estates", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "estates", token: token }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  const { data: services } = useQuery({
-    queryKey: ["service", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/services",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    let estateOptions;
-    if (estates) {
-      estateOptions = estates.data?.map((estate) => {
-        return { label: estate.name, value: estate._id };
-      });
-      setEstatesOptions(estateOptions);
-    }
-  }, [estates]);
-
-  useEffect(() => {
-    let compoundOptions;
-    if (compounds) {
-      compoundOptions = compounds.data?.compounds?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-      setCompoundsOptions(compoundOptions);
-    }
-  }, [compounds]);
-
-  useEffect(() => {
-    let contactOptions;
-    if (services) {
-      contactOptions = services.data?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    setContactsOptions(contactOptions);
-  }, [services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -117,7 +58,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
       ? estatesOptions?.find((estate) => estate.value === task.estate._id) || ""
       : "",
     contact: task.contact
-      ? contactsOptions?.find(
+      ? servicesOptions?.find(
           (contact) => contact.value === task.contact._id
         ) || ""
       : "",
@@ -278,7 +219,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
                   id="contact"
                   name="contact"
                   value={values.contact}
-                  options={contactsOptions}
+                  options={servicesOptions}
                   onChange={(val) => setFieldValue("contact", val ? val : null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}

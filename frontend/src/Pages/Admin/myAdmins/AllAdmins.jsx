@@ -1,19 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import NoData from "../../../Components/UI/Blocks/NoData";
-import Row from "react-bootstrap/esm/Row";
 import UserItem from "../Users/UserItem";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { useCallback, useState } from "react";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddAdmin from "./AdminsForm/AddAdmin";
-import SearchField from "../../../Components/Search/SearchField";
+import {
+  useState,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useQuery,
+} from "../../../shared/hooks";
+import {
+  SearchField,
+  NoData,
+  MainTitle,
+  LoadingOne,
+  ButtonOne,
+  ModalForm,
+} from "../../../shared/components";
+import { Row } from "../../../shared/bootstrap";
 
 const AllAdmins = () => {
-  
   const [showAddPackModal, setShowAddPackModal] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
 
@@ -39,18 +44,18 @@ const AllAdmins = () => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filteredData =
-    users && Array.isArray(users?.data)
-      ? users?.data?.filter(
-          (user) =>
-            !searchFilter ||
-            user.name
-              .trim()
-              .toLowerCase()
-              .includes(searchFilter.trim().toLowerCase()) ||
-            user.phone.includes(searchFilter)
-        )
-      : [];
+  const filteredData = useMemo(() => {
+    if (!users || !Array.isArray(users?.data)) return [];
+    return users?.data?.filter(
+      (user) =>
+        !searchFilter ||
+        user.name
+          .trim()
+          .toLowerCase()
+          .includes(searchFilter.trim().toLowerCase()) ||
+        user.phone.includes(searchFilter)
+    );
+  }, [users, searchFilter]);
 
   return (
     <>
@@ -73,7 +78,12 @@ const AllAdmins = () => {
         <Row className="g-3">
           {filteredData?.length > 0 ? (
             filteredData?.map((user) => (
-              <UserItem key={user._id} userData={user} refetch={refetch} isAdminPage={true} />
+              <UserItem
+                key={user._id}
+                userData={user}
+                refetch={refetch}
+                isAdminPage={true}
+              />
             ))
           ) : (
             <NoData text={"noResults"} />

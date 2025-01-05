@@ -69,7 +69,7 @@ const Properties = () => {
     queryKey: ["compounds", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: selectedFilter === "compounds" && !!token,
+    enabled:!!token,
     staleTime: Infinity,
   });
 
@@ -117,9 +117,6 @@ const Properties = () => {
       if (val === "bookmarked") {
         refetchBookmarked();
       }
-      // if(val==="compounds"){
-      //   refetchCompound()
-      // }
     }
   };
 

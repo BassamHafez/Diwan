@@ -58,7 +58,6 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* <!-- data num 3 --> */}
               <div className="d-flex mb-3">
                 <div className={isArLang ? "ms-3" : "me-3"}>
                   <FontAwesomeIcon

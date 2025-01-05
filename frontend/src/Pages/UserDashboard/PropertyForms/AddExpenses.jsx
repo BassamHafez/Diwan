@@ -1,9 +1,5 @@
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
-import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -22,18 +18,16 @@ import {
   number,
 } from "../../../shared/constants";
 import {
-  useEffect,
-  useState,
   useMutation,
-  useQuery,
   useTranslation,
   useParams,
+  useServicesContact,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
-  const [contactServicesOptions, setContactServicesOptions] = useState([]);
+  const servicesOptions = useServicesContact();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -41,21 +35,6 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
   const params = useParams();
 
   const myParam = isCompound ? params.compId : params.propId;
-
-  const { data: services } = useQuery({
-    queryKey: ["service", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/services",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    setContactServicesOptions(convertTpOptionsFormate(services?.data));
-  }, [services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -128,7 +107,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    amount: number().required(key("fieldReq")),
+    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
     dueDate: date().required(key("fieldReq")),
     type: string().required(key("fieldReq")),
     note: string(),
@@ -190,7 +169,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
                 <Select
                   id="contact"
                   name="contact"
-                  options={contactServicesOptions}
+                  options={servicesOptions}
                   onChange={(val) =>
                     setFieldValue("contact", val ? val.value : null)
                   }

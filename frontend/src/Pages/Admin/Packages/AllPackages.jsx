@@ -1,39 +1,34 @@
-import { useQuery } from "@tanstack/react-query";
-import { getPublicData } from "../../../util/Http";
-import { useTranslation } from "react-i18next";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useState } from "react";
 import CreatePackage from "./PackagesForm/CreatePackage";
-import Tabs from "react-bootstrap/Tabs";
 import PackageTab from "./PackageTab";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import Tab from "react-bootstrap/Tab";
+import {
+  useState,
+  useTranslation,
+  useCallback,
+  useFilterPackagesDuration,
+} from "../../../shared/hooks";
+import {
+  MainTitle,
+  LoadingOne,
+  ModalForm,
+  ButtonOne,
+} from "../../../shared/components";
+import { Tab, Tabs } from "../../../shared/bootstrap";
 
 const AllPackages = () => {
   const [showAddPackModal, setShowAddPackModal] = useState(false);
+  const {
+    packages,
+    monthlyPackages,
+    threeMonthsPackage,
+    sixMonthsPackage,
+    yearlyPackage,
+    refetch,
+    isFetching,
+  } = useFilterPackagesDuration();
   const { t: key } = useTranslation();
 
-  const {
-    data: packages,
-    isFetching,
-    refetch,
-  } = useQuery({
-    queryKey: ["allPackages"],
-    queryFn: () => getPublicData({ type: "packages" }),
-    staleTime: Infinity,
-  });
-
-  const packagesData = packages?.data;
-
-  const filterPackagesByDuration = (packages, duration) =>
-    packages?.filter((pack) => pack.duration === duration);
-
-  const monthlyPackages = filterPackagesByDuration(packagesData, 1);
-  const threeMonthsPackage = filterPackagesByDuration(packagesData, 3);
-  const sixMonthsPackage = filterPackagesByDuration(packagesData, 6);
-  const yearlyPackage = filterPackagesByDuration(packagesData, 12);
+  const handleShowAddModal = useCallback(() => setShowAddPackModal(true), []);
+  const handleHideAddModal = useCallback(() => setShowAddPackModal(false), []);
 
   return (
     <>
@@ -43,7 +38,7 @@ const AllPackages = () => {
         </div>
         <div className="d-flex justify-content-end p-2 pb-3">
           <ButtonOne
-            onClick={() => setShowAddPackModal(true)}
+            onClick={handleShowAddModal}
             borderd={true}
             text={key("addPackage")}
           />
@@ -71,13 +66,10 @@ const AllPackages = () => {
       {showAddPackModal && (
         <ModalForm
           show={showAddPackModal}
-          onHide={() => setShowAddPackModal(false)}
+          onHide={handleHideAddModal}
           modalSize="lg"
         >
-          <CreatePackage
-            hideModal={() => setShowAddPackModal(false)}
-            refetch={refetch}
-          />
+          <CreatePackage hideModal={handleHideAddModal} refetch={refetch} />
         </ModalForm>
       )}
     </>

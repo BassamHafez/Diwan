@@ -1,30 +1,19 @@
-import Tab from "react-bootstrap/Tab";
-import Tabs from "react-bootstrap/Tabs";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
-import { getPublicData } from "../../util/Http";
-import LoadingOne from "../../Components/UI/Loading/LoadingOne";
 import styles from "./Packages.module.css";
 import PackagesTab from "./PackagesTab";
+import { Tab, Tabs } from "../../shared/bootstrap";
+import { useTranslation, useFilterPackagesDuration } from "../../shared/hooks";
+import { LoadingOne } from "../../shared/components";
 
 const Packages = () => {
   const { t: key } = useTranslation();
-
-  const { data: packages, isFetching } = useQuery({
-    queryKey: ["allPackages"],
-    queryFn: () => getPublicData({ type: "packages" }),
-    staleTime: Infinity,
-  });
-
-  const packagesData = packages?.data;
-
-  const filterPackagesByDuration = (packages, duration) =>
-    packages?.filter((pack) => pack.duration === duration);
-
-  const monthlyPackages = filterPackagesByDuration(packagesData, 1);
-  const threeMonthsPackage = filterPackagesByDuration(packagesData, 3);
-  const sixMonthsPackage = filterPackagesByDuration(packagesData, 6);
-  const yearlyPackage = filterPackagesByDuration(packagesData, 12);
+  const {
+    packages,
+    monthlyPackages,
+    threeMonthsPackage,
+    sixMonthsPackage,
+    yearlyPackage,
+    isFetching,
+  } = useFilterPackagesDuration();
 
   return (
     <div

@@ -123,11 +123,11 @@ const CreatePackage = ({ refetch, hideModal }) => {
   const validationSchema = object({
     arTitle: string().required(key("fieldReq")),
     enTitle: string().required(key("fieldReq")),
-    price: number().required(key("fieldReq")),
-    originalPrice: number().required(key("fieldReq")),
-    usersCount: number(),
-    compoundsCount: number(),
-    estatesCount: number(),
+    price: number().min(0, key("positiveValidation")).required(key("fieldReq")),
+    originalPrice: number().min(0, key("positiveValidation")).required(key("fieldReq")),
+    usersCount: number().min(0, key("positiveValidation")),
+    compoundsCount: number().min(0, key("positiveValidation")),
+    estatesCount: number().min(0, key("positiveValidation")),
     duration: object()
       .shape({
         label: string(),

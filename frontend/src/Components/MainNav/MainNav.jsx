@@ -18,7 +18,7 @@ import {
   faScroll,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import SettingOffCanvas from "../SettingOffCanvas/SettingOffCanvas";
 import avatar from "../../assets/default.png";
 import LanguageChanger from "../Lang/LanguageChanger";
@@ -33,23 +33,29 @@ const MainNav = () => {
   const isLogin = useSelector((state) => state.userInfo.isLogin);
   const profileInfo = useSelector((state) => state.profileInfo.data);
 
-  const packageLink = (
-    <NavLink
-      onClick={() => isCollapsed && setIsCollapsed(false)}
-      className={({ isActive }) => (isActive ? styles.active : undefined)}
-      to={"/packages"}
-    >
-      <span>
-        <FontAwesomeIcon
-          className={`${styles.nav_icon} ${
-            isArLang ? styles.ar_icon : styles.en_icon
-          }`}
-          icon={faLayerGroup}
-        />
-        {t("packages")}
-      </span>
-    </NavLink>
+  const generalLinks = useMemo(
+    () => [
+      { to: "/", label: "home", icon: faHouse },
+      { to: "/about", label: "about", icon: faCircleInfo },
+      { to: "/contact", label: "contact", icon: faEnvelope },
+      { to: "/packages", label: "packages", icon: faLayerGroup },
+    ],
+    []
   );
+
+  const loggedInLinks = useMemo(
+    () => [
+      { to: "/dashboard", label: "dashboard", icon: faHouse },
+      { to: "/properties", label: "compounds", icon: faBuilding },
+      { to: "/contacts", label: "contacts", icon: faUsers },
+      { to: "/tasks", label: "tasks", icon: faClipboard },
+      { to: "/packages", label: "packages", icon: faLayerGroup },
+    ],
+    []
+  );
+
+  const handleShowAddModal = useCallback(() => setShowSetting(true), []);
+  const handleHideAddModal = useCallback(() => setShowSetting(false), []);
 
   return (
     <>
@@ -73,75 +79,28 @@ const MainNav = () => {
             >
               {isLogin ? (
                 <>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/dashboard"}
-                    end
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faHouse}
-                      />
-                      {t("dashboard")}
-                    </span>
-                  </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/properties"}
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faBuilding}
-                      />
-                      {t("compounds")}
-                    </span>
-                  </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/contacts"}
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faUsers}
-                      />
-                      {t("contacts")}
-                    </span>
-                  </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/tasks"}
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faClipboard}
-                      />
-                      {t("tasks")}
-                    </span>
-                  </NavLink>
+                  {loggedInLinks?.map((link, index) => (
+                    <NavLink
+                      key={`${link.to}_${index}`}
+                      onClick={() => isCollapsed && setIsCollapsed(false)}
+                      className={({ isActive }) =>
+                        isActive ? styles.active : undefined
+                      }
+                      to={link.to}
+                      end
+                    >
+                      <span>
+                        <FontAwesomeIcon
+                          className={`${styles.nav_icon} ${
+                            isArLang ? styles.ar_icon : styles.en_icon
+                          }`}
+                          icon={link.icon}
+                        />
+                        {t(link.label)}
+                      </span>
+                    </NavLink>
+                  ))}
+
                   <CheckPermissions
                     btnActions={["CONTRACTS_REPORTS", "FINANCIAL_REPORTS"]}
                     noCheckingForExpired={true}
@@ -164,63 +123,30 @@ const MainNav = () => {
                       </span>
                     </NavLink>
                   </CheckPermissions>
-                  {packageLink}
                 </>
               ) : (
                 <>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/"}
-                    end
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faHouse}
-                      />
-                      {t("home")}
-                    </span>
-                  </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/about"}
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faCircleInfo}
-                      />
-                      {t("about")}
-                    </span>
-                  </NavLink>
-                  <NavLink
-                    onClick={() => isCollapsed && setIsCollapsed(false)}
-                    className={({ isActive }) =>
-                      isActive ? styles.active : undefined
-                    }
-                    to={"/contact"}
-                  >
-                    <span>
-                      <FontAwesomeIcon
-                        className={`${styles.nav_icon} ${
-                          isArLang ? styles.ar_icon : styles.en_icon
-                        }`}
-                        icon={faEnvelope}
-                      />
-                      {t("contact")}
-                    </span>
-                  </NavLink>
-                  {packageLink}
+                  {generalLinks?.map((link, index) => (
+                    <NavLink
+                      key={`${link.to}_${index}`}
+                      onClick={() => isCollapsed && setIsCollapsed(false)}
+                      className={({ isActive }) =>
+                        isActive ? styles.active : undefined
+                      }
+                      to={link.to}
+                      end
+                    >
+                      <span>
+                        <FontAwesomeIcon
+                          className={`${styles.nav_icon} ${
+                            isArLang ? styles.ar_icon : styles.en_icon
+                          }`}
+                          icon={link.icon}
+                        />
+                        {t(link.label)}
+                      </span>
+                    </NavLink>
+                  ))}
                 </>
               )}
             </Nav>
@@ -249,10 +175,7 @@ const MainNav = () => {
                   />
                 </div>
               ) : (
-                <div
-                  className={styles.avatar}
-                  onClick={() => setShowSetting(true)}
-                >
+                <div className={styles.avatar} onClick={handleShowAddModal}>
                   <img
                     src={
                       profileInfo?.photo
@@ -268,10 +191,7 @@ const MainNav = () => {
         </Container>
       </Navbar>
       {showSetting && (
-        <SettingOffCanvas
-          show={showSetting}
-          handleClose={() => setShowSetting(false)}
-        />
+        <SettingOffCanvas show={showSetting} handleClose={handleHideAddModal} />
       )}
     </>
   );
