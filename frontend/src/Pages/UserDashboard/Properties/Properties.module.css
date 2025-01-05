@@ -5,9 +5,8 @@
 }
 .filters {
   background-color: white;
-  min-height: 82vh;
+  min-height: 70vh;
   border-radius: 10px;
-  box-shadow: 0 0 3px rgba(0, 0, 0, 0.078);
   padding-inline: 0 !important;
   display: flex;
   justify-content: center;

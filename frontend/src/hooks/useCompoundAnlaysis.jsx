@@ -5,12 +5,16 @@ const useCompoundAnlaysis = (compoundData) => {
   const totalRev = Number(compoundData?.totalRevenue) || 0;
   const totalPaidEx = Number(compoundData?.totalPaidExpenses) || 0;
   const totalPaidRev = Number(compoundData?.totalPaidRevenues) || 0;
+  const totalMonthRev = Number(compoundData?.totalMonthRevenue);
+  const totalMonthPaidRev = Number(compoundData?.totalMonthPaidRevenues);
+  const totalEstatesCount =
+    compoundData?.estates?.length || compoundData?.compound?.estatesCount || 0;
   const commissionPercentage =
     Number(compoundData?.compound?.commissionPercentage) || 0;
 
   const theCommissionVal = useMemo(
-    () => convertNumbersToFixedTwo(totalRev * (commissionPercentage / 100)),
-    [totalRev, commissionPercentage]
+    () => convertNumbersToFixedTwo(totalPaidRev * (commissionPercentage / 100)),
+    [totalPaidRev, commissionPercentage]
   );
 
   const netIncomeVal = useMemo(
@@ -39,14 +43,31 @@ const useCompoundAnlaysis = (compoundData) => {
     [totalPaidRev, netIncomeVal]
   );
 
+  const rentedEstateCount = useMemo(() => {
+    let rentedEstatesArr = [];
+
+    if (compoundData) {
+      rentedEstatesArr = compoundData?.estates.filter(
+        (estate) => estate.status === "rented"
+      );
+      const myrentedEstateCount = rentedEstatesArr?.length || 0;
+      return myrentedEstateCount;
+    }
+  }, [compoundData]);
+
   return {
     theCommissionVal,
     commissionPercentage,
     netIncomeVal,
     netReturnsVal,
     collectionRatioVal,
+    totalRev,
     totalPaidRev,
     totalPaidEx,
+    totalMonthRev,
+    totalMonthPaidRev,
+    totalEstatesCount,
+    rentedEstateCount
   };
 };
 
