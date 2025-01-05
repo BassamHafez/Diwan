@@ -1,4 +1,4 @@
-export { useParams } from "react-router-dom";
+export { useParams,useNavigate } from "react-router-dom";
 export { default as useFileHandler } from "../hooks/useFileHandler";
 export { default as useTagsOption } from "../hooks/useTagsOption";
 export { default as useContactsOptions } from "../hooks/useContactsOptions";
