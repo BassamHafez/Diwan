@@ -1,9 +1,9 @@
 import { mainFormsHandlerTypeFormData } from "../util/Http";
 import { convertTpOptionsFormate } from "../Components/Logic/LogicFun";
-import { useQuery, useMemo } from "../shared/hooks";
+import { useQuery, useMemo, useSelector } from "../shared/hooks";
 
 const useServicesContact = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { data: services } = useQuery({
     queryKey: ["service", token],

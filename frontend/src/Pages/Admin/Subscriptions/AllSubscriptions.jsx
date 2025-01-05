@@ -2,12 +2,12 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import styles from "../Admin.module.css";
 import PolicyList from "../../../Components/UI/Blocks/PolicyList";
 import SubscriptionItem from "./SubscriptionItem";
-import { useTranslation, useMemo, useQuery } from "../../../shared/hooks";
+import { useTranslation, useMemo, useQuery, useSelector } from "../../../shared/hooks";
 import { MainTitle, LoadingOne, NoData } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AllSubscriptions = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 

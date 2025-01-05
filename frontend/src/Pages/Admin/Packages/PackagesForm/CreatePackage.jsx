@@ -19,12 +19,12 @@ import {
   string,
   number,
 } from "../../../../shared/constants";
-import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { useMutation, useSelector, useTranslation } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const CreatePackage = ({ refetch, hideModal }) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";

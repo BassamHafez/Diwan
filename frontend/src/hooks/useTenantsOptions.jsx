@@ -1,9 +1,9 @@
 import { convertTpOptionsFormate } from "../Components/Logic/LogicFun";
-import { useQuery, useMemo } from "../shared/hooks";
+import { useQuery, useMemo, useSelector } from "../shared/hooks";
 import { mainFormsHandlerTypeFormData } from "../util/Http";
 
 const useTenantsOptions = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { data: tenants, refetch: refetchTenants } = useQuery({
     queryKey: ["tenant", token],

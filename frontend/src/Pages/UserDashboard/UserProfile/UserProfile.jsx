@@ -28,7 +28,7 @@ const UserProfile = () => {
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const profileInfo = useSelector((state) => state.profileInfo.data);
 
-  const iconMArginClass = isArLang ? "ms-3" : "me-3";
+  const iconMArginClass = isArLang ? "ms-2" : "me-2";
 
   const chooseActiveActive = (type) => {
     setActivePage(type);
@@ -57,7 +57,10 @@ const UserProfile = () => {
                 <FontAwesomeIcon className={iconMArginClass} icon={faUser} />
                 <span>{key("main")}</span>
               </li>
-              <CheckPermissions btnActions={["UPDATE_ACCOUNT"]} noCheckingForExpired={true}>
+              <CheckPermissions
+                btnActions={["UPDATE_ACCOUNT"]}
+                noCheckingForExpired={true}
+              >
                 <li
                   className={activeLink === "office" ? styles.active : ""}
                   onClick={() => setActivePage("office")}

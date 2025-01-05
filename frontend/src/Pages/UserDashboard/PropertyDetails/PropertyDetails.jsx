@@ -43,6 +43,7 @@ const PropertyDetails = () => {
   const notifyError = (message) => toast.error(message);
   const [isMarked, setIsMarked] = useState(false);
   const accountInfo = useSelector((state) => state.accountInfo.data);
+
   useEffect(() => {
     AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
@@ -157,7 +158,7 @@ const PropertyDetails = () => {
   const commissionPercentage = Number(myData?.estate?.commissionPercentage);
   const theCommissionVal =
     myData?.totalPaidRevenues * (commissionPercentage / 100);
-
+  
   return (
     <>
       <ScrollTopBtn />

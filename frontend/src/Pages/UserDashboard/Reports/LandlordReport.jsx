@@ -12,7 +12,7 @@ import {
   incomeReportTable,
   paymentsReportTable,
 } from "../../../Components/Logic/StaticLists";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReportsForm from "./ReportForms/ReportsForm";
 import PrintFinancialReport from "../../../Components/Prints/PrintFinancialReport";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
@@ -60,30 +60,32 @@ const LandlordReport = ({
     setDataEnteried(formValues);
   };
 
-  const combinedData = [
-    ...revenues.map((item) => ({
-      ...item,
-      category: "revenue",
-    })),
-    ...expenses.map((item) => ({
-      ...item,
-      category: "expense",
-    })),
-  ];
+  const combinedData = useMemo(() => {
+    return [
+      ...revenues.map((item) => ({
+        ...item,
+        category: "revenue",
+      })),
+      ...expenses.map((item) => ({
+        ...item,
+        category: "expense",
+      })),
+    ];
+  }, [revenues, expenses]);
 
   const filterChangeHandler = (val) => {
     setResultFilter(val ? val : "");
   };
 
-  const filteredResults =
-    combinedData && Array.isArray(combinedData)
-      ? combinedData.filter(
-          (item) =>
-            resultFilter === "" ||
-            item.category.trim().toLocaleLowerCase() ===
-              resultFilter.trim().toLocaleLowerCase()
-        )
-      : [];
+  const filteredResults = useMemo(() => {
+    if (!Array.isArray(combinedData)) return [];
+    return combinedData?.filter(
+      (item) =>
+        resultFilter === "" ||
+        item.category.trim().toLocaleLowerCase() ===
+          resultFilter.trim().toLocaleLowerCase()
+    );
+  }, [combinedData, resultFilter]);
 
   const tableHeaders =
     filterType === "incomeReport"
@@ -92,39 +94,40 @@ const LandlordReport = ({
       ? incomeReportDetailsTable
       : paymentsReportTable || [];
 
-  const reportsData = [...(combinedData || [])];
-
-  const filteredReportsData = reportsData.map((ex) => {
-    if (filterType === "incomeReport") {
-      return {
-        [key("category")]: key(ex?.category) || "-",
-        [key("estate")]: ex?.estateName || "-",
-        [`${key("total")} (${key("sarSmall")})`]: ex?.total || "-",
-      };
-    } else if (filterType === "incomeReportDetails") {
-      return {
-        [key("category")]: key(ex?.category) || "-",
-        [key("estate")]: ex.estate?.name || ex.compound?.name || "-",
-        [key("theTenant")]: ex.tenant?.name || "-",
-        [`${key("total")} (${key("sarSmall")})`]: ex?.amount || "-",
-        [key("recDate")]: formattedDate(ex?.paidAt) || "-",
-        [key("recMethod")]: key(ex?.paymentMethod) || "-",
-      };
-    } else {
-      return {
-        [key("category")]: key(ex?.category) || "-",
-        [key("estate")]: ex.estate?.name || ex?.compound?.name || "-",
-        [key("theTenant")]: ex?.tenant?.name || "-",
-        [`${key("total")} (${key("sarSmall")})`]: ex?.amount || "-",
-        [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
-        [key("type")]: key(ex?.type) || "-",
-        [key("status")]: key(ex?.status) || "-",
-        [key("recDate")]: formattedDate(ex?.paidAt) || "-",
-        [key("recMethod")]: key(ex?.paymentMethod) || "-",
-        [key("notes")]: ex?.note || "-",
-      };
-    }
-  });
+  const filteredReportsData = useMemo(() => {
+    const reportsData = [...(combinedData || [])];
+    return reportsData?.map((ex) => {
+      if (filterType === "incomeReport") {
+        return {
+          [key("category")]: key(ex?.category) || "-",
+          [key("estate")]: ex?.estateName || "-",
+          [`${key("total")} (${key("sarSmall")})`]: ex?.total || "-",
+        };
+      } else if (filterType === "incomeReportDetails") {
+        return {
+          [key("category")]: key(ex?.category) || "-",
+          [key("estate")]: ex.estate?.name || ex.compound?.name || "-",
+          [key("theTenant")]: ex.tenant?.name || "-",
+          [`${key("total")} (${key("sarSmall")})`]: ex?.amount || "-",
+          [key("recDate")]: formattedDate(ex?.paidAt) || "-",
+          [key("recMethod")]: key(ex?.paymentMethod) || "-",
+        };
+      } else {
+        return {
+          [key("category")]: key(ex?.category) || "-",
+          [key("estate")]: ex.estate?.name || ex?.compound?.name || "-",
+          [key("theTenant")]: ex?.tenant?.name || "-",
+          [`${key("total")} (${key("sarSmall")})`]: ex?.amount || "-",
+          [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
+          [key("type")]: key(ex?.type) || "-",
+          [key("status")]: key(ex?.status) || "-",
+          [key("recDate")]: formattedDate(ex?.paidAt) || "-",
+          [key("recMethod")]: key(ex?.paymentMethod) || "-",
+          [key("notes")]: ex?.note || "-",
+        };
+      }
+    });
+  }, [combinedData, filterType, key]);
 
   return (
     <>

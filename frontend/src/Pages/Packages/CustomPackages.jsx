@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import CustomPackageItem from "./CustomPackageItem";
@@ -16,11 +16,12 @@ const CustomPackages = () => {
     isFavoriteAllowed: false,
     isRemindersAllowed: false,
   });
-
   const { t: key } = useTranslation();
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const myAccount = accountInfo?.account;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const centerClass = "d-flex justify-content-center align-items-center";
+
   useEffect(() => {
     scrollTo(0, 0);
   }, []);
@@ -42,23 +43,29 @@ const CustomPackages = () => {
     }));
   };
 
-  const centerClass = "d-flex justify-content-center align-items-center";
+  const filteredMaxEstateCompoundOptions = useMemo(() => {
+    const maxEstatesInCompoundOptions = [
+      {
+        label: `${key("withoutChange")} (${myAccount.maxEstatesInCompound})`,
+        value: 0,
+      },
+      { label: key("threeUnits"), value: 3 },
+      { label: key("tenUnits"), value: 10 },
+      { label: key("ThirtyUnits"), value: 30 },
+      { label: key("fiftyUnits"), value: 50 },
+      { label: key("threeHundredUnits"), value: 300 },
+    ];
+    return maxEstatesInCompoundOptions.filter(
+      (val) => val.value !== myAccount.maxEstatesInCompound
+    );
+  }, [myAccount.maxEstatesInCompound, key]);
 
-  const maxEstatesInCompoundOptions = [
-    {
-      label: `${key("withoutChange")} (${myAccount.maxEstatesInCompound})`,
-      value: 0,
-    },
-    { label: key("threeUnits"), value: 3 },
-    { label: key("tenUnits"), value: 10 },
-    { label: key("ThirtyUnits"), value: 30 },
-    { label: key("fiftyUnits"), value: 50 },
-    { label: key("threeHundredUnits"), value: 300 },
-  ];
-
-  const filteredMaxEstateCompoundOptions = maxEstatesInCompoundOptions.filter(
-    (val) => val.value !== myAccount.maxEstatesInCompound
-  );
+  const myFeatures = useMemo(() => {
+    return Object.entries(features).map(([key, value]) => ({
+      label: key,
+      value,
+    }));
+  }, [features]);
 
   return (
     <div className="height_container">
@@ -153,6 +160,7 @@ const CustomPackages = () => {
                 </div>
               </Col>
             )}
+            
             {!myAccount?.isRemindersAllowed && (
               <Col sm={6} className={centerClass}>
                 <div className="form-check form-switch p-0 m-0 mt-3 d-flex justify-content-between align-items-center ">
@@ -176,12 +184,7 @@ const CustomPackages = () => {
           </Row>
         </Col>
         <Col sm={6} xl={4}>
-          <CustomPackageItem
-            features={Object.entries(features).map(([key, value]) => ({
-              label: key,
-              value,
-            }))}
-          />
+          <CustomPackageItem features={myFeatures} />
         </Col>
       </Row>
     </div>

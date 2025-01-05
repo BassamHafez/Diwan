@@ -54,7 +54,27 @@ const Properties = () => {
   const role = useSelector((state) => state.userInfo.role);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const navigate = useNavigate();
-  const notifyError = (message) => toast.error(message);
+
+  const showAddCompoundHandler = useCallback(
+    () => setShowAddCompoundModal(true),
+    []
+  );
+  const hideAddCompoundHandler = useCallback(
+    () => setShowAddCompoundModal(false),
+    []
+  );
+
+  const showAddEstateHandler = useCallback(
+    () => setShowAddEstateModal(true),
+    []
+  );
+  const hideAddEstateHandler = useCallback(
+    () => setShowAddEstateModal(false),
+    []
+  );
+
+  const showMainModalHandler = useCallback(() => setShowModal(true), []);
+  const hideMainModalHandler = useCallback(() => setShowModal(false), []);
 
   useEffect(() => {
     if (role === "admin") {
@@ -84,41 +104,6 @@ const Properties = () => {
     enabled: selectedFilter === "bookmarked" && !!token,
     staleTime: Infinity,
   });
-
-  const handleFilterChange = (event, type) => {
-    const val = event.target.value;
-    if (type === "status") {
-      setStatusFiltering(val);
-    } else if (type === "compoundStatus") {
-      setCompoundStatusFiltering(val);
-    } else {
-      setSelectedFilter(val);
-    }
-  };
-
-  const handleCompoundFilterChange = (value) => {
-    setSelectedCompoundId(value);
-  };
-
-  const showNextModal = (selectedModal) => {
-    setShowModal(false);
-    const allowName =
-      selectedModal === "compound" ? "allowedCompounds" : "allowedEstates";
-    const isAllowed = checkAccountFeatures(accountInfo?.account, allowName);
-    if (!isAllowed) {
-      notifyError(key("featureEnded"));
-      return;
-    }
-    if (selectedModal === "compound") {
-      setShowAddCompoundModal(true);
-    } else {
-      setShowAddEstateModal(true);
-    }
-  };
-
-  const onSearch = useCallback((searchInput) => {
-    setSearchFilter(searchInput);
-  }, []);
 
   //filtering
   const filteredEstates = useMemo(() => {
@@ -183,18 +168,6 @@ const Properties = () => {
       : [];
   }, [compounds, compoundStatusFiltering]);
 
-  //statics
-  const cubes = <FontAwesomeIcon className={styles.acc_icon} icon={faCubes} />;
-  const status = (
-    <FontAwesomeIcon className={styles.acc_icon} icon={faRotate} />
-  );
-  const Contracts = (
-    <FontAwesomeIcon className={styles.acc_icon} icon={faFileSignature} />
-  );
-  const parentRealEstate = (
-    <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
-  );
-
   //rendering
   const renderProperties = (
     data,
@@ -204,7 +177,6 @@ const Properties = () => {
     hideStatus = false,
     rentedEstatesCount
   ) => {
-
     if (isFetching) {
       return <LoadingOne />;
     }
@@ -251,10 +223,61 @@ const Properties = () => {
     );
   };
 
-  const refetchEstatesAndCompounds = () => {
+  const handleFilterChange = useCallback((event, type) => {
+    const val = event.target.value;
+    if (type === "status") {
+      setStatusFiltering(val);
+    } else if (type === "compoundStatus") {
+      setCompoundStatusFiltering(val);
+    } else {
+      setSelectedFilter(val);
+    }
+  }, []);
+
+  const showNextModal = useCallback(
+    (selectedModal) => {
+      const notifyError = (message) => toast.error(message);
+      setShowModal(false);
+      const allowName =
+        selectedModal === "compound" ? "allowedCompounds" : "allowedEstates";
+      const isAllowed = checkAccountFeatures(accountInfo?.account, allowName);
+      if (!isAllowed) {
+        notifyError(key("featureEnded"));
+        return;
+      }
+      if (selectedModal === "compound") {
+        showAddCompoundHandler();
+      } else {
+        showAddEstateHandler();
+      }
+    },
+    [accountInfo, key, showAddCompoundHandler, showAddEstateHandler]
+  );
+
+  const onSearch = useCallback((searchInput) => {
+    setSearchFilter(searchInput);
+  }, []);
+
+  const refetchEstatesAndCompounds = useCallback(() => {
     refetchEstate();
     refetchCompound();
-  };
+  }, [refetchEstate, refetchCompound]);
+
+  const handleCompoundFilterChange = useCallback((value) => {
+    setSelectedCompoundId(value);
+  }, []);
+
+  //statics
+  const cubes = <FontAwesomeIcon className={styles.acc_icon} icon={faCubes} />;
+  const status = (
+    <FontAwesomeIcon className={styles.acc_icon} icon={faRotate} />
+  );
+  const Contracts = (
+    <FontAwesomeIcon className={styles.acc_icon} icon={faFileSignature} />
+  );
+  const parentRealEstate = (
+    <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
+  );
 
   return (
     <div className={styles.main_body}>
@@ -730,7 +753,7 @@ const Properties = () => {
               <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
                 <CheckPermissions btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}>
                   <ButtonOne
-                    onClick={() => setShowModal(true)}
+                    onClick={showMainModalHandler}
                     borderd={true}
                     text={key("addEstateUnit")}
                   />
@@ -764,7 +787,7 @@ const Properties = () => {
       {showModal && (
         <MainModal
           show={showModal}
-          onHide={() => setShowModal(false)}
+          onHide={hideMainModalHandler}
           title={key("createPropOrCompound")}
           modalSize="lg"
         >
@@ -793,24 +816,18 @@ const Properties = () => {
       )}
 
       {showAddCompoundModal && (
-        <ModalForm
-          show={showAddCompoundModal}
-          onHide={() => setShowAddCompoundModal(false)}
-        >
+        <ModalForm show={showAddCompoundModal} onHide={hideAddCompoundHandler}>
           <AddCompound
-            hideModal={() => setShowAddCompoundModal(false)}
+            hideModal={hideAddCompoundHandler}
             refetch={refetchCompound}
           />
         </ModalForm>
       )}
 
       {showAddEstateModal && (
-        <ModalForm
-          show={showAddEstateModal}
-          onHide={() => setShowAddEstateModal(false)}
-        >
+        <ModalForm show={showAddEstateModal} onHide={hideAddEstateHandler}>
           <AddEstate
-            hideModal={() => setShowAddEstateModal(false)}
+            hideModal={hideAddEstateHandler}
             refetch={refetchEstatesAndCompounds}
           />
         </ModalForm>

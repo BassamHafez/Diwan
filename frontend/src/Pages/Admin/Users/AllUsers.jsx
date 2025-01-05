@@ -7,6 +7,7 @@ import {
   useCallback,
   useMemo,
   useQuery,
+  useSelector,
 } from "../../../shared/hooks";
 import {
   MainTitle,
@@ -22,7 +23,7 @@ const AllUsers = () => {
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [showMessagesModal, setShowMessagesModal] = useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
 
   const {

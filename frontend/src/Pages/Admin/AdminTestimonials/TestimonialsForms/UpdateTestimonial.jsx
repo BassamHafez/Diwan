@@ -12,13 +12,14 @@ import {
   useMutation,
   useTranslation,
   useFileHandler,
+  useSelector,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateTestimonial = ({ hideModal, refetch, content }) => {
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 

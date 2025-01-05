@@ -50,13 +50,6 @@ const ProfileMain = () => {
               <h6>{profileInfo?.phone}</h6>
             </div>
           </Col>
-
-          {/* <Col md={4}>
-            <div className={styles.info}>
-              <span>{key("tag")}</span>
-              <h6>Estate Manager</h6>
-            </div>
-          </Col> */}
           <Col md={6}>
             <div className={styles.info}>
               <span>{key("email")}</span>
@@ -66,7 +59,7 @@ const ProfileMain = () => {
         </Row>
       </div>
 
-      {profileInfo?.phoneVerified===false && (
+      {profileInfo?.phoneVerified === false && (
         <div className={`mt-3 px-4 d-flex align-items-center`}>
           <VerifyPhoneAlert />
         </div>

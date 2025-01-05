@@ -9,6 +9,7 @@ import {
   useCallback,
   useMemo,
   useQuery,
+  useSelector,
 } from "../../../shared/hooks";
 import {
   MainTitle,
@@ -21,7 +22,7 @@ import { Row } from "../../../shared/bootstrap";
 const Support = () => {
   const [searchFilter, setSearchFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";

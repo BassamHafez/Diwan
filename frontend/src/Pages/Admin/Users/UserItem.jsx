@@ -20,7 +20,7 @@ const UserItem = ({
   isAdminPage,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const isIdExist = selectedUsers?.find((id) => id === userData?._id);
 
