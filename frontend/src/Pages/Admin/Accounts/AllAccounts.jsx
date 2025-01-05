@@ -1,15 +1,19 @@
-import { useTranslation } from "react-i18next";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import Row from "react-bootstrap/esm/Row";
-
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import { useQuery } from "@tanstack/react-query";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import NoData from "../../../Components/UI/Blocks/NoData";
-
-import { useCallback, useState } from "react";
-import SearchField from "../../../Components/Search/SearchField";
 import AccountItem from "./AccountItem";
+import {
+  useState,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useQuery,
+} from "../../../shared/hooks";
+import {
+  SearchField,
+  NoData,
+  MainTitle,
+  LoadingOne,
+} from "../../../shared/components";
+import { Row } from "../../../shared/bootstrap";
 
 const AllAccounts = () => {
   const [searchFilter, setSearchFilter] = useState("");
@@ -36,23 +40,24 @@ const AllAccounts = () => {
     setSearchFilter(searchInput);
   }, []);
 
-  const cleanAccountData =
-    accounts && Array.isArray(accounts?.data)
-      ? accounts?.data?.filter((acc) => acc.owner && acc.name)
-      : [];
+  const cleanAccountData = useMemo(() => {
+    if (accounts && Array.isArray(accounts?.data)) {
+      return accounts.data.filter((acc) => acc.owner && acc.name);
+    }
+    return [];
+  }, [accounts]);
 
-  const filteredData =
-    cleanAccountData && Array.isArray(cleanAccountData)
-      ? cleanAccountData?.filter(
-          (acc) =>
-            !searchFilter ||
-            acc?.name
-              .trim()
-              .toLowerCase()
-              .includes(searchFilter.trim().toLowerCase()) ||
-            acc?.phone.includes(searchFilter)
-        )
-      : [];
+  const filteredData = useMemo(() => {
+    return cleanAccountData.filter(
+      (acc) =>
+        !searchFilter ||
+        acc.name
+          .trim()
+          .toLowerCase()
+          .includes(searchFilter.trim().toLowerCase()) ||
+        acc.phone.includes(searchFilter)
+    );
+  }, [cleanAccountData, searchFilter]);
 
   return (
     <div className="admin_body height_container p-2 position-relative">

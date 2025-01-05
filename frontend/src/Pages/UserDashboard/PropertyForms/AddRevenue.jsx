@@ -1,9 +1,5 @@
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { revenueTypeOptions } from "../../../Components/Logic/StaticLists";
-import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -22,20 +18,16 @@ import {
   number,
 } from "../../../shared/constants";
 import {
-  useEffect,
-  useState,
   useMutation,
-  useQuery,
   useTranslation,
   useParams,
+  useTenantsOptions,
 } from "../../../shared/hooks";
-import {
-  InputErrorMessage,
-} from "../../../shared/components";
+import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
-  const [tenantsOption, setTenantOption] = useState([]);
+  const { tenantsOptions } = useTenantsOptions();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -45,18 +37,6 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
-
-  const { data: tenants } = useQuery({
-    queryKey: ["tenants", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "contacts/tenants", token: token }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    setTenantOption(convertTpOptionsFormate(tenants?.data));
-  }, [tenants]);
 
   const initialValues = {
     tenant: "",
@@ -119,7 +99,7 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
 
   const validationSchema = object().shape({
     tenant: string().required(key("fieldReq")),
-    amount: number().required(key("fieldReq")),
+    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
     dueDate: date()
       .required(key("fieldReq"))
       .test(
@@ -153,7 +133,7 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
                 <Select
                   id="tenant"
                   name="tenant"
-                  options={tenantsOption}
+                  options={tenantsOptions}
                   onChange={(val) => setFieldValue("tenant", val.value)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}

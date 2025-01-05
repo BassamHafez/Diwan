@@ -1,14 +1,9 @@
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import ButtonTwo from "../../Components/UI/Buttons/ButtonTwo";
-import InputErrorMessage from "../../Components/UI/Words/InputErrorMessage";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/esm/Col";
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
-import { useMutation } from "@tanstack/react-query";
-import { object, string } from "yup";
-import { useSelector } from "react-redux";
+import { ErrorMessage, Field, Form, Formik } from "../../shared/index";
+import { toast, object, string } from "../../shared/constants";
+import { useMutation, useTranslation, useSelector } from "../../shared/hooks";
+import { InputErrorMessage, ButtonTwo } from "../../shared/components";
+import { Row, Col } from "../../shared/bootstrap";
 
 const ContactForm = () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -19,6 +14,7 @@ const ContactForm = () => {
   const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
+
   const initialValues = {
     name: profileInfo?.name || "",
     email: profileInfo?.email || "",
@@ -84,19 +80,19 @@ const ContactForm = () => {
         <Row>
           <Col md={6}>
             <div className="field">
-              <label htmlFor="name">{key("name")} {requiredLabel}</label>
+              <label htmlFor="name">
+                {key("name")} {requiredLabel}
+              </label>
               <Field id="name" type="text" name="name" />
               <ErrorMessage name="name" component={InputErrorMessage} />
             </div>
           </Col>
           <Col md={6}>
             <div className="field">
-              <label htmlFor="email">{key("email")} {requiredLabel}</label>
-              <Field
-                id="email"
-                type="email"
-                name="email"
-              />
+              <label htmlFor="email">
+                {key("email")} {requiredLabel}
+              </label>
+              <Field id="email" type="email" name="email" />
               <ErrorMessage name="email" component={InputErrorMessage} />
             </div>
           </Col>
@@ -113,19 +109,19 @@ const ContactForm = () => {
             </div>
           </Col>
           <Col md={6}>
-            <label htmlFor="subject">{key("subject")} {requiredLabel}</label>
+            <label htmlFor="subject">
+              {key("subject")} {requiredLabel}
+            </label>
             <div className="field">
-              <Field
-                id="subject"
-                type="text"
-                name="subject"
-              />
+              <Field id="subject" type="text" name="subject" />
               <ErrorMessage name="subject" component={InputErrorMessage} />
             </div>
           </Col>
           <Col md={12}>
             <div className="field">
-              <label htmlFor="message">{key("message")} {requiredLabel}</label>
+              <label htmlFor="message">
+                {key("message")} {requiredLabel}
+              </label>
               <Field
                 id="message"
                 as="textarea"

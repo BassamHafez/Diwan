@@ -1,16 +1,22 @@
-import { useCallback, useState } from "react";
-import SearchField from "../../../Components/Search/SearchField";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import Select from "react-select";
 import { supportMessagesStatusOptions } from "../../../Components/Logic/StaticLists";
-import Row from "react-bootstrap/esm/Row";
 import SupportItem from "./SupportItem";
-import NoData from "../../../Components/UI/Blocks/NoData";
 import styles from "../Admin.module.css";
+import { Select } from "../../../shared/index";
+import {
+  useState,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useQuery,
+} from "../../../shared/hooks";
+import {
+  MainTitle,
+  LoadingOne,
+  NoData,
+  SearchField,
+} from "../../../shared/components";
+import { Row } from "../../../shared/bootstrap";
 
 const Support = () => {
   const [searchFilter, setSearchFilter] = useState("");
@@ -39,26 +45,31 @@ const Support = () => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filterChangeHandler = (val) => {
+  const filterChangeHandler = useCallback((val) => {
     setStatusFilter(val ? val : "");
-  };
+  }, []);
 
-  const filteredData =
-    messages && Array.isArray(messages?.data)
-      ? messages?.data?.filter(
-          (msg) =>
-            (!searchFilter ||
-              msg?.name
-                .trim()
-                .toLowerCase()
-                .includes(searchFilter.trim().toLowerCase()) ||
-              msg?.email
-                .trim()
-                .toLowerCase()
-                .includes(searchFilter.trim().toLowerCase())) &&
-            (!statusFilter || msg.status.trim() === statusFilter.trim())
-        )
-      : [];
+  const filteredData = useMemo(() => {
+    if (!messages || !Array.isArray(messages?.data)) return [];
+    return messages.data.filter(
+      (msg) =>
+        (!searchFilter ||
+          msg?.name
+            .trim()
+            .toLowerCase()
+            .includes(searchFilter.trim().toLowerCase()) ||
+          msg?.email
+            .trim()
+            .toLowerCase()
+            .includes(searchFilter.trim().toLowerCase())) &&
+        (!statusFilter || msg.status.trim() === statusFilter.trim())
+    );
+  }, [messages, searchFilter, statusFilter]);
+
+  const selectOptions = useMemo(
+    () => supportMessagesStatusOptions[currentLang],
+    [currentLang]
+  );
 
   return (
     <div className="admin_body height_container position-relative p-2">
@@ -72,12 +83,12 @@ const Support = () => {
           <SearchField
             className="my-2"
             onSearch={onSearch}
-            text={key("searchContacts")}
+            text={key("searchMessages")}
           />
         </div>
         <div>
           <Select
-            options={supportMessagesStatusOptions[currentLang]}
+            options={selectOptions}
             onChange={(val) => filterChangeHandler(val ? val.value : null)}
             className={`${isArLang ? "text-end" : "text-start"} my-2 ${
               styles.select_type

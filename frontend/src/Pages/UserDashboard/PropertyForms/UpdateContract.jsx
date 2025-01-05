@@ -37,7 +37,6 @@ import { InputErrorMessage, MainModal } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState(
     contract.paymentPeriodUnit || ""
   );
@@ -58,6 +57,7 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
   const queryClient = useQueryClient();
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -182,7 +182,7 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
         const { startDate } = this.parent;
         return value > startDate;
       }),
-    totalAmount: number().required(key("fieldReq")),
+    totalAmount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
     paymentPeriodValue: string().required(key("fieldReq")),
     paymentPeriodUnit: string().required(key("fieldReq")),
   });

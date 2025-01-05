@@ -17,20 +17,17 @@ import {
   string,
 } from "../../../shared/constants";
 import {
-  useEffect,
   useState,
   useMutation,
-  useQuery,
   useTranslation,
   useDispatch,
   useFileHandler,
+  useContactsOptions,
+  useTagsOption,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
@@ -44,64 +41,16 @@ import fetchAccountData from "../../../Store/accountInfo-actions";
 const AddCompound = ({ hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
-  const [tagsOptions, setTagsOptions] = useState([]);
-  const [brokersOptions, setBrokersOptions] = useState([]);
-  const [landlordOptions, setlandlordOptions] = useState([]);
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const { tagsOptions, refetchTags } = useTagsOption();
+  const { brokersOptions, landlordOptions } = useContactsOptions();
 
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const dispatch = useDispatch();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
-
-  const { data: tags, refetch: refetchTags } = useQuery({
-    queryKey: ["tags", token],
-    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  const { data: landlords } = useQuery({
-    queryKey: ["landlord", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/landlords",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  const { data: brokers } = useQuery({
-    queryKey: ["brokers", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "contacts/brokers", token: token }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    let myTagsOptions = tags?.data?.map((tag) => {
-      return { label: tag, value: tag };
-    });
-    setTagsOptions(myTagsOptions);
-  }, [tags]);
-
-  useEffect(() => {
-    let myLandlords = landlords?.data?.map((tenant) => {
-      return { label: tenant.name, value: tenant._id };
-    });
-    setlandlordOptions(myLandlords);
-  }, [landlords]);
-
-  useEffect(() => {
-    let myBrokers = brokers?.data?.map((broker) => {
-      return { label: broker.name, value: broker._id };
-    });
-    setBrokersOptions(myBrokers);
-  }, [brokers]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
@@ -117,7 +66,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     address: "",
     tags: [],
     broker: "",
-    commissionPercentage: "",
+    commissionPercentage: 0,
     landlord: "",
   };
 
@@ -145,8 +94,8 @@ const AddCompound = ({ hideModal, refetch }) => {
       formData.append("broker", values.broker);
       formData.append("commissionPercentage", values.commissionPercentage || 0);
     }
-
-    if (values.tags?.length > 0) {
+    const isTagsExist = values.tags?.length > 0;
+    if (isTagsExist) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
       });
@@ -167,7 +116,9 @@ const AddCompound = ({ hideModal, refetch }) => {
               if (data?.status === "success") {
                 await refetch();
                 dispatch(fetchAccountData(token));
-                refetchTags();
+                if (isTagsExist) {
+                  refetchTags();
+                }
                 resolve();
                 resetForm();
                 hideModal();
@@ -201,7 +152,7 @@ const AddCompound = ({ hideModal, refetch }) => {
     address: string(),
     lessor: string(),
     broker: string(),
-    commissionPercentage: number(),
+    commissionPercentage: number().min(0, key("positiveValidation")),
   });
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {

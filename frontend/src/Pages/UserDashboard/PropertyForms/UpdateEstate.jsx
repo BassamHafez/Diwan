@@ -1,8 +1,5 @@
 import styles from "./PropertyForms.module.css";
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
@@ -11,7 +8,6 @@ import {
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
-import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -28,16 +24,19 @@ import {
   toast,
   object,
   string,
+  number,
 } from "../../../shared/constants";
 import {
   useEffect,
   useState,
   useMutation,
-  useQuery,
   useQueryClient,
   useTranslation,
   useFileHandler,
   useParams,
+  useTagsOption,
+  useContactsOptions,
+  useCompoundOptions,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -50,13 +49,11 @@ const UpdateEstate = ({
 }) => {
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
-  const [brokersOptions, setBrokersOptions] = useState([]);
-  const [landlordOptions, setlandlordOptions] = useState([]);
-  const [tagsOptions, setTagsOptions] = useState([]);
+  const { compoundsOptionsWithNot } = useCompoundOptions();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const { tagsOptions, refetchTags } = useTagsOption();
+  const { brokersOptions, landlordOptions } = useContactsOptions();
   const queryClient = useQueryClient();
-
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -64,77 +61,15 @@ const UpdateEstate = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { propId } = useParams();
 
-  const { data: compounds } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
-  });
-
-  const { data: landlords } = useQuery({
-    queryKey: ["landlord", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/landlords",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  const { data: brokers } = useQuery({
-    queryKey: ["brokers", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "contacts/brokers", token: token }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    setlandlordOptions(convertTpOptionsFormate(landlords?.data));
-  }, [landlords]);
-
-  useEffect(() => {
-    setBrokersOptions(convertTpOptionsFormate(brokers?.data));
-  }, [brokers]);
-
-  useEffect(() => {
-    let compoundOptions = [];
-    if (compounds) {
-      compoundOptions = compounds?.data?.compounds?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    let allCompoundsOptions = [
-      { label: key("notSpecified"), value: "not" },
-      ...compoundOptions,
-    ];
-    setCompoundsOptions(allCompoundsOptions);
-  }, [compounds, key]);
-
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
   });
-
-  const { data: tags, refetch: refetchTags } = useQuery({
-    queryKey: ["tags", token],
-    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    const myTagsOptions = tags?.data?.map((tag) => {
-      return { label: tag, value: tag };
-    });
-    setTagsOptions(myTagsOptions);
-  }, [tags]);
 
   const estateParent = estateParentCompound ? estateParentCompound : estateData;
 
   const initialValues = {
     image: "",
-    compound: compoundsOptions?.find(
+    compound: compoundsOptionsWithNot?.find(
       (option) => option.value === estateParentCompound?._id
     ) || { label: key("notSpecified"), value: "not" },
     name: estateData?.name || "",
@@ -153,6 +88,7 @@ const UpdateEstate = ({
     electricityAccountNumber: estateData?.electricityAccountNumber || "",
     broker: estateParent?.broker?._id || "",
     landlord: estateParent?.landlord?._id || "",
+    commissionPercentage: estateParent?.commissionPercentage || 0,
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -184,7 +120,9 @@ const UpdateEstate = ({
     if (values.address) {
       formData.append("address", values.address);
     }
-    if (values.tags?.length > 0) {
+
+    const isTagsExist = values.tags?.length > 0;
+    if (isTagsExist) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
       });
@@ -194,6 +132,7 @@ const UpdateEstate = ({
     }
     if (values.broker) {
       formData.append("broker", values.broker);
+      formData.append("commissionPercentage", values.commissionPercentage || 0);
     }
     if (values.waterAccountNumber) {
       formData.append(
@@ -222,7 +161,9 @@ const UpdateEstate = ({
               console.log(data);
               if (data?.status === "success") {
                 await refetch();
-                refetchTags();
+                if (isTagsExist) {
+                  refetchTags();
+                }
                 queryClient.invalidateQueries(["estates", token]);
                 resetForm();
                 resolve();
@@ -261,6 +202,7 @@ const UpdateEstate = ({
     price: string().required(key("fieldReq")),
     area: string().required(key("fieldReq")),
     broker: string(),
+    commissionPercentage: number().min(0, key("positiveValidation")),
     lessor: string(),
     waterAccountNumber: string().matches(/^\d{10}$/, key("waterMinValidation")),
     electricityAccountNumber: string().matches(
@@ -339,7 +281,7 @@ const UpdateEstate = ({
                   id="compound"
                   name="compound"
                   value={values.compound}
-                  options={compoundsOptions}
+                  options={compoundsOptionsWithNot}
                   onChange={(val) => setFieldValue("compound", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
@@ -562,6 +504,25 @@ const UpdateEstate = ({
                   component={InputErrorMessage}
                 />
               </div>
+              {values.broker && (
+                <div className="field mb-1">
+                  <label htmlFor="commissionPercentage">
+                    {key("commissionPercentage")} (%)
+                  </label>
+                  <Field
+                    type="number"
+                    id="commissionPercentage"
+                    name="commissionPercentage"
+                    disabled={
+                      values.compound && values.compound?.value !== "not"
+                    }
+                  />
+                  <ErrorMessage
+                    name="commissionPercentage"
+                    component={InputErrorMessage}
+                  />
+                </div>
+              )}
             </Col>
           </Row>
           <div className={styles.photo_field}>
