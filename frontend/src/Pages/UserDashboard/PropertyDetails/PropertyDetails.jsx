@@ -126,6 +126,8 @@ const PropertyDetails = () => {
       if (res?.data?.status === "success") {
         setIsMarked(false);
         refetch();
+        queryClient.invalidateQueries(["bookmarked", token]);
+        console.log("hi");
         notifySuccess(key("removedSucc"));
       } else {
         notifyError(key("wrong"));
@@ -136,10 +138,10 @@ const PropertyDetails = () => {
         method: "post",
         type: `estates/${propId}/favorites`,
       });
-      console.log(res);
       if (res.status === "success") {
         setIsMarked(true);
         refetch();
+        queryClient.invalidateQueries(["bookmarked", token]);
         notifySuccess(key("bookmarkedSucc"));
       } else {
         notifyError(key("wrong"));

@@ -13,6 +13,9 @@ export {
   faMoneyBillTrendUp,
   faSackDollar,
   faTags,
+  faCubes,
+  faFileSignature,
+  faRotate,
 } from "@fortawesome/free-solid-svg-icons";
 export {
   faBuilding,
