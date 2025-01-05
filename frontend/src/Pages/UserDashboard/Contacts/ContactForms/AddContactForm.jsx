@@ -1,6 +1,9 @@
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import DateField from "../../../../Components/Fields/DateField";
-import { countriesOptions } from "../../../../Components/Logic/StaticLists";
+import {
+  countriesOptions,
+  tenantTypeOptions,
+} from "../../../../Components/Logic/StaticLists";
 import { cleanUpData } from "../../../../Components/Logic/LogicFun";
 
 import {
@@ -28,11 +31,6 @@ const AddContactForm = ({
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currenLang = isArLang ? "ar" : "en";
-
-  const tenantTypeOptions = [
-    { label: key("individual"), value: "individual" },
-    { label: key("organization"), value: "organization" },
-  ];
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -203,7 +201,7 @@ const AddContactForm = ({
                 <Select
                   id="tenantType"
                   name="type"
-                  options={tenantTypeOptions}
+                  options={tenantTypeOptions[currenLang]}
                   onChange={(val) => setFieldValue("type", val.value)}
                   className={isArLang ? "text-end" : "text-start"}
                   isRtl={isArLang ? true : false}

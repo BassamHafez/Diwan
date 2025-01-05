@@ -1,12 +1,6 @@
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
-import {
-  convertTpOptionsFormate,
-  formattedDate,
-} from "../../../Components/Logic/LogicFun";
+import { formattedDate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -25,36 +19,19 @@ import {
   number,
 } from "../../../shared/constants";
 import {
-  useEffect,
-  useState,
   useMutation,
-  useQuery,
   useTranslation,
+  useServicesContact,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
+  const servicesOptions = useServicesContact();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const [contactServicesOptions, setContactServicesOptions] = useState([]);
-
-  const { data: services } = useQuery({
-    queryKey: ["service", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/services",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    setContactServicesOptions(convertTpOptionsFormate(services?.data));
-  }, [services]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -70,7 +47,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
           (type) => type.value === exDetails.type
         ) || "",
     contact: exDetails.contact
-      ? contactServicesOptions?.find(
+      ? servicesOptions?.find(
           (contact) => contact.value === exDetails.contact || ""
         )
       : "",
@@ -131,7 +108,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
 
   const validationSchema = object({
     title: string().required(key("fieldReq")),
-    amount: number().required(key("fieldReq")),
+    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
     dueDate: date().required(key("fieldReq")),
     type: object()
       .shape({
@@ -207,7 +184,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
                   id="contact"
                   name="contact"
                   value={values.contact}
-                  options={contactServicesOptions}
+                  options={servicesOptions}
                   onChange={(val) => setFieldValue("contact", val ? val : null)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}

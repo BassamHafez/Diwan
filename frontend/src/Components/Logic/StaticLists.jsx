@@ -499,7 +499,6 @@ export const chartsData = [
 ];
 
 //countries
-
 export const countriesOptions = {
   en: [
     { label: "Afghanistan", value: "Afghanistan-أفغانستان" },
@@ -956,5 +955,17 @@ export const countriesOptions = {
     { label: "اليمن", value: "Yemen-اليمن" },
     { label: "زامبيا", value: "Zambia-زامبيا" },
     { label: "زيمبابوي", value: "Zimbabwe-زيمبابوي" },
+  ],
+};
+
+// contacts
+export const tenantTypeOptions = {
+  en: [
+    { label: "individual", value: "individual" },
+    { label: "organization", value: "organization" },
+  ],
+  ar: [
+    { label: "فرد", value: "individual" },
+    { label: "منشأة", value: "organization" },
   ],
 };

@@ -1,6 +1,5 @@
 import fetchAccountData from "../../../../Store/accountInfo-actions";
 import {
-  mainFormsHandlerTypeFormData,
   mainFormsHandlerTypeRaw,
 } from "../../../../util/Http";
 
@@ -23,10 +22,10 @@ import {
   useEffect,
   useState,
   useMutation,
-  useQuery,
   useTranslation,
   useDispatch,
   useSelector,
+  useCompoundOptions,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row } from "../../../../shared/bootstrap";
@@ -40,7 +39,8 @@ const UpdatePermissionsForm = ({
   tag,
 }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
+  const {compoundsOptions} = useCompoundOptions();
+
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -49,23 +49,6 @@ const UpdatePermissionsForm = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-
-  const { data: compounds } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    let compoundOptions = [];
-    if (compounds) {
-      compoundOptions = compounds?.data?.compounds?.map((compound) => {
-        return { label: compound.name, value: compound._id };
-      });
-    }
-    setCompoundsOptions(compoundOptions);
-  }, [compounds]);
 
   useEffect(() => {
     if (allPermissions) {
