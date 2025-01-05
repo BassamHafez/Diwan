@@ -279,11 +279,39 @@ const Properties = () => {
     <FontAwesomeIcon className={styles.acc_icon} icon={faBuilding} />
   );
 
+  const filterByCompoundSelect = useMemo(() => {
+    return (
+      <Select
+        isSearchable={true}
+        classNames="w-100"
+        name="parentRealEstate"
+        options={compoundsOptions}
+        className={`${isArLang ? "text-end" : "text-start"}`}
+        isRtl={isArLang ? true : false}
+        placeholder={isArLang ? "" : "select"}
+        isClearable
+        value={
+          compoundsOptions?.find(
+            (option) => option.value === selectedCompoundId
+          ) || null
+        }
+        onChange={(val) => handleCompoundFilterChange(val ? val.value : null)}
+      />
+    );
+  }, [
+    selectedCompoundId,
+    compoundsOptions,
+    handleCompoundFilterChange,
+    isArLang,
+  ]);
+
+  const smallFilterClass = "small_filter mb-3";
+
   return (
     <div className={styles.main_body}>
       <Row>
         <div className={styles.small_controllers}>
-          <div className="small_filter mb-3">
+          <div className={smallFilterClass}>
             <h5>{key("types")}</h5>
             <input
               type="radio"
@@ -345,7 +373,7 @@ const Properties = () => {
 
           {selectedFilter !== "compounds" && (
             <>
-              <div className="small_filter mb-3">
+              <div className={smallFilterClass}>
                 <h5>{key("status")}</h5>
                 <input
                   type="radio"
@@ -354,8 +382,15 @@ const Properties = () => {
                   id="statusAllSmall"
                   autoComplete="off"
                   value="all"
+                  checked={statusFiltering === "all"}
+                  onChange={(e) => handleFilterChange(e, "status")}
                 />
-                <label className="btn" htmlFor="statusAllSmall">
+                <label
+                  className={`${
+                    statusFiltering === "all" && styles.label_checked
+                  } btn`}
+                  htmlFor="statusAllSmall"
+                >
                   {key("all")}
                 </label>
 
@@ -366,8 +401,15 @@ const Properties = () => {
                   id="rentedSmall"
                   value="rented"
                   autoComplete="off"
+                  checked={statusFiltering === "rented"}
+                  onChange={(e) => handleFilterChange(e, "status")}
                 />
-                <label className="btn" htmlFor="rentedSmall">
+                <label
+                  className={`${
+                    statusFiltering === "rented" && styles.label_checked
+                  } btn`}
+                  htmlFor="rentedSmall"
+                >
                   {key("rented")}
                 </label>
 
@@ -375,62 +417,25 @@ const Properties = () => {
                   type="radio"
                   className="btn-check"
                   name="status"
-                  id="reservedSmall"
-                  value="reserved"
+                  id="availableSmall"
+                  value="available"
                   autoComplete="off"
+                  checked={statusFiltering === "available"}
+                  onChange={(e) => handleFilterChange(e, "status")}
                 />
-                <label className="btn" htmlFor="reservedSmall">
-                  {key("reserved")}
+                <label
+                  className={`${
+                    statusFiltering === "available" && styles.label_checked
+                  } btn`}
+                  htmlFor="availableSmall"
+                >
+                  {key("available")}
                 </label>
               </div>
 
-              <div className="small_filter mb-3">
-                <h5>{key("Contracts")}</h5>
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="Contracts"
-                  id="nextMonthSmall"
-                  autoComplete="off"
-                  value="nextMonth"
-                />
-                <label className="btn" htmlFor="nextMonthSmall">
-                  {key("nextMonth")}
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="Contracts"
-                  id="next3MonthSmall"
-                  value="next3Month"
-                  autoComplete="off"
-                />
-                <label className="btn" htmlFor="next3MonthSmall">
-                  {key("next3Month")}
-                </label>
-              </div>
-
-              <div className="small_filter mb-3">
+              <div className={smallFilterClass}>
                 <h5>{key("parentRealEstate")}</h5>
-                <Select
-                  isSearchable={true}
-                  classNames="w-100"
-                  name="parentRealEstate"
-                  options={compoundsOptions}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                  isClearable
-                  value={
-                    compoundsOptions?.find(
-                      (option) => option.value === selectedCompoundId
-                    ) || null
-                  }
-                  onChange={(val) =>
-                    handleCompoundFilterChange(val ? val.value : null)
-                  }
-                />
+                {filterByCompoundSelect}
               </div>
             </>
           )}
@@ -508,23 +513,7 @@ const Properties = () => {
                     icon={parentRealEstate}
                     eventKey="3"
                   >
-                    <Select
-                      isSearchable={true}
-                      name="parentRealEstate"
-                      options={compoundsOptions}
-                      className={`${isArLang ? "text-end" : "text-start"}`}
-                      isRtl={isArLang ? true : false}
-                      placeholder={isArLang ? "" : "select"}
-                      isClearable
-                      value={
-                        compoundsOptions?.find(
-                          (option) => option.value === selectedCompoundId
-                        ) || null
-                      }
-                      onChange={(val) =>
-                        handleCompoundFilterChange(val ? val.value : null)
-                      }
-                    />
+                    {filterByCompoundSelect}
                   </AccordionContent>
 
                   <AccordionContent
@@ -574,24 +563,6 @@ const Properties = () => {
                         className={`${styles.filter_input} form-check-input`}
                         type="radio"
                         name="statusSelection"
-                        value="pending"
-                        id="pending"
-                        checked={statusFiltering === "pending"}
-                        onChange={(e) => handleFilterChange(e, "status")}
-                      />
-                      <label
-                        className={`form-check-label ${styles.filter_label}`}
-                        htmlFor="pending"
-                      >
-                        {key("pending")}
-                      </label>
-                    </div>
-
-                    <div className="form-check">
-                      <input
-                        className={`${styles.filter_input} form-check-input`}
-                        type="radio"
-                        name="statusSelection"
                         value="available"
                         id="available"
                         checked={statusFiltering === "available"}
@@ -602,45 +573,6 @@ const Properties = () => {
                         htmlFor="available"
                       >
                         {key("available")}
-                      </label>
-                    </div>
-                  </AccordionContent>
-
-                  <AccordionContent
-                    removeTitle={true}
-                    title={key("Contracts")}
-                    icon={Contracts}
-                    eventKey="2"
-                  >
-                    <div className="form-check">
-                      <input
-                        className={`${styles.filter_input} form-check-input`}
-                        type="radio"
-                        name="ContractsSelection"
-                        value="nextMonth"
-                        id="nextMonth"
-                      />
-                      <label
-                        className={`form-check-label ${styles.filter_label}`}
-                        htmlFor="nextMonth"
-                      >
-                        {key("nextMonth")}
-                      </label>
-                    </div>
-
-                    <div className="form-check">
-                      <input
-                        className={`${styles.filter_input} form-check-input`}
-                        type="radio"
-                        name="ContractsSelection"
-                        value="next3Month"
-                        id="next3Month"
-                      />
-                      <label
-                        className={`form-check-label ${styles.filter_label}`}
-                        htmlFor="next3Month"
-                      >
-                        {key("next3Month")}
                       </label>
                     </div>
                   </AccordionContent>

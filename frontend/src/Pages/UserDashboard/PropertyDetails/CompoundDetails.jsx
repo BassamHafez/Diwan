@@ -32,10 +32,10 @@ import AOS from "aos";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import TaskContent from "../Tasks/TaskContent";
+import useCompoundAnlaysis from "../../../hooks/useCompoundAnlaysis";
 
 const CompoundDetails = () => {
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
-  const [rentedEstateCount, setRentedEstateCount] = useState(false);
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
   const accountInfo = useSelector((state) => state.accountInfo.data);
@@ -57,11 +57,6 @@ const CompoundDetails = () => {
     enabled: compId && !!token,
   });
 
-  useEffect(() => {
-    AOS.init({ disable: "mobile" });
-    window.scrollTo(0, 0);
-  }, []);
-
   const { data: tasks, refetch: refetchTasks } = useQuery({
     queryKey: ["compoundTasks", compId, token],
     queryFn: () =>
@@ -73,17 +68,23 @@ const CompoundDetails = () => {
     enabled: !!token,
   });
 
+  const compDetails = data?.data;
+  const {
+    theCommissionVal,
+    commissionPercentage,
+    netIncomeVal,
+    netReturnsVal,
+    collectionRatioVal,
+    totalMonthRev,
+    totalMonthPaidRev,
+    totalEstatesCount,
+    rentedEstateCount,
+  } = useCompoundAnlaysis(compDetails);
+
   useEffect(() => {
-    let rentedEstates = [];
-    let rentedEstateCount = 0;
-    if (data) {
-      rentedEstates = data?.data?.estates.filter(
-        (estate) => estate.status === "rented"
-      );
-      rentedEstateCount = rentedEstates?.length || 0;
-    }
-    setRentedEstateCount(rentedEstateCount);
-  }, [data]);
+    AOS.init({ disable: "mobile" });
+    window.scrollTo(0, 0);
+  }, []);
 
   const deleteCompound = async () => {
     setShowDeleteModal(false);
@@ -111,22 +112,6 @@ const CompoundDetails = () => {
     }
   };
 
-  const compDetails = data?.data;
-  const totalRev = Number(compDetails?.totalRevenue);
-  // const totalEx = Number(compDetails?.totalExpense);
-  const totalPaidEx = Number(compDetails?.totalPaidExpenses);
-  const totalPaidRev = Number(compDetails?.totalPaidRevenues);
-  const totalMonthRev = Number(compDetails?.totalMonthRevenue);
-  const totalMonthPaidRev = Number(compDetails?.totalMonthPaidRevenues);
-  const commissionPercentage = Number(
-    compDetails?.compound?.commissionPercentage
-  );
-  const theCommissionVal = totalPaidRev * (commissionPercentage / 100);
-  const netIncomeVal =
-    totalRev > 0
-      ? convertNumbersToFixedTwo(totalPaidRev - totalPaidEx - theCommissionVal)
-      : 0;
-
   const checkIsAllowed = () => {
     const isAllowed = checkAccountFeatures(
       accountInfo?.account,
@@ -138,6 +123,7 @@ const CompoundDetails = () => {
     }
     setShowAddEstateModal(true);
   };
+
   return (
     <>
       <ScrollTopBtn />
@@ -214,7 +200,7 @@ const CompoundDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("totalProperties")}</span>
-                          <p>{compDetails?.estates?.length||compDetails?.compound?.estatesCount||0}</p>
+                          <p>{totalEstatesCount}</p>
                         </div>
                       </Col>
                       <Col
@@ -255,32 +241,9 @@ const CompoundDetails = () => {
                           <span>
                             {key("collectionRatio")} {key("forEstates")}
                           </span>
-                          <p>
-                            {totalRev > 0
-                              ? convertNumbersToFixedTwo(
-                                  (totalPaidRev / totalRev) * 100
-                                )
-                              : 0}
-                            %
-                          </p>
+                          <p>{collectionRatioVal} %</p>
                         </div>
                       </Col>
-                      {/* <Col
-                        xs={6}
-                        sm={4}
-                        md={6}
-                        className="d-flex justify-content-center align-items-center"
-                      >
-                        <div className={styles.main_details}>
-                          <span>{key("totalIncome2")}</span>
-                          <p>
-                            {convertNumbersToFixedTwo(
-                              theCommissionVal + netIncomeVal
-                            )}{" "}
-                            {key("sarSmall")}
-                          </p>
-                        </div>
-                      </Col> */}
                       <Col
                         xs={6}
                         sm={4}
@@ -333,14 +296,7 @@ const CompoundDetails = () => {
                           <span>
                             {key("netReturns")} {key("forEstates")}
                           </span>
-                          <p>
-                            {totalPaidRev > 0
-                              ? convertNumbersToFixedTwo(
-                                  (netIncomeVal / totalPaidRev) * 100
-                                )
-                              : 0}
-                            %
-                          </p>
+                          <p>{netReturnsVal} %</p>
                         </div>
                       </Col>
                       <Col
