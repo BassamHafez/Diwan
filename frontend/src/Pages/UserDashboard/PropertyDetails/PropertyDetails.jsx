@@ -43,7 +43,6 @@ const PropertyDetails = () => {
   const notifyError = (message) => toast.error(message);
   const [isMarked, setIsMarked] = useState(false);
   const accountInfo = useSelector((state) => state.accountInfo.data);
-
   useEffect(() => {
     AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
@@ -152,6 +151,11 @@ const PropertyDetails = () => {
   const settingIsLoading = (bol) => {
     setIsLoading(bol);
   };
+
+  const commissionPercentage = Number(myData?.estate?.commissionPercentage);
+  const theCommissionVal =
+    myData?.totalPaidRevenues * (commissionPercentage / 100);
+
   return (
     <>
       <ScrollTopBtn />
@@ -235,9 +239,11 @@ const PropertyDetails = () => {
                         className="d-flex justify-content-center align-items-center"
                       >
                         <div className={styles.main_details}>
-                          <span>{key("totalIncome")}</span>
+                          <span>{key("totalPaidRevenues")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(myData?.totalRevenue)}{" "}
+                            {convertNumbersToFixedTwo(
+                              myData?.totalPaidRevenues
+                            )}{" "}
                             {key("sarSmall")}
                           </p>
                         </div>
@@ -300,8 +306,7 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("collectionRatio")}</span>
                           <p>
-                            {myData?.totalRevenue &&
-                            myData?.totalPendingRevenues !== 0
+                            {myData?.totalRevenue && myData?.totalRevenue !== 0
                               ? convertNumbersToFixedTwo(
                                   (Number(myData?.totalPaidRevenues) /
                                     Number(myData?.totalRevenue)) *
@@ -324,7 +329,7 @@ const PropertyDetails = () => {
                             {myData?.estate?.price &&
                             myData?.estate?.price !== 0
                               ? convertNumbersToFixedTwo(
-                                  (Number(myData?.totalRevenue) /
+                                  (Number(myData?.totalPaidRevenues) /
                                     Number(myData?.estate?.price)) *
                                     100
                                 )
@@ -345,8 +350,9 @@ const PropertyDetails = () => {
                             {myData?.estate?.price &&
                             myData?.estate?.price !== 0
                               ? convertNumbersToFixedTwo(
-                                  ((Number(myData?.totalRevenue) -
-                                    Number(myData?.totalExpense)) /
+                                  ((Number(myData?.totalPaidRevenues) -
+                                    Number(myData?.totalPaidExpenses) -
+                                    theCommissionVal) /
                                     Number(myData?.estate?.price)) *
                                     100
                                 )
@@ -368,17 +374,21 @@ const PropertyDetails = () => {
                           </p>
                         </div>
                       </Col>
-                      {/* <Col
-                        xs={6}
-                        sm={4}
-                        md={6}
-                        className="d-flex justify-content-center align-items-center"
-                      >
-                        <div className={styles.main_details}>
-                          <span>{key("rentPerSqm")}</span>
-                          <p>0 {key("sarSmall")}</p>
-                        </div>
-                      </Col> */}
+                      {!myData?.compound && (
+                        <Col
+                          xs={6}
+                          sm={4}
+                          md={6}
+                          className="d-flex justify-content-center align-items-center"
+                        >
+                          <div className={styles.main_details}>
+                            <span>{key("operatingRatio")}</span>
+                            <p>
+                              {convertNumbersToFixedTwo(commissionPercentage)}%
+                            </p>
+                          </div>
+                        </Col>
+                      )}
                     </Row>
                   </div>
                 </Col>

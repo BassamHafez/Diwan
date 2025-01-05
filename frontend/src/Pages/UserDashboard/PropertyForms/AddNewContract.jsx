@@ -1,12 +1,8 @@
-import {
-  mainFormsHandlerTypeFormData,
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { unitOptions } from "../../../Components/Logic/StaticLists";
 import {
   calculateDaysDifference,
   calculateRevenues,
-  convertTpOptionsFormate,
   filterTimeUnitDpendsOnDaysDifference,
   generatePeriodOptions,
 } from "../../../Components/Logic/LogicFun";
@@ -33,19 +29,20 @@ import {
   useEffect,
   useState,
   useMutation,
-  useQuery,
   useQueryClient,
   useTranslation,
   useParams,
+  useTenantsOptions,
 } from "../../../shared/hooks";
-import { InputErrorMessage,MainModal,ModalForm } from "../../../shared/components";
+import {
+  InputErrorMessage,
+  MainModal,
+  ModalForm,
+} from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
-
-
 const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
-  const [tenantsOptions, setTenantsOptions] = useState([]);
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const { tenantsOptions, refetchTenants } = useTenantsOptions();
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
   const [paymentPeriodValueOptions, setPaymentPeriodValueOptions] = useState(
     []
@@ -59,24 +56,10 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
-  const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
   const queryClient = useQueryClient();
-
-  const { data: tenants, refetch: refetchTenants } = useQuery({
-    queryKey: ["tenant", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/tenants",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  useEffect(() => {
-    setTenantsOptions(convertTpOptionsFormate(tenants?.data));
-  }, [tenants]);
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const requiredLabel = <span className="text-danger">*</span>;
 
   useEffect(() => {
     if (startDate && endDate) {
@@ -192,7 +175,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
         const { startDate } = this.parent;
         return value > startDate;
       }),
-    totalAmount: number().required(key("fieldReq")),
+    totalAmount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
     paymentPeriodValue: string().required(key("fieldReq")),
     paymentPeriodUnit: string().required(key("fieldReq")),
   });

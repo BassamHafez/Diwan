@@ -35,6 +35,8 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currentLang = isArLang ? "ar" : "en";
+
   const { propId } = useParams();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
@@ -53,21 +55,6 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
     enabled: propId && !!token,
     staleTime: Infinity,
   });
-
-  const getStatusBgColor = (status) => {
-    switch (status) {
-      case "active":
-        return styles.green;
-      case "pending":
-        return styles.orange;
-      case "canceled":
-        return styles.red;
-      case "upcoming":
-        return styles.yellow;
-      default:
-        return "";
-    }
-  };
 
   const deleteContract = async () => {
     setShowDeleteModal(false);
@@ -88,8 +75,6 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
       notifyError(key("deleteWrong"));
     }
   };
-
-  const language = isArLang ? "ar" : "en";
 
   return (
     <div className={styles.contracts_body}>
@@ -130,14 +115,9 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
                       <td>{currentContract?.data?.contract?.totalAmount}</td>
                       <td>
                         <span
-                          className={`${getStatusBgColor(
-                            currentContract?.data?.contract?.status
-                          )} ${styles.status_span}`}
+                          className={`${styles.green} ${styles.status_span}`}
                         >
-                          {renamedContractStatus(
-                            currentContract?.data?.contract?.status,
-                            language
-                          )}
+                          {renamedContractStatus("active", currentLang)}
                         </span>
                       </td>
                       <td>

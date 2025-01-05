@@ -2,15 +2,12 @@ import styles from "./AdminNav.module.css";
 import avatar from "../../assets/default.png";
 import logo from "../../assets/smallLogo.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCrown,
-  faGears,
-  faHeadset,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCrown, faGears, faHeadset } from "@fortawesome/free-solid-svg-icons";
 import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useMemo } from "react";
 
 const AdminNav = () => {
   const { t: key } = useTranslation();
@@ -18,23 +15,29 @@ const AdminNav = () => {
   const iconClass = isArLang ? "ms-2" : "me-2";
   const profileInfo = useSelector((state) => state.profileInfo.data);
 
-  const generalLinks = [
-    { to: "/admin-dashboard", label: key("dashboard") },
-    { to: "/admin-members", label: key("admins") },
-    { to: "/admin-accounts", label: key("accounts") },
-    { to: "/admin-users", label: key("users") },
-    { to: "/admin-subscriptions", label: key("subscriptions") },
-    { to: "/admin-packages", label: key("packages") },
-    { to: "/admin-configs", label: key("customization") },
-    { to: "/admin-testimonials", label: key("testimonials") },
-  ];
+  const generalLinks = useMemo(
+    () => [
+      { to: "/admin-dashboard", label: "dashboard" },
+      { to: "/admin-members", label: "admins" },
+      { to: "/admin-accounts", label: "accounts" },
+      { to: "/admin-users", label: "users" },
+      { to: "/admin-subscriptions", label: "subscriptions" },
+      { to: "/admin-packages", label: "packages" },
+      { to: "/admin-configs", label: "customization" },
+      { to: "/admin-testimonials", label: "testimonials" },
+    ],
+    []
+  );
 
-  const supportLinks = [
-    { to: "/admin-support",icon: faHeadset, label: key("support") },
-    { to: "/admin-settings", icon: faGears, label: key("accSetting") },
-  ];
+  const supportLinks = useMemo(
+    () => [
+      { to: "/admin-support", icon: faHeadset, label: "support" },
+      { to: "/admin-settings", icon: faGears, label: "accSetting" },
+    ],
+    []
+  );
 
-  const tag = profileInfo?.isKing ? key("superAdmin") : key("admin");
+  const tag = profileInfo?.isKing ? "superAdmin" : "admin";
 
   return (
     <aside className={styles.nav_side}>
@@ -51,13 +54,13 @@ const AdminNav = () => {
                 icon={faCrown}
               />
             )}
-            {tag}
+            {key(tag)}
           </span>
         </div>
       </div>
       <ul className={styles.nav_list}>
         <h6 className="text-secondary">{key("pages")}</h6>
-        {generalLinks.map((item, index) => (
+        {generalLinks?.map((item, index) => (
           <NavLink
             key={index}
             to={item.to}
@@ -67,13 +70,13 @@ const AdminNav = () => {
           >
             <li>
               <FontAwesomeIcon className={iconClass} icon={faFolderOpen} />
-              {item.label}
+              {key(item.label)}
             </li>
           </NavLink>
         ))}
         <hr />
         <h6 className="text-secondary">{key("support")}</h6>
-        {supportLinks.map((item, index) => (
+        {supportLinks?.map((item, index) => (
           <NavLink
             key={index}
             to={item.to}
@@ -83,7 +86,7 @@ const AdminNav = () => {
           >
             <li>
               <FontAwesomeIcon className={iconClass} icon={item.icon} />
-              {item.label}
+              {key(item.label)}
             </li>
           </NavLink>
         ))}

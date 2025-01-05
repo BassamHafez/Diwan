@@ -1,6 +1,5 @@
 import { paymentMethodOptions } from "../../../Components/Logic/StaticLists";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-import { formattedDate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -15,7 +14,6 @@ import {
   toast,
   object,
   string,
-  date,
   number,
 } from "../../../shared/constants";
 import {
@@ -46,7 +44,7 @@ const SettleContract = ({
 
   const initialValues = {
     paymentMethod: "",
-    paidAt: formattedDate(new Date()),
+    // paidAt: formattedDate(new Date()),
     settlementAmount: "",
   };
 
@@ -92,7 +90,7 @@ const SettleContract = ({
 
   const validationSchema = object({
     paymentMethod: string().required(key("fieldReq")),
-    paidAt: date(),
+    // paidAt: date(),
     settlementAmount: number()
       .min(0, key("positiveOnlyValidation"))
       .required(key("fieldReq")),
@@ -135,11 +133,11 @@ const SettleContract = ({
             <ErrorMessage name="paymentMethod" component={InputErrorMessage} />
           </div>
 
-          <div className="field">
+          {/* <div className="field">
             <label htmlFor="paidAt">{key("paidAt")}</label>
             <Field type="date" id="paidAt" name="paidAt" />
             <ErrorMessage name="paidAt" component={InputErrorMessage} />
-          </div>
+          </div> */}
 
           <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
             <button onClick={hideModal} className="cancel_btn my-2">

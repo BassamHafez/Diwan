@@ -1,6 +1,6 @@
 import Offcanvas from "react-bootstrap/Offcanvas";
 import styles from "./SettingOffCanvas.module.css";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRightFromBracket,
@@ -29,6 +29,19 @@ const SettingOffCanvas = ({ show, handleClose }) => {
     handleClose();
     navigate(`profile/${profileInfo?._id}`);
   };
+
+  const menuLinks = useMemo(
+    () => [
+      { to: `profile/${profileInfo?._id}`, label: "accSetting", icon: faGears },
+      { to: "/about", label: "about", icon: faCircleInfo },
+      { to: "/contact", label: "contact", icon: faEnvelope },
+      { to: "/help", label: "Help", icon: faCircleInfo },
+    ],
+    [profileInfo?._id]
+  );
+
+  const handleShowAddModal = useCallback(() => setLogoutModalShow(true), []);
+  const handleHideAddModal = useCallback(() => setLogoutModalShow(false), []);
 
   return (
     <>
@@ -66,52 +79,24 @@ const SettingOffCanvas = ({ show, handleClose }) => {
                 } d-flex justify-content-center flex-column`}
               >
                 <span className={styles.profile_name}>{profileInfo?.name}</span>
-                <span className={styles.user_email}>
-                  {profileInfo?.email}
-                </span>
+                <span className={styles.user_email}>{profileInfo?.email}</span>
               </div>
             </div>
           </Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
           <ul className={styles.contact_list}>
-            <Link to={`profile/${profileInfo?._id}`}>
-              <li className={styles.contact_list_item} onClick={handleClose}>
-                {key("accSetting")}
-                <FontAwesomeIcon className={styles.list_icons} icon={faGears} />
-              </li>
-            </Link>
-            <Link to={"/about"}>
-              <li className={styles.contact_list_item} onClick={handleClose}>
-                {key("about")}
-                <FontAwesomeIcon
-                  className={styles.list_icons}
-                  icon={faCircleInfo}
-                />
-              </li>
-            </Link>
-            <Link to={"/contact"}>
-              <li className={styles.contact_list_item} onClick={handleClose}>
-                {key("contact")}
-                <FontAwesomeIcon
-                  className={styles.list_icons}
-                  icon={faEnvelope}
-                />
-              </li>
-            </Link>
-            <Link to={"/help"}>
-              <li className={styles.contact_list_item} onClick={handleClose}>
-                {key("Help")}
-                <FontAwesomeIcon
-                  className={styles.list_icons}
-                  icon={faCircleInfo}
-                />
-              </li>
-            </Link>
-
+            {menuLinks?.map(({ to, label, icon }, index) => (
+              <Link to={to} key={index}>
+                <li className={styles.contact_list_item} onClick={handleClose}>
+                  {key(label)}
+                  <FontAwesomeIcon className={styles.list_icons} icon={icon} />
+                </li>
+              </Link>
+            ))}
             <li
               className={styles.contact_list_item}
-              onClick={() => setLogoutModalShow(true)}
+              onClick={handleShowAddModal}
             >
               {key("logout")}
               <FontAwesomeIcon
@@ -132,7 +117,7 @@ const SettingOffCanvas = ({ show, handleClose }) => {
       {logoutModalShow && (
         <LogOutModal
           show={logoutModalShow}
-          onHide={() => setLogoutModalShow(false)}
+          onHide={handleHideAddModal}
           onClose={handleClose}
         />
       )}

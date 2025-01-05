@@ -88,7 +88,7 @@ const SplitRevenue = ({
   };
 
   const validationSchema = object({
-    splitedAmount: number().required(key("fieldReq")),
+    splitedAmount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
     dueDate: date().required(key("fieldReq")),
     note: string().min(5, key("min5")),
   });

@@ -1,21 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import NoData from "../../../Components/UI/Blocks/NoData";
 import UserItem from "./UserItem";
-import Row from "react-bootstrap/esm/Row";
-import { useCallback, useState } from "react";
-import SearchField from "../../../Components/Search/SearchField";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import SendMessaagesForm from "./SendMessaagesForm";
+import {
+  useState,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useQuery,
+} from "../../../shared/hooks";
+import {
+  MainTitle,
+  LoadingOne,
+  NoData,
+  SearchField,
+  ButtonOne,
+  ModalForm,
+} from "../../../shared/components";
+import { Row } from "../../../shared/bootstrap";
 
 const AllUsers = () => {
   const [searchFilter, setSearchFilter] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [showMessagesModel, setShowMessagesModel] = useState(false);
+  const [showMessagesModal, setShowMessagesModal] = useState(false);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
 
@@ -38,35 +44,34 @@ const AllUsers = () => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filteredData =
-    users && Array.isArray(users?.data)
-      ? users?.data?.filter(
-          (user) =>
-            !searchFilter ||
-            user.name
-              .trim()
-              .toLowerCase()
-              .includes(searchFilter.trim().toLowerCase()) ||
-            user.phone.includes(searchFilter)
-        )
-      : [];
+  const filteredData = useMemo(() => {
+    if (!users || !Array.isArray(users?.data)) return [];
+    return users.data.filter(
+      (user) =>
+        !searchFilter ||
+        user.name
+          .trim()
+          .toLowerCase()
+          .includes(searchFilter.trim().toLowerCase()) ||
+        user.phone.includes(searchFilter)
+    );
+  }, [users, searchFilter]);
 
-  const selectUserHandler = (userId) => {
-    const currentUsersIds = [...selectedUsers];
-    const isIdExist = currentUsersIds.find((id) => id === userId);
-    let updatedUsersIds = [];
-    if (isIdExist) {
-      updatedUsersIds = currentUsersIds.filter((id) => id !== userId);
-    } else {
-      updatedUsersIds = [...currentUsersIds, userId];
-    }
+  const selectUserHandler = useCallback((userId) => {
+    setSelectedUsers((prevSelectedUsers) =>
+      prevSelectedUsers.includes(userId)
+        ? prevSelectedUsers.filter((id) => id !== userId)
+        : [...prevSelectedUsers, userId]
+    );
+  }, []);
 
-    setSelectedUsers(updatedUsersIds);
-  };
+  const handleShowAddModal = useCallback(() => setShowMessagesModal(true), []);
+  const handleHideAddModal = useCallback(() => setShowMessagesModal(false), []);
 
-  const clearSelectedUsersIds = () => {
+  const clearSelectedUsers = useCallback(() => {
     setSelectedUsers([]);
-  };
+  }, []);
+
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
@@ -80,11 +85,11 @@ const AllUsers = () => {
           </div>
           <div>
             <ButtonOne
-              onClick={() => setShowMessagesModel(true)}
+              onClick={handleShowAddModal}
               borderd={true}
               text={key("sendMessages")}
               classes="my-2"
-              disabled={selectedUsers?.length>0?false:true}
+              disabled={selectedUsers?.length > 0 ? false : true}
             />
           </div>
         </div>
@@ -104,15 +109,12 @@ const AllUsers = () => {
           )}
         </Row>
       </div>
-      {showMessagesModel && (
-        <ModalForm
-          show={showMessagesModel}
-          onHide={() => setShowMessagesModel(false)}
-        >
+      {showMessagesModal && (
+        <ModalForm show={showMessagesModal} onHide={handleHideAddModal}>
           <SendMessaagesForm
-            clearSelectedUsersIds={clearSelectedUsersIds}
+            clearSelectedUsersIds={clearSelectedUsers}
             selectedUsers={selectedUsers}
-            hideModal={() => setShowMessagesModel(false)}
+            hideModal={handleHideAddModal}
           />
         </ModalForm>
       )}

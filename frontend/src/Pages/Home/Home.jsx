@@ -2,10 +2,8 @@ import { useEffect } from "react";
 import styles from "./Home.module.css";
 import { useTranslation } from "react-i18next";
 import AOS from "aos";
-
 import Hero from "../../Components/Hero/Hero";
 import MainTitle from "../../Components/UI/Words/MainTitle";
-
 import Packages from "../Packages/Packages";
 import HomeTestimonalsSlider from "./HomeTestimonalsSlider";
 import About from "../About/About";
@@ -51,7 +49,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Testimonials */}
       <section className={styles.Testimonials}>
         <MainTitle title={key("testimonials")} />
         <HomeTestimonalsSlider />

@@ -1,17 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import TestimonialItem from "../../../Components/TestimonialItem/TestimonialItem";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import { useCallback, useState } from "react";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import { useTranslation } from "react-i18next";
-import SearchField from "../../../Components/Search/SearchField";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import NoData from "../../../Components/UI/Blocks/NoData";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddTestimonial from "./TestimonialsForms/AddTestimonial";
+import {
+  useState,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useQuery,
+} from "../../../shared/hooks";
+import {
+  SearchField,
+  NoData,
+  MainTitle,
+  LoadingOne,
+  ModalForm,
+  ButtonOne,
+} from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const AdminTestimonials = () => {
   const [showAddTestimonialsModal, setShowAddTestimonialsModal] =
@@ -30,21 +35,21 @@ const AdminTestimonials = () => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filteredData =
-    data && Array.isArray(data?.data)
-      ? data?.data?.filter(
-          (comment) =>
-            !searchFilter ||
-            comment.name
-              .trim()
-              .toLowerCase()
-              .includes(searchFilter.trim().toLowerCase()) ||
-            comment.title
-              .trim()
-              .toLowerCase()
-              .includes(searchFilter.trim().toLowerCase())
-        )
-      : [];
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(data?.data)) return [];
+    const lowerCasedFilter = searchFilter.trim().toLowerCase();
+    return data?.data?.filter((comment) => {
+      const nameMatches = comment.name
+        .trim()
+        .toLowerCase()
+        .includes(lowerCasedFilter);
+      const titleMatches = comment.title
+        .trim()
+        .toLowerCase()
+        .includes(lowerCasedFilter);
+      return !searchFilter || nameMatches || titleMatches;
+    });
+  }, [data, searchFilter]);
 
   return (
     <>

@@ -1,76 +1,39 @@
-import Row from "react-bootstrap/esm/Row";
 import styles from "./Reports.module.css";
-import Col from "react-bootstrap/esm/Col";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { faCircle, faPaste } from "@fortawesome/free-regular-svg-icons";
+import LandlordReport from "./LandlordReport";
+import OperationalReport from "./OperationalReport";
+import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import CompoundsReport from "./CompoundsReport";
+import CompoundDetailsReports from "./CompoundDetailsReports";
+import { FontAwesomeIcon } from "../../../shared/index";
 import {
+  faCircle,
+  faPaste,
   faFileContract,
   faFileInvoiceDollar,
   faMoneyBillTrendUp,
   faSackDollar,
   faTags,
-} from "@fortawesome/free-solid-svg-icons";
-import LandlordReport from "./LandlordReport";
-import { useQuery } from "@tanstack/react-query";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import { convertTpOptionsFormate } from "../../../Components/Logic/LogicFun";
-import OperationalReport from "./OperationalReport";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
-import CompoundsReport from "./CompoundsReport";
-import CompoundDetailsReports from "./CompoundDetailsReports";
+} from "../../../shared/constants";
+import {
+  useState,
+  useTranslation,
+  useEstatesOptions,
+  useCompoundOptions,
+  useContactsOptions,
+} from "../../../shared/hooks";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
   const [landlordFilter, setLandlordFilter] = useState("incomeReport");
   const [operationalFilter, setOperationalFilter] = useState("contractsReport");
   const [compoundsFilter, setCompoundsFilter] = useState("compoundsReport");
+  const estatesOptions = useEstatesOptions();
+  const {compoundsOptions} = useCompoundOptions();
+  const landlordOptions = useContactsOptions();
 
-  const [landlordOptions, setLandlordOptions] = useState([]);
-  const [compoundsOptions, setCompoundsOptions] = useState([]);
-  const [estatesOptions, setEstatesOptions] = useState([]);
-
-  const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
-  const { data: landlords } = useQuery({
-    queryKey: ["landlord", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({
-        type: "contacts/landlords",
-        token: token,
-      }),
-    staleTime: Infinity,
-    enabled: !!token,
-  });
-
-  const { data: compounds } = useQuery({
-    queryKey: ["compounds", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  const { data: estates } = useQuery({
-    queryKey: ["estates", token],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "estates", token: token }),
-    enabled: !!token,
-    staleTime: Infinity,
-  });
-
-  useEffect(() => {
-    setLandlordOptions(convertTpOptionsFormate(landlords?.data));
-    const myEstatesOptions = convertTpOptionsFormate(estates?.data);
-    const myCompoundsOptions = convertTpOptionsFormate(
-      compounds?.data?.compounds
-    );
-    setEstatesOptions([...myEstatesOptions]);
-    setCompoundsOptions([...myCompoundsOptions]);
-  }, [estates, compounds, landlords, key]);
 
   let iconClass = isArLang ? "ms-2" : "me-2";
   const circleIcon = (

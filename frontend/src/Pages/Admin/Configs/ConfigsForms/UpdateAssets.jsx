@@ -1,20 +1,24 @@
 import { mainFormsHandlerTypeFormData } from "../../../../util/Http";
 import styles from "../../Admin.module.css";
-import { maxFileSize } from "../../../../Components/Logic/StaticLists";
-
 import { Form, Formik, FontAwesomeIcon } from "../../../../shared/index";
 import { faSpinner, toast } from "../../../../shared/constants";
-import { useState, useMutation, useTranslation } from "../../../../shared/hooks";
+import {
+  useMutation,
+  useTranslation,
+  useFileHandler,
+} from "../../../../shared/hooks";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateAssets = () => {
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
-  const [selectedFile2, setSelectedFile2] = useState(null);
-  const [imagePreviewUrl2, setImagePreviewUrl2] = useState(null);
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const {
+    selectedFile: selectedFile2,
+    imagePreviewUrl: imagePreviewUrl2,
+    handleFileChange: handleFileChange2,
+  } = useFileHandler();
+
   const { t: key } = useTranslation();
   const token = JSON.parse(localStorage.getItem("token"));
-  const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
@@ -70,32 +74,6 @@ const UpdateAssets = () => {
         error: key("wrong"),
       }
     );
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.currentTarget.files[0];
-    const inputId = e.currentTarget.id;
-
-    if (file?.size > maxFileSize) {
-      notifyError(key("imgSizeError"));
-      return;
-    }
-
-    if (inputId === "banner") {
-      setSelectedFile(file);
-      if (file) {
-        const previewUrl = URL.createObjectURL(file);
-        setImagePreviewUrl(previewUrl);
-      }
-    } else {
-      setSelectedFile2(file);
-      if (file) {
-        const previewUrl = URL.createObjectURL(file);
-        setImagePreviewUrl2(previewUrl);
-      }
-    }
-
-    e.target.value = null;
   };
 
   return (
@@ -155,7 +133,7 @@ const UpdateAssets = () => {
                 type="file"
                 id="banner2"
                 accept="image/*"
-                onChange={handleFileChange}
+                onChange={handleFileChange2}
                 className="d-none"
               />
             </div>

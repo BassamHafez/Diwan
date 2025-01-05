@@ -13,6 +13,7 @@ const AccountFeatures = ({ account }) => {
     isFavoriteAllowed: account.isFavoriteAllowed,
     allowedEstates: account.allowedEstates,
     maxEstatesInCompound: account.maxEstatesInCompound,
+    isRemindersAllowed: account?.isRemindersAllowed,
   });
 
   const { t: key } = useTranslation();
@@ -31,7 +32,7 @@ const AccountFeatures = ({ account }) => {
           Number(feature.value) > 0 && (
             <li key={index}>
               <FontAwesomeIcon
-                className={`${styles.list_icon} ${isArLang?"ms-2":"me-2"}`}
+                className={`${styles.list_icon} ${isArLang ? "ms-2" : "me-2"}`}
                 icon={faCircleCheck}
               />
               {key(feature.label)}{" "}
