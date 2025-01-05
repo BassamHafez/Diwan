@@ -383,7 +383,7 @@ exports.getCurrentContracts = catchAsync(async (req, res, next) => {
     estate: { $in: estateIds },
     startDate: { $lte: new Date() },
     endDate: { $gte: new Date() },
-    isCanceled: false,
+    status: { $nin: ["canceled", "completed"] },
   }).lean();
 
   const tenantsPromise = Tenant.find({ account: compound.account })

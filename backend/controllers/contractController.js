@@ -56,7 +56,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
       estate: estateId,
       startDate: { $lte: newEndDate },
       endDate: { $gte: newStartDate },
-      isCanceled: false,
+      status: { $nin: ["canceled", "completed"] },
     })
       .select("_id")
       .lean(),
@@ -239,7 +239,7 @@ exports.updateContract = catchAsync(async (req, res, next) => {
     estate: estateId,
     startDate: { $lte: newEndDate },
     endDate: { $gte: newStartDate },
-    isCanceled: false,
+    status: { $nin: ["canceled", "completed"] },
   })
     .select("_id")
     .lean();
@@ -407,7 +407,7 @@ exports.extendContract = catchAsync(async (req, res, next) => {
     estate: estateId,
     startDate: { $lte: newEndDate },
     endDate: { $gte: contract.startDate },
-    isCanceled: false,
+    status: { $nin: ["canceled", "completed"] },
   })
     .select("_id")
     .lean();
