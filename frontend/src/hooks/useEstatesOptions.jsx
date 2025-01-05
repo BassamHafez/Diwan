@@ -1,9 +1,9 @@
 import { mainFormsHandlerTypeFormData } from "../util/Http";
-import { useQuery, useMemo } from "../shared/hooks";
+import { useQuery, useMemo, useSelector } from "../shared/hooks";
 import { convertTpOptionsFormate } from "../Components/Logic/LogicFun";
 
 const useEstatesOptions = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { data: estates } = useQuery({
     queryKey: ["estates", token],

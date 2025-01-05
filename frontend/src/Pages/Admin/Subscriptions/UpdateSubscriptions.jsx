@@ -8,13 +8,13 @@ import {
   FontAwesomeIcon,
 } from "../../../shared/index";
 import { faSpinner, toast, object, number } from "../../../shared/constants";
-import { useMutation, useTranslation } from "../../../shared/hooks";
+import { useMutation, useSelector, useTranslation } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
 const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 

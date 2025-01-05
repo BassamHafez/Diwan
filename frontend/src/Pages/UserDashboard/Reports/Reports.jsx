@@ -30,7 +30,7 @@ const Reports = () => {
   const [compoundsFilter, setCompoundsFilter] = useState("compoundsReport");
   const estatesOptions = useEstatesOptions();
   const {compoundsOptions} = useCompoundOptions();
-  const landlordOptions = useContactsOptions();
+  const {landlordOptions} = useContactsOptions();
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";

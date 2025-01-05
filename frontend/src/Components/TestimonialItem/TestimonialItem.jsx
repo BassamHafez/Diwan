@@ -10,12 +10,13 @@ import UpdateTestimonial from "../../Pages/Admin/AdminTestimonials/TestimonialsF
 import ModalForm from "../UI/Modals/ModalForm";
 import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
+import { useSelector } from "react-redux";
 
 const TestimonialItem = ({ content, isAdmin, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateTestimonialsModal, setShowUpdateTestmonialsModal] =
     useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const { t: key } = useTranslation();

@@ -1,10 +1,10 @@
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import { Field, Form, Formik, FontAwesomeIcon } from "../../../../shared/index";
 import { faSpinner, toast, object, string } from "../../../../shared/constants";
-import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { useMutation, useSelector, useTranslation } from "../../../../shared/hooks";
 
 const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
 
   const { mutate, isPending } = useMutation({

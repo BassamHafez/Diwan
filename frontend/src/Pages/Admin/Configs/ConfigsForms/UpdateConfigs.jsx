@@ -27,7 +27,7 @@ import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateConfigs = () => {
   const { t: key } = useTranslation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const requiredLabel = <span className="text-danger">*</span>;
   const dispatch = useDispatch();
   const configs = useSelector((state) => state.configs);

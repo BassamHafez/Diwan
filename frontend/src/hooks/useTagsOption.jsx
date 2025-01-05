@@ -1,8 +1,8 @@
 import { mainFormsHandlerTypeRaw } from "../util/Http";
-import { useQuery, useMemo } from "../shared/hooks";
+import { useQuery, useMemo, useSelector } from "../shared/hooks";
 
 const useTagsOption = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { data: tags, refetch: refetchTags } = useQuery({
     queryKey: ["tags", token],

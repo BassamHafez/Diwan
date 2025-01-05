@@ -30,10 +30,11 @@ import accounts from "../../../assets/icons/accounts.png";
 import topOffice from "../../../assets/topOffice.webp";
 import popular from "../../../assets/popular.webp";
 import NoData from "../../../Components/UI/Blocks/NoData";
+import { useSelector } from "react-redux";
 
 const AdminHome = () => {
   const [startCounter, setStartCounter] = useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 

@@ -6,9 +6,9 @@ import { InputErrorMessage, ButtonTwo } from "../../shared/components";
 import { Row, Col } from "../../shared/bootstrap";
 
 const ContactForm = () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  const { t: key } = useTranslation();
+  const token = useSelector((state) => state.userInfo.token);
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 
   const { mutate } = useMutation({

@@ -6,6 +6,7 @@ import {
   useCallback,
   useMemo,
   useQuery,
+  useSelector,
 } from "../../../shared/hooks";
 import {
   SearchField,
@@ -18,7 +19,7 @@ import { Row } from "../../../shared/bootstrap";
 const AllAccounts = () => {
   const [searchFilter, setSearchFilter] = useState("");
 
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
 
   const {

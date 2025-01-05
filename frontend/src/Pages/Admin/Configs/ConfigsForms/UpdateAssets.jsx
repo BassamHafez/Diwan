@@ -6,6 +6,7 @@ import {
   useMutation,
   useTranslation,
   useFileHandler,
+  useSelector,
 } from "../../../../shared/hooks";
 import { Row, Col } from "../../../../shared/bootstrap";
 
@@ -18,7 +19,7 @@ const UpdateAssets = () => {
   } = useFileHandler();
 
   const { t: key } = useTranslation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,

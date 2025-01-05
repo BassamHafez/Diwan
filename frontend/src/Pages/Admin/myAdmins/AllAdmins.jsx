@@ -7,6 +7,7 @@ import {
   useCallback,
   useMemo,
   useQuery,
+  useSelector,
 } from "../../../shared/hooks";
 import {
   SearchField,
@@ -22,7 +23,7 @@ const AllAdmins = () => {
   const [showAddPackModal, setShowAddPackModal] = useState(false);
   const [searchFilter, setSearchFilter] = useState("");
 
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
 
   const {

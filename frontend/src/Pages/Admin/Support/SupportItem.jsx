@@ -14,11 +14,12 @@ import { toast } from "react-toastify";
 import { faSquareWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { formatWhatsAppLink } from "../../../Components/Logic/LogicFun";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const SupportItem = ({ msgData, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const { t: key } = useTranslation();

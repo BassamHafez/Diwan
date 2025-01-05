@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
 import { ErrorMessage, Form, Formik, Field } from "formik";
 import { object, string } from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import fetchProfileData from "../../Store/profileInfo-actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,7 +12,7 @@ import InputErrorMessage from "../UI/Words/InputErrorMessage";
 
 const VerifyPhoneForm = ({ hideModal }) => {
   const { t: key } = useTranslation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const dispatch = useDispatch();

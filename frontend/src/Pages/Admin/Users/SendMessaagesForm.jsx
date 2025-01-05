@@ -14,7 +14,7 @@ import {
   object,
   string,
 } from "../../../shared/constants";
-import { useMutation, useTranslation } from "../../../shared/hooks";
+import { useMutation, useSelector, useTranslation } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
 const SendMessaagesForm = ({
@@ -23,7 +23,7 @@ const SendMessaagesForm = ({
   hideModal,
 }) => {
   const { t: key } = useTranslation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 

@@ -16,12 +16,13 @@ import MainModal from "../../../Components/UI/Modals/MainModal";
 import UpdatePackages from "./PackagesForm/UpdatePackages";
 import { mainDeleteFunHandler } from "../../../util/Http";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 const PackItem = ({ pack, type, refetch }) => {
   const [showUpdatePackModal, setShowUpdatePackModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { t: key } = useTranslation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const iconClass = isArLang ? "ms-2" : "me-2";
   const notifySuccess = (message) => toast.success(message);
