@@ -6,7 +6,11 @@ const useCompoundOptions = () => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
 
-  const { data: compounds } = useQuery({
+  const {
+    data: compounds,
+    refetch: refetchCompound,
+    isFetching: fetchingCompounds,
+  } = useQuery({
     queryKey: ["compounds", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
@@ -20,9 +24,15 @@ const useCompoundOptions = () => {
 
   const compoundsOptionsWithNot = useMemo(() => {
     return [{ label: key("notSpecified"), value: "not" }, ...compoundsOptions];
-  }, [compoundsOptions,key]);
+  }, [compoundsOptions, key]);
 
-  return {compoundsOptions,compoundsOptionsWithNot};
+  return {
+    compoundsOptions,
+    compoundsOptionsWithNot,
+    compounds,
+    refetchCompound,
+    fetchingCompounds,
+  };
 };
 
 export default useCompoundOptions;
