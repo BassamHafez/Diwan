@@ -54,7 +54,7 @@ const AdminNav = () => {
                 icon={faCrown}
               />
             )}
-            {tag}
+            {key(tag)}
           </span>
         </div>
       </div>
