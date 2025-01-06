@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import SearchField from "../../../Components/Search/SearchField";
-import {useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { useNavigate, useParams } from "react-router-dom";
@@ -10,7 +9,6 @@ import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
 import {
   formattedDate,
-  getContractStatus,
   handleDownloadExcelSheet,
   renamedContractStatus,
 } from "../../../Components/Logic/LogicFun";
@@ -26,15 +24,13 @@ const CompoundContracts = ({ compoundEstates }) => {
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currentLang = isArLang ? "ar" : "en";
   const token = JSON.parse(localStorage.getItem("token"));
   const { compId } = useParams();
   const navigate = useNavigate();
 
-  const {
-    data: contractsData,
-    isFetching,
-  } = useQuery({
-    queryKey: ["compContracts",compId,token],
+  const { data: contractsData, isFetching } = useQuery({
+    queryKey: ["compContracts", compId, token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
         type: `compounds/${compId}/current-contracts`,
@@ -44,13 +40,7 @@ const CompoundContracts = ({ compoundEstates }) => {
     staleTime: Infinity,
   });
 
-  const findTenant = (tenantId) => {
-    return contractsData?.data?.tenants.find(
-      (tenant) => tenant._id === tenantId
-    );
-  };
-
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = useCallback((status) => {
     switch (status) {
       case "active":
         return styles.green;
@@ -63,13 +53,50 @@ const CompoundContracts = ({ compoundEstates }) => {
       default:
         return "";
     }
-  };
+  }, []);
 
-  const getEstateName = (estateId) => {
-    return (
-      compoundEstates.find((estate) => estate._id === estateId)?.name || "-"
+  const findTenant = useCallback(
+    (tenantId) => {
+      return contractsData?.data?.tenants.find(
+        (tenant) => tenant._id === tenantId
+      );
+    },
+    [contractsData]
+  );
+
+  const getEstateName = useCallback(
+    (estateId) => {
+      return (
+        compoundEstates?.find((estate) => estate._id === estateId)?.name || "-"
+      );
+    },
+    [compoundEstates]
+  );
+
+  const filteredContractsList = useMemo(() => {
+    return contractsData && Array.isArray(contractsData?.data?.contracts)
+      ? contractsData?.data?.contracts?.map((contract) => {
+          return {
+            [key("theUnit")]: getEstateName(contract?.estate) || "-",
+            [key("theTenant")]: findTenant(contract.tenant)?.name || "-",
+            [key("startContract")]: formattedDate(contract?.startDate) || "-",
+            [key("endContract")]: formattedDate(contract?.endDate) || "-",
+            [`${key("price")} ${key("sarSmall")}`]:
+              contract?.totalAmount || "-",
+            [key("status")]:
+              renamedContractStatus(contract?.status, currentLang) || "-",
+          };
+        })
+      : [];
+  }, [contractsData, key, getEstateName, findTenant, currentLang]);
+
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredContractsList,
+      "CurrentContracts.xlsx",
+      "CurrentContracts"
     );
-  };
+  }, [filteredContractsList]);
 
   return (
     <div className={styles.contracts_body}>
@@ -82,25 +109,13 @@ const CompoundContracts = ({ compoundEstates }) => {
               borderd
               color="white"
               text={key("exportCsv")}
-              onClick={() =>
-                handleDownloadExcelSheet(
-                  contractsData?.data,
-                  "CurrentContracts.xlsx",
-                  "CurrentContracts"
-                )
-              }
+              onClick={exportCsvHandler}
             />
           </div>
         )}
       </div>
 
       <div className={styles.contract_content}>
-        <div className={styles.content_header}>
-          <div className={styles.search_field}>
-            <SearchField text={key("searchContract")} />
-          </div>
-        </div>
-
         <div className="my-4">
           {contractsData || !isFetching ? (
             contractsData.data?.contracts?.length > 0 ? (
@@ -108,8 +123,8 @@ const CompoundContracts = ({ compoundEstates }) => {
                 <table className={`${styles.contract_table} table`}>
                   <thead className={styles.table_head}>
                     <tr>
-                      <th>{key("estate")}</th>
-                      <th>{key("tenant")}</th>
+                      <th>{key("theUnit")}</th>
+                      <th>{key("theTenant")}</th>
                       <th>{key("startContract")}</th>
                       <th>{key("endContract")}</th>
                       <th>{key("price")}</th>
@@ -122,37 +137,20 @@ const CompoundContracts = ({ compoundEstates }) => {
                     {contractsData.data?.contracts.map((contract) => (
                       <tr key={contract._id}>
                         <td>{getEstateName(contract?.estate)}</td>
-                        <td>{findTenant(contract.tenant)?.name}</td>
-                        <td>{formattedDate(contract.startDate)}</td>
-                        <td>{formattedDate(contract.endDate)}</td>
-                        <td>{contract.totalAmount}</td>
+                        <td>{findTenant(contract?.tenant)?.name}</td>
+                        <td>{formattedDate(contract?.startDate)}</td>
+                        <td>{formattedDate(contract?.endDate)}</td>
+                        <td>{contract?.totalAmount}</td>
                         <td>
                           <span
-                            className={`${getStatusBgColor(
-                              getContractStatus(
-                                contract.isCanceled,
-                                contract.startDate,
-                                contract.endDate
-                              )
-                            )} ${styles.status_span}`}
+                            className={`${getStatusBgColor(contract?.status)} ${
+                              styles.status_span
+                            }`}
                           >
-                            {isArLang
-                              ? renamedContractStatus(
-                                  getContractStatus(
-                                    contract.isCanceled,
-                                    contract.startDate,
-                                    contract.endDate
-                                  ),
-                                  "ar"
-                                )
-                              : renamedContractStatus(
-                                  getContractStatus(
-                                    contract.isCanceled,
-                                    contract.startDate,
-                                    contract.endDate
-                                  ),
-                                  "en"
-                                )}
+                            {renamedContractStatus(
+                              contract?.status,
+                              currentLang
+                            )}
                           </span>
                         </td>
                         <td>

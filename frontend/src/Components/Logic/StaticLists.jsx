@@ -969,3 +969,14 @@ export const tenantTypeOptions = {
     { label: "منشأة", value: "organization" },
   ],
 };
+
+export const reportsFiltering = {
+  en: [
+    { label: "revenues", value: "revenue" },
+    { label: "expenses", value: "expense" },
+  ],
+  ar: [
+    { label: "الإيرادات", value: "revenue" },
+    { label: "المصروفات", value: "expense" },
+  ],
+};

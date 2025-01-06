@@ -16,6 +16,7 @@ export {
   faCubes,
   faFileSignature,
   faRotate,
+  faCircleInfo
 } from "@fortawesome/free-solid-svg-icons";
 export {
   faBuilding,

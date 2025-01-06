@@ -5,13 +5,21 @@ import AdminNav from "../../../Components/MainNav/AdminNav";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Col from "react-bootstrap/esm/Col";
 import LogOutModal from "../../../Components/UI/Modals/LogOutModal";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const AdminMainContainer = (props) => {
   const [logoutModalShow, setLogoutModalShow] = useState(false);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+
+  const hideLogoutModalHandler = useCallback(() => {
+    setLogoutModalShow(false);
+  }, []);
+
+  const showLogoutModalHandler = useCallback(() => {
+    setLogoutModalShow(true);
+  }, []);
 
   return (
     <>
@@ -35,7 +43,7 @@ const AdminMainContainer = (props) => {
               >
                 <LanguageChanger />
                 <ButtonOne
-                  onClick={() => setLogoutModalShow(true)}
+                  onClick={showLogoutModalHandler}
                   classes="m-2"
                   text={key("logout")}
                   borderd={true}
@@ -49,10 +57,7 @@ const AdminMainContainer = (props) => {
       <MainFooter />
 
       {logoutModalShow && (
-        <LogOutModal
-          show={logoutModalShow}
-          onHide={() => setLogoutModalShow(false)}
-        />
+        <LogOutModal show={logoutModalShow} onHide={hideLogoutModalHandler} />
       )}
     </>
   );

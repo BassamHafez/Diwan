@@ -78,7 +78,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
       updatedValues.compound = updatedValues.compound.value;
     }
 
-    const cleanedValues = cleanUpData(updatedValues);
+    const cleanedValues = cleanUpData({...updatedValues});
     console.log(cleanedValues);
     toast.promise(
       new Promise((resolve, reject) => {
@@ -200,7 +200,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
                   name="contact"
                   options={servicesOptions}
                   onChange={(val) =>
-                    setFieldValue("contact", val ? val.value : null)
+                    setFieldValue("contact", val ? val.value : "")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}

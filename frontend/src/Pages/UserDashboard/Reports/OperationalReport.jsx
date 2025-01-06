@@ -12,7 +12,7 @@ import {
   contractsReportTable,
   contractStatusOptions,
 } from "../../../Components/Logic/StaticLists";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ReportsForm from "./ReportForms/ReportsForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
@@ -42,12 +42,12 @@ const OperationalReport = ({
 
   const currentLang = isArLang ? "ar" : "en";
 
-  const getSearchData = (contractsData, formValues) => {
+  const getSearchData = useCallback((contractsData, formValues) => {
     setContractsData(contractsData);
     setDataEnteried(formValues);
-  };
+  }, []);
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = useCallback((status) => {
     switch (status) {
       case "active":
         return styles.green;
@@ -60,14 +60,14 @@ const OperationalReport = ({
       default:
         return "";
     }
-  };
+  }, []);
 
   const filterChangeHandler = (val) => {
     setResultFilter(val ? val : "");
   };
 
-  const filteredResults =
-    contractsData && Array.isArray(contractsData)
+  const filteredResults = useMemo(() => {
+    return contractsData && Array.isArray(contractsData)
       ? contractsData.filter(
           (item) =>
             resultFilter === "" ||
@@ -75,69 +75,90 @@ const OperationalReport = ({
               resultFilter.trim().toLocaleLowerCase()
         )
       : [];
+  }, [contractsData, resultFilter]);
 
-  const contractsReport = [...(contractsData || [])];
+  const filteredContractsReport = useMemo(() => {
+    const contractsReport = [...(contractsData || [])];
+    return contractsReport?.map((ex) => {
+      return {
+        [key("estate")]: ex?.estate?.name || ex?.compound?.name || "-",
+        [key("theTenant")]: ex?.tenant?.name || "-",
+        [key("startDate")]: formattedDate(ex?.startDate || "-"),
+        [key("endDate")]: formattedDate(ex?.endDate || "-"),
+        [`${key("amount")} (${key("sarSmall")})`]: ex?.totalAmount || "-",
+        [key("status")]: renamedContractStatus(ex?.status, currentLang) || "-",
+      };
+    });
+  }, [contractsData, key, currentLang]);
 
-  const filteredContractsReport = contractsReport?.map((ex) => {
-    return {
-      [key("estate")]: ex?.estate?.name || ex?.compound?.name || "-",
-      [key("theTenant")]: ex?.tenant?.name || "-",
-      [key("startDate")]: formattedDate(ex?.startDate || "-"),
-      [key("endDate")]: formattedDate(ex?.endDate || "-"),
-      [`${key("amount")} (${key("sarSmall")})`]: ex?.totalAmount || "-",
-      [key("status")]: renamedContractStatus(ex?.status, currentLang) || "-",
-    };
-  });
+  const operationalTable = useMemo(() => {
+    return (
+      <table className={`${styles.contract_table} table`}>
+        <thead className={styles.table_head}>
+          <tr>
+            {contractsReportTable?.map((title, index) => (
+              <th key={`${title}_${index}`}>{key(title)}</th>
+            ))}
+          </tr>
+        </thead>
 
-  const operationalTable = (
-    <table className={`${styles.contract_table} table`}>
-      <thead className={styles.table_head}>
-        <tr>
-          {contractsReportTable?.map((title, index) => (
-            <th key={`${title}_${index}`}>{key(title)}</th>
-          ))}
-        </tr>
-      </thead>
-
-      <tbody className={styles.table_body}>
-        {filteredResults?.length > 0 ? (
-          filteredResults?.map((item, index) => (
-            <tr key={index}>
-              <td>{item.estate?.name || item.compound?.name || "-"}</td>
-              <td>{item.tenant?.name || "-"}</td>
-              <td>{formattedDate(item.startDate || "-")}</td>
-              <td>{formattedDate(item.endDate || "-")}</td>
-              <td>{item.totalAmount}</td>
-              <td>
-                <span
-                  className={`${getStatusBgColor(item.status)} ${
-                    styles.status_span
-                  }`}
-                >
-                  {renamedContractStatus(item.status, currentLang)}
-                </span>
+        <tbody className={styles.table_body}>
+          {filteredResults?.length > 0 ? (
+            filteredResults?.map((item, index) => (
+              <tr key={index}>
+                <td>{item.estate?.name || item.compound?.name || "-"}</td>
+                <td>{item.tenant?.name || "-"}</td>
+                <td>{formattedDate(item.startDate || "-")}</td>
+                <td>{formattedDate(item.endDate || "-")}</td>
+                <td>{item.totalAmount}</td>
+                <td>
+                  <span
+                    className={`${getStatusBgColor(item.status)} ${
+                      styles.status_span
+                    }`}
+                  >
+                    {renamedContractStatus(item.status, currentLang)}
+                  </span>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan={`${contractsReportTable.length || "5"}`}
+                className="py-5"
+              >
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                  <FontAwesomeIcon
+                    className="fs-1 text-secondary mb-3"
+                    icon={faCircleInfo}
+                  />
+                  <span className="mini_word">{key("noDetails")}</span>
+                </div>
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td
-              colSpan={`${contractsReportTable.length || "5"}`}
-              className="py-5"
-            >
-              <div className="d-flex flex-column justify-content-center align-items-center">
-                <FontAwesomeIcon
-                  className="fs-1 text-secondary mb-3"
-                  icon={faCircleInfo}
-                />
-                <span className="mini_word">{key("noDetails")}</span>
-              </div>
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
-  );
+          )}
+        </tbody>
+      </table>
+    );
+  }, [filteredResults, getStatusBgColor, key, currentLang]);
+
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredContractsReport,
+      `${key(filterType)}.xlsx`,
+      `${key(filterType)}`
+    );
+  }, [filteredContractsReport, filterType, key]);
+
+  const downloadPdfHandler = useCallback(() => {
+    generatePDF(
+      `contractsReport_${dataEnteried?.startDueDate}`,
+      `${key("contractsReport")}_(${dataEnteried?.startDueDate}) (${
+        dataEnteried?.endDueDate
+      }) ${dataEnteried?.estate || dataEnteried.compound || ""}`
+    );
+  }, [dataEnteried, key]);
 
   return (
     <>
@@ -183,25 +204,10 @@ const OperationalReport = ({
                     borderd
                     color="white"
                     text={key("exportCsv")}
-                    onClick={() =>
-                      handleDownloadExcelSheet(
-                        filteredContractsReport,
-                        `${key(filterType)}.xlsx`,
-                        `${key(filterType)}`
-                      )
-                    }
+                    onClick={exportCsvHandler}
                   />
                   <ButtonOne
-                    onClick={() =>
-                      generatePDF(
-                        `contractsReport_${dataEnteried?.startDueDate}`,
-                        `${key("contractsReport")}_(${
-                          dataEnteried?.startDueDate
-                        }) (${dataEnteried?.endDueDate}) ${
-                          dataEnteried?.estate || dataEnteried.compound || ""
-                        }`
-                      )
-                    }
+                    onClick={downloadPdfHandler}
                     classes="m-2 bg-navy"
                     borderd
                     text={key("download")}

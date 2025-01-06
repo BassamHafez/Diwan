@@ -21,7 +21,7 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Contracts from "./Contracts";
 import Revenue from "./Revenue";
 import CompoundEstates from "./CompoundEstates";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateCompound from "../PropertyForms/UpdateCompound";
 import propDetailsImage from "../../../assets/propDetails.png";
@@ -44,17 +44,25 @@ const GeneralDetails = memo(
     compoundEstates,
     showAddEstatesModal,
     refetch,
-    settingIsLoading
+    settingIsLoading,
   }) => {
     const parentCompound =
       !isCompound && estateParentCompound ? estateParentCompound : details;
-    const { t: key } = useTranslation();
-    let isArLang = localStorage.getItem("i18nextLng") === "ar";
     const [showUpdateDetailsModal, setShowAUpdateDetailsModal] =
       useState(false);
 
+    const { t: key } = useTranslation();
+    let isArLang = localStorage.getItem("i18nextLng") === "ar";
     useEffect(() => {
       AOS.init({ disable: "mobile" });
+    }, []);
+
+    const showUpdateDetailsModalHandler = useCallback(() => {
+      setShowAUpdateDetailsModal(true);
+    }, []);
+
+    const hideUpdateDetailsModalHandler = useCallback(() => {
+      setShowAUpdateDetailsModal(false);
     }, []);
 
     return (
@@ -70,7 +78,7 @@ const GeneralDetails = memo(
             >
               <CheckAllowedCompounds id={isCompound ? details._id : "estate"}>
                 <ButtonOne
-                  onClick={() => setShowAUpdateDetailsModal(true)}
+                  onClick={showUpdateDetailsModalHandler}
                   classes="bg-navy"
                   borderd={true}
                 >
@@ -388,17 +396,17 @@ const GeneralDetails = memo(
         {showUpdateDetailsModal && (
           <ModalForm
             show={showUpdateDetailsModal}
-            onHide={() => setShowAUpdateDetailsModal(false)}
+            onHide={hideUpdateDetailsModalHandler}
           >
             {isCompound ? (
               <UpdateCompound
-                hideModal={() => setShowAUpdateDetailsModal(false)}
+                hideModal={hideUpdateDetailsModalHandler}
                 refetch={refetch}
                 compoundData={details}
               />
             ) : (
               <UpdateEstate
-                hideModal={() => setShowAUpdateDetailsModal(false)}
+                hideModal={hideUpdateDetailsModalHandler}
                 refetch={refetch}
                 estateData={details}
                 estateParentCompound={estateParentCompound}

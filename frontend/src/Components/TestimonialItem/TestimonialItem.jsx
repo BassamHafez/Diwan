@@ -2,46 +2,47 @@ import styles from "./TestimonialItem.module.css";
 import noAvatar from "../../assets/default.png";
 import ButtonOne from "../UI/Buttons/ButtonOne";
 import MainModal from "../UI/Modals/MainModal";
-import { useState } from "react";
-import { mainDeleteFunHandler } from "../../util/Http";
-import { toast } from "react-toastify";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import UpdateTestimonial from "../../Pages/Admin/AdminTestimonials/TestimonialsForms/UpdateTestimonial";
 import ModalForm from "../UI/Modals/ModalForm";
 import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
-import { useSelector } from "react-redux";
+import useDeleteItem from "../../hooks/useDeleteItem";
 
 const TestimonialItem = ({ content, isAdmin, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateTestimonialsModal, setShowUpdateTestmonialsModal] =
     useState(false);
-  const token = useSelector((state) => state.userInfo.token);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
+  const deleteItem = useDeleteItem();
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const deletePack = async () => {
-    setShowDeleteModal(false);
-    if (content?._id && token) {
-      const res = await mainDeleteFunHandler({
-        id: content?._id,
-        token: token,
-        type: `testimonials`,
-      });
-      if (res.status === 204) {
-        if (refetch) {
-          refetch();
-        }
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: content?._id,
+      endPoint: `testimonials`,
+      refetch,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const showDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
+
+  const hideUpdateModalHandler = useCallback(() => {
+    setShowUpdateTestmonialsModal(false);
+  }, []);
+
+  const showUpdateModalHandler = useCallback(() => {
+    setShowUpdateTestmonialsModal(true);
+  }, []);
 
   return (
     <>
@@ -64,16 +65,6 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
               alt="avatar"
             />
           </div>
-          {/* <img
-            src={
-              content?.image
-                ? `${import.meta.env.VITE_Host}${content?.image}`
-                : noAvatar
-            }
-            className={`${styles.person}`}
-            alt="person"
-          /> */}
-
           <div
             className={`${styles.slide_header_caption} d-flex flex-column  ${
               isArLang ? "me-3" : "ms-3"
@@ -99,14 +90,14 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
               text={key("delete")}
               classes="bg-danger m-2"
               borderd={true}
-              onClick={() => setShowDeleteModal(true)}
+              onClick={showDeleteModalHandler}
             />
 
             <ButtonOne
               text={key("ediet")}
               classes="bg-navy m-2"
               borderd={true}
-              onClick={() => setShowUpdateTestmonialsModal(true)}
+              onClick={showUpdateModalHandler}
             />
           </div>
         )}
@@ -115,7 +106,7 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
+          onHide={hideDeleteModalHandler}
           confirmFun={deletePack}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}
@@ -127,11 +118,11 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
       {showUpdateTestimonialsModal && (
         <ModalForm
           show={showUpdateTestimonialsModal}
-          onHide={() => setShowUpdateTestmonialsModal(false)}
+          onHide={hideUpdateModalHandler}
         >
           <UpdateTestimonial
             refetch={refetch}
-            hideModal={() => setShowUpdateTestmonialsModal(false)}
+            hideModal={hideUpdateModalHandler}
             content={content}
           />
         </ModalForm>

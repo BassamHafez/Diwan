@@ -5,12 +5,11 @@ import Col from "react-bootstrap/esm/Col";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCrown, faSquarePhone } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import { toast } from "react-toastify";
-import { mainDeleteFunHandler } from "../../../util/Http";
+import { useCallback, useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const UserItem = ({
   userData,
@@ -20,40 +19,40 @@ const UserItem = ({
   isAdminPage,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const token = useSelector((state) => state.userInfo.token);
+  const deleteItem = useDeleteItem();
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const isIdExist = selectedUsers?.find((id) => id === userData?._id);
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const deletePack = async () => {
-    setShowDeleteModal(false);
-    if (userData?._id && token) {
-      const res = await mainDeleteFunHandler({
-        id: userData?._id,
-        token: token,
-        type: `users`,
-      });
-      if (res.status === 204) {
-        if (refetch) {
-          refetch();
-        }
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: userData?._id,
+      endPoint: `users`,
+      refetch,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
 
-  const selectHandler = () => {
+  const selectHandler = useCallback(() => {
     selectUserHandler(userData?._id);
-  };
+  }, [selectUserHandler, userData]);
+
+  const navigateToAdminPage = useCallback(() => {
+    navigate("/admin-settings");
+  }, [navigate]);
+
+  const showDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
   return (
     <>
       <Col lg={4} md={6}>
@@ -120,7 +119,7 @@ const UserItem = ({
                     text={key("delete")}
                     classes="bg-danger m-2"
                     borderd={true}
-                    onClick={() => setShowDeleteModal(true)}
+                    onClick={showDeleteModalHandler}
                   />
 
                   {!isAdminPage && (
@@ -141,7 +140,7 @@ const UserItem = ({
                   text={key("ediet")}
                   classes="bg-navy m-2"
                   borderd={true}
-                  onClick={() => navigate("/admin-settings")}
+                  onClick={navigateToAdminPage}
                 />
               </div>
             )}
@@ -151,7 +150,7 @@ const UserItem = ({
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
+          onHide={hideDeleteModalHandler}
           confirmFun={deletePack}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}

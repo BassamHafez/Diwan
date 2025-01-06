@@ -6,40 +6,27 @@ import Col from "react-bootstrap/esm/Col";
 import { useTranslation } from "react-i18next";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useState } from "react";
-import { mainDeleteFunHandler } from "../../../util/Http";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
+import { useCallback, useState } from "react";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
-const AccountItem = ({ acc ,refetch}) => {
+const AccountItem = ({ acc, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const deleteItem = useDeleteItem();
+
   const { t: key } = useTranslation();
-  const token = useSelector((state) => state.userInfo.token);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const deleteAccount = async () => {
     setShowDeleteModal(false);
-
-    if (acc?._id && token) {
-      const res = await mainDeleteFunHandler({
-        id: acc?._id,
-        token: token,
-        type: `accounts`,
-      });
-
-      if (res.status === 204) {
-        refetch();
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: acc?._id,
+      endPoint: `accounts`,
+      refetch,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
 
-  const displayValue = (value) => value || key("notExist");
+  const displayValue = useCallback((value) => value || key("notExist"), [key]);
 
   const DetailsList = ({ items }) => (
     <ul className={styles.details_list}>
@@ -51,6 +38,14 @@ const AccountItem = ({ acc ,refetch}) => {
       ))}
     </ul>
   );
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const showDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
 
   return (
     <>
@@ -101,14 +96,19 @@ const AccountItem = ({ acc ,refetch}) => {
           </div>
 
           <div className="positon-relative d-flex justify-content-end">
-            <ButtonOne onClick={()=>setShowDeleteModal(true)} borderd={true} classes="bg-danger" text={key("delete")} />
+            <ButtonOne
+              onClick={showDeleteModalHandler}
+              borderd={true}
+              classes="bg-danger"
+              text={key("delete")}
+            />
           </div>
         </div>
       </Col>
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
+          onHide={hideDeleteModalHandler}
           confirmFun={deleteAccount}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}

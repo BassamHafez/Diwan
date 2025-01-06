@@ -27,6 +27,7 @@ import {
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
+import { cleanUpData } from "../../../../Components/Logic/LogicFun";
 
 const ReportsForm = ({
   compoundsOptions,
@@ -93,6 +94,7 @@ const ReportsForm = ({
     }
 
     console.log(updatedValues);
+    const cleanedValues=cleanUpData({...updatedValues});
 
     let endPoint = "income";
 
@@ -127,7 +129,7 @@ const ReportsForm = ({
       new Promise((resolve, reject) => {
         mutate(
           {
-            formData: updatedValues,
+            formData: cleanedValues,
             token: token,
             method: "add",
             type: `reports/${endPoint}`,
@@ -256,7 +258,7 @@ const ReportsForm = ({
                     options={compoundsOptions}
                     value={values.compound}
                     onChange={(val) =>
-                      setFieldValue("compound", val ? val : null)
+                      setFieldValue("compound", val ? val : "")
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? true : false}
@@ -275,7 +277,7 @@ const ReportsForm = ({
                   name="landlord"
                   options={landlordOptions}
                   onChange={(val) =>
-                    setFieldValue("landlord", val ? val.value : null)
+                    setFieldValue("landlord", val ? val.value : "")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
@@ -320,7 +322,7 @@ const ReportsForm = ({
                           : paymentStatusOptions
                       }
                       onChange={(val) =>
-                        setFieldValue("status", val ? val.value : null)
+                        setFieldValue("status", val ? val.value : "")
                       }
                       className={`${isArLang ? "text-end" : "text-start"}`}
                       isRtl={isArLang ? true : false}
