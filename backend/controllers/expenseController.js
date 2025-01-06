@@ -39,22 +39,30 @@ exports.createExpense = catchAsync(async (req, res, next) => {
       .select("compound landlord")
       .lean();
 
-    req.body.compound = estateData.compound;
-    req.body.landlord = estateData.landlord;
+    if (!estateData) {
+      return next(new ApiError("No estate found with that ID", 404));
+    }
+
+    if (estateData.compound) req.body.compound = estateData.compound;
+    if (estateData.landlord) req.body.landlord = estateData.landlord;
 
     if (!req.body.landlord) {
       const compoundData = await Compound.findById(estateData.compound)
         .select("landlord")
         .lean();
 
-      req.body.landlord = compoundData.landlord;
+      if (compoundData.landlord) req.body.landlord = compoundData.landlord;
     }
   } else if (compound && !estate) {
     const compoundData = await Compound.findById(compound)
       .select("landlord")
       .lean();
 
-    req.body.landlord = compoundData.landlord;
+    if (!compoundData) {
+      return next(new ApiError("No compound found with that ID", 404));
+    }
+
+    if (compoundData.landlord) req.body.landlord = compoundData.landlord;
   }
 
   const expenseId = new mongoose.Types.ObjectId();
