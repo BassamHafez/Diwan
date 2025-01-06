@@ -34,7 +34,8 @@ const estatePopOptions = [
 const estatesSelectFields =
   "compound name description region city image inFavorites status tags unitNumber commissionPercentage";
 
-const compoundSelectFields = "name address region city neighborhood image commissionPercentage";
+const compoundSelectFields =
+  "name address region city neighborhood image commissionPercentage";
 
 exports.getAllEstates = factory.getAll(
   Estate,
@@ -416,15 +417,15 @@ exports.createEstateExpense = catchAsync(async (req, res, next) => {
   }
 
   req.body.estate = estateId;
-  req.body.compound = estate.compound;
-  req.body.landlord = estate.landlord;
+  if (estate.compound) req.body.compound = estate.compound;
+  if (estate.landlord) req.body.landlord = estate.landlord;
 
   if (!req.body.landlord && estate.compound) {
     const compound = await Compound.findById(estate.compound)
       .select("landlord")
       .lean();
 
-    req.body.landlord = compound.landlord;
+    if (compound.landlord) req.body.landlord = compound.landlord;
   }
 
   const expense = await Expense.create(req.body);
