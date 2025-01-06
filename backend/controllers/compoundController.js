@@ -417,7 +417,7 @@ exports.getCompoundExpenses = catchAsync(async (req, res, next) => {
     .lean();
 
   const expensesPromise = Expense.find({ compound: compoundId })
-    .select("note amount dueDate type status paidAt paymentMethod")
+    .select("note amount dueDate type status paidAt paymentMethod contact")
     .sort("dueDate")
     .lean();
 

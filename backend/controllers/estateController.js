@@ -385,7 +385,7 @@ exports.getEstateExpenses = catchAsync(async (req, res, next) => {
     .lean();
 
   const expensesPromise = Expense.find({ estate: estateId })
-    .select("note amount dueDate type status paidAt paymentMethod")
+    .select("note amount dueDate type status paidAt paymentMethod contact")
     .sort("dueDate")
     .lean();
 
