@@ -440,13 +440,16 @@ exports.getCompoundExpenses = catchAsync(async (req, res, next) => {
 exports.createCompoundExpense = catchAsync(async (req, res, next) => {
   const compoundId = req.params.id;
 
-  const compound = await Compound.findById(compoundId).select("_id").lean();
+  const compound = await Compound.findById(compoundId)
+    .select("_id landlord")
+    .lean();
 
   if (!compound) {
     return next(new ApiError("No compound found with that ID", 404));
   }
 
   req.body.compound = compoundId;
+  if (compound.landlord) req.body.landlord = compound.landlord;
 
   const expense = await Expense.create(req.body);
 
