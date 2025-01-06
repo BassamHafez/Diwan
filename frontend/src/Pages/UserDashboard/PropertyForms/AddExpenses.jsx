@@ -25,6 +25,7 @@ import {
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
+import { cleanUpData } from "../../../Components/Logic/LogicFun";
 
 const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
   const servicesOptions = useServicesContact();
@@ -55,9 +56,6 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
       type: values.type,
     };
 
-    if (values.note) {
-      updatedValues.note = values.note;
-    }
     if (!isCompound) {
       updatedValues.estate = myParam;
     } else {
@@ -66,14 +64,18 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
     if (values.contact) {
       updatedValues.contact = values.contact;
     }
+    if (values.note) {
+      updatedValues.note = values.note;
+    }
+    const cleanedValues = cleanUpData({ ...updatedValues });
 
-    console.log(updatedValues);
+    console.log(cleanedValues);
 
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
           {
-            formData: updatedValues,
+            formData: cleanedValues,
             token: token,
             method: "add",
             type: `expenses`,
@@ -107,7 +109,9 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
+    amount: number()
+      .min(0, key("positiveValidation"))
+      .required(key("fieldReq")),
     dueDate: date().required(key("fieldReq")),
     type: string().required(key("fieldReq")),
     note: string(),
@@ -171,7 +175,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
                   name="contact"
                   options={servicesOptions}
                   onChange={(val) =>
-                    setFieldValue("contact", val ? val.value : null)
+                    setFieldValue("contact", val ? val.value : "")
                   }
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}

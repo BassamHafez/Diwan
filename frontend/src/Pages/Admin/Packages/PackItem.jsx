@@ -10,44 +10,47 @@ import {
 import Accordion from "react-bootstrap/Accordion";
 import AccordionContent from "../../../Components/UI/Tools/AccordionContent";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import UpdatePackages from "./PackagesForm/UpdatePackages";
-import { mainDeleteFunHandler } from "../../../util/Http";
-import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const PackItem = ({ pack, type, refetch }) => {
   const [showUpdatePackModal, setShowUpdatePackModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const deleteItem=useDeleteItem();
+
   const { t: key } = useTranslation();
-  const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const iconClass = isArLang ? "ms-2" : "me-2";
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const deletePack = async () => {
     setShowDeleteModal(false);
-    if (pack._id && token) {
-      const res = await mainDeleteFunHandler({
-        id: pack._id,
-        token: token,
-        type: `packages`,
-      });
-      if (res.status === 204) {
-        if (refetch) {
-          refetch();
-        }
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: pack?._id,
+      endPoint: `packages`,
+      refetch,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
+
+  const hideUpdateModalHandler = useCallback(() => {
+    setShowUpdatePackModal(false);
+  }, []);
+
+  const showUpdateModalHandler = useCallback(() => {
+    setShowUpdatePackModal(true);
+  }, []);
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const showDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
 
   return (
     <>
@@ -183,14 +186,14 @@ const PackItem = ({ pack, type, refetch }) => {
           </div>
           <div className="mt-3 d-flex justify-content-center text-center flex-wrap position-relative">
             <ButtonOne
-              onClick={() => setShowDeleteModal(true)}
+              onClick={showDeleteModalHandler}
               classes="bg-danger m-2"
               borderd={true}
               text={key("delete")}
             />
 
             <ButtonOne
-              onClick={() => setShowUpdatePackModal(true)}
+              onClick={showUpdateModalHandler}
               classes="bg-navy m-2"
               borderd={true}
               text={key("update")}
@@ -201,11 +204,11 @@ const PackItem = ({ pack, type, refetch }) => {
       {showUpdatePackModal && (
         <ModalForm
           show={showUpdatePackModal}
-          onHide={() => setShowUpdatePackModal(false)}
+          onHide={hideUpdateModalHandler}
           modalSize="lg"
         >
           <UpdatePackages
-            hideModal={() => setShowUpdatePackModal(false)}
+            hideModal={hideUpdateModalHandler}
             refetch={refetch}
             pack={pack}
           />
@@ -215,7 +218,7 @@ const PackItem = ({ pack, type, refetch }) => {
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
+          onHide={hideDeleteModalHandler}
           confirmFun={deletePack}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}

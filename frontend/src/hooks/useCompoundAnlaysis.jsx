@@ -47,7 +47,7 @@ const useCompoundAnlaysis = (compoundData) => {
     let rentedEstatesArr = [];
 
     if (compoundData) {
-      rentedEstatesArr = compoundData?.estates.filter(
+      rentedEstatesArr = compoundData?.estates?.filter(
         (estate) => estate.status === "rented"
       );
       const myrentedEstateCount = rentedEstatesArr?.length || 0;

@@ -4,12 +4,11 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import SearchField from "../../../Components/Search/SearchField";
 import Select from "react-select";
 import { contractStatusOptions } from "../../../Components/Logic/StaticLists";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  mainDeleteFunHandler,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
 import { useParams } from "react-router-dom";
@@ -24,13 +23,13 @@ import {
 import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ExtendContract from "../PropertyForms/ExtendContract";
 import SettleContract from "../PropertyForms/SettleContract";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const Contracts = ({
   details,
@@ -48,13 +47,11 @@ const Contracts = ({
   const [contractId, setContractId] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
-
+  const deleteItem = useDeleteItem();
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
   const { propId } = useParams();
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const currentLang = isArLang ? "ar" : "en";
   const queryClient = useQueryClient();
 
@@ -73,7 +70,7 @@ const Contracts = ({
     staleTime: Infinity,
   });
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = useCallback((status) => {
     switch (status) {
       case "active":
         return styles.green;
@@ -86,28 +83,19 @@ const Contracts = ({
       default:
         return "";
     }
-  };
+  }, []);
 
   const deleteContract = async () => {
-    setShowDeleteModal(false);
-    if (propId && contractId && token) {
-      const res = await mainDeleteFunHandler({
-        id: contractId,
-        token: token,
-        type: `estates/${propId}/contracts`,
-      });
-      if ([200, 204].includes(res.status)) {
-        await refetch();
-        await refetchDetails();
-        notifySuccess(key("deletedSucc"));
-        queryClient.invalidateQueries(["estates", token]);
-        queryClient.invalidateQueries(["compounds", token]);
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: contractId,
+      endPoint: `estates/${propId}/contracts`,
+      refetch,
+      refetchDetails,
+      hideModal: setShowDeleteModal(false),
+    };
+    await deleteItem(formData);
+    queryClient.invalidateQueries(["estates", token]);
+    queryClient.invalidateQueries(["compounds", token]);
   };
 
   const filterChangeHandler = (val, type) => {
@@ -120,8 +108,8 @@ const Contracts = ({
     setSearchFilter(searchInput);
   }, []);
 
-  const filteredContracts =
-    contractsData && Array.isArray(contractsData.data)
+  const filteredContracts = useMemo(() => {
+    return contractsData && Array.isArray(contractsData.data)
       ? contractsData.data.filter(
           (contract) =>
             (statusFilter === "" || contract.status === statusFilter) &&
@@ -130,34 +118,73 @@ const Contracts = ({
               .includes(searchFilter.toLocaleLowerCase())
         )
       : [];
+  }, [contractsData, statusFilter, searchFilter]);
 
-  const contractsList = [...(contractsData?.data || [])];
-
-  const getLandlordName = (compound, details) => {
-    if (compound?.broker || details?.broker) return "-";
-    return compound?.landlord?.name || details?.landlord?.name || "-";
-  };
-
-  const filteredContractsList = contractsList.map((contract) => {
-    const tenant = contract?.tenant || {};
-    const brokerName =
-      estateParentCompound?.broker?.name || details?.broker?.name || "-";
-    const landlordName = getLandlordName(estateParentCompound, details);
-
-    return {
-      [key("theUnit")]: details?.name || "-",
-      [key("estate")]: estateParentCompound?.name || key("noCompound"),
-      [key("theTenant")]: tenant.name || "-",
-      [key("phone")]: tenant.phone || "-",
-      [key("startContract")]: formattedDate(contract?.startDate) || "-",
-      [key("endContract")]: formattedDate(contract?.endDate) || "-",
-      [`${key("price")} ${key("sarSmall")}`]: contract?.totalAmount || "-",
-      [key("status")]:
-        renamedContractStatus(contract?.status, currentLang) || "-",
-      [key("agent")]: brokerName,
-      [key("theLandlord")]: landlordName,
+  const filteredContractsList = useMemo(() => {
+    const getLandlordName = (compound, details) => {
+      if (compound?.broker || details?.broker) return "-";
+      return compound?.landlord?.name || details?.landlord?.name || "-";
     };
-  });
+    const contractsList = [...(contractsData?.data || [])];
+    return contractsList?.map((contract) => {
+      const tenant = contract?.tenant || {};
+      const brokerName =
+        estateParentCompound?.broker?.name || details?.broker?.name || "-";
+      const landlordName = getLandlordName(estateParentCompound, details);
+
+      return {
+        [key("theUnit")]: details?.name || "-",
+        [key("estate")]: estateParentCompound?.name || key("noCompound"),
+        [key("theTenant")]: tenant.name || "-",
+        [key("phone")]: tenant.phone || "-",
+        [key("startContract")]: formattedDate(contract?.startDate) || "-",
+        [key("endContract")]: formattedDate(contract?.endDate) || "-",
+        [`${key("price")} ${key("sarSmall")}`]: contract?.totalAmount || "-",
+        [key("status")]:
+          renamedContractStatus(contract?.status, currentLang) || "-",
+        [key("agent")]: brokerName,
+        [key("theLandlord")]: landlordName,
+      };
+    });
+  }, [contractsData, details, estateParentCompound, key, currentLang]);
+
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredContractsList,
+      `${key("contracts")}_${details?.name} ${
+        estateParentCompound ? `_(${estateParentCompound?.name})` : ""
+      }.xlsx`,
+      key("contracts")
+    );
+  }, [filteredContractsList, details, estateParentCompound, key]);
+
+  const showContractModalHandler = useCallback(() => {
+    setShowAddContractModal(true);
+  }, []);
+
+  const hideContractModalHandler = useCallback(() => {
+    setShowAddContractModal(false);
+  }, []);
+
+  const hideSettleContractModalHandler = useCallback(() => {
+    setShowSettleContractModal(false);
+  }, []);
+
+  const hideUpdateContractModalHandler = useCallback(() => {
+    setShowUpdateContractModal(false);
+  }, []);
+
+  const hideExtendContractModalHandler = useCallback(() => {
+    setShowExtendContractModal(false);
+  }, []);
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const hideDetailsModalHandler = useCallback(() => {
+    setShowDetailsModal(false);
+  }, []);
 
   return (
     <>
@@ -171,22 +198,12 @@ const Contracts = ({
                 borderd
                 color="white"
                 text={key("exportCsv")}
-                onClick={() =>
-                  handleDownloadExcelSheet(
-                    filteredContractsList,
-                    `${key("contracts")}_${details?.name} ${
-                      estateParentCompound
-                        ? `_(${estateParentCompound?.name})`
-                        : ""
-                    }.xlsx`,
-                    key("contracts")
-                  )
-                }
+                onClick={exportCsvHandler}
               />
             )}
             <CheckPermissions btnActions={["ADD_CONTRACT"]}>
               <ButtonOne
-                onClick={() => setShowAddContractModal(true)}
+                onClick={showContractModalHandler}
                 classes="m-2 bg-navy"
                 borderd
                 text={key("addContracts")}
@@ -338,13 +355,14 @@ const Contracts = ({
           </div>
         </div>
       </div>
+
       {showAddContractModal && (
         <ModalForm
           show={showAddContractModal}
-          onHide={() => setShowAddContractModal(false)}
+          onHide={hideContractModalHandler}
         >
           <AddNewContract
-            hideModal={() => setShowAddContractModal(false)}
+            hideModal={hideContractModalHandler}
             refetch={refetch}
             refetchDetails={refetchDetails}
             settingIsLoading={settingIsLoading}
@@ -355,11 +373,11 @@ const Contracts = ({
       {showSettleContractModal && (
         <ModalForm
           show={showSettleContractModal}
-          onHide={() => setShowSettleContractModal(false)}
+          onHide={hideSettleContractModalHandler}
           modalSize="md"
         >
           <SettleContract
-            hideModal={() => setShowSettleContractModal(false)}
+            hideModal={hideSettleContractModalHandler}
             refetch={refetch}
             refetchDetails={refetchDetails}
             contractDetails={contractDetails}
@@ -369,10 +387,10 @@ const Contracts = ({
       {showUpdateContractModal && (
         <ModalForm
           show={showUpdateContractModal}
-          onHide={() => setShowUpdateContractModal(false)}
+          onHide={hideUpdateContractModalHandler}
         >
           <UpdateContract
-            hideModal={() => setShowUpdateContractModal(false)}
+            hideModal={hideUpdateContractModalHandler}
             refetch={refetch}
             contract={contractDetails}
             refetchDetails={refetchDetails}
@@ -383,21 +401,22 @@ const Contracts = ({
       {showExtendContractModal && (
         <ModalForm
           show={showExtendContractModal}
-          onHide={() => setShowExtendContractModal(false)}
+          onHide={hideExtendContractModalHandler}
           modalSize={"lg"}
         >
           <ExtendContract
-            hideModal={() => setShowExtendContractModal(false)}
+            hideModal={hideExtendContractModalHandler}
             refetch={refetch}
             refetchDetails={refetchDetails}
             contractDetails={contractDetails}
           />
         </ModalForm>
       )}
+
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
+          onHide={hideDeleteModalHandler}
           confirmFun={deleteContract}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}
@@ -408,7 +427,7 @@ const Contracts = ({
       {showDetailsModal && (
         <MainModal
           show={showDetailsModal}
-          onHide={() => setShowDetailsModal(false)}
+          onHide={hideDetailsModalHandler}
           cancelBtn={key("cancel")}
           okBtn={key("download")}
           confirmFun={() =>

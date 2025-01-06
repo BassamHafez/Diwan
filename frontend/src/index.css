@@ -270,6 +270,9 @@ p {
 .date_picker input{
   padding: 10px !important;
 }
+.scrollableTable{
+  min-height: 9.375rem;
+}
 
 @media screen and (max-width: 1150px) {
   .scrollableTable {

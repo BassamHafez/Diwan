@@ -143,6 +143,23 @@ const OperationalReport = ({
     );
   }, [filteredResults, getStatusBgColor, key, currentLang]);
 
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredContractsReport,
+      `${key(filterType)}.xlsx`,
+      `${key(filterType)}`
+    );
+  }, [filteredContractsReport, filterType, key]);
+
+  const downloadPdfHandler = useCallback(() => {
+    generatePDF(
+      `contractsReport_${dataEnteried?.startDueDate}`,
+      `${key("contractsReport")}_(${dataEnteried?.startDueDate}) (${
+        dataEnteried?.endDueDate
+      }) ${dataEnteried?.estate || dataEnteried.compound || ""}`
+    );
+  }, [dataEnteried, key]);
+
   return (
     <>
       <div>
@@ -187,25 +204,10 @@ const OperationalReport = ({
                     borderd
                     color="white"
                     text={key("exportCsv")}
-                    onClick={() =>
-                      handleDownloadExcelSheet(
-                        filteredContractsReport,
-                        `${key(filterType)}.xlsx`,
-                        `${key(filterType)}`
-                      )
-                    }
+                    onClick={exportCsvHandler}
                   />
                   <ButtonOne
-                    onClick={() =>
-                      generatePDF(
-                        `contractsReport_${dataEnteried?.startDueDate}`,
-                        `${key("contractsReport")}_(${
-                          dataEnteried?.startDueDate
-                        }) (${dataEnteried?.endDueDate}) ${
-                          dataEnteried?.estate || dataEnteried.compound || ""
-                        }`
-                      )
-                    }
+                    onClick={downloadPdfHandler}
                     classes="m-2 bg-navy"
                     borderd
                     text={key("download")}

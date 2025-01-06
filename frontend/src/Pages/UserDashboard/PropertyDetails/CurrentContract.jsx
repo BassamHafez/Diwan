@@ -2,9 +2,8 @@ import { useTranslation } from "react-i18next";
 import styles from "./Contracts.module.css";
 import { useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  mainDeleteFunHandler,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
 import { useParams } from "react-router-dom";
@@ -18,12 +17,12 @@ import {
 import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
-import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import UpdateContract from "../PropertyForms/UpdateContract";
 import { useSelector } from "react-redux";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   const token = useSelector((state) => state.userInfo.token);
@@ -32,14 +31,13 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [contractDetails, setContractDetails] = useState({});
   const [contractId, setContractId] = useState("");
-
+  const deleteItem=useDeleteItem();
+  const queryClient=useQueryClient();
   const { t: key } = useTranslation();
+
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
-
   const { propId } = useParams();
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const {
     data: currentContract,
@@ -57,23 +55,16 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   });
 
   const deleteContract = async () => {
-    setShowDeleteModal(false);
-    if (propId && contractId && token) {
-      const res = await mainDeleteFunHandler({
-        id: contractId,
-        token: token,
-        type: `estates/${propId}/contracts`,
-      });
-      if (res.status === 204 || res.status === 200) {
-        refetch();
-        refetchDetails();
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: contractId,
+      endPoint: `estates/${propId}/contracts`,
+      refetch,
+      refetchDetails,
+      hideModal: setShowDeleteModal(false),
+    };
+    await deleteItem(formData);
+    queryClient.invalidateQueries(["estates", token]);
+    queryClient.invalidateQueries(["compounds", token]);
   };
 
   return (

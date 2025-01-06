@@ -111,10 +111,10 @@ const ContactForm = () => {
             </div>
           </Col>
           <Col md={6}>
-            <label htmlFor="subject">
-              {key("subject")} {requiredLabel}
-            </label>
             <div className="field">
+              <label htmlFor="subject">
+                {key("subject")} {requiredLabel}
+              </label>
               <Field id="subject" type="text" name="subject" />
               <ErrorMessage name="subject" component={InputErrorMessage} />
             </div>

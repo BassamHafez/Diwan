@@ -58,6 +58,14 @@ const AllAdmins = () => {
     );
   }, [users, searchFilter]);
 
+  const hideAddPackModalHandler = useCallback(() => {
+    setShowAddPackModal(false);
+  }, []);
+
+  const showAddPackModalHandler = useCallback(() => {
+    setShowAddPackModal(true);
+  }, []);
+
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
@@ -70,7 +78,7 @@ const AllAdmins = () => {
             <SearchField onSearch={onSearch} text={key("searchContacts")} />
           </div>
           <ButtonOne
-            onClick={() => setShowAddPackModal(true)}
+            onClick={showAddPackModalHandler}
             borderd={true}
             text={key("addAdmin")}
             classes="my-2"
@@ -94,13 +102,10 @@ const AllAdmins = () => {
       {showAddPackModal && (
         <ModalForm
           show={showAddPackModal}
-          onHide={() => setShowAddPackModal(false)}
+          onHide={hideAddPackModalHandler}
           modalSize="lg"
         >
-          <AddAdmin
-            hideModal={() => setShowAddPackModal(false)}
-            refetch={refetch}
-          />
+          <AddAdmin hideModal={hideAddPackModalHandler} refetch={refetch} />
         </ModalForm>
       )}
     </>

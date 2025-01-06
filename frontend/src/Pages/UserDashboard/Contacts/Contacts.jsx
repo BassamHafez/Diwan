@@ -173,13 +173,13 @@ const Contacts = () => {
     ));
   };
 
-  const showAddModal = () => {
+  const showAddModal = useCallback(() => {
     if (selectedFilter === "contacts") {
       setShowSelectContactTypeModal(true);
     } else {
       setShowAddContactModal(true);
     }
-  };
+  }, [selectedFilter]);
 
   const triggerAddModalDependsOnSelection = (selection) => {
     setShowSelectContactTypeModal(false);

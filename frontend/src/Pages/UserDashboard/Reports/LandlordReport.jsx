@@ -11,8 +11,9 @@ import {
   incomeReportDetailsTable,
   incomeReportTable,
   paymentsReportTable,
+  reportsFiltering,
 } from "../../../Components/Logic/StaticLists";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ReportsForm from "./ReportForms/ReportsForm";
 import PrintFinancialReport from "../../../Components/Prints/PrintFinancialReport";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
@@ -33,11 +34,7 @@ const LandlordReport = ({
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
-  const filterOptions = [
-    { label: key("revenues"), value: "revenue" },
-    { label: key("expenses"), value: "expense" },
-  ];
+  const currentLang = isArLang ? "ar" : "en";
 
   useEffect(() => {
     const intialData = {
@@ -54,11 +51,11 @@ const LandlordReport = ({
     }
   }, [filterType]);
 
-  const getSearchData = (ex, rev, formValues) => {
+  const getSearchData = useCallback((ex, rev, formValues) => {
     setExpenses(ex);
     setRevenues(rev);
     setDataEnteried(formValues);
-  };
+  }, []);
 
   const combinedData = useMemo(() => {
     return [
@@ -129,6 +126,25 @@ const LandlordReport = ({
     });
   }, [combinedData, filterType, key]);
 
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredReportsData,
+      `${key(filterType)}.xlsx`,
+      `${key(filterType)}`
+    );
+  }, [filteredReportsData, filterType, key]);
+
+  const downloadPdfHandler = useCallback(() => {
+    generatePDF(
+      filterType,
+      `${key(filterType)}_(${
+        dataEnteried.startDate || dataEnteried.startDueDate || ""
+      }) (${dataEnteried.endDate || dataEnteried.endDueDate || ""}) ${
+        dataEnteried?.estate || dataEnteried.compound || ""
+      }`
+    );
+  }, [dataEnteried, filterType, key]);
+
   return (
     <>
       <div>
@@ -146,9 +162,7 @@ const LandlordReport = ({
             type={filterType}
           />
         </div>
-
         <hr />
-
         <div>
           <div className="my-3">
             <MainTitle>
@@ -161,7 +175,7 @@ const LandlordReport = ({
           {combinedData && combinedData?.length > 0 && (
             <div className={styles.header}>
               <Select
-                options={filterOptions}
+                options={reportsFiltering[currentLang]}
                 onChange={(val) => filterChangeHandler(val ? val.value : null)}
                 className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
                   styles.select_type
@@ -177,29 +191,10 @@ const LandlordReport = ({
                     borderd
                     color="white"
                     text={key("exportCsv")}
-                    onClick={() =>
-                      handleDownloadExcelSheet(
-                        filteredReportsData,
-                        `${key(filterType)}.xlsx`,
-                        `${key(filterType)}`
-                      )
-                    }
+                    onClick={exportCsvHandler}
                   />
                   <ButtonOne
-                    onClick={() =>
-                      generatePDF(
-                        filterType,
-                        `${key(filterType)}_(${
-                          dataEnteried.startDate ||
-                          dataEnteried.startDueDate ||
-                          ""
-                        }) (${
-                          dataEnteried.endDate || dataEnteried.endDueDate || ""
-                        }) ${
-                          dataEnteried?.estate || dataEnteried.compound || ""
-                        }`
-                      )
-                    }
+                    onClick={downloadPdfHandler}
                     classes="m-2 bg-navy"
                     borderd
                     text={key("download")}
