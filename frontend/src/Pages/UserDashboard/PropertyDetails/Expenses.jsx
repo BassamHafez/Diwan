@@ -50,7 +50,7 @@ const Expenses = ({
   const [exDetails, setExDetails] = useState({});
   const [exID, setExID] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const deleteItem=useDeleteItem();
+  const deleteItem = useDeleteItem();
   const { t: key } = useTranslation();
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -180,7 +180,7 @@ const Expenses = ({
         [key("theUnit")]: ex?.estate?.name || details?.name || "-",
         [key("estate")]:
           estateParentCompound?.name || ex?.compound?.name || key("noCompound"),
-        [key("type")]: ex.type || "-",
+        [key("type")]: key(ex.type) || "-",
         [`${key("amount")} (${key("sarSmall")})`]: ex?.amount || "-",
         [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
         [key("status")]:
@@ -229,7 +229,7 @@ const Expenses = ({
   const hideDetailsModalHandler = useCallback(() => {
     setShowDetailsModal(false);
   }, []);
-  
+
   return (
     <>
       <div className={styles.contracts_body}>

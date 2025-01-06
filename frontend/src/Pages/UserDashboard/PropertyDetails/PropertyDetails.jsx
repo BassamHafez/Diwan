@@ -158,7 +158,7 @@ const PropertyDetails = () => {
   const commissionPercentage = Number(myData?.estate?.commissionPercentage);
   const theCommissionVal =
     myData?.totalPaidRevenues * (commissionPercentage / 100);
-  
+
   return (
     <>
       <ScrollTopBtn />
@@ -351,7 +351,8 @@ const PropertyDetails = () => {
                           <span>{key("netReturns")}</span>
                           <p>
                             {myData?.estate?.price &&
-                            myData?.estate?.price !== 0
+                            myData?.estate?.price !== 0 &&
+                            Number(myData?.totalPaidRevenues) > 0
                               ? convertNumbersToFixedTwo(
                                   ((Number(myData?.totalPaidRevenues) -
                                     Number(myData?.totalPaidExpenses) -
