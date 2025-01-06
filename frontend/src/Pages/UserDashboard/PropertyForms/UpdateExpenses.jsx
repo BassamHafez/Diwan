@@ -36,7 +36,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
-
+ 
   const initialValues = {
     amount: exDetails.amount || "",
     dueDate: formattedDate(exDetails.dueDate) || "",
