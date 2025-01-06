@@ -6,11 +6,10 @@ import {
   expensesStatusOptions,
   expensesTypeOptions,
 } from "../../../Components/Logic/StaticLists";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
-  mainDeleteFunHandler,
   mainEmptyBodyFun,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
@@ -34,6 +33,7 @@ import ExpensesDetails from "./ExpensesDetails";
 import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const Expenses = ({
   isCompound,
@@ -50,8 +50,9 @@ const Expenses = ({
   const [exDetails, setExDetails] = useState({});
   const [exID, setExID] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-
+  const deleteItem=useDeleteItem();
   const { t: key } = useTranslation();
+
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
   const params = useParams();
@@ -78,7 +79,7 @@ const Expenses = ({
     staleTime: Infinity,
   });
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = useCallback((status) => {
     switch (status) {
       case "paid":
         return styles.green;
@@ -89,26 +90,17 @@ const Expenses = ({
       default:
         return "";
     }
-  };
+  }, []);
 
   const deleteEx = async () => {
-    setShowDeleteModal(false);
-    if (exID && token) {
-      const res = await mainDeleteFunHandler({
-        id: exID,
-        token: token,
-        type: `expenses`,
-      });
-      if (res.status === 204 || res.status === 200) {
-        refetch();
-        refetchDetails();
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: exID,
+      endPoint: `expenses`,
+      refetch,
+      refetchDetails,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
 
   const cancelEx = async (exId) => {
@@ -163,44 +155,81 @@ const Expenses = ({
     }
   };
 
-  const filteredExpenses =
-    expenses && Array.isArray(expenses?.data)
+  const filteredExpenses = useMemo(() => {
+    return expenses && Array.isArray(expenses?.data)
       ? expenses.data.filter(
           (ex) =>
             (statusFilter === "" || ex.status === statusFilter) &&
             (typeFilter === "" || ex.type === typeFilter)
         )
       : [];
+  }, [expenses, statusFilter, typeFilter]);
 
-  const expensesList = [...(expenses?.data || [])];
-
-  const getLandlordName = (compound, details) => {
-    if (compound?.broker || details?.broker) return "-";
-    return compound?.landlord?.name || details?.landlord?.name || "-";
-  };
-
-  const filteredExpensesList = expensesList?.map((ex) => {
-    const brokerName =
-      estateParentCompound?.broker?.name || details?.broker?.name || "-";
-    const landlordName = getLandlordName(estateParentCompound, details);
-
-    return {
-      [key("theUnit")]: ex?.estate?.name || details?.name || "-",
-      [key("estate")]:
-        estateParentCompound?.name || ex?.compound?.name || key("noCompound"),
-      [key("type")]: ex.type || "-",
-      [`${key("amount")} (${key("sarSmall")})`]: ex?.amount || "-",
-      [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
-      [key("status")]:
-        renamedExpensesStatusMethod(ex.status, currentLang) || "-",
-      [key("agent")]: brokerName,
-      [key("theLandlord")]: landlordName,
-      [key("paidAt")]: formattedDate(ex?.paidAt) || "-",
-      [key("paymentMethod")]: ex?.paymentMethod ? key(ex?.paymentMethod) : "-",
-      [key("notes")]: ex?.note || "-",
+  const filteredExpensesList = useMemo(() => {
+    const expensesList = [...(expenses?.data || [])];
+    const getLandlordName = (compound, details) => {
+      if (compound?.broker || details?.broker) return "-";
+      return compound?.landlord?.name || details?.landlord?.name || "-";
     };
-  });
+    return expensesList?.map((ex) => {
+      const brokerName =
+        estateParentCompound?.broker?.name || details?.broker?.name || "-";
+      const landlordName = getLandlordName(estateParentCompound, details);
 
+      return {
+        [key("theUnit")]: ex?.estate?.name || details?.name || "-",
+        [key("estate")]:
+          estateParentCompound?.name || ex?.compound?.name || key("noCompound"),
+        [key("type")]: ex.type || "-",
+        [`${key("amount")} (${key("sarSmall")})`]: ex?.amount || "-",
+        [key("dueDate")]: formattedDate(ex?.dueDate) || "-",
+        [key("status")]:
+          renamedExpensesStatusMethod(ex.status, currentLang) || "-",
+        [key("agent")]: brokerName,
+        [key("theLandlord")]: landlordName,
+        [key("paidAt")]: formattedDate(ex?.paidAt) || "-",
+        [key("paymentMethod")]: ex?.paymentMethod
+          ? key(ex?.paymentMethod)
+          : "-",
+        [key("notes")]: ex?.note || "-",
+      };
+    });
+  }, [details, key, estateParentCompound, expenses, currentLang]);
+
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredExpensesList,
+      `${key("expenses")}_${details?.name}${
+        estateParentCompound ? `_(${estateParentCompound?.name})` : ""
+      }.xlsx`,
+      "expenses"
+    );
+  }, [filteredExpensesList, estateParentCompound, key, details]);
+
+  const showAddExModalHandler = useCallback(() => {
+    setShowAddExModal(true);
+  }, []);
+
+  const hideAddExModalHandler = useCallback(() => {
+    setShowAddExModal(false);
+  }, []);
+
+  const hideUpdateExModalHandler = useCallback(() => {
+    setShowUpdateModal(false);
+  }, []);
+
+  const hidePayExModalHandler = useCallback(() => {
+    setShowPayExpensesModal(false);
+  }, []);
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const hideDetailsModalHandler = useCallback(() => {
+    setShowDetailsModal(false);
+  }, []);
+  
   return (
     <>
       <div className={styles.contracts_body}>
@@ -213,23 +242,13 @@ const Expenses = ({
                 borderd
                 color="white"
                 text={key("exportCsv")}
-                onClick={() =>
-                  handleDownloadExcelSheet(
-                    filteredExpensesList,
-                    `${key("expenses")}_${details?.name}${
-                      estateParentCompound
-                        ? `_(${estateParentCompound?.name})`
-                        : ""
-                    }.xlsx`,
-                    "expenses"
-                  )
-                }
+                onClick={exportCsvHandler}
               />
             )}
             <CheckPermissions btnActions={["ADD_EXPENSE"]}>
               <CheckAllowedCompounds id={isCompound ? myParam : "estate"}>
                 <ButtonOne
-                  onClick={() => setShowAddExModal(true)}
+                  onClick={showAddExModalHandler}
                   classes="m-2 bg-navy"
                   borderd
                   text={key("addExpenses")}
@@ -423,74 +442,67 @@ const Expenses = ({
             )}
           </div>
         </div>
-
-        {showAddExModal && (
-          <ModalForm
-            show={showAddExModal}
-            onHide={() => setShowAddExModal(false)}
-          >
-            <AddExpenses
-              hideModal={() => setShowAddExModal(false)}
-              refetch={refetch}
-              refetchDetails={refetchDetails}
-              isCompound={isCompound}
-            />
-          </ModalForm>
-        )}
-        {showUpdateModal && (
-          <ModalForm
-            show={showUpdateModal}
-            onHide={() => setShowUpdateModal(false)}
-          >
-            <UpdateExpenses
-              hideModal={() => setShowUpdateModal(false)}
-              refetch={refetch}
-              exDetails={exDetails}
-              refetchDetails={refetchDetails}
-            />
-          </ModalForm>
-        )}
-        {showDeleteModal && (
-          <MainModal
-            show={showDeleteModal}
-            onHide={() => setShowDeleteModal(false)}
-            confirmFun={deleteEx}
-            cancelBtn={key("cancel")}
-            okBtn={key("delete")}
-          >
-            <h5>{key("deleteText")}</h5>
-          </MainModal>
-        )}
-        {showDetailsModal && (
-          <MainModal
-            show={showDetailsModal}
-            onHide={() => setShowDetailsModal(false)}
-            cancelBtn={key("cancel")}
-            okBtn={key("download")}
-            confirmFun={() => generatePDF(exDetails._id, "ExpenseDetails")}
-            title={key("expensesDetails")}
-            modalSize={"lg"}
-          >
-            <ExpensesDetails exDetails={exDetails} />
-            <div className="d-none">
-              <div
-                id={`${exDetails._id}`}
-                className="d-flex justify-content-center align-items-center flex-column"
-              >
-                <ExpensesDetails exDetails={exDetails} />
-              </div>
-            </div>
-          </MainModal>
-        )}
       </div>
+      {showAddExModal && (
+        <ModalForm show={showAddExModal} onHide={hideAddExModalHandler}>
+          <AddExpenses
+            hideModal={hideAddExModalHandler}
+            refetch={refetch}
+            refetchDetails={refetchDetails}
+            isCompound={isCompound}
+          />
+        </ModalForm>
+      )}
+      {showUpdateModal && (
+        <ModalForm show={showUpdateModal} onHide={hideUpdateExModalHandler}>
+          <UpdateExpenses
+            hideModal={hideUpdateExModalHandler}
+            refetch={refetch}
+            exDetails={exDetails}
+            refetchDetails={refetchDetails}
+          />
+        </ModalForm>
+      )}
+      {showDeleteModal && (
+        <MainModal
+          show={showDeleteModal}
+          onHide={hideDeleteModalHandler}
+          confirmFun={deleteEx}
+          cancelBtn={key("cancel")}
+          okBtn={key("delete")}
+        >
+          <h5>{key("deleteText")}</h5>
+        </MainModal>
+      )}
+      {showDetailsModal && (
+        <MainModal
+          show={showDetailsModal}
+          onHide={hideDetailsModalHandler}
+          cancelBtn={key("cancel")}
+          okBtn={key("download")}
+          confirmFun={() => generatePDF(exDetails._id, "ExpenseDetails")}
+          title={key("expensesDetails")}
+          modalSize={"lg"}
+        >
+          <ExpensesDetails exDetails={exDetails} />
+          <div className="d-none">
+            <div
+              id={`${exDetails._id}`}
+              className="d-flex justify-content-center align-items-center flex-column"
+            >
+              <ExpensesDetails exDetails={exDetails} />
+            </div>
+          </div>
+        </MainModal>
+      )}
       {showPayExpensesModal && (
         <ModalForm
           show={showPayExpensesModal}
-          onHide={() => setShowPayExpensesModal(false)}
+          onHide={hidePayExModalHandler}
           modalSize="md"
         >
           <MainPayForm
-            hideModal={() => setShowPayExpensesModal(false)}
+            hideModal={hidePayExModalHandler}
             refetch={refetch}
             Id={exID}
             type={"expenses"}

@@ -235,7 +235,7 @@ const AddContactForm = ({
                           name="nationality"
                           options={countriesOptions[currenLang]}
                           onChange={(val) =>
-                            setFieldValue("nationality", val ? val.value : null)
+                            setFieldValue("nationality", val ? val.value : "")
                           }
                           className={isArLang ? "text-end" : "text-start"}
                           isRtl={isArLang ? true : false}

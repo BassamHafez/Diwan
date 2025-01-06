@@ -7,11 +7,10 @@ import {
   revenueFilterTypeOptions,
   revenuesStatus,
 } from "../../../Components/Logic/StaticLists";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
-  mainDeleteFunHandler,
   mainEmptyBodyFun,
   mainFormsHandlerTypeFormData,
 } from "../../../util/Http";
@@ -37,6 +36,7 @@ import PrintCashReceipt from "../../../Components/Prints/PrintCashReceipt";
 import { useSelector } from "react-redux";
 import PrintTaxInvoice from "../../../Components/Prints/PrintTaxInvoice";
 import SplitRevenue from "../PropertyForms/SplitRevenue";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
@@ -51,6 +51,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [searchFilter, setSearchFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [revenueId, setRevenueId] = useState("");
+  const deleteItem = useDeleteItem();
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const curentLang = isArLang ? "ar" : "en";
@@ -76,7 +77,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
     staleTime: Infinity,
   });
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = useCallback((status) => {
     switch (status) {
       case "pending":
         return styles.yellow;
@@ -87,26 +88,17 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
       default:
         return "";
     }
-  };
+  }, []);
 
   const deleteRevenue = async () => {
-    setShowDeleteModal(false);
-    if (propId && revenueId && token) {
-      const res = await mainDeleteFunHandler({
-        id: revenueId,
-        token: token,
-        type: `estates/${propId}/revenues`,
-      });
-      if (res.status === 204 || res.status === 200) {
-        refetch();
-        refetchDetails();
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: revenueId,
+      endPoint: `estates/${propId}/revenues`,
+      refetch,
+      refetchDetails,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
 
   const unPayRevenue = async (revId) => {
@@ -168,8 +160,8 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filteredRevenues =
-    revenuesData && Array.isArray(revenuesData.data)
+  const filteredRevenues = useMemo(() => {
+    return revenuesData && Array.isArray(revenuesData.data)
       ? revenuesData.data.filter(
           (rev) =>
             (statusFilter === "" || rev.status === statusFilter) &&
@@ -179,36 +171,56 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
               .includes(searchFilter.toLocaleLowerCase())
         )
       : [];
+  }, [revenuesData, statusFilter, typeFilter, searchFilter]);
 
-  const revenuesList = [...(revenuesData?.data || [])];
+  const filteredRevenuesList = useMemo(() => {
+    const revenuesList = [...(revenuesData?.data || [])];
 
-  const getLandlordName = (compound, details) => {
-    if (compound?.broker || details?.broker) return "-";
-    return compound?.landlord?.name || details?.landlord?.name || "-";
-  };
-
-  const filteredRevenuesList = revenuesList.map((rev) => {
-    const tenant = rev?.tenant || {};
-    const brokerName =
-      estateParentCompound?.broker?.name || details?.broker?.name || "-";
-    const landlordName = getLandlordName(estateParentCompound, details);
-
-    return {
-      [key("theUnit")]: details?.name || "-",
-      [key("estate")]: estateParentCompound?.name || key("noCompound"),
-      [key("theTenant")]: tenant.name || "-",
-      [key("phone")]: tenant.phone || "-",
-      [`${key("amount")} ${key("sarSmall")}`]: rev?.amount || "-",
-      [key("dueDate")]: formattedDate(rev?.dueDate) || "-",
-      [key("status")]: renamedRevenuesStatus(rev?.status, currentLang) || "-",
-      [key("agent")]: brokerName,
-      [key("theLandlord")]: landlordName,
-      [key("paidAt")]: formattedDate(rev?.paidAt) || "-",
-      [key("paymentMethod")]: rev?.paymentMethod
-        ? key(rev?.paymentMethod)
-        : "-",
+    const getLandlordName = (compound, details) => {
+      if (compound?.broker || details?.broker) return "-";
+      return compound?.landlord?.name || details?.landlord?.name || "-";
     };
-  });
+    return revenuesList.map((rev) => {
+      const tenant = rev?.tenant || {};
+      const brokerName =
+        estateParentCompound?.broker?.name || details?.broker?.name || "-";
+      const landlordName = getLandlordName(estateParentCompound, details);
+
+      return {
+        [key("theUnit")]: details?.name || "-",
+        [key("estate")]: estateParentCompound?.name || key("noCompound"),
+        [key("theTenant")]: tenant.name || "-",
+        [key("phone")]: tenant.phone || "-",
+        [`${key("amount")} ${key("sarSmall")}`]: rev?.amount || "-",
+        [key("dueDate")]: formattedDate(rev?.dueDate) || "-",
+        [key("status")]: renamedRevenuesStatus(rev?.status, currentLang) || "-",
+        [key("agent")]: brokerName,
+        [key("theLandlord")]: landlordName,
+        [key("paidAt")]: formattedDate(rev?.paidAt) || "-",
+        [key("paymentMethod")]: rev?.paymentMethod
+          ? key(rev?.paymentMethod)
+          : "-",
+      };
+    });
+  }, [revenuesData, estateParentCompound, details, key, currentLang]);
+
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredRevenuesList,
+      `${key("revenues")}_${details?.name}${
+        estateParentCompound ? `_(${estateParentCompound?.name})` : ""
+      }.xlsx`,
+      key("revenues")
+    );
+  }, [filteredRevenuesList, details, key, estateParentCompound]);
+
+  const showAddModalHandler = useCallback(() => {
+    setShowAddRevenueModal(true);
+  }, []);
+
+  const hideAddModalHandler = useCallback(() => {
+    setShowAddRevenueModal(false);
+  }, []);
 
   return (
     <>
@@ -222,22 +234,12 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                 borderd
                 color="white"
                 text={key("exportCsv")}
-                onClick={() =>
-                  handleDownloadExcelSheet(
-                    filteredRevenuesList,
-                    `${key("revenues")}_${details?.name}${
-                      estateParentCompound
-                        ? `_(${estateParentCompound?.name})`
-                        : ""
-                    }.xlsx`,
-                    key("revenues")
-                  )
-                }
+                onClick={exportCsvHandler}
               />
             )}
             <CheckPermissions btnActions={["ADD_REVENUE"]}>
               <ButtonOne
-                onClick={() => setShowAddRevenueModal(true)}
+                onClick={showAddModalHandler}
                 classes="m-2 bg-navy"
                 borderd
                 text={`${key("addRevenue")}`}
@@ -438,12 +440,9 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
         </div>
       </div>
       {showAddRevenueModal && (
-        <ModalForm
-          show={showAddRevenueModal}
-          onHide={() => setShowAddRevenueModal(false)}
-        >
+        <ModalForm show={showAddRevenueModal} onHide={hideAddModalHandler}>
           <AddRevenue
-            hideModal={() => setShowAddRevenueModal(false)}
+            hideModal={hideAddModalHandler}
             refetch={refetch}
             refetchDetails={refetchDetails}
           />

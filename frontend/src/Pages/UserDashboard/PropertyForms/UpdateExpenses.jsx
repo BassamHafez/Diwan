@@ -1,6 +1,6 @@
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
-import { formattedDate } from "../../../Components/Logic/LogicFun";
+import { cleanUpData, formattedDate } from "../../../Components/Logic/LogicFun";
 
 import {
   ErrorMessage,
@@ -59,21 +59,21 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
       dueDate: values.dueDate,
       type: values.type?.value,
     };
-
+    if (values.contact) {
+      updatedValues.contact = values.contact?.value;
+    }
     if (values.note) {
       updatedValues.note = values.note;
     }
-    if (values.contact) {
-      updatedValues.contact = values.contact;
-    }
+    const cleanedValues = cleanUpData({ ...updatedValues });
 
-    console.log(updatedValues);
+    console.log(cleanedValues);
 
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
           {
-            formData: updatedValues,
+            formData: cleanedValues,
             token: token,
             method: "patch",
             type: `expenses/${exDetails._id}`,
@@ -107,8 +107,9 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    title: string().required(key("fieldReq")),
-    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
+    amount: number()
+      .min(0, key("positiveValidation"))
+      .required(key("fieldReq")),
     dueDate: date().required(key("fieldReq")),
     type: object()
       .shape({
@@ -185,7 +186,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
                   name="contact"
                   value={values.contact}
                   options={servicesOptions}
-                  onChange={(val) => setFieldValue("contact", val ? val : null)}
+                  onChange={(val) => setFieldValue("contact", val ? val : "")}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}

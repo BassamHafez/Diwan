@@ -7,45 +7,32 @@ import { faCaretDown, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import UpdateSupport from "./SupportForm/UpdateSupport";
-import { mainDeleteFunHandler } from "../../../util/Http";
-import { toast } from "react-toastify";
 import { faSquareWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { formatWhatsAppLink } from "../../../Components/Logic/LogicFun";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const SupportItem = ({ msgData, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const token = useSelector((state) => state.userInfo.token);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
+  const deleteItem = useDeleteItem();
+
   const { t: key } = useTranslation();
 
   const deleteMessage = async () => {
     setShowDeleteModal(false);
-    if (msgData?._id && token) {
-      const res = await mainDeleteFunHandler({
-        id: msgData?._id,
-        token: token,
-        type: `support/messages`,
-      });
-      if (res.status === 204) {
-        if (refetch) {
-          refetch();
-        }
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: msgData?._id,
+      endPoint: `support/messages`,
+      refetch,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
 
-  const getStatusBgColor = (status) => {
+  const getStatusBgColor = useCallback((status) => {
     switch (status) {
       case "pending":
         return styles.yellow;
@@ -58,9 +45,25 @@ const SupportItem = ({ msgData, refetch }) => {
       default:
         return "";
     }
-  };
+  }, []);
 
   const whatsappLink = formatWhatsAppLink(msgData?.phone);
+
+  const showDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
+
+  const hideDeleteModalHandler = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const showUpdateModalHandler = useCallback(() => {
+    setShowUpdateModal(true);
+  }, []);
+
+  const hideUpdateModalHandler = useCallback(() => {
+    setShowUpdateModal(false);
+  }, []);
 
   return (
     <>
@@ -120,10 +123,10 @@ const SupportItem = ({ msgData, refetch }) => {
               text={key("delete")}
               classes="bg-danger"
               borderd={true}
-              onClick={() => setShowDeleteModal(true)}
+              onClick={showDeleteModalHandler}
             />
             <ButtonOne
-              onClick={() => setShowUpdateModal(true)}
+              onClick={showUpdateModalHandler}
               text={key("update")}
               borderd={true}
             />
@@ -134,7 +137,7 @@ const SupportItem = ({ msgData, refetch }) => {
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
+          onHide={hideDeleteModalHandler}
           confirmFun={deleteMessage}
           cancelBtn={key("cancel")}
           okBtn={key("delete")}
@@ -146,12 +149,12 @@ const SupportItem = ({ msgData, refetch }) => {
       {showUpdateModal && (
         <ModalForm
           show={showUpdateModal}
-          onHide={() => setShowUpdateModal(false)}
+          onHide={hideUpdateModalHandler}
           modalSize="md"
         >
           <UpdateSupport
             refetch={refetch}
-            hideModal={() => setShowUpdateModal(false)}
+            hideModal={hideUpdateModalHandler}
             msgStatus={msgData?.status}
             msgId={msgData?._id}
           />

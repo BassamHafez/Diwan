@@ -7,7 +7,7 @@ import Property from "../../../Components/Property/Property";
 import { estateStatus } from "../../../Components/Logic/StaticLists";
 import Row from "react-bootstrap/esm/Row";
 import NoData from "../../../Components/UI/Blocks/NoData";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import { useParams } from "react-router-dom";
@@ -18,12 +18,13 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
   const [statusFilter, setStatusFilter] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
   const { compId } = useParams();
+  
   const onSearch = useCallback((searchInput) => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filteredEstates =
-    compoundEstates && Array.isArray(compoundEstates)
+  const filteredEstates = useMemo(() => {
+    return compoundEstates && Array.isArray(compoundEstates)
       ? compoundEstates.filter((estate) => {
           const normalizedSearchFilter = searchFilter.toLowerCase();
           return (
@@ -33,6 +34,7 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
           );
         })
       : [];
+  }, [compoundEstates, searchFilter, statusFilter]);
 
   return (
     <>
