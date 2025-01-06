@@ -214,6 +214,8 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
     );
   }, [filteredRevenuesList, details, key, estateParentCompound]);
 
+
+  
   const showAddModalHandler = useCallback(() => {
     setShowAddRevenueModal(true);
   }, []);

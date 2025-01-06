@@ -87,7 +87,7 @@ const MainFooter = () => {
                 )}
 
                 {configs?.email && (
-                  <Link target="_blank" to={`mailto:bassamhafez791@gmail.com`}>
+                  <Link target="_blank" to={`mailto:${configs?.email}`}>
                     <FontAwesomeIcon icon={faEnvelope} />
                   </Link>
                 )}
