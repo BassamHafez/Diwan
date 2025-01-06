@@ -18,14 +18,12 @@ import {
 import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import Col from "react-bootstrap/esm/Col";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
 import MainModal from "../../../Components/UI/Modals/MainModal";
-import { mainDeleteFunHandler } from "../../../util/Http";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateContactForm from "./ContactForms/UpdateContactForm";
 import AOS from "aos";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const ContactItem = ({
   contact,
@@ -39,12 +37,10 @@ const ContactItem = ({
   const [renamedType, setRenamedType] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateContactModal, setShowUpdateContactModal] = useState(false);
-
+  const deleteItem = useDeleteItem();
   const { t: key } = useTranslation();
+
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const token = useSelector((state) => state.userInfo.token);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
 
   const formattedPhone = formatPhoneNumber(contact.phone);
   const formattedPhone2 = contact.phone2
@@ -67,31 +63,22 @@ const ContactItem = ({
   }, [isArLang, type, contact]);
 
   const deleteContact = async () => {
-    setShowDeleteModal(false);
     const myType = type === "contact" ? contact.contactType : type;
-    if (contact._id && token) {
-      const res = await mainDeleteFunHandler({
-        id: contact._id,
-        token: token,
-        type: `contacts/${myType}s`,
-      });
-      if (res.status === 204) {
-        if (refetch) {
-          refetch();
-        }
-        refetchAllContacts();
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
-    }
+    const formData = {
+      itemId: contact?._id,
+      endPoint: `contacts/${myType}s`,
+      refetch,
+      refetchDetails: refetchAllContacts,
+      hideModal: setShowDeleteModal(false),
+    };
+    deleteItem(formData);
   };
 
   const gridXXLSystem = isListView ? 12 : 4;
   const gridLgSystem = isListView ? 12 : 6;
-  const detailsSpanClass = `${isArLang ? "me-auto" : "ms-auto"} ${styles.details_span}`;
+  const detailsSpanClass = `${isArLang ? "me-auto" : "ms-auto"} ${
+    styles.details_span
+  }`;
   return (
     <>
       <Col lg={gridLgSystem} xxl={gridXXLSystem}>
@@ -206,7 +193,9 @@ const ContactItem = ({
               <hr />
               {contact?.nationalId && (
                 <div className="mb-1 d-flex flex-wrap">
-                  <span className="text-secondary">⭐ {key("nationalId")}:</span>
+                  <span className="text-secondary">
+                    ⭐ {key("nationalId")}:
+                  </span>
                   <span className={detailsSpanClass}>
                     {contact?.nationalId}
                   </span>
@@ -222,7 +211,9 @@ const ContactItem = ({
               )}
               {contact?.nationality && (
                 <div className="mb-1 d-flex flex-wrap">
-                  <span className="text-secondary">⭐ {key("nationality")}:</span>
+                  <span className="text-secondary">
+                    ⭐ {key("nationality")}:
+                  </span>
                   <span className={detailsSpanClass}>
                     {contact?.nationality?.split("-")[isArLang ? 1 : 0]}
                   </span>

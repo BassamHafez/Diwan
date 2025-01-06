@@ -55,7 +55,7 @@ const CompoundsReportForm = ({
       );
     }
 
-    const cleanedValues = cleanUpData(updatedValues);
+    const cleanedValues = cleanUpData({ ...updatedValues });
 
     const endPoint = isDetails ? "compound-details" : "compounds";
 
@@ -157,7 +157,7 @@ const CompoundsReportForm = ({
                     isClearable
                     options={compoundsOptions}
                     onChange={(val) =>
-                      setFieldValue("compoundId", val ? val.value : null)
+                      setFieldValue("compoundId", val ? val.value : "")
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? true : false}
@@ -196,7 +196,7 @@ const CompoundsReportForm = ({
                     name="landlord"
                     options={landlordOptions}
                     onChange={(val) =>
-                      setFieldValue("landlord", val ? val.value : null)
+                      setFieldValue("landlord", val ? val.value : "")
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? true : false}

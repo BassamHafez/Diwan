@@ -29,8 +29,8 @@ const Reports = () => {
   const [operationalFilter, setOperationalFilter] = useState("contractsReport");
   const [compoundsFilter, setCompoundsFilter] = useState("compoundsReport");
   const estatesOptions = useEstatesOptions();
-  const {compoundsOptions} = useCompoundOptions();
-  const {landlordOptions} = useContactsOptions();
+  const { compoundsOptions } = useCompoundOptions();
+  const { landlordOptions } = useContactsOptions();
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";

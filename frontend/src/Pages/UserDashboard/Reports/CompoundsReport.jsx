@@ -9,8 +9,9 @@ import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import {
   compoundsReportTable,
   contractsReportTable,
+  reportsFiltering,
 } from "../../../Components/Logic/StaticLists";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Select from "react-select";
@@ -31,52 +32,66 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
 
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currentLang = isArLang ? "ar" : "en";
 
-  const filterOptions = [
-    { label: key("revenues"), value: "revenue" },
-    { label: key("expenses"), value: "expense" },
-  ];
-
-  const getSearchData = (ex, rev, formValues) => {
+  const getSearchData = useCallback((ex, rev, formValues) => {
     setExpenses(ex);
     setRevenues(rev);
     setDataEnteried(formValues);
-  };
+  }, []);
 
-  const combinedData = [
-    ...revenues.map((item) => ({
-      ...item,
-      category: "revenue",
-    })),
-    ...expenses.map((item) => ({
-      ...item,
-      category: "expense",
-    })),
-  ];
+  const combinedData = useMemo(() => {
+    return [
+      ...revenues.map((item) => ({
+        ...item,
+        category: "revenue",
+      })),
+      ...expenses.map((item) => ({
+        ...item,
+        category: "expense",
+      })),
+    ];
+  }, [revenues, expenses]);
 
   const filterChangeHandler = (val) => {
     setResultFilter(val ? val : "");
   };
 
-  const filteredResults =
-    combinedData && Array.isArray(combinedData)
-      ? combinedData.filter(
-          (item) =>
-            resultFilter === "" ||
-            item.category.trim().toLocaleLowerCase() ===
-              resultFilter.trim().toLocaleLowerCase()
-        )
-      : [];
+  const filteredResults = useMemo(() => {
+    return combinedData.filter(
+      (item) =>
+        resultFilter === "" ||
+        item.category.trim().toLowerCase() === resultFilter.trim().toLowerCase()
+    );
+  }, [combinedData, resultFilter]);
 
-  const reportsData = [...(combinedData || [])];
+  const filteredData = useMemo(() => {
+    const reportsData = [...(combinedData || [])];
+    return reportsData.map((comp) => {
+      return {
+        [key("category")]: key(comp?.category) || "-",
+        [key("estate")]: comp?.compoundName || "-",
+        [`${key("total")} (${key("sarSmall")})`]: comp?.total || "-",
+      };
+    });
+  }, [combinedData, key]);
 
-  const filteredData = reportsData.map((comp) => {
-    return {
-      [key("category")]: key(comp?.category) || "-",
-      [key("estate")]: comp?.compoundName || "-",
-      [`${key("total")} (${key("sarSmall")})`]: comp?.total || "-",
-    };
-  });
+  const exportCsvHandler = useCallback(() => {
+    handleDownloadExcelSheet(
+      filteredData,
+      `${key(filterType)}.xlsx`,
+      `${key(filterType)}`
+    );
+  }, [filteredData, filterType, key]);
+
+  const downloadPdfHandler = useCallback(() => {
+    generatePDF(
+      "compoundsReport",
+      `${key(filterType)}_(${dataEnteried.startDate || ""}) (${
+        dataEnteried.endDate || ""
+      })`
+    );
+  }, [dataEnteried, filterType, key]);
 
   return (
     <>
@@ -96,14 +111,14 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
         <hr />
 
         <div>
-            <div className="my-3">
+          <div className="my-3">
             <MainTitle>{key("compounds")}</MainTitle>
-            </div>
-          
+          </div>
+
           {combinedData && combinedData?.length > 0 && (
             <div className={styles.header}>
               <Select
-                options={filterOptions}
+                options={reportsFiltering[currentLang]}
                 onChange={(val) => filterChangeHandler(val ? val.value : null)}
                 className={`${isArLang ? "text-end me-2" : "text-start ms-2"} ${
                   styles.select_type
@@ -119,23 +134,10 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
                     borderd
                     color="white"
                     text={key("exportCsv")}
-                    onClick={() =>
-                      handleDownloadExcelSheet(
-                        filteredData,
-                        `${key(filterType)}.xlsx`,
-                        `${key(filterType)}`
-                      )
-                    }
+                    onClick={exportCsvHandler}
                   />
                   <ButtonOne
-                    onClick={() =>
-                      generatePDF(
-                        "compoundsReport",
-                        `${key(filterType)}_(${
-                          dataEnteried.startDate || ""
-                        }) (${dataEnteried.endDate || ""})`
-                      )
-                    }
+                    onClick={downloadPdfHandler}
                     classes="m-2 bg-navy"
                     borderd
                     text={key("download")}

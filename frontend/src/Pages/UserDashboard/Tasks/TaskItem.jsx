@@ -21,22 +21,23 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateTask from "./TaskForms/UpdateTask";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { useSelector } from "react-redux";
 import {
-  mainDeleteFunHandler,
   mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
 import { toast } from "react-toastify";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import { useQueryClient } from "@tanstack/react-query";
+import useDeleteItem from "../../../hooks/useDeleteItem";
 
 const TaskItem = ({ task, refetch, compId, propId }) => {
   const [showUpdateTaskModal, setShowUpdateTaskModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [taskData, setTaskData] = useState({});
   const [taskID, setTaskID] = useState("");
+  const deleteItem = useDeleteItem();
   const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
@@ -51,9 +52,9 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
       ? "text-warning"
       : "text-success";
 
-  const getTaskType = () => {
+  const getTaskType = useCallback(() => {
     let iconType = faCircleQuestion;
-    switch (task.type) {
+    switch (task?.type) {
       case "reminder":
         iconType = faBell;
         break;
@@ -70,30 +71,18 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
         break;
     }
     return iconType;
-  };
+  },[task?.type]);
 
   const deleteTask = async () => {
-    setShowDeleteModal(false);
-    if (taskID && token) {
-      const res = await mainDeleteFunHandler({
-        id: taskID,
-        token: token,
-        type: `tasks`,
-      });
-      if (res.status === 204) {
-        if (refetch) {
-          refetch();
-        }
-        if (compId || propId) {
-          queryClient.invalidateQueries(["tasks", token]);
-        }
-
-        notifySuccess(key("deletedSucc"));
-      } else {
-        notifyError(key("wrong"));
-      }
-    } else {
-      notifyError(key("deleteWrong"));
+    const formData = {
+      itemId: taskID,
+      endPoint: `tasks`,
+      refetch,
+      hideModal: setShowDeleteModal(false),
+    };
+    await deleteItem(formData);
+    if (compId || propId) {
+      queryClient.invalidateQueries(["tasks", token]);
     }
   };
 

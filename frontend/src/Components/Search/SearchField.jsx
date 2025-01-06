@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import styles from "./SearchField.module.css";
 
-const SearchField = ({ onSearch = () => {}, text }) => {
+const SearchField = memo(({ onSearch = () => {}, text }) => {
   const [searchInput, setSearchInput] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
@@ -37,6 +37,7 @@ const SearchField = ({ onSearch = () => {}, text }) => {
       />
     </div>
   );
-};
+});
 
+SearchField.displayName = "SearchField";
 export default SearchField;

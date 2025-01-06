@@ -51,6 +51,14 @@ const AdminTestimonials = () => {
     });
   }, [data, searchFilter]);
 
+  const hideTestimonialsModalHandler = useCallback(() => {
+    setShowAddTestimonialsModal(false);
+  }, []);
+
+  const showTestimonialsModalHandler = useCallback(() => {
+    setShowAddTestimonialsModal(true);
+  }, []);
+
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
@@ -65,7 +73,7 @@ const AdminTestimonials = () => {
           </div>
           <div>
             <ButtonOne
-              onClick={() => setShowAddTestimonialsModal(true)}
+              onClick={showTestimonialsModalHandler}
               borderd={true}
               text={key("add")}
               classes="my-2"
@@ -91,11 +99,11 @@ const AdminTestimonials = () => {
       {showAddTestimonialsModal && (
         <ModalForm
           show={showAddTestimonialsModal}
-          onHide={() => setShowAddTestimonialsModal(false)}
+          onHide={hideTestimonialsModalHandler}
         >
           <AddTestimonial
             refetch={refetch}
-            hideModal={() => setShowAddTestimonialsModal(false)}
+            hideModal={hideTestimonialsModalHandler}
           />
         </ModalForm>
       )}

@@ -4,6 +4,7 @@ import { toast, object, string } from "../../shared/constants";
 import { useMutation, useTranslation, useSelector } from "../../shared/hooks";
 import { InputErrorMessage, ButtonTwo } from "../../shared/components";
 import { Row, Col } from "../../shared/bootstrap";
+import { cleanUpData } from "../../Components/Logic/LogicFun";
 
 const ContactForm = () => {
   const token = useSelector((state) => state.userInfo.token);
@@ -24,11 +25,12 @@ const ContactForm = () => {
   };
 
   const onSubmit = (values, { resetForm }) => {
+    const cleanedValues = cleanUpData({ ...values });
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
           {
-            formData: values,
+            formData: cleanedValues,
             token: token,
             method: "add",
             type: `support/messages`,
@@ -109,10 +111,10 @@ const ContactForm = () => {
             </div>
           </Col>
           <Col md={6}>
-            <label htmlFor="subject">
-              {key("subject")} {requiredLabel}
-            </label>
             <div className="field">
+              <label htmlFor="subject">
+                {key("subject")} {requiredLabel}
+              </label>
               <Field id="subject" type="text" name="subject" />
               <ErrorMessage name="subject" component={InputErrorMessage} />
             </div>
