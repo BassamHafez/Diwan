@@ -35,7 +35,7 @@ const MemberItem = ({
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const dispatch = useDispatch();
   const isIamOwner = userData?._id === accountOwner;
-
+ 
   const deleteMember = async () => {
     setShowDeleteModal(false);
 
@@ -86,7 +86,7 @@ const MemberItem = ({
                   ) : (
                     ""
                   )}{" "}
-                  {tag || isIamOwner ? key("owner") : key("member")}
+                  {tag ?key(tag):isIamOwner ? key("owner") : key("member")}
                 </span>
               </div>
             </div>
