@@ -46,7 +46,7 @@ exports.createExpense = catchAsync(async (req, res, next) => {
     if (estateData.compound) req.body.compound = estateData.compound;
     if (estateData.landlord) req.body.landlord = estateData.landlord;
 
-    if (!req.body.landlord) {
+    if (!req.body.landlord && estateData.compound) {
       const compoundData = await Compound.findById(estateData.compound)
         .select("landlord")
         .lean();
