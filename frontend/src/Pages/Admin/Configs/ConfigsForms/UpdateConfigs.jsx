@@ -104,13 +104,11 @@ const UpdateConfigs = () => {
       )
       .nullable(),
 
-    WHATSAPP: string()
-      .matches(/^((966)|00966)?5\d{8}$/, key("invalidWhatsApp"))
-      .nullable(),
+    WHATSAPP: string().nullable(),
     EMAIL: string().email(key("invalidEmail")).nullable(),
     VAT: number().min(0, key("positiveValidation")).nullable(),
   });
-
+  // .matches(/^((966)|00966)?5\d{8}$/, key("invalidWhatsApp"))
   return (
     <>
       {!configs && <LoadingOne />}
