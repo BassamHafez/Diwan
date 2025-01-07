@@ -1,6 +1,7 @@
 //main
 export const mainAlertTime = 30 * 60 * 1000;
-export const maxFileSize = 20 * 1024 * 1024;
+export const maxFileSize = 5 * 1024 * 1024;
+export const phoneRejex=/^05\d{8}$/;
 // packages
 export const packagesDuration = {
   en: [

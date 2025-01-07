@@ -29,7 +29,7 @@
   "copyRights": "All rights reserved to the Diwan team",
   "pages": "Pages",
   "help": "help",
-  "terms": "Terms and Conditions",
+  "terms": "Terms & Conditions",
 
   "month": "Month",
   "3month": "3 Months",
@@ -106,7 +106,7 @@
 
   "uploadPhoto": "Uploade Image",
   "addedSuccess": "Data has been added successfully",
-  "imgSizeError": "Maximum size for image is 20MB.",
+  "imgSizeError": "Maximum size for image is 5MB.",
   "compoundImage": "compound Image",
   "estateImage": "Estate Image",
   "description": "Description",

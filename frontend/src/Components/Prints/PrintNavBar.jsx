@@ -1,7 +1,7 @@
-import { useTranslation } from "react-i18next";
-import logo from "../../assets/whiteLogo.png";
-import { formattedDate } from "../Logic/LogicFun";
 import styles from "./PrintContract.module.css";
+import { formattedDate } from "../Logic/LogicFun";
+import { whiteLogo } from "../../shared/images";
+import { useTranslation } from "../../shared/hooks";
 
 const PrintNavBar = ({ title }) => {
   const currentDate = new Date();
@@ -9,7 +9,7 @@ const PrintNavBar = ({ title }) => {
 
   return (
     <div className={styles.header}>
-      <img src={logo} alt="logo" />
+      <img src={whiteLogo} alt="logo" />
       <h2>{title}</h2>
       <div className="text-center">
         <span style={{ fontSize: "12px" }}>{key("printDate")}</span>

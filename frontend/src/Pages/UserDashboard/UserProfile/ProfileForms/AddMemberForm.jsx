@@ -27,6 +27,7 @@ import {
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
+import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 
 const AddMemberForm = ({ hideModal, allPermissions }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
@@ -132,7 +133,7 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
       .email(`${key("emailValidation1")}`)
       .required(`${key("emailValidation2")}`),
     phone: string()
-      .matches(/^05\d{8}$/, key("invalidPhone"))
+      .matches(phoneRejex, key("invalidPhone"))
       .required(key("fieldReq")),
     password: string()
       .min(5, key("min5"))

@@ -16,11 +16,35 @@ export {
   faCubes,
   faFileSignature,
   faRotate,
-  faCircleInfo
+  faCircleInfo,
+  faArrowRightFromBracket,
+  faBalanceScale,
+  faGears,
+  faHouse,
+  faLayerGroup,
+  faClipboard,
+  faUsers,
+  faScroll,
+  faCrown,
+  faHeadset,
+  faLocationDot,
+  faTriangleExclamation,
+  faBagShopping,
+  faBox,
+  faBoxes,
+  faChartLine,
 } from "@fortawesome/free-solid-svg-icons";
 export {
+  faFolderOpen,
   faBuilding,
   faCircle,
   faPaste,
+  faCircleCheck,
+  faStar
 } from "@fortawesome/free-regular-svg-icons";
-export { faSquareWhatsapp } from "@fortawesome/free-brands-svg-icons";
+export {
+  faSquareWhatsapp,
+  faInstagram,
+  faWhatsapp,
+  faXTwitter,
+} from "@fortawesome/free-brands-svg-icons";

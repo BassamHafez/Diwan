@@ -1,21 +1,14 @@
 import styles from "./Footer.module.css";
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
-import { Link } from "react-router-dom";
-import footerLogo from "../../assets/logo.png";
-import mada from "../../assets/logo/mada.png";
-import masterCard from "../../assets/logo/masterCard.png";
-import visa from "../../assets/logo/visa.png";
-import applePay from "../../assets/logo/applePay.png";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { logo, mada, masterCard, visa, applePay } from "../../shared/images";
+import { Link, FontAwesomeIcon } from "../../shared/index";
 import {
   faInstagram,
   faWhatsapp,
   faXTwitter,
-} from "@fortawesome/free-brands-svg-icons";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
+  faEnvelope,
+} from "../../shared/constants";
+import { useSelector, useTranslation } from "../../shared/hooks";
+import { Col, Row } from "../../shared/bootstrap";
 
 const MainFooter = () => {
   const { t: key } = useTranslation();
@@ -28,7 +21,7 @@ const MainFooter = () => {
         <Row>
           <Col lg={4}>
             <div className={styles.footer_logo}>
-              <img src={footerLogo} alt="footerLogo" width="100%" />
+              <img src={logo} alt="footerLogo" width="100%" />
             </div>
           </Col>
           <Col lg={4}>

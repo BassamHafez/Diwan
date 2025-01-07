@@ -1,18 +1,21 @@
 import styles from "../Admin.module.css";
-import Accordion from "react-bootstrap/Accordion";
-import AccordionContent from "../../../Components/UI/Tools/AccordionContent";
 import AccountFeatures from "./AccountFeatures";
-import Col from "react-bootstrap/esm/Col";
-import { useTranslation } from "react-i18next";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useCallback, useState } from "react";
-import useDeleteItem from "../../../hooks/useDeleteItem";
+import {
+  useTranslation,
+  useState,
+  useDeleteItem,
+  useCallback,
+} from "../../../shared/hooks";
+import {
+  MainModal,
+  ButtonOne,
+  AccordionContent,
+} from "../../../shared/components";
+import { Accordion, Col } from "../../../shared/bootstrap";
 
 const AccountItem = ({ acc, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const deleteItem = useDeleteItem();
-
   const { t: key } = useTranslation();
 
   const deleteAccount = async () => {
@@ -30,7 +33,7 @@ const AccountItem = ({ acc, refetch }) => {
 
   const DetailsList = ({ items }) => (
     <ul className={styles.details_list}>
-      {items.map(([label, value], index) => (
+      {items?.map(([label, value], index) => (
         <li key={index}>
           <span>{key(label)}</span>
           <span>{displayValue(value)}</span>
@@ -75,7 +78,7 @@ const AccountItem = ({ acc, refetch }) => {
 
           <div className={`${styles.features} mb-4`}>
             <Accordion>
-              <AccordionContent title={key("features")} eventKey="0">
+              <AccordionContent title={key("features")} eventKey="1">
                 <AccountFeatures account={acc} />
               </AccordionContent>
             </Accordion>
@@ -83,7 +86,7 @@ const AccountItem = ({ acc, refetch }) => {
 
           <div className="mb-4">
             <Accordion>
-              <AccordionContent title={key("ownerInfo")} eventKey="0">
+              <AccordionContent title={key("ownerInfo")} eventKey="2">
                 <DetailsList
                   items={[
                     ["name", acc?.owner?.name],

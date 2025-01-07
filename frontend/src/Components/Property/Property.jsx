@@ -1,18 +1,20 @@
-import Col from "react-bootstrap/esm/Col";
 import styles from "./Property.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
 import AOS from "aos";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 import {
   calculateRentedPercentage,
   renamedEstateStatus,
 } from "../Logic/LogicFun";
-import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
-import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from "../../shared/index";
+import { faLocationDot } from "../../shared/constants";
+import {
+  useSelector,
+  useTranslation,
+  useNavigate,
+  useEffect,
+} from "../../shared/hooks";
+import { ImgComponent } from "../../shared/components";
+import { Col } from "../../shared/bootstrap";
 
 const Property = ({
   property,
@@ -107,7 +109,7 @@ const Property = ({
               alt={"propertyImage"}
             />
           </div>
-          {/* `${import.meta.env.VITE_Host}${property?.image}` */}
+
           <div className={styles.card_caption}>
             <h4>{property.name}</h4>
             {!hideStatus && (

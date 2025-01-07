@@ -25,29 +25,39 @@ import AOS from "aos";
 import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
 import {
   checkAccountFeatures,
-  convertNumbersToFixedTwo,
   formattedDate,
 } from "../../../Components/Logic/LogicFun";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import TaskContent from "../Tasks/TaskContent";
+import useEstateAnalysis from "../../../hooks/useEstateAnalysis";
 
 const PropertyDetails = () => {
-  const { t: key } = useTranslation();
+  const [isMarked, setIsMarked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const token = useSelector((state) => state.userInfo.token);
-  const { propId } = useParams();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const token = useSelector((state) => state.userInfo.token);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+
+  const { propId } = useParams();
+  const { t: key } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  const [isMarked, setIsMarked] = useState(false);
-  const accountInfo = useSelector((state) => state.accountInfo.data);
 
   useEffect(() => {
     AOS.init({ disable: "mobile" });
     window.scrollTo(0, 0);
   }, []);
+
+  const { data, refetch } = useQuery({
+    queryKey: ["singleProp", token, propId],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
+    staleTime: Infinity,
+    enabled: propId && !!token,
+  });
 
   const { data: tasks, refetch: refetchTasks } = useQuery({
     queryKey: ["estateTasks", propId, token],
@@ -60,14 +70,6 @@ const PropertyDetails = () => {
     enabled: !!token,
   });
 
-  const { data, refetch } = useQuery({
-    queryKey: ["singleProp", token, propId],
-    queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
-    staleTime: Infinity,
-    enabled: propId && !!token,
-  });
-
   const { data: currentContract } = useQuery({
     queryKey: ["currentContract", propId, token],
     queryFn: () =>
@@ -78,6 +80,20 @@ const PropertyDetails = () => {
     enabled: propId && !!token,
     staleTime: Infinity,
   });
+
+  const myData = data?.data;
+
+  const {
+    totalPaidRev,
+    totalPendingRev,
+    totalPaidEx,
+    totalUnPaidCosts,
+    collectionRatio,
+    grandReturns,
+    netReturns,
+    area,
+    operatingRatio,
+  } = useEstateAnalysis(myData || {});
 
   useEffect(() => {
     if (data?.data?.estate?.inFavorites) {
@@ -150,14 +166,9 @@ const PropertyDetails = () => {
     }
   };
 
-  const myData = data?.data;
   const settingIsLoading = (bol) => {
     setIsLoading(bol);
   };
-
-  const commissionPercentage = Number(myData?.estate?.commissionPercentage);
-  const theCommissionVal =
-    myData?.totalPaidRevenues * (commissionPercentage / 100);
 
   return (
     <>
@@ -208,7 +219,6 @@ const PropertyDetails = () => {
                     </CheckPermissions>
                   </div>
                 </div>
-
                 <Col
                   md={6}
                   className="d-flex justify-content-center align-items-center"
@@ -244,10 +254,7 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("totalPaidRevenues")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(
-                              myData?.totalPaidRevenues
-                            )}{" "}
-                            {key("sarSmall")}
+                            {totalPaidRev} {key("sarSmall")}
                           </p>
                         </div>
                       </Col>
@@ -260,10 +267,7 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("uncollectedAmount")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(
-                              myData?.totalPendingRevenues
-                            )}{" "}
-                            {key("sarSmall")}
+                            {totalPendingRev} {key("sarSmall")}
                           </p>
                         </div>
                       </Col>
@@ -276,10 +280,7 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("totalPaidCosts")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(
-                              myData?.totalPaidExpenses
-                            )}{" "}
-                            {key("sarSmall")}
+                            {totalPaidEx} {key("sarSmall")}
                           </p>
                         </div>
                       </Col>
@@ -292,11 +293,7 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("totalUnPaidCosts")}</span>
                           <p>
-                            {convertNumbersToFixedTwo(
-                              Number(myData?.totalExpense) -
-                                Number(myData?.totalPaidExpenses)
-                            )}{" "}
-                            {key("sarSmall")}
+                            {totalUnPaidCosts} {key("sarSmall")}
                           </p>
                         </div>
                       </Col>
@@ -308,16 +305,7 @@ const PropertyDetails = () => {
                       >
                         <div className={styles.main_details}>
                           <span>{key("collectionRatio")}</span>
-                          <p>
-                            {myData?.totalRevenue && myData?.totalRevenue !== 0
-                              ? convertNumbersToFixedTwo(
-                                  (Number(myData?.totalPaidRevenues) /
-                                    Number(myData?.totalRevenue)) *
-                                    100
-                                )
-                              : "0"}
-                            %
-                          </p>
+                          <p>{collectionRatio} %</p>
                         </div>
                       </Col>
                       <Col
@@ -327,18 +315,14 @@ const PropertyDetails = () => {
                         className="d-flex justify-content-center align-items-center"
                       >
                         <div className={styles.main_details}>
-                          <span>{key("grandReturns")}</span>
-                          <p>
-                            {myData?.estate?.price &&
-                            myData?.estate?.price !== 0
-                              ? convertNumbersToFixedTwo(
-                                  (Number(myData?.totalPaidRevenues) /
-                                    Number(myData?.estate?.price)) *
-                                    100
-                                )
-                              : "0"}
-                            %
-                          </p>
+                          <span
+                            className={
+                              grandReturns < 0 ? "text-danger" : "text-success"
+                            }
+                          >
+                            {key("grandReturns")}
+                          </span>
+                          <p>{grandReturns} %</p>
                         </div>
                       </Col>
                       <Col
@@ -348,21 +332,14 @@ const PropertyDetails = () => {
                         className="d-flex justify-content-center align-items-center"
                       >
                         <div className={styles.main_details}>
-                          <span>{key("netReturns")}</span>
-                          <p>
-                            {myData?.estate?.price &&
-                            myData?.estate?.price !== 0 &&
-                            Number(myData?.totalPaidRevenues) > 0
-                              ? convertNumbersToFixedTwo(
-                                  ((Number(myData?.totalPaidRevenues) -
-                                    Number(myData?.totalPaidExpenses) -
-                                    theCommissionVal) /
-                                    Number(myData?.estate?.price)) *
-                                    100
-                                )
-                              : "0"}
-                            %
-                          </p>
+                          <span
+                            className={
+                              netReturns < 0 ? "text-danger" : "text-success"
+                            }
+                          >
+                            {key("netReturns")}
+                          </span>
+                          <p>{netReturns} %</p>
                         </div>
                       </Col>
                       <Col
@@ -374,7 +351,7 @@ const PropertyDetails = () => {
                         <div className={styles.main_details}>
                           <span>{key("area")}</span>
                           <p>
-                            {myData?.estate?.area} {key("areaUnit")}
+                            {area} {key("areaUnit")}
                           </p>
                         </div>
                       </Col>
@@ -387,9 +364,7 @@ const PropertyDetails = () => {
                         >
                           <div className={styles.main_details}>
                             <span>{key("operatingRatio")}</span>
-                            <p>
-                              {convertNumbersToFixedTwo(commissionPercentage)}%
-                            </p>
+                            <p>{operatingRatio} %</p>
                           </div>
                         </Col>
                       )}

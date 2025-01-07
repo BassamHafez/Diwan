@@ -44,6 +44,8 @@ import VerifyPhonePage from "./Components/VerifyPhone/VerifyPhonePage";
 import AdminTestimonials from "./Pages/Admin/AdminTestimonials/AdminTestimonials";
 import fetchConfigs from "./Store/configs-actions";
 import Support from "./Pages/Admin/Support/Support";
+import AdminTerms from "./Pages/Admin/AdminTerms/AdminTerms";
+import TermsAndConditions from "./Pages/UserDashboard/TermsAndConditions/TermsAndConditions";
 
 const router = createBrowserRouter(
   [
@@ -62,8 +64,12 @@ const router = createBrowserRouter(
         { path: "register", element: <Register /> },
         { path: "help", element: <Help /> },
         { path: "forget-password", element: <ForgetPassword /> },
+        { path: "terms-conditions", element: <TermsAndConditions /> },
+
+        //after login
         { path: "verify-phone", element: <VerifyPhonePage /> },
-        //userDashboard
+
+        //role userDashboard
         { path: "dashboard", element: <UserHome /> },
         { path: "properties", element: <Properties /> },
         { path: "estate-unit-details/:propId", element: <PropertyDetails /> },
@@ -73,7 +79,7 @@ const router = createBrowserRouter(
         { path: "profile/:userId", element: <UserProfile /> },
         { path: "reports", element: <Reports /> },
 
-        //adminDashboard
+        //role adminDashboard
         { path: "admin-dashboard", element: <AdminHome /> },
         { path: "admin-subscriptions", element: <AllSubscriptions /> },
         { path: "admin-members", element: <AllAdmins /> },
@@ -84,6 +90,7 @@ const router = createBrowserRouter(
         { path: "admin-configs", element: <Configs /> },
         { path: "admin-testimonials", element: <AdminTestimonials /> },
         { path: "admin-support", element: <Support /> },
+        { path: "admin-terms", element: <AdminTerms /> },
 
         //else
         { path: "*", element: <PageNotFound /> },

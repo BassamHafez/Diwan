@@ -1,14 +1,19 @@
 import styles from "./TestimonialItem.module.css";
-import noAvatar from "../../assets/default.png";
-import ButtonOne from "../UI/Buttons/ButtonOne";
-import MainModal from "../UI/Modals/MainModal";
-import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
 import UpdateTestimonial from "../../Pages/Admin/AdminTestimonials/TestimonialsForms/UpdateTestimonial";
-import ModalForm from "../UI/Modals/ModalForm";
-import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
-import useDeleteItem from "../../hooks/useDeleteItem";
+import {
+  useDeleteItem,
+  useTranslation,
+  useCallback,
+  useState,
+} from "../../shared/hooks";
+import {
+  ImgComponent,
+  ModalForm,
+  MainModal,
+  ButtonOne,
+} from "../../shared/components";
+import { avatar } from "../../shared/images";
 
 const TestimonialItem = ({ content, isAdmin, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -57,7 +62,7 @@ const TestimonialItem = ({ content, isAdmin, refetch }) => {
               src={
                 content?.image
                   ? `${import.meta.env.VITE_Host}${content?.image}`
-                  : noAvatar
+                  : avatar
               }
               width="4.375rem"
               height="4.375rem"

@@ -1,21 +1,23 @@
-import Offcanvas from "react-bootstrap/Offcanvas";
 import styles from "./SettingOffCanvas.module.css";
-import { useCallback, useMemo, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { avatar } from "../../shared/images";
+import { Link, FontAwesomeIcon } from "../../shared/index";
 import {
   faArrowRightFromBracket,
+  faBalanceScale,
   faCircleInfo,
   faEnvelope,
   faGears,
-} from "@fortawesome/free-solid-svg-icons";
-
-import { Link, useNavigate } from "react-router-dom";
-
-import avatar from "../../assets/default.png";
-import ContactsIcon from "../UI/ContactsIcon/ContactsIcon";
-import LogOutModal from "../UI/Modals/LogOutModal";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
+} from "../../shared/constants";
+import {
+  useSelector,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useState,
+  useNavigate,
+} from "../../shared/hooks";
+import { Offcanvas } from "../../shared/bootstrap";
+import { LogOutModal, ContactsIcon } from "../../shared/components";
 
 const SettingOffCanvas = ({ show, handleClose }) => {
   const [logoutModalShow, setLogoutModalShow] = useState(false);
@@ -36,6 +38,7 @@ const SettingOffCanvas = ({ show, handleClose }) => {
       { to: "/about", label: "about", icon: faCircleInfo },
       { to: "/contact", label: "contact", icon: faEnvelope },
       { to: "/help", label: "Help", icon: faCircleInfo },
+      { to: "/terms-conditions", label: "terms", icon: faBalanceScale },
     ],
     [profileInfo?._id]
   );

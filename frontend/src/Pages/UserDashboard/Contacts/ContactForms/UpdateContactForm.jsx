@@ -2,6 +2,7 @@ import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import DateField from "../../../../Components/Fields/DateField";
 import {
   countriesOptions,
+  phoneRejex,
   tenantTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
 import {
@@ -146,9 +147,9 @@ const UpdateContactForm = ({
   const validationSchema = object().shape({
     name: string().required(key("fieldReq")),
     phone: string()
-      .matches(/^05\d{8}$/, key("invalidPhone"))
+      .matches(phoneRejex, key("invalidPhone"))
       .required(key("fieldReq")),
-    phone2: string().matches(/^05\d{8}$/, key("invalidPhone")),
+    phone2: string().matches(phoneRejex, key("invalidPhone")),
     notes: string(),
     nationalId: string().when("type", {
       is: (type) => type === "individual",

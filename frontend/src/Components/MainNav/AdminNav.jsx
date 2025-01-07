@@ -1,13 +1,13 @@
 import styles from "./AdminNav.module.css";
-import avatar from "../../assets/default.png";
-import logo from "../../assets/smallLogo.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrown, faGears, faHeadset } from "@fortawesome/free-solid-svg-icons";
-import { faFolderOpen } from "@fortawesome/free-regular-svg-icons";
-import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { useMemo } from "react";
+import { logo, avatar } from "../../shared/images";
+import { NavLink, FontAwesomeIcon } from "../../shared/index";
+import {
+  faFolderOpen,
+  faCrown,
+  faGears,
+  faHeadset,
+} from "../../shared/constants";
+import { useSelector, useTranslation, useMemo } from "../../shared/hooks";
 
 const AdminNav = () => {
   const { t: key } = useTranslation();
@@ -25,6 +25,7 @@ const AdminNav = () => {
       { to: "/admin-packages", label: "packages" },
       { to: "/admin-configs", label: "customization" },
       { to: "/admin-testimonials", label: "testimonials" },
+      { to: "/admin-terms", label: "terms" },
     ],
     []
   );

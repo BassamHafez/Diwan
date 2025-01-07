@@ -19,6 +19,7 @@ import saveUserInfoIntoLocalStorag, {
 import { userActions } from "../../../Store/userInfo-slice";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { phoneRejex } from "../../../Components/Logic/StaticLists";
 
 const LoginForm = () => {
   const { t: key } = useTranslation();
@@ -86,7 +87,7 @@ const LoginForm = () => {
 
   const validationSchema = object({
     phone: string()
-      .matches(/^05\d{8}$/, key("invalidPhone"))
+      .matches(phoneRejex, key("invalidPhone"))
       .required(key("fieldReq")),
     password: string()
       .min(5, key("min5"))

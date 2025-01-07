@@ -9,14 +9,15 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import PrintContractsReport from "../../../Components/Prints/PrintContractsReport";
 import CompoundsReportForm from "./ReportForms/CompoundsReportForm";
 import { FontAwesomeIcon } from "../../../shared/index";
+import { faCircleInfo } from "../../../shared/constants";
 import {
-  faCircleInfo,
-} from "../../../shared/constants";
-import {
-  useCallback, useMemo, useState ,useCompoundAnlaysis,useTranslation
+  useCallback,
+  useMemo,
+  useState,
+  useCompoundAnlaysis,
+  useTranslation,
 } from "../../../shared/hooks";
-import {ButtonOne,MainTitle } from "../../../shared/components";
-
+import { ButtonOne, MainTitle } from "../../../shared/components";
 
 const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
   const [compoundData, setCompoundData] = useState({});
@@ -32,7 +33,7 @@ const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
     netIncomeVal,
     netReturnsVal,
     collectionRatioVal,
-  } = useCompoundAnlaysis(compoundData);
+  } = useCompoundAnlaysis(compoundData || {});
 
   const { t: key } = useTranslation();
 

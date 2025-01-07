@@ -1,10 +1,8 @@
-import Alert from "react-bootstrap/Alert";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { useTranslation } from "react-i18next";
-import ButtonOne from "../UI/Buttons/ButtonOne";
-
-import { Link } from "react-router-dom";
+import { FontAwesomeIcon, Link } from "../../shared/index";
+import { useTranslation } from "../../shared/hooks";
+import { ButtonOne } from "../../shared/components";
+import { faTriangleExclamation } from "../../shared/constants";
+import { Alert } from "../../shared/bootstrap";
 
 const VerifyPhoneAlert = ({ isModalAlert }) => {
   const { t: key } = useTranslation();

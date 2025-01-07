@@ -1,15 +1,10 @@
 import styles from "./AdminHome.module.css";
-import { useTranslation } from "react-i18next";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import { useEffect, useState } from "react";
 import CountUp from "react-countup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { FontAwesomeIcon } from "../../../shared/index";
 import {
+  faStar,
   faBagShopping,
   faBalanceScale,
   faBox,
@@ -17,20 +12,28 @@ import {
   faChartLine,
   faHouse,
   faUsers,
-} from "@fortawesome/free-solid-svg-icons";
-import {faStar} from "@fortawesome/free-regular-svg-icons"
-import paid from "../../../assets/icons/paid.png";
-import profits from "../../../assets/icons/profits.png";
-import loss from "../../../assets/icons/loss.png";
-import pending from "../../../assets/icons/pending.png";
-import cash from "../../../assets/icons/cash.png";
-import transaction from "../../../assets/icons/transaction.png";
-import office from "../../../assets/icons/office.png";
-import accounts from "../../../assets/icons/accounts.png";
-import topOffice from "../../../assets/topOffice.webp";
-import popular from "../../../assets/popular.webp";
-import NoData from "../../../Components/UI/Blocks/NoData";
-import { useSelector } from "react-redux";
+} from "../../../shared/constants";
+import {
+  useTranslation,
+  useQuery,
+  useState,
+  useSelector,
+  useEffect,
+} from "../../../shared/hooks";
+import { MainTitle, NoData, LoadingOne } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+import {
+  paid,
+  profits,
+  loss,
+  pending,
+  cash,
+  transaction,
+  office,
+  accounts,
+  topOffice,
+  popular,
+} from "../../../shared/images";
 
 const AdminHome = () => {
   const [startCounter, setStartCounter] = useState(false);
@@ -145,8 +148,13 @@ const AdminHome = () => {
       icon: faBagShopping,
     },
   ];
-  const starIcon=<FontAwesomeIcon className={`${isArLang?"ms-2":"ms-1"} text-warning`} icon={faStar}/>
-  const lastChildClass=isArLang?"me-auto":"ms-auto"
+  const starIcon = (
+    <FontAwesomeIcon
+      className={`${isArLang ? "ms-2" : "ms-1"} text-warning`}
+      icon={faStar}
+    />
+  );
+  const lastChildClass = isArLang ? "me-auto" : "ms-auto";
   return (
     <div className="admin_body height_container position-relative p-2">
       {(!analytics || isFetching) && <LoadingOne />}
@@ -309,16 +317,31 @@ const AdminHome = () => {
                 <h4 className="mb-3">{key("packInfo")}</h4>
                 <ul className={styles.caption_list}>
                   <li>
-                    <span>{starIcon}{key("arTitle")}</span>
-                    <span className={lastChildClass}>{myData?.mostPopularPackage?.arTitle}</span>
+                    <span>
+                      {starIcon}
+                      {key("arTitle")}
+                    </span>
+                    <span className={lastChildClass}>
+                      {myData?.mostPopularPackage?.arTitle}
+                    </span>
                   </li>
                   <li>
-                    <span>{starIcon}{key("enTitle")}</span>
-                    <span className={lastChildClass}>{myData?.mostPopularPackage?.enTitle}</span>
+                    <span>
+                      {starIcon}
+                      {key("enTitle")}
+                    </span>
+                    <span className={lastChildClass}>
+                      {myData?.mostPopularPackage?.enTitle}
+                    </span>
                   </li>
                   <li>
-                    <span>{starIcon}{key("numberOfPurchases")}</span>
-                    <span className={lastChildClass}>{myData?.mostPopularPackage?.numberOfPurchases}</span>
+                    <span>
+                      {starIcon}
+                      {key("numberOfPurchases")}
+                    </span>
+                    <span className={lastChildClass}>
+                      {myData?.mostPopularPackage?.numberOfPurchases}
+                    </span>
                   </li>
                 </ul>
               </div>

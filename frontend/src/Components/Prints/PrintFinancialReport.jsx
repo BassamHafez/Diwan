@@ -1,15 +1,14 @@
-import { useTranslation } from "react-i18next";
-import PrintNavBar from "./PrintNavBar";
 import styles from "./PrintContract.module.css";
-import ReportsDetailsHeader from "./ReportsDetailsHeader";
 import {
   incomeReportDetailsTable,
   incomeReportTable,
   paymentsReportTable,
 } from "../Logic/StaticLists";
 import { formattedDate } from "../Logic/LogicFun";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "../../shared/index";
+import { faCircleInfo } from "../../shared/constants";
+import { useTranslation } from "../../shared/hooks";
+import { PrintNavBar, ReportsDetailsHeader } from "../../shared/components";
 
 const PrintFinancialReport = ({
   filterType,
@@ -44,7 +43,9 @@ const PrintFinancialReport = ({
       className={styles.container_body}
       id={isCompoundsReport ? "compoundsReport" : filterType}
     >
-      <PrintNavBar title={isCompoundsReport?key("compoundsReport"):key(filterType)} />
+      <PrintNavBar
+        title={isCompoundsReport ? key("compoundsReport") : key(filterType)}
+      />
       <ReportsDetailsHeader dataEnteried={dataEnteried} />
       <div className={styles.information}>
         <h5 className="my-4">

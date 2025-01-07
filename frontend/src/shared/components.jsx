@@ -1,10 +1,41 @@
-export { default as MainTitle } from "../Components/UI/Words/MainTitle";
-export { default as NoData } from "../Components/UI/Blocks/NoData";
-export { default as SearchField } from "../Components/Search/SearchField";
-export { default as LoadingOne } from "../Components/UI/Loading/LoadingOne";
-export { default as ButtonOne } from "../Components/UI/Buttons/ButtonOne";
-export { default as ButtonTwo } from "../Components/UI/Buttons/ButtonTwo";
-export { default as MainModal } from "../Components/UI/Modals/MainModal";
-export { default as ModalForm } from "../Components/UI/Modals/ModalForm";
-export { default as InputErrorMessage } from "../Components/UI/Words/InputErrorMessage";
-export { default as AccordionContent } from "../Components/UI/Tools/AccordionContent";
+import MainTitle from "../Components/UI/Words/MainTitle";
+import NoData from "../Components/UI/Blocks/NoData";
+import SearchField from "../Components/Search/SearchField";
+import LoadingOne from "../Components/UI/Loading/LoadingOne";
+import ButtonOne from "../Components/UI/Buttons/ButtonOne";
+import ButtonTwo from "../Components/UI/Buttons/ButtonTwo";
+import MainModal from "../Components/UI/Modals/MainModal";
+import ModalForm from "../Components/UI/Modals/ModalForm";
+import LogOutModal from "../Components/UI/Modals/LogOutModal";
+import InputErrorMessage from "../Components/UI/Words/InputErrorMessage";
+import AccordionContent from "../Components/UI/Tools/AccordionContent";
+import ContactsIcon from "../Components/UI/ContactsIcon/ContactsIcon";
+import SettingOffCanvas from "../Components/SettingOffCanvas/SettingOffCanvas";
+import LanguageChanger from "../Components/Lang/LanguageChanger";
+import PrintHeader from "../Components/Prints/PrintHeader";
+import PrintNavBar from "../Components/Prints/PrintNavBar";
+import ReportsDetailsHeader from "../Components/Prints/ReportsDetailsHeader";
+import ImgComponent from "../Components/Img/ImgComponent";
+import ScrollTopBtn from "../Components/UI/Buttons/ScrollTopBtn";
+
+export {
+  MainTitle,
+  NoData,
+  SearchField,
+  LoadingOne,
+  ButtonOne,
+  ButtonTwo,
+  MainModal,
+  LogOutModal,
+  InputErrorMessage,
+  ModalForm,
+  AccordionContent,
+  ContactsIcon,
+  SettingOffCanvas,
+  LanguageChanger,
+  PrintHeader,
+  PrintNavBar,
+  ReportsDetailsHeader,
+  ImgComponent,
+  ScrollTopBtn
+};

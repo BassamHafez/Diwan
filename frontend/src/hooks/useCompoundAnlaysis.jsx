@@ -2,15 +2,24 @@ import { convertNumbersToFixedTwo } from "../Components/Logic/LogicFun";
 import { useMemo } from "../shared/hooks";
 
 const useCompoundAnlaysis = (compoundData) => {
-  const totalRev = Number(compoundData?.totalRevenue) || 0;
-  const totalPaidEx = Number(compoundData?.totalPaidExpenses) || 0;
-  const totalPaidRev = Number(compoundData?.totalPaidRevenues) || 0;
-  const totalMonthRev = Number(compoundData?.totalMonthRevenue);
-  const totalMonthPaidRev = Number(compoundData?.totalMonthPaidRevenues);
-  const totalEstatesCount =
-    compoundData?.estates?.length || compoundData?.compound?.estatesCount || 0;
-  const commissionPercentage =
-    Number(compoundData?.compound?.commissionPercentage) || 0;
+  const {
+    totalRevenue=0,
+    totalPaidExpenses=0,
+    totalPaidRevenues=0,
+    totalMonthRevenue=0,
+    totalMonthPaidRevenues=0,
+    estates={},
+    compound={},
+  } = compoundData;
+
+  const totalRev = Number(totalRevenue);
+  const totalPaidEx = Number(totalPaidExpenses);
+  const totalPaidRev = Number(totalPaidRevenues);
+  const totalMonthRev = Number(totalMonthRevenue);
+  const totalMonthPaidRev = Number(totalMonthPaidRevenues);
+
+  const totalEstatesCount = estates?.length || compound?.estatesCount || 0;
+  const commissionPercentage = Number(compound?.commissionPercentage|| 0);
 
   const theCommissionVal = useMemo(
     () => convertNumbersToFixedTwo(totalPaidRev * (commissionPercentage / 100)),
@@ -19,11 +28,8 @@ const useCompoundAnlaysis = (compoundData) => {
 
   const netIncomeVal = useMemo(
     () =>
-      totalPaidRev > 0
-        ? convertNumbersToFixedTwo(
-            totalPaidRev - totalPaidEx - theCommissionVal
-          )
-        : 0,
+      convertNumbersToFixedTwo(totalPaidRev - totalPaidEx - theCommissionVal) ||
+      0,
     [totalPaidRev, totalPaidEx, theCommissionVal]
   );
 
@@ -67,7 +73,7 @@ const useCompoundAnlaysis = (compoundData) => {
     totalMonthRev,
     totalMonthPaidRev,
     totalEstatesCount,
-    rentedEstateCount
+    rentedEstateCount,
   };
 };
 
