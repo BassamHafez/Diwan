@@ -7,6 +7,7 @@ const ScheduledMission = require("../models/scheduledMissionModel");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const { sendWAText } = require("../utils/sendWAMessage");
+const { formatSaudiNumber } = require("../utils/formatNumbers");
 
 const revenuePopOptions = [
   {
@@ -123,7 +124,7 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
   const sendWAMsgPromise =
     updatedRevenue.tenant && updatedRevenue.tenant.phone
       ? sendWAText(
-          `966${updatedRevenue.tenant.phone}`,
+          formatSaudiNumber(updatedRevenue.tenant.phone),
           `${updatedRevenue.amount} SAR received for "${
             updatedRevenue.estate.name
           }" on (${new Date(paidAt).toLocaleDateString()})`
