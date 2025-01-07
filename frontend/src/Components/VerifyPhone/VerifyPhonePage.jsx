@@ -1,18 +1,17 @@
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
-import { useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
-import { useEffect, useState } from "react";
-import ModalForm from "../UI/Modals/ModalForm";
 import VerifyPhoneForm from "./VerifyPhoneForm";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ButtonOne from "../UI/Buttons/ButtonOne";
 import verifiedImage from "../../assets/verified.jpg";
-import MainTitle from "../UI/Words/MainTitle";
-import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "../../shared/index";
+import { toast, faWhatsapp } from "../../shared/constants";
+import {
+  useTranslation,
+  useState,
+  useNavigate,
+  useEffect,
+  useSelector,
+} from "../../shared/hooks";
+import { ModalForm, ButtonOne, MainTitle } from "../../shared/components";
+import { Row, Col } from "../../shared/bootstrap";
 
 const VerifyPhonePage = () => {
   const [showVerifyCodeModal, setShowVerifyCodeModal] = useState(false);
@@ -22,13 +21,13 @@ const VerifyPhonePage = () => {
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const profileInfo = useSelector((state) => state.profileInfo.data);
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  useEffect(()=>{
-    if(profileInfo?.phoneVerified===true){
-      navigate(-1)
+  useEffect(() => {
+    if (profileInfo?.phoneVerified === true) {
+      navigate(-1);
     }
-  },[profileInfo?.phoneVerified,navigate]);
+  }, [profileInfo?.phoneVerified, navigate]);
 
   const verifyPhoneNumber = async () => {
     const response = await mainFormsHandlerTypeRaw({

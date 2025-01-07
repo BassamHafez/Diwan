@@ -1,12 +1,6 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import Container from "react-bootstrap/Container";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
 import styles from "./MainNav.module.css";
-import logo from "../../assets/logo.png";
-import ButtonOne from "../UI/Buttons/ButtonOne";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CheckPermissions from "../CheckPermissions/CheckPermissions";
+import { NavLink, FontAwesomeIcon } from "../../shared/index";
 import {
   faCircleInfo,
   faEnvelope,
@@ -16,13 +10,22 @@ import {
   faClipboard,
   faUsers,
   faScroll,
-} from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
-import { useCallback, useMemo, useState } from "react";
-import SettingOffCanvas from "../SettingOffCanvas/SettingOffCanvas";
-import avatar from "../../assets/default.png";
-import LanguageChanger from "../Lang/LanguageChanger";
-import CheckPermissions from "../CheckPermissions/CheckPermissions";
+} from "../../shared/constants";
+import {
+  useSelector,
+  useTranslation,
+  useCallback,
+  useMemo,
+  useState,
+  useNavigate,
+} from "../../shared/hooks";
+import { Container, Navbar, Nav } from "../../shared/bootstrap";
+import {
+  SettingOffCanvas,
+  ButtonOne,
+  LanguageChanger,
+} from "../../shared/components";
+import { logo, avatar } from "../../shared/images";
 
 const MainNav = () => {
   const [showSetting, setShowSetting] = useState(false);

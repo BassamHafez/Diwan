@@ -3,6 +3,7 @@ import fetchAccountData from "../../../../Store/accountInfo-actions";
 import {
   citiesByRegion,
   citiesByRegionAr,
+  phoneRejex,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../../Components/Logic/StaticLists";
@@ -102,7 +103,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
     name: string().required(key("fieldReq")),
     address: string().required(key("fieldReq")),
     phone: string()
-      .matches(/^05\d{8}$/, key("invalidPhone"))
+      .matches(phoneRejex, key("invalidPhone"))
       .required(key("fieldReq")),
     commercialRecord: string().matches(/^\d{10}$/, key("CommercialValidation")),
     taxNumber: string().matches(/^3\d{14}$/, key("taxNumberValidation")),

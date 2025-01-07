@@ -1,13 +1,11 @@
-import { useTranslation } from "react-i18next";
 import styles from "./PrintContract.module.css";
 import {
   convertNumbersToFixedTwo,
   formattedDate,
   renamedPaymentMethod,
 } from "../Logic/LogicFun";
-import PrintHeader from "./PrintHeader";
-import MainTitle from "../UI/Words/MainTitle";
-import { useSelector } from "react-redux";
+import { useSelector, useTranslation } from "../../shared/hooks";
+import { PrintHeader, MainTitle } from "../../shared/components";
 
 const PrintCashReceipt = ({
   revDetails,

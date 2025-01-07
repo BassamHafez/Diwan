@@ -1,8 +1,6 @@
-import { useTranslation } from "react-i18next";
 import styles from "./PrintContract.module.css";
-import { useSelector } from "react-redux";
-import PrintNavBar from "./PrintNavBar";
-import MainTitle from "../../Components/UI/Words/MainTitle";
+import { useSelector, useTranslation } from "../../shared/hooks";
+import { MainTitle, PrintNavBar } from "../../shared/components";
 
 const PrintHeader = ({
   title,
@@ -84,7 +82,7 @@ const PrintHeader = ({
       </div>
       <div className={styles.information}>
         <div className={centerTitleClass}>
-          <MainTitle small={true} title={partiesTitle}/>
+          <MainTitle small={true} title={partiesTitle} />
         </div>
         <div className="scrollableTable">
           <table className={`${styles.contract_table} table`}>
@@ -111,10 +109,11 @@ const PrintHeader = ({
                 )}
                 {!details.broker && !estateParentCompound?.broker ? null : (
                   <td>
-                    {details?.broker?.name || estateParentCompound?.broker?.name}
+                    {details?.broker?.name ||
+                      estateParentCompound?.broker?.name}
                   </td>
                 )}
-                <td>{tenant?.name||"-"}</td>
+                <td>{tenant?.name || "-"}</td>
               </tr>
               <tr>
                 <td>{key("phone")}</td>
@@ -130,7 +129,7 @@ const PrintHeader = ({
                       estateParentCompound?.broker?.phone}
                   </td>
                 )}
-                <td>{tenant?.phone||"-"}</td>
+                <td>{tenant?.phone || "-"}</td>
               </tr>
             </tbody>
           </table>

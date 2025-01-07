@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import styles from "./PrintContract.module.css";
 import {
   calculatePeriod,
@@ -7,8 +6,8 @@ import {
   renamedRevenuesType,
 } from "../Logic/LogicFun";
 import ContractRevenues from "../../Pages/UserDashboard/PropertyDetails/ContractRevenues";
-import PrintHeader from "./PrintHeader";
-import MainTitle from "../UI/Words/MainTitle";
+import {useTranslation } from "../../shared/hooks";
+import { PrintHeader, MainTitle } from "../../shared/components";
 
 const PrintContract = ({ contract, details,estateParentCompound, id, type }) => {
   const { t: key } = useTranslation();

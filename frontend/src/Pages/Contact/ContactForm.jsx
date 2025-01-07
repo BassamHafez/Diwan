@@ -5,6 +5,7 @@ import { useMutation, useTranslation, useSelector } from "../../shared/hooks";
 import { InputErrorMessage, ButtonTwo } from "../../shared/components";
 import { Row, Col } from "../../shared/bootstrap";
 import { cleanUpData } from "../../Components/Logic/LogicFun";
+import { phoneRejex } from "../../Components/Logic/StaticLists";
 
 const ContactForm = () => {
   const token = useSelector((state) => state.userInfo.token);
@@ -68,7 +69,7 @@ const ContactForm = () => {
     message: string()
       .min(5, key("min5"))
       .required(`${key("fieldReq")}`),
-    phone: string().matches(/^05\d{8}$/, key("invalidPhone")),
+    phone: string().matches(phoneRejex, key("invalidPhone")),
   });
 
   return (

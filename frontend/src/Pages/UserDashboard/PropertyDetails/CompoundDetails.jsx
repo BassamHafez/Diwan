@@ -79,7 +79,7 @@ const CompoundDetails = () => {
     totalMonthPaidRev,
     totalEstatesCount,
     rentedEstateCount,
-  } = useCompoundAnlaysis(compDetails);
+  } = useCompoundAnlaysis(compDetails || {});
 
   useEffect(() => {
     AOS.init({ disable: "mobile" });
@@ -265,7 +265,11 @@ const CompoundDetails = () => {
                         className="d-flex justify-content-center align-items-center"
                       >
                         <div className={styles.main_details}>
-                          <span>
+                          <span
+                            className={
+                              netReturnsVal < 0 ? "text-danger" : "text-success"
+                            }
+                          >
                             {key("netIncome")} {key("forEstates")}
                           </span>
                           <p>
@@ -293,7 +297,11 @@ const CompoundDetails = () => {
                         className="d-flex justify-content-center align-items-center"
                       >
                         <div className={styles.main_details}>
-                          <span>
+                          <span
+                            className={
+                              netReturnsVal < 0 ? "text-danger" : "text-success"
+                            }
+                          >
                             {key("netReturns")} {key("forEstates")}
                           </span>
                           <p>{netReturnsVal} %</p>

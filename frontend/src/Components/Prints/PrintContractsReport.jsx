@@ -1,7 +1,6 @@
-import { useTranslation } from "react-i18next";
 import styles from "./PrintContract.module.css";
-import PrintNavBar from "./PrintNavBar";
-import ReportsDetailsHeader from "./ReportsDetailsHeader";
+import {useTranslation } from "../../shared/hooks";
+import {PrintNavBar,ReportsDetailsHeader } from "../../shared/components";
 
 const PrintContractsReport = ({
   id,

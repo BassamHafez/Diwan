@@ -1,14 +1,20 @@
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Form, Formik, Field } from "formik";
-import { object, string } from "yup";
-import { useDispatch, useSelector } from "react-redux";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import fetchProfileData from "../../Store/profileInfo-actions";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import InputErrorMessage from "../UI/Words/InputErrorMessage";
+import {
+  FontAwesomeIcon,
+  ErrorMessage,
+  Form,
+  Formik,
+  Field,
+} from "../../shared/index";
+import { toast, object, string, faSpinner } from "../../shared/constants";
+import {
+  useMutation,
+  useTranslation,
+  useDispatch,
+  useSelector,
+} from "../../shared/hooks";
+import { InputErrorMessage } from "../../shared/components";
 
 const VerifyPhoneForm = ({ hideModal }) => {
   const { t: key } = useTranslation();

@@ -1,8 +1,11 @@
-import useCurrentFeatures from "../../../hooks/useCurrentFeatures";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
 import styles from "../Admin.module.css";
-import { useTranslation } from "react-i18next";
+import { FontAwesomeIcon } from "../../../shared/index";
+import { faCircleCheck } from "../../../shared/constants";
+import {
+  useTranslation,
+  useCurrentFeatures,
+  useMemo,
+} from "../../../shared/hooks";
 
 const AccountFeatures = ({ account }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -18,10 +21,12 @@ const AccountFeatures = ({ account }) => {
 
   const { t: key } = useTranslation();
 
-  const featuresList = Object.entries(currentFeatures).map(([key, value]) => ({
-    label: key,
-    value,
-  }));
+  const featuresList = useMemo(() => {
+    return Object.entries(currentFeatures).map(([key, value]) => ({
+      label: key,
+      value,
+    }));
+  }, [currentFeatures]);
 
   return (
     <ul className={styles.features_list}>

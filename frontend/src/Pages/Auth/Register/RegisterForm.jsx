@@ -10,6 +10,7 @@ import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import { phoneRejex } from "../../../Components/Logic/StaticLists";
 
 const RegisterForm = () => {
   const { t: key } = useTranslation();
@@ -71,7 +72,7 @@ const RegisterForm = () => {
       .email(`${key("emailValidation1")}`)
       .required(`${key("emailValidation2")}`),
     phone: string()
-      .matches(/^05\d{8}$/, key("invalidPhone"))
+      .matches(phoneRejex, key("invalidPhone"))
       .required(key("fieldReq")),
     password: string()
       .min(5, key("min5"))

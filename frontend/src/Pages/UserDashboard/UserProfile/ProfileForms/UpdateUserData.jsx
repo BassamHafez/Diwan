@@ -23,6 +23,7 @@ import {
   useFileHandler,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
+import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 
 const UpdateUserData = ({ profileInfo, hideModal }) => {
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
@@ -95,7 +96,7 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
       .email(`${key("emailValidation1")}`)
       .required(`${key("emailValidation2")}`),
     phone: string()
-      .matches(/^05\d{8}$/, key("invalidPhone"))
+      .matches(phoneRejex, key("invalidPhone"))
       .required(key("fieldReq")),
   });
 
