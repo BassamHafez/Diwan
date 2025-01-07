@@ -34,6 +34,9 @@ const handleJWTError = () =>
 const handleJWTExpiredError = () =>
   new ApiError("Your token has expired! Please log in again.", 401);
 
+const handleMulterFileSizeError = (err) =>
+  new ApiError(`File size should be less than 6MB!`, 400);
+
 const sendErrorDev = (err, req, res) =>
   res.status(err.statusCode).json({
     status: err.status,
@@ -69,6 +72,8 @@ module.exports = (err, req, res, next) => {
   if (err.name === "ValidationError") err = handleValidationErrorDB(err);
   if (err.name === "JsonWebTokenError") err = handleJWTError();
   if (err.name === "TokenExpiredError") err = handleJWTExpiredError();
+  if (err.code === "LIMIT_FILE_SIZE" && err.name === "MulterError")
+    err = handleMulterFileSizeError(err);
 
   if (process.env.NODE_ENV === "development") {
     sendErrorDev(err, req, res);
