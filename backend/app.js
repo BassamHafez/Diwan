@@ -41,16 +41,14 @@ if (process.env.NODE_ENV === "development") {
 const limiter = rateLimit({
   max: 1000,
   windowMs: 60 * 60 * 1000,
-  keyGenerator: (req) => {
-    return req.ip; // Customize key generation to ensure correct IP is used
-  },
+  keyGenerator: (req) => req.ip,
   message: "Too many requests from this IP, Please try again in an hour!",
 });
 app.use("/api", limiter);
 
 // Body parser
-app.use(express.json({ limit: "100mb" }));
-app.use(express.urlencoded({ extended: true, limit: "100mb" }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // Data sanitization against NoSQL injection
 app.use(mongoSanitize());
