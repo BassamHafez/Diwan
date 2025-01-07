@@ -3,6 +3,7 @@ const sharp = require("sharp");
 const { uploadSingleImage } = require("../utils/uploadImage");
 const { sendWAText } = require("../utils/sendWAMessage");
 const sendEmail = require("../utils/sendEmail");
+const { formatSaudiNumber } = require("../utils/formatNumbers");
 
 const User = require("../models/userModel");
 const Account = require("../models/accountModel");
@@ -116,7 +117,7 @@ exports.getPhoneWACode = catchAsync(async (req, res, next) => {
   await Promise.all([
     user.save(),
     sendWAText(
-      `966${user.phone}`,
+      formatSaudiNumber(user.phone),
       `Your verification code is ${verificationCode}`
     ),
   ]);
@@ -208,7 +209,7 @@ exports.sendUsersMessage = catchAsync(async (req, res, next) => {
 
   if (type === "whatsapp") {
     users.forEach((user) => {
-      sendWAText(`966${user.phone}`, message);
+      sendWAText(formatSaudiNumber(user.phone), message);
     });
   } else if (type === "email") {
     users.forEach((user) => {

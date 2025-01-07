@@ -8,6 +8,7 @@ const ScheduledMission = require("./models/scheduledMissionModel");
 const { sendWAText } = require("./utils/sendWAMessage");
 const sendEmail = require("./utils/sendEmail");
 const { subscriptionExpirationHtml } = require("./utils/htmlMessages");
+const { formatSaudiNumber } = require("./utils/formatNumbers");
 
 let isTaskRunning = false;
 
@@ -62,7 +63,7 @@ const checkScheduledMissions = async () => {
             .lean()
             .then((contract) => {
               sendWAText(
-                `966${contract.tenant.phone}`,
+                formatSaudiNumber(contract.tenant.phone),
                 `Hello ${contract.tenant.name}, your contract for "${contract.estate.name}" has finished.`
               );
             })
@@ -124,7 +125,7 @@ const checkScheduledMissions = async () => {
 
                 if (tenantPhone) {
                   await sendWAText(
-                    `966${tenantPhone}`,
+                    formatSaudiNumber(tenantPhone),
                     `Hello ${
                       revenue.tenant.name
                     }, diwan reminder for payment of ${
@@ -137,7 +138,7 @@ const checkScheduledMissions = async () => {
 
                 if (landlordPhone) {
                   await sendWAText(
-                    `966${landlordPhone}`,
+                    formatSaudiNumber(landlordPhone),
                     `Diwan Reminder: ${revenue.tenant.name} payment of ${
                       revenue.amount
                     } is due on ${revenue.dueDate.toDateString()} for the estate "${
@@ -185,7 +186,7 @@ const checkScheduledMissions = async () => {
 
                 if (landlordPhone) {
                   await sendWAText(
-                    `966${landlordPhone}`,
+                    formatSaudiNumber(landlordPhone),
                     `Diwan Reminder: ${
                       contactName || "contact"
                     } should receive payment of ${
@@ -288,7 +289,7 @@ const checkSubscriptions = async () => {
       });
 
       sendWAText(
-        `966${task.accountOwner.phone}`,
+        formatSaudiNumber(task.accountOwner.phone),
         `Hello ${task.accountOwner.name}, your subscription has expired.\nPlease renew your subscription to continue using Diiwan.com .`
       );
 

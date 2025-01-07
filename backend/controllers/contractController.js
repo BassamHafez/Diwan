@@ -8,6 +8,7 @@ const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const calculateRevenues = require("../utils/calculateRevenues");
 const { sendWAText } = require("../utils/sendWAMessage");
+const { formatSaudiNumber } = require("../utils/formatNumbers");
 
 const contractPopOptions = [
   {
@@ -137,7 +138,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
   ScheduledMission.insertMany(revenuesReminders, { ordered: false });
 
   sendWAText(
-    `966${tenant.phone}`,
+    formatSaudiNumber(tenant.phone),
     `Hello ${
       tenant.name
     }, You have a new contract starting on ${newStartDate.toLocaleDateString()} and ending on ${newEndDate.toLocaleDateString()} at "${
@@ -212,7 +213,7 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
   }
 
   sendWAText(
-    `966${contract.tenant.phone}`,
+    formatSaudiNumber(contract.tenant.phone),
     `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been canceled.`
   );
 
@@ -541,7 +542,7 @@ exports.settleContract = catchAsync(async (req, res, next) => {
   ]);
 
   sendWAText(
-    `966${contract.tenant.phone}`,
+    formatSaudiNumber(contract.tenant.phone),
     `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.`
   );
 

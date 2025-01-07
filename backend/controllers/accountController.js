@@ -10,6 +10,7 @@ const ApiError = require("../utils/ApiError");
 const { sendWAText } = require("../utils/sendWAMessage");
 const sendEmail = require("../utils/sendEmail");
 const { newMemberHtml } = require("../utils/htmlMessages");
+const { formatSaudiNumber } = require("../utils/formatNumbers");
 
 const memberPopOptions = {
   path: "members.user",
@@ -376,7 +377,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
     }),
 
     sendWAText(
-      `966${req.body.phone}`,
+      formatSaudiNumber(req.body.phone),
       `Welcome to your new account on Diiwan.com. Your account has been created successfully. Your login credentials are as follows: \nPhone: ${req.body.phone}\nPassword: ${req.body.password}`
     ),
 
