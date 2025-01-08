@@ -1,16 +1,14 @@
-import { useTranslation } from "react-i18next";
 import styles from "../Auth.module.css";
-import registerImg from "../../../assets/register.webp";
-import { useEffect } from "react";
 import AOS from "aos";
 import RegisterForm from "./RegisterForm";
+import { registerImg } from "../../../shared/images";
+import { useEffect, useTranslation } from "../../../shared/hooks";
 
 const Register = () => {
-
   const { t: key } = useTranslation();
 
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
   }, []);
 
   return (

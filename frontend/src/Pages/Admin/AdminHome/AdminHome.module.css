@@ -71,26 +71,26 @@
 .sky_bg {
   background-color: #fff6e7;
 }
-.sky_bg2{
-  background-color:#FFF8DE;
+.sky_bg2 {
+  background-color: #fff8de;
 }
-.caption{
+.caption {
   background-color: white;
   padding: 1.875rem;
   border-radius: 1.25rem;
   height: 100%;
 }
-.caption_list li{
+.caption_list li {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   margin: 30px 0;
 }
-.caption_list li span:first-child{
+.caption_list li span:first-child {
   color: var(--dark_white);
 }
-.caption_list li span:last-child{
+.caption_list li span:last-child {
   min-width: 80px;
   text-align: center;
 }

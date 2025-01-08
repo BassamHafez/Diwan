@@ -1,19 +1,31 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import { object, ref, string } from "yup";
 import styles from "../Auth.module.css";
 import { signFormsHandler } from "../../../util/Http";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { toast } from "react-toastify";
-import { useTranslation } from "react-i18next";
-import { phoneRejex } from "../../../Components/Logic/StaticLists";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Link,
+} from "../../../shared/index";
+import { toast, object, faSpinner } from "../../../shared/constants";
+import {
+  useMutation,
+  useTranslation,
+  useNavigate,
+  useValidation,
+} from "../../../shared/hooks";
+import { InputErrorMessage, ButtonOne } from "../../../shared/components";
 
 const RegisterForm = () => {
   const { t: key } = useTranslation();
+  const {
+    phoneValidation,
+    passwordValidation,
+    confirmPasswordValidation,
+    emailValidation,
+    nameValidation,
+  } = useValidation();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -24,7 +36,7 @@ const RegisterForm = () => {
     mutationFn: signFormsHandler,
 
     onSuccess: (response) => {
-      console.log(response)
+      console.log(response);
       if (response.data.status === "success") {
         notifySuccess(key("registeredSuccess"));
         navigate("/login");
@@ -33,7 +45,7 @@ const RegisterForm = () => {
       }
     },
     onError(error) {
-      console.log(error)
+      console.log(error);
       if (error.status === 500) {
         if (
           error.data.message ===
@@ -64,25 +76,11 @@ const RegisterForm = () => {
   };
 
   const validationSchema = object({
-    name: string()
-      .min(3, `${key("nameValidation1")}`)
-      .max(20, `${key("nameValidation2")}`)
-      .required(`${key("nameValidation3")}`),
-    email: string()
-      .email(`${key("emailValidation1")}`)
-      .required(`${key("emailValidation2")}`),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
-    password: string()
-      .min(5, key("min5"))
-      .required(key("fieldReq"))
-      .matches(/[A-Z]+/, key("validationUpperCase"))
-      .matches(/[a-z]+/, key("validationLowerCase"))
-      .matches(/[0-9]+/, key("validationNumber")),
-    passwordConfirm: string()
-      .oneOf([ref("password"), null], `${key("passwordMismatch")}`)
-      .required(`${key("fieldReq")}`),
+    name: nameValidation,
+    email: emailValidation,
+    phone: phoneValidation.required(key("fieldReq")),
+    password: passwordValidation,
+    passwordConfirm: confirmPasswordValidation,
   });
 
   return (
@@ -109,7 +107,7 @@ const RegisterForm = () => {
               id="phoneInput"
               name="phone"
               placeholder={key("phone")}
-              className={isArLang?"ar_direction":""}
+              className={isArLang ? "ar_direction" : ""}
             />
             <ErrorMessage name="phone" component={InputErrorMessage} />
           </div>
@@ -135,7 +133,7 @@ const RegisterForm = () => {
             />
           </div>
 
-          <div className="text-center my-4 px-5">
+          <div className="text-center my-4 px-5 position-relative">
             <ButtonOne type="submit" borderd={true} classes="w-100">
               {isPending ? (
                 <FontAwesomeIcon className="fa-spin" icon={faSpinner} />

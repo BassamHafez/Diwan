@@ -1,5 +1,5 @@
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-
+import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 import {
   ErrorMessage,
   Field,
@@ -17,7 +17,6 @@ import {
 import { useMutation, useSelector, useTranslation } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
-import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 
 const AddAdmin = ({ refetch, hideModal }) => {
   const { t: key } = useTranslation();

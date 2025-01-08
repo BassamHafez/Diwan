@@ -1,24 +1,25 @@
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 import { signFormsHandler } from "../../../util/Http";
-import { object, string } from "yup";
 import ResetPassword from "./ResetPassword";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import { ErrorMessage, Field, Form, Formik } from "formik";
-import Modal from "react-bootstrap/Modal";
 import styles from "./ForgetPassword.module.css";
-import { faYinYang } from "@fortawesome/free-solid-svg-icons";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../shared/index";
+import { toast, object, string, faYinYang } from "../../../shared/constants";
+import { useMutation, useState, useTranslation } from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Modal } from "../../../shared/bootstrap";
 
 const VerificationCode = ({ show, onHide }) => {
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
-
   const [isCodeWrong, setIsCodeWrong] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const { t: key } = useTranslation();
+
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
     mutationFn: signFormsHandler,
@@ -91,15 +92,13 @@ const VerificationCode = ({ show, onHide }) => {
               </div>
 
               <div className="d-flex justify-content-center align-items-center mt-3 px-2">
-                {isPending ? (
-                  <button type="submit" className="submit_btn">
+                <button className="submit_btn" type="submit">
+                  {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
-                  </button>
-                ) : (
-                  <button className="submit_btn" type="submit">
-                    {key("verify")}
-                  </button>
-                )}
+                  ) : (
+                    key("verify")
+                  )}
+                </button>
               </div>
             </Form>
           </Formik>

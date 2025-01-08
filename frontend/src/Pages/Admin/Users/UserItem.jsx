@@ -1,15 +1,17 @@
 import styles from "../Admin.module.css";
-import noAvatar from "../../../assets/default.png";
-import { useTranslation } from "react-i18next";
-import Col from "react-bootstrap/esm/Col";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrown, faSquarePhone } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useState } from "react";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import useDeleteItem from "../../../hooks/useDeleteItem";
+import { FontAwesomeIcon } from "../../../shared/index";
+import { faCrown, faSquarePhone } from "../../../shared/constants";
+import {
+  useSelector,
+  useCallback,
+  useState,
+  useTranslation,
+  useDeleteItem,
+  useNavigate,
+} from "../../../shared/hooks";
+import { MainModal, ButtonOne } from "../../../shared/components";
+import { Col } from "../../../shared/bootstrap";
+import { avatar } from "../../../shared/images";
 
 const UserItem = ({
   userData,
@@ -68,7 +70,7 @@ const UserItem = ({
               src={
                 userData.photo
                   ? `${import.meta.env.VITE_Host}${userData.photo}`
-                  : noAvatar
+                  : avatar
               }
               alt="noAvatar"
             />

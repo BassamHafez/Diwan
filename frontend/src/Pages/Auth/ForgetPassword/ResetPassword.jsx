@@ -1,23 +1,31 @@
-import { useMutation } from "@tanstack/react-query";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import {useNavigate } from "react-router-dom";
 import { signFormsHandler } from "../../../util/Http";
-import { toast } from "react-toastify";
-import { object, string } from "yup";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faYinYang } from "@fortawesome/free-solid-svg-icons";
-import { ErrorMessage, Field, Formik,Form } from "formik";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import Modal from "react-bootstrap/Modal";
 import styles from "./ForgetPassword.module.css";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+} from "../../../shared/index";
+import { toast, object, faYinYang } from "../../../shared/constants";
+import {
+  useMutation,
+  useNavigate,
+  useState,
+  useTranslation,
+  useValidation,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Modal } from "../../../shared/bootstrap";
 
 const ResetPassword = ({ show, onHide }) => {
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const [isRightEmail, setIsRightEmail] = useState(false);
   const navigate = useNavigate();
   const { t: key } = useTranslation();
+  const { emailValidation, passwordValidation } = useValidation();
+
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
     mutationFn: signFormsHandler,
@@ -57,15 +65,8 @@ const ResetPassword = ({ show, onHide }) => {
   };
 
   const validationSchema = object({
-    email: string()
-      .email(key("emailValidation1"))
-      .required(key("emailValidation2")),
-    newPassword: string()
-      .min(5, `${key("passwordValidation1")}`)
-      .required(`${key("passwordValidation2")}`)
-      .matches(/[A-Z]+/, `${key("passwordValidation3")}`)
-      .matches(/[a-z]+/, `${key("passwordValidation4")}`)
-      .matches(/[0-9]+/, `${key("passwordValidation5")}`),
+    email: emailValidation,
+    newPassword: passwordValidation,
   });
 
   return (
@@ -100,15 +101,13 @@ const ResetPassword = ({ show, onHide }) => {
             </div>
 
             <div className="d-flex justify-content-center align-items-center mt-3 px-2">
-              {isPending ? (
-                <button type="submit" className="submit_btn">
+              <button className="submit_btn" type="submit">
+                {isPending ? (
                   <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
-                </button>
-              ) : (
-                <button className="submit_btn" type="submit">
-                  {key("confirm")}
-                </button>
-              )}
+                ) : (
+                  key("confirm")
+                )}
+              </button>
             </div>
           </Form>
         </Formik>

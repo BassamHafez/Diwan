@@ -1,16 +1,14 @@
-import { useTranslation } from "react-i18next";
 import styles from "../Auth.module.css";
 import LoginForm from "./LoginForm";
-import loginImg from "../../../assets/signin.webp";
-import { useEffect } from "react";
 import AOS from "aos";
+import { loginImg } from "../../../shared/images";
+import { useEffect, useTranslation } from "../../../shared/hooks";
 
 const Login = () => {
-
-  const {t:key}=useTranslation();
+  const { t: key } = useTranslation();
 
   useEffect(() => {
-    AOS.init({disable: 'mobile'});;
+    AOS.init({ disable: "mobile" });
   }, []);
 
   return (

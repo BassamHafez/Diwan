@@ -1,18 +1,21 @@
-import Col from "react-bootstrap/esm/Col";
 import styles from "../Admin.module.css";
-import { useTranslation } from "react-i18next";
-import avatar from "../../../assets/noAvatar.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCaretDown, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useCallback, useState } from "react";
 import UpdateSupport from "./SupportForm/UpdateSupport";
-import { faSquareWhatsapp } from "@fortawesome/free-brands-svg-icons";
 import { formatWhatsAppLink } from "../../../Components/Logic/LogicFun";
-import { Link } from "react-router-dom";
-import useDeleteItem from "../../../hooks/useDeleteItem";
+import { FontAwesomeIcon, Link } from "../../../shared/index";
+import {
+  faCaretDown,
+  faEnvelope,
+  faSquareWhatsapp,
+} from "../../../shared/constants";
+import {
+  useTranslation,
+  useState,
+  useCallback,
+  useDeleteItem,
+} from "../../../shared/hooks";
+import { ModalForm, MainModal, ButtonOne } from "../../../shared/components";
+import { Col } from "../../../shared/bootstrap";
+import { noAvatar } from "../../../shared/images";
 
 const SupportItem = ({ msgData, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -71,7 +74,7 @@ const SupportItem = ({ msgData, refetch }) => {
         <div className={styles.item}>
           <div className="d-flex justify-content-between flex-wrap mb-4">
             <div className={styles.header}>
-              <img src={avatar} alt="avatar" />
+              <img src={noAvatar} alt="noAvatar" />
               <div>
                 <h5>{msgData?.name}</h5>
                 <span>{msgData?.email}</span>

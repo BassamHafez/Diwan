@@ -1,8 +1,8 @@
-import { useTranslation } from "react-i18next";
-import MainTitle from "../../../Components/UI/Words/MainTitle";
 import UpdateConfigs from "./ConfigsForms/UpdateConfigs";
 import styles from "../Admin.module.css";
 import UpdateAssets from "./ConfigsForms/UpdateAssets";
+import { useTranslation } from "../../../shared/hooks";
+import { MainTitle } from "../../../shared/components";
 
 const Configs = () => {
   const { t: key } = useTranslation();

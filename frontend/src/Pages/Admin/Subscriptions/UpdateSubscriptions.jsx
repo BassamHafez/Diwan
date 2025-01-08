@@ -1,24 +1,19 @@
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-
+import { ErrorMessage, Field, Form, Formik } from "../../../shared/index";
+import { toast, object, number } from "../../../shared/constants";
 import {
-  ErrorMessage,
-  Field,
-  Form,
-  Formik,
-  FontAwesomeIcon,
-} from "../../../shared/index";
-import { faSpinner, toast, object, number } from "../../../shared/constants";
-import { useMutation, useSelector, useTranslation } from "../../../shared/hooks";
+  useMutation,
+  useSelector,
+  useTranslation,
+} from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
 const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
@@ -31,32 +26,40 @@ const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
       [sub.feature]: values.price,
     };
 
-    console.log(updatedValues);
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "put",
-        type: `subscriptions`,
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            if (refetch) {
-              refetch();
-            }
-            notifySuccess(key("updatedSucc"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "put",
+            type: `subscriptions`,
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                if (refetch) {
+                  refetch();
+                }
+                resetForm();
+                resolve();
+                hideModal();
+              } else {
+                reject();
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject();
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("saving")),
+        success: key("updatedSucc"),
+        error: key("wrong"),
       }
     );
   };
@@ -86,11 +89,7 @@ const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
           </button>
 
           <button className="submit_btn my-2" type="submit">
-            {isPending ? (
-              <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
-            ) : (
-              key("update")
-            )}
+            {key("update")}
           </button>
         </div>
       </Form>
