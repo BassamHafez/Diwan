@@ -631,6 +631,8 @@
   "setteledSucc": "Settlement completed successfully",
   "settlement": "settlement",
   "searching": "Searching...",
+  "termsAr":"Terms & Conditions [Arabic]",
+  "termsEn":"Terms & Conditions [English]",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",

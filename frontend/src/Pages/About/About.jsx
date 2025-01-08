@@ -16,7 +16,6 @@ const About = () => {
 
   useEffect(() => {
     AOS.init({ disable: "mobile" });
-    return () => AOS.refresh();
   }, []);
 
   const accodionContentArr = useMemo(() => {

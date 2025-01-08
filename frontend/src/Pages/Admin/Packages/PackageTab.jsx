@@ -1,7 +1,7 @@
-import Row from "react-bootstrap/esm/Row";
 import PackItem from "./PackItem";
-import NoData from "../../../Components/UI/Blocks/NoData";
-import { useTranslation } from "react-i18next";
+import {Row} from "../../../shared/bootstrap";
+import {NoData} from "../../../shared/components";
+import {useTranslation} from "../../../shared/hooks";
 
 const PackageTab = ({packages, refetch }) => {
   const { t: key } = useTranslation();
@@ -10,7 +10,7 @@ const PackageTab = ({packages, refetch }) => {
       <div className="position-relative px-1">
         <Row className="g-3">
           {packages?.length > 0 ? (
-            packages.map((packageData) => (
+            packages?.map((packageData) => (
               <PackItem
                 key={packageData._id}
                 pack={packageData}

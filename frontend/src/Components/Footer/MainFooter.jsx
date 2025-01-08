@@ -46,7 +46,7 @@ const MainFooter = () => {
               <div
                 className={`${isArLang ? "me-5" : "ms-5"} ${styles.second_row}`}
               >
-                <Link to={"/"} className={styles.footer_link}>
+                <Link to={"/terms-conditions"} className={styles.footer_link}>
                   {key("terms")}
                 </Link>
                 <Link to={"/help"} className={styles.footer_link}>

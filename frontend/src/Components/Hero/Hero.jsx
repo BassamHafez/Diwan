@@ -1,15 +1,10 @@
 import styles from "./Hero.module.css";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import ButtonTwo from "../UI/Buttons/ButtonTwo";
-import { useTranslation } from "react-i18next";
-import circles from "../../assets/svg/circles.svg";
-import dash from "../../assets/svg/dash.svg";
 import AOS from "aos";
-import { useEffect } from "react";
-import ImgComponent from "../Img/ImgComponent";
 import { imgHash } from "../Logic/StaticLists";
-import { useNavigate } from "react-router-dom";
+import { Row, Col } from "../../shared/bootstrap";
+import { ButtonTwo, ImgComponent } from "../../shared/components";
+import { circles, dash } from "../../shared/images";
+import { useTranslation, useEffect, useNavigate } from "../../shared/hooks";
 
 const Hero = () => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";

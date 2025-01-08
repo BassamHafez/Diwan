@@ -22,7 +22,6 @@ const AdminTestimonials = () => {
   const [showAddTestimonialsModal, setShowAddTestimonialsModal] =
     useState(false);
   const [searchFilter, setSearchFilter] = useState("");
-
   const { t: key } = useTranslation();
 
   const { data, isFetching, refetch } = useQuery({

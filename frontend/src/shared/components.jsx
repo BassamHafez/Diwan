@@ -17,6 +17,9 @@ import PrintNavBar from "../Components/Prints/PrintNavBar";
 import ReportsDetailsHeader from "../Components/Prints/ReportsDetailsHeader";
 import ImgComponent from "../Components/Img/ImgComponent";
 import ScrollTopBtn from "../Components/UI/Buttons/ScrollTopBtn";
+import AdminNav from "../Components/MainNav/AdminNav";
+import MainFooter from "../Components/Footer/MainFooter";
+import PolicyList from "../Components/UI/Blocks/PolicyList";
 
 export {
   MainTitle,
@@ -37,5 +40,8 @@ export {
   PrintNavBar,
   ReportsDetailsHeader,
   ImgComponent,
-  ScrollTopBtn
+  ScrollTopBtn,
+  AdminNav,
+  MainFooter,
+  PolicyList
 };

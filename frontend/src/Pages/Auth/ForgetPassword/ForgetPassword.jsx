@@ -1,25 +1,30 @@
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
-import { useMutation } from "@tanstack/react-query";
-import { ErrorMessage, Form, Formik, Field } from "formik";
-import { object, string } from "yup";
 import { signFormsHandler } from "../../../util/Http";
 import styles from "./ForgetPassword.module.css";
-import forgetPassImg from "../../../assets/forgetPassword.png";
-import InputErrorMessage from "../../../Components/UI/Words/InputErrorMessage";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faYinYang } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
 import VerificationCode from "./VerificationCode";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
+import {
+  ErrorMessage,
+  Field,
+  Form,
+  Formik,
+  FontAwesomeIcon,
+  Link,
+} from "../../../shared/index";
+import { toast, object, faYinYang } from "../../../shared/constants";
+import {
+  useMutation,
+  useState,
+  useTranslation,
+  useValidation,
+} from "../../../shared/hooks";
+import { InputErrorMessage } from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
+import { forgetPassImg } from "../../../shared/images";
 
 const ForgetPassword = () => {
   const [isRightEmail, setIsRightEmail] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const { t: key } = useTranslation();
-
+  const { emailValidation } = useValidation();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
@@ -58,9 +63,7 @@ const ForgetPassword = () => {
   };
 
   const validationSchema = object({
-    email: string()
-      .email(key("emailValidation1"))
-      .required(key("emailValidation2")),
+    email:emailValidation,
   });
 
   return (
@@ -95,7 +98,7 @@ const ForgetPassword = () => {
                 </div>
 
                 <div className="d-flex justify-content-center align-items-center mt-4 px-2">
-                  <button type="submit" className="submit_btn bg-main" >
+                  <button type="submit" className="submit_btn bg-main">
                     {isPending ? (
                       <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
                     ) : (

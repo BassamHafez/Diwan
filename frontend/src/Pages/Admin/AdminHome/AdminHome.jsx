@@ -1,8 +1,6 @@
 import styles from "./AdminHome.module.css";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import CountUp from "react-countup";
-
-import { FontAwesomeIcon } from "../../../shared/index";
+import { FontAwesomeIcon, CountUp } from "../../../shared/index";
 import {
   faStar,
   faBagShopping,

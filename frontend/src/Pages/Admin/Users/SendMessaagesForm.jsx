@@ -7,14 +7,17 @@ import {
   FontAwesomeIcon,
 } from "../../../shared/index";
 import {
-  faSpinner,
   faEnvelope,
   faSquareWhatsapp,
   toast,
   object,
   string,
 } from "../../../shared/constants";
-import { useMutation, useSelector, useTranslation } from "../../../shared/hooks";
+import {
+  useMutation,
+  useSelector,
+  useTranslation,
+} from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
 const SendMessaagesForm = ({
@@ -24,10 +27,7 @@ const SendMessaagesForm = ({
 }) => {
   const { t: key } = useTranslation();
   const token = useSelector((state) => state.userInfo.token);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
-
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
@@ -39,29 +39,38 @@ const SendMessaagesForm = ({
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = { ...values, usersIds: selectedUsers };
     console.log(updatedValues);
-    mutate(
-      {
-        formData: updatedValues,
-        token: token,
-        method: "add",
-        type: "users/messages",
-      },
-      {
-        onSuccess: (data) => {
-          console.log(data);
-          if (data?.status === "success") {
-            clearSelectedUsersIds();
-            notifySuccess(key("sentSuccess"));
-            resetForm();
-            hideModal();
-          } else {
-            notifyError(key("wrong"));
+    toast.promise(
+      new Promise((resolve, reject) => {
+        mutate(
+          {
+            formData: updatedValues,
+            token: token,
+            method: "add",
+            type: "users/messages",
+          },
+          {
+            onSuccess: (data) => {
+              console.log(data);
+              if (data?.status === "success") {
+                clearSelectedUsersIds();
+                resolve(key("sentSuccess"));
+                resetForm();
+                hideModal();
+              } else {
+                reject(key("wrong"));
+              }
+            },
+            onError: (error) => {
+              console.log(error);
+              reject(key("wrong"));
+            },
           }
-        },
-        onError: (error) => {
-          console.log(error);
-          notifyError(key("wrong"));
-        },
+        );
+      }),
+      {
+        pending: key(key("sending")),
+        success: key("sentSuccess"),
+        error: key("wrong"),
       }
     );
   };
@@ -131,11 +140,7 @@ const SendMessaagesForm = ({
           </button>
 
           <button className="submit_btn my-2" type="submit">
-            {isPending ? (
-              <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
-            ) : (
-              key("send")
-            )}
+            {key("send")}
           </button>
         </div>
       </Form>

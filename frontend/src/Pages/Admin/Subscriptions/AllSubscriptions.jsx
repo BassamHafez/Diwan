@@ -1,9 +1,8 @@
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import styles from "../Admin.module.css";
-import PolicyList from "../../../Components/UI/Blocks/PolicyList";
 import SubscriptionItem from "./SubscriptionItem";
 import { useTranslation, useMemo, useQuery, useSelector } from "../../../shared/hooks";
-import { MainTitle, LoadingOne, NoData } from "../../../shared/components";
+import { MainTitle, LoadingOne, NoData,PolicyList } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AllSubscriptions = () => {
@@ -26,7 +25,7 @@ const AllSubscriptions = () => {
     enabled: !!token,
   });
 
-  const policyList = useMemo(
+  const policyContent = useMemo(
     () => [
       { label: "subCondition1", value: null },
       { label: "subCondition2", value: null },
@@ -46,7 +45,7 @@ const AllSubscriptions = () => {
         <div className="my-4">
           <Row>
             <Col xl={7} lg={6} className="py-4">
-              <PolicyList list={policyList} />
+              <PolicyList list={policyContent} />
             </Col>
             <Col xl={5} lg={6}>
               {subscriptions ? (

@@ -46,9 +46,9 @@
 }
 
 .badge {
-  font-size: 12px;
-  border-radius: 30px;
-  padding: 5px 10px;
+  font-size: 0.75rem;
+  border-radius: 1.875rem;
+  padding: 0.3125rem 0.625rem;
   font-weight: 600;
   width: fit-content;
 }
@@ -246,6 +246,44 @@
   scale: 1.1;
 }
 
+/* terms */
+
+.terms_container{
+  background-color: var(--sub_white);
+  padding: 1.25rem;
+  border-radius: 1.875rem;
+  box-shadow: 0 0.1875rem 0.1875rem rgba(0, 0, 0, 0.101);
+  border-top: 0.0625rem solid rgb(232, 231, 231);
+  margin: 1.25rem;
+  overflow: hidden;
+}
+.terms_list{
+  padding: 0.625rem;
+}
+.terms_list li{
+  margin: 0.625rem;
+  padding: 0.3125rem;
+}
+.transpatent_color{
+  background-color: transparent;
+  box-shadow: none;
+  border: none;
+}
+
+
+@media screen and (max-width: 500px) {
+  .terms_container{
+    padding: 10px;
+    margin: 10px;
+  }
+  .terms_list{
+    padding: 5px;
+  }
+  .terms_list li{
+    padding: 2px;
+  }
+  
+}
 @media screen and (max-width: 280px) {
   .image_preview {
     max-width: 100%;

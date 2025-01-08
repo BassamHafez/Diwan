@@ -1,13 +1,17 @@
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import { Field, Form, Formik, FontAwesomeIcon } from "../../../../shared/index";
-import { faSpinner, toast, object, string } from "../../../../shared/constants";
-import { useMutation, useSelector, useTranslation } from "../../../../shared/hooks";
+import { Field, Form, Formik } from "../../../../shared/index";
+import { toast, object, string } from "../../../../shared/constants";
+import {
+  useMutation,
+  useSelector,
+  useTranslation,
+} from "../../../../shared/hooks";
 
 const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
 
-  const { mutate, isPending } = useMutation({
+  const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
@@ -130,11 +134,7 @@ const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
           </button>
 
           <button className="submit_btn bg-main my-2" type="submit">
-            {isPending ? (
-              <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
-            ) : (
-              key("update")
-            )}
+            {key("update")}
           </button>
         </div>
       </Form>

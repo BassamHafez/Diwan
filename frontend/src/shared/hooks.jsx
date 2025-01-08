@@ -10,6 +10,8 @@ import useCompoundAnlaysis from "../hooks/useCompoundAnlaysis";
 import useDeleteItem from "../hooks/useDeleteItem";
 import useEstateAnalysis from "../hooks/useEstateAnalysis";
 import useCurrentFeatures from "../hooks/useCurrentFeatures";
+import useSaveLoginData from "../hooks/useSaveLoginData";
+import useValidation from "../hooks/useValidation";
 export {
   useFileHandler,
   useTagsOption,
@@ -22,7 +24,9 @@ export {
   useCompoundAnlaysis,
   useDeleteItem,
   useEstateAnalysis,
-  useCurrentFeatures
+  useCurrentFeatures,
+  useSaveLoginData,
+  useValidation
 };
 
 export { useDispatch, useSelector } from "react-redux";

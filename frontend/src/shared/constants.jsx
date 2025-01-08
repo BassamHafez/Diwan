@@ -33,6 +33,12 @@ export {
   faBox,
   faBoxes,
   faChartLine,
+  faPenToSquare,
+  faCaretDown,
+  faSquarePhone,
+  faYinYang,
+  faMapMarkedAlt,
+  faPhoneFlip,
 } from "@fortawesome/free-solid-svg-icons";
 export {
   faFolderOpen,
@@ -40,7 +46,9 @@ export {
   faCircle,
   faPaste,
   faCircleCheck,
-  faStar
+  faStar,
+  faEye,
+  faEyeSlash,
 } from "@fortawesome/free-regular-svg-icons";
 export {
   faSquareWhatsapp,

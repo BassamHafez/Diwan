@@ -8,5 +8,6 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Alert from "react-bootstrap/Alert";
+import Modal from "react-bootstrap/Modal";
 
-export { Row, Col, Tabs, Tab,Accordion,Container,Offcanvas,Nav,Navbar,Alert };
+export { Row, Col, Tabs, Tab,Accordion,Container,Offcanvas,Nav,Navbar,Alert,Modal };

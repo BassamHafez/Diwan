@@ -1,12 +1,12 @@
-import Row from "react-bootstrap/esm/Row";
-import MainFooter from "../../../Components/Footer/MainFooter";
-import LanguageChanger from "../../../Components/Lang/LanguageChanger";
-import AdminNav from "../../../Components/MainNav/AdminNav";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import Col from "react-bootstrap/esm/Col";
-import LogOutModal from "../../../Components/UI/Modals/LogOutModal";
-import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, useState, useCallback } from "../../../shared/hooks";
+import {
+  AdminNav,
+  MainFooter,
+  LogOutModal,
+  ButtonOne,
+  LanguageChanger,
+} from "../../../shared/components";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const AdminMainContainer = (props) => {
   const [logoutModalShow, setLogoutModalShow] = useState(false);

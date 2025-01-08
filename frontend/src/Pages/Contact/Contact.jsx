@@ -1,17 +1,15 @@
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/esm/Col";
 import styles from "./Contact.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ContactForm from "./ContactForm";
+import { FontAwesomeIcon } from "../../shared/index";
 import {
   faCaretDown,
   faEnvelope,
   faMapMarkedAlt,
   faPhoneFlip,
-} from "@fortawesome/free-solid-svg-icons";
-import ContactsIcon from "../../Components/UI/ContactsIcon/ContactsIcon";
-import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import ContactForm from "./ContactForm";
+} from "../../shared/constants";
+import { useTranslation, useSelector } from "../../shared/hooks";
+import { ContactsIcon } from "../../shared/components";
+import { Row, Col } from "../../shared/bootstrap";
 
 const Contact = () => {
   const { t: key } = useTranslation();

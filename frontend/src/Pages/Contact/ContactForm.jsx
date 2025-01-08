@@ -1,16 +1,27 @@
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { ErrorMessage, Field, Form, Formik } from "../../shared/index";
-import { toast, object, string } from "../../shared/constants";
-import { useMutation, useTranslation, useSelector } from "../../shared/hooks";
+import { toast, object} from "../../shared/constants";
+import {
+  useMutation,
+  useTranslation,
+  useSelector,
+  useValidation,
+} from "../../shared/hooks";
 import { InputErrorMessage, ButtonTwo } from "../../shared/components";
 import { Row, Col } from "../../shared/bootstrap";
 import { cleanUpData } from "../../Components/Logic/LogicFun";
-import { phoneRejex } from "../../Components/Logic/StaticLists";
 
 const ContactForm = () => {
   const token = useSelector((state) => state.userInfo.token);
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
+  const {
+    mainReqValidation,
+    phoneValidation,
+    emailValidation,
+    nameValidation,
+    messageValidation,
+  } = useValidation();
   const requiredLabel = <span className="text-danger">*</span>;
 
   const { mutate } = useMutation({
@@ -61,15 +72,11 @@ const ContactForm = () => {
   };
 
   const validationSchema = object().shape({
-    name: string().required(key("fieldReq")),
-    email: string()
-      .email(`${key("emailValidation1")}`)
-      .required(`${key("emailValidation2")}`),
-    subject: string().required(key("fieldReq")),
-    message: string()
-      .min(5, key("min5"))
-      .required(`${key("fieldReq")}`),
-    phone: string().matches(phoneRejex, key("invalidPhone")),
+    name: nameValidation,
+    email: emailValidation,
+    subject: mainReqValidation,
+    message: messageValidation,
+    phone: phoneValidation,
   });
 
   return (

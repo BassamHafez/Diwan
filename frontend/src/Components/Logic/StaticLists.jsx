@@ -1,7 +1,7 @@
 //main
 export const mainAlertTime = 30 * 60 * 1000;
 export const maxFileSize = 5 * 1024 * 1024;
-export const phoneRejex=/^05\d{8}$/;
+export const phoneRejex = /^05\d{8}$/;
 // packages
 export const packagesDuration = {
   en: [
@@ -483,21 +483,6 @@ export const supportMessagesStatusOptions = {
     { label: "مؤرشفة", value: "archived" },
   ],
 };
-//dummy data
-export const chartsData = [
-  { totalPaid: 700, totalPending: 200, month: 1 },
-  { totalPaid: 900, totalPending: 1500, month: 2 },
-  { totalPaid: 1000, totalPending: 200, month: 3 },
-  { totalPaid: 800, totalPending: 300, month: 4 },
-  { totalPaid: 500, totalPending: 1000, month: 5 },
-  { totalPaid: 1200, totalPending: 1600, month: 6 },
-  { totalPaid: 1600, totalPending: 300, month: 7 },
-  { totalPaid: 900, totalPending: 800, month: 8 },
-  { totalPaid: 1500, totalPending: 1200, month: 9 },
-  { totalPaid: 400, totalPending: 200, month: 10 },
-  { totalPaid: 1800, totalPending: 1100, month: 11 },
-  { totalPaid: 1800, totalPending: 1100, month: 12 },
-];
 
 //countries
 export const countriesOptions = {
@@ -979,5 +964,48 @@ export const reportsFiltering = {
   ar: [
     { label: "الإيرادات", value: "revenue" },
     { label: "المصروفات", value: "expense" },
+  ],
+};
+
+//dummy data
+export const chartsData = [
+  { totalPaid: 700, totalPending: 200, month: 1 },
+  { totalPaid: 900, totalPending: 1500, month: 2 },
+  { totalPaid: 1000, totalPending: 200, month: 3 },
+  { totalPaid: 800, totalPending: 300, month: 4 },
+  { totalPaid: 500, totalPending: 1000, month: 5 },
+  { totalPaid: 1200, totalPending: 1600, month: 6 },
+  { totalPaid: 1600, totalPending: 300, month: 7 },
+  { totalPaid: 900, totalPending: 800, month: 8 },
+  { totalPaid: 1500, totalPending: 1200, month: 9 },
+  { totalPaid: 400, totalPending: 200, month: 10 },
+  { totalPaid: 1800, totalPending: 1100, month: 11 },
+  { totalPaid: 1800, totalPending: 1100, month: 12 },
+];
+
+export const terms = {
+  en: [
+    "Acceptance of Terms: By using this service, you agree to the terms and conditions outlined here.",
+    "Modification of Terms: The company reserves the right to update or modify these terms at any time without prior notice.",
+    "User Responsibilities: Users are responsible for providing accurate information and maintaining the confidentiality of their account.",
+    "Prohibited Activities: Users must not engage in illegal activities or misuse the platform.",
+    "Intellectual Property: All content on this platform is protected by copyright laws.",
+    "Termination of Service: The company reserves the right to suspend or terminate services for users who violate these terms.",
+    "Limitation of Liability: The company is not responsible for any damages resulting from the use of this service.",
+    "Dispute Resolution: Any disputes will be resolved under the jurisdiction of [Your Country].",
+    "Privacy Policy: Please refer to our Privacy Policy for details on how we handle user data.",
+    "Contact Information: For any inquiries, contact us at [email/contact].",
+  ],
+  ar: [
+    "قبول الشروط: باستخدامك لهذه الخدمة، فإنك توافق على الشروط والأحكام الموضحة هنا.",
+    "تعديل الشروط: تحتفظ الشركة بالحق في تحديث أو تعديل هذه الشروط في أي وقت دون إشعار مسبق.",
+    "مسؤوليات المستخدم: يتحمل المستخدمون مسؤولية تقديم معلومات دقيقة والحفاظ على سرية حساباتهم.",
+    "الأنشطة المحظورة: يجب على المستخدمين عدم الانخراط في أنشطة غير قانونية أو إساءة استخدام المنصة.",
+    "الملكية الفكرية: جميع المحتويات على هذه المنصة محمية بموجب قوانين حقوق النشر.",
+    "إنهاء الخدمة: تحتفظ الشركة بالحق في تعليق أو إنهاء الخدمات للمستخدمين الذين ينتهكون هذه الشروط.",
+    "تحديد المسؤولية: الشركة غير مسؤولة عن أي أضرار ناتجة عن استخدام هذه الخدمة.",
+    "حل النزاعات: يتم حل أي نزاعات تحت ولاية [بلدك].",
+    "سياسة الخصوصية: يُرجى الرجوع إلى سياسة الخصوصية الخاصة بنا لمعرفة تفاصيل كيفية التعامل مع بيانات المستخدم.",
+    "معلومات الاتصال: لأي استفسارات، يُرجى التواصل معنا عبر [البريد الإلكتروني/الاتصال].",
   ],
 };

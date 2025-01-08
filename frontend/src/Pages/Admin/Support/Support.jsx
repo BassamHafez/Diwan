@@ -67,11 +67,6 @@ const Support = () => {
     );
   }, [messages, searchFilter, statusFilter]);
 
-  const selectOptions = useMemo(
-    () => supportMessagesStatusOptions[currentLang],
-    [currentLang]
-  );
-
   return (
     <div className="admin_body height_container position-relative p-2">
       {(!messages || isFetching) && <LoadingOne />}
@@ -89,7 +84,7 @@ const Support = () => {
         </div>
         <div>
           <Select
-            options={selectOptions}
+            options={supportMessagesStatusOptions[currentLang]}
             onChange={(val) => filterChangeHandler(val ? val.value : null)}
             className={`${isArLang ? "text-end" : "text-start"} my-2 ${
               styles.select_type
