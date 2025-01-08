@@ -3,8 +3,6 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
-  districtsByCity,
-  districtsByCityAr,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
@@ -40,7 +38,6 @@ import { Row, Col } from "../../../shared/bootstrap";
 
 const AddEstate = ({ hideModal, refetch, compId }) => {
   const [cityOptions, setCityOptions] = useState([]);
-  const [districtOptions, setDistrictOptions] = useState([]);
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const { tagsOptions, refetchTags } = useTagsOption();
   const { compoundsOptionsWithNot } = useCompoundOptions();
@@ -92,7 +89,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
       }
       formData.append("city", values.city);
       formData.append("region", values.region);
-      formData.append("neighborhood", values.neighborhood);
+      formData.append("neighborhood", values.neighborhood || "not specified");
     }
 
     if (selectedFile) {
@@ -160,14 +157,17 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     city: string(),
     address: string(),
     neighborhood: string(),
-    price: number().min(0,key("positiveOnlyValidation")).required(key("fieldReq")),
-    area: number().min(0,key("positiveOnlyValidation")).required(key("fieldReq")),
+    price: number()
+      .min(0, key("positiveOnlyValidation"))
+      .required(key("fieldReq")),
+    area: number()
+      .min(0, key("positiveOnlyValidation"))
+      .required(key("fieldReq")),
   });
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {
     setFieldValue("region", selectedRegion || "");
     setFieldValue("city", "");
-    setFieldValue("neighborhood", "");
     let cities;
     if (isArLang) {
       cities = citiesByRegionAr[selectedRegion] || [];
@@ -175,23 +175,6 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
       cities = citiesByRegion[selectedRegion] || [];
     }
     setCityOptions(cities);
-    setDistrictOptions([]);
-  };
-
-  const handleCityChange = (selectedCity, setFieldValue) => {
-    setFieldValue("city", selectedCity?.value || "");
-    setFieldValue("neighborhood", "");
-    let districts;
-    if (isArLang) {
-      districts = districtsByCityAr[selectedCity?.value] || [];
-    } else {
-      districts = districtsByCity[selectedCity?.value] || [];
-    }
-    let finalDistricts = [
-      { label: key("notSpecified"), value: "not specified" },
-      ...districts,
-    ];
-    setDistrictOptions(finalDistricts);
   };
 
   const clearReigonsField = (val, setFieldValue) => {
@@ -238,54 +221,14 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 />
                 <ErrorMessage name="compound" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label htmlFor="name">
                   {key("name")} {requiredLabel}
                 </label>
                 <Field type="text" id="name" name="name" />
                 <ErrorMessage name="name" component={InputErrorMessage} />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="description">
-                  {key("description")} {requiredLabel}
-                </label>
-                <Field
-                  className="text_area"
-                  as="textarea"
-                  id="description"
-                  name="description"
-                />
-                <ErrorMessage
-                  name="description"
-                  component={InputErrorMessage}
-                />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="tags">{key("searchKeys")}</label>
-                <CreatableSelect
-                  isClearable
-                  options={tagsOptions}
-                  isMulti
-                  onChange={(val) => setFieldValue("tags", val)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder=""
-                  formatCreateLabel={(inputValue) =>
-                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                  }
-                />
-                <ErrorMessage name="tags" component={InputErrorMessage} />
-              </div>
-
-              <div className="field mb-1">
-                <label htmlFor="area">
-                  {key("area")} ({key("areaUnit")}) {requiredLabel}
-                </label>
-                <Field type="number" id="area" name="area" />
-                <ErrorMessage name="area" component={InputErrorMessage} />
               </div>
             </Col>
             <Col sm={6}>
@@ -314,16 +257,15 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 />
                 <ErrorMessage name="region" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label>
                   {key("city")} {requiredLabel}
                 </label>
                 <Select
                   options={cityOptions}
-                  onChange={(selected) =>
-                    handleCityChange(selected, setFieldValue)
-                  }
+                  onChange={(val) => setFieldValue("city", val?.value || "")}
                   value={
                     cityOptions.find((opt) => opt.value === values.city) || null
                   }
@@ -338,40 +280,32 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 />
                 <ErrorMessage name="city" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
-                <label>{key("district")}</label>
-                <Select
-                  options={districtOptions}
-                  onChange={(selected) =>
-                    setFieldValue("neighborhood", selected?.value)
+                <label htmlFor="neighborhood">{key("district")}</label>
+                <Field
+                  disabled={
+                    compId || (values.compound && values.compound !== "not")
                   }
-                  value={
-                    districtOptions.find(
-                      (opt) => opt.value === values.neighborhood
-                    ) || null
-                  }
-                  isDisabled={
-                    !values.city ||
-                    compId ||
-                    (values.compound && values.compound !== "not")
-                  }
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder=""
+                  type="text"
+                  id="neighborhood"
+                  name="neighborhood"
                 />
                 <ErrorMessage
                   name="neighborhood"
                   component={InputErrorMessage}
                 />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label htmlFor="address">{key("address")}</label>
                 <Field type="text" id="address" name="address" />
                 <ErrorMessage name="address" component={InputErrorMessage} />
               </div>
-
+            </Col>
+            <Col sm={6}>
               <div className="field mb-1">
                 <label htmlFor="price">
                   {key("unitPrice")} ({key("sar")}) {requiredLabel}
@@ -380,35 +314,87 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 <ErrorMessage name="price" component={InputErrorMessage} />
               </div>
             </Col>
-          </Row>
-          <div className={styles.photo_field}>
-            <h6 className="mb-3 text-start">{key("estateImage")}</h6>
-            <label
-              className={
-                imagePreviewUrl ? styles.photo_label_img : styles.photo_label
-              }
-              htmlFor="compoundImage"
-            >
-              {imagePreviewUrl ? (
-                <img
-                  src={imagePreviewUrl}
-                  alt="Uploaded_image"
-                  className={styles.image_preview}
+
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="area">
+                  {key("area")} ({key("areaUnit")}) {requiredLabel}
+                </label>
+                <Field type="number" id="area" name="area" />
+                <ErrorMessage name="area" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field mb-1">
+                <label htmlFor="tags">{key("searchKeys")}</label>
+                <CreatableSelect
+                  isClearable
+                  options={tagsOptions}
+                  isMulti
+                  onChange={(val) => setFieldValue("tags", val)}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? true : false}
+                  placeholder=""
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
                 />
-              ) : (
-                <FontAwesomeIcon className={styles.img_icon} icon={faImage} />
-              )}
-            </label>
-            <input
-              type="file"
-              id="compoundImage"
-              name="image"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="d-none"
-            />
-            <ErrorMessage name="image" component={InputErrorMessage} />
-          </div>
+                <ErrorMessage name="tags" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={12}>
+              <div className="field mb-1">
+                <label htmlFor="description">
+                  {key("description")} {requiredLabel}
+                </label>
+                <Field
+                  className="text_area"
+                  as="textarea"
+                  id="description"
+                  name="description"
+                />
+                <ErrorMessage
+                  name="description"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </Col>
+            <Col sm={12}>
+              <div className={styles.photo_field}>
+                <h6 className="mb-3 text-start">{key("estateImage")}</h6>
+                <label
+                  className={
+                    imagePreviewUrl
+                      ? styles.photo_label_img
+                      : styles.photo_label
+                  }
+                  htmlFor="compoundImage"
+                >
+                  {imagePreviewUrl ? (
+                    <img
+                      src={imagePreviewUrl}
+                      alt="Uploaded_image"
+                      className={styles.image_preview}
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      className={styles.img_icon}
+                      icon={faImage}
+                    />
+                  )}
+                </label>
+                <input
+                  type="file"
+                  id="compoundImage"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="d-none"
+                />
+                <ErrorMessage name="image" component={InputErrorMessage} />
+              </div>
+            </Col>
+          </Row>
 
           <div className="d-flex justify-content-between align-items-center mt-3 px-3">
             <button onClick={hideModal} className="cancel_btn my-2">

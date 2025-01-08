@@ -3,8 +3,6 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
-  districtsByCity,
-  districtsByCityAr,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
@@ -40,12 +38,11 @@ import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
-  const [districtOptions, setDistrictOptions] = useState([]);
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const { tagsOptions, refetchTags } = useTagsOption();
   const { brokersOptions, landlordOptions, refetchBroker, refetchLandlord } =
     useContactsOptions();
-  const {addBrokersAndLandLords} = useAddContactInForms({
+  const { addBrokersAndLandLords } = useAddContactInForms({
     refetchBroker,
     refetchLandlord,
   });
@@ -66,7 +63,10 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
     description: compoundData?.description || "",
     region: compoundData?.region || "",
     city: compoundData?.city || "",
-    neighborhood: compoundData?.neighborhood || "",
+    neighborhood:
+      (compoundData?.neighborhood !== "not specified"
+        ? compoundData?.neighborhood
+        : "") || "",
     address: compoundData?.address || "",
     tags:
       compoundData?.tags.map((tag) => {
@@ -86,7 +86,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
     formData.append("description", values.description);
     formData.append("city", values.city);
     formData.append("region", values.region);
-    formData.append("neighborhood", values.neighborhood);
+    formData.append("neighborhood", values.neighborhood || "not specified");
 
     if (selectedFile) {
       formData.append("image", selectedFile);
@@ -167,7 +167,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
       .required(key("fieldReq")),
     city: string().required(key("fieldReq")),
     region: string().required(key("fieldReq")),
-    neighborhood: string().required(key("fieldReq")),
+    neighborhood: string(),
     address: string(),
     broker: string(),
     lessor: string(),
@@ -182,21 +182,13 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   useEffect(() => {
     const settingCityAndDistrictOptionsOptions = () => {
       let cities;
-      let districts;
       if (isArLang) {
         cities = citiesByRegionAr[compoundData.region] || [];
-        districts = districtsByCityAr[compoundData.city] || [];
       } else {
         cities = citiesByRegion[compoundData.region] || [];
-        districts = districtsByCity[compoundData.city] || [];
       }
-      let finalDistricts = [
-        { label: key("notSpecified"), value: "not specified" },
-        ...districts,
-      ];
 
       setCityOptions(cities);
-      setDistrictOptions(finalDistricts);
     };
 
     settingCityAndDistrictOptionsOptions();
@@ -205,7 +197,6 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const handleRegionChange = (selectedRegion, setFieldValue) => {
     setFieldValue("region", selectedRegion?.value || "");
     setFieldValue("city", "");
-    setFieldValue("neighborhood", "");
     let cities;
     if (isArLang) {
       cities = citiesByRegionAr[selectedRegion?.value] || [];
@@ -214,23 +205,6 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
     }
 
     setCityOptions(cities);
-    setDistrictOptions([]);
-  };
-
-  const handleCityChange = (selectedCity, setFieldValue) => {
-    setFieldValue("city", selectedCity?.value || "");
-    setFieldValue("neighborhood", "");
-    let districts;
-    if (isArLang) {
-      districts = districtsByCityAr[selectedCity?.value] || [];
-    } else {
-      districts = districtsByCity[selectedCity?.value] || [];
-    }
-    let finalDistricts = [
-      { label: key("notSpecified"), value: "not specified" },
-      ...districts,
-    ];
-    setDistrictOptions(finalDistricts);
   };
 
   return (
@@ -285,9 +259,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                   </label>
                   <Select
                     options={cityOptions}
-                    onChange={(selected) =>
-                      handleCityChange(selected, setFieldValue)
-                    }
+                    onChange={(val) => setFieldValue("city", val?.value || "")}
                     value={
                       cityOptions.find((opt) => opt.value === values.city) ||
                       null
@@ -295,33 +267,18 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                     isDisabled={!values.region}
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? true : false}
-                    placeholder={isArLang ? "" : "select"}
+                    placeholder=""
                   />
                   <ErrorMessage name="city" component="div" className="error" />
                 </div>
               </Col>
               <Col sm={6}>
                 <div className="field mb-1">
-                  <label>{key("district")}</label>
-                  <Select
-                    options={districtOptions}
-                    onChange={(selected) =>
-                      setFieldValue("neighborhood", selected?.value)
-                    }
-                    value={
-                      districtOptions.find(
-                        (opt) => opt.value === values.neighborhood
-                      ) || null
-                    }
-                    isDisabled={!values.city}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? true : false}
-                    placeholder={isArLang ? "" : "select"}
-                  />
+                  <label htmlFor="neighborhood">{key("district")}</label>
+                  <Field type="text" id="neighborhood" name="neighborhood" />
                   <ErrorMessage
                     name="neighborhood"
-                    component="div"
-                    className="error"
+                    component={InputErrorMessage}
                   />
                 </div>
               </Col>
@@ -368,7 +325,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
               </Col>
               <Col sm={6}>
                 <div className="field mb-1">
-                  <label htmlFor="broker">{key("broker")}</label>
+                  <label htmlFor="broker">{key("agent")}</label>
                   <Select
                     id="broker"
                     name="broker"
@@ -388,7 +345,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
               </Col>
               <Col sm={6}>
                 <div className="field mb-1">
-                  <label htmlFor="landlord">{key("landlord")}</label>
+                  <label htmlFor="landlord">{key("theLandlord")}</label>
                   <Select
                     id="landlord"
                     name="landlord"
