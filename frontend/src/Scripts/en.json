@@ -633,6 +633,8 @@
   "searching": "Searching...",
   "termsAr":"Terms & Conditions [Arabic]",
   "termsEn":"Terms & Conditions [English]",
+  "termValidation":"At least one term is required",
+  "contactUsLinks":"Reach out to us through the following links if you need any assistance",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",

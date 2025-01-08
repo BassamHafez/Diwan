@@ -44,7 +44,7 @@ const AdminMainContainer = (props) => {
                 <LanguageChanger />
                 <ButtonOne
                   onClick={showLogoutModalHandler}
-                  classes="m-2"
+                  classes="m-2 bg-danger"
                   text={key("logout")}
                   borderd={true}
                 />

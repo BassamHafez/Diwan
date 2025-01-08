@@ -1,11 +1,39 @@
-import { terms } from "../../../Components/Logic/StaticLists";
-import { ButtonOne, MainTitle, ModalForm } from "../../../shared/components";
-import { useTranslation, useCallback, useState } from "../../../shared/hooks";
+import { useMemo } from "react";
+import {
+  ButtonOne,
+  LoadingOne,
+  MainTitle,
+  ModalForm,
+} from "../../../shared/components";
+import {
+  useTranslation,
+  useCallback,
+  useState,
+  useQuery,
+  useSelector,
+} from "../../../shared/hooks";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import styles from "../Admin.module.css";
 import UpdateTermsForm from "./AdminTermsForm/UpdateTermsForm";
 
 const AdminTerms = ({ isUserPage }) => {
-  // const configs = useSelector((state) => state.configs);
+  const token = useSelector((state) => state.userInfo.token);
+
+  const {
+    data: terms,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ["terms", token],
+    queryFn: () =>
+      mainFormsHandlerTypeFormData({
+        type: "terms",
+        token: token,
+      }),
+    staleTime: Infinity,
+    enabled: !!token,
+  });
+
   const [showUpdateermsModal, setShowUpdateTermsModal] = useState(false);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -14,37 +42,42 @@ const AdminTerms = ({ isUserPage }) => {
   }`;
   const handleShowModal = useCallback(() => setShowUpdateTermsModal(true), []);
   const handleHideModal = useCallback(() => setShowUpdateTermsModal(false), []);
+  const termsData = terms?.data || {};
 
-  const ArabicContent = (
-    <div dir="rtl" className={containerClasses}>
-      <div className="mb-3">
-        <MainTitle colored={true} title={key("termsAr")} />
+  const ArabicContent = useMemo(() => {
+    return (
+      <div dir="rtl" className={containerClasses}>
+        <div className="mb-3">
+          <MainTitle colored={true} title={key("termsAr")} />
+        </div>
+        <ol className={styles.terms_list}>
+          {termsData?.ar?.map((term, index) => (
+            <li key={index}>{term}</li>
+          ))}
+        </ol>
       </div>
-      <ol className={styles.terms_list}>
-        {terms["ar"].map((term, index) => (
-          <li key={index}>{term}</li>
-        ))}
-      </ol>
-    </div>
-  );
+    );
+  }, [termsData?.ar, containerClasses, key]);
 
-  const EnglishContent = (
-    <div dir="ltr" className={containerClasses}>
-      <div className="mb-3">
-        <MainTitle colored={true} title={key("termsEn")} />
+  const EnglishContent = useMemo(() => {
+    return (
+      <div dir="ltr" className={containerClasses}>
+        <div className="mb-3">
+          <MainTitle colored={true} title={key("termsEn")} />
+        </div>
+        <ol className={styles.terms_list}>
+          {termsData?.en?.map((term, index) => (
+            <li key={index}>{term}</li>
+          ))}
+        </ol>
       </div>
-      <ol className={styles.terms_list}>
-        {terms["en"].map((term, index) => (
-          <li key={index}>{term}</li>
-        ))}
-      </ol>
-    </div>
-  );
+    );
+  }, [termsData?.en, containerClasses, key]);
 
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
-        {/* {(!configs) && <LoadingOne />} */}
+        {!terms || (isFetching && <LoadingOne />)}
         {!isUserPage && (
           <div className="d-flex justify-content-end align-items-center position-relative my-3 p-2">
             <div>
@@ -62,7 +95,11 @@ const AdminTerms = ({ isUserPage }) => {
 
       {showUpdateermsModal && (
         <ModalForm show={showUpdateermsModal} onHide={handleHideModal}>
-          <UpdateTermsForm terms={terms} hideModal={handleHideModal} />
+          <UpdateTermsForm
+            termsData={termsData}
+            hideModal={handleHideModal}
+            refetch={refetch}
+          />
         </ModalForm>
       )}
     </>
