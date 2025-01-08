@@ -31,6 +31,7 @@ import {
   useEstatesOptions,
   useCompoundOptions,
   useServicesContact,
+  useAddContactInForms,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
@@ -38,8 +39,8 @@ import { Row, Col } from "../../../../shared/bootstrap";
 const AddTask = ({ hideModal, refetch, propId, compId }) => {
   const estatesOptions = useEstatesOptions();
   const {compoundsOptions} = useCompoundOptions();
-  const servicesOptions = useServicesContact();
-
+  const {servicesOptions,refetchServices} = useServicesContact();
+  const {AddServices}=useAddContactInForms({refetchServices});
   const [isCompound, setIsCompound] = useState(compId ? true : false);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -155,6 +156,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
+            {AddServices}
             <Col sm={12}>
               <div className="field">
                 <label htmlFor="title">

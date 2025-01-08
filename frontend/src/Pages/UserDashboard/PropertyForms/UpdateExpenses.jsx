@@ -22,14 +22,18 @@ import {
   useMutation,
   useTranslation,
   useServicesContact,
+  useAddContactInForms,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
-  const servicesOptions = useServicesContact();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const {servicesOptions,refetchServices} = useServicesContact();
+  const {AddServices}=useAddContactInForms({refetchServices});
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
+
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -136,6 +140,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
+            {AddServices}
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="amount">

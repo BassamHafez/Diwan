@@ -5,7 +5,7 @@ import { convertTpOptionsFormate } from "../Components/Logic/LogicFun";
 const useContactsOptions = () => {
   const token = useSelector((state) => state.userInfo.token);
 
-  const { data: landlords } = useQuery({
+  const { data: landlords,refetch:refetchLandlord } = useQuery({
     queryKey: ["landlord", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({
@@ -16,7 +16,7 @@ const useContactsOptions = () => {
     enabled: !!token,
   });
 
-  const { data: brokers } = useQuery({
+  const { data: brokers,refetch:refetchBroker } = useQuery({
     queryKey: ["brokers", token],
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: "contacts/brokers", token: token }),
@@ -32,7 +32,7 @@ const useContactsOptions = () => {
     return convertTpOptionsFormate(brokers?.data) || [];
   }, [brokers]);
 
-  return { landlordOptions, brokersOptions };
+  return { landlordOptions, brokersOptions,refetchBroker,refetchLandlord };
 };
 
 export default useContactsOptions;

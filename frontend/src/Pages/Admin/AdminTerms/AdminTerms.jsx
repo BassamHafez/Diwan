@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import {
   ButtonOne,
   LoadingOne,
@@ -11,6 +10,7 @@ import {
   useState,
   useQuery,
   useSelector,
+  useMemo,
 } from "../../../shared/hooks";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import styles from "../Admin.module.css";
@@ -40,8 +40,7 @@ const AdminTerms = ({ isUserPage }) => {
   const containerClasses = `${styles.terms_container} ${
     isUserPage ? styles.transpatent_color : ""
   }`;
-  const handleShowModal = useCallback(() => setShowUpdateTermsModal(true), []);
-  const handleHideModal = useCallback(() => setShowUpdateTermsModal(false), []);
+
   const termsData = terms?.data || {};
 
   const ArabicContent = useMemo(() => {
@@ -73,6 +72,9 @@ const AdminTerms = ({ isUserPage }) => {
       </div>
     );
   }, [termsData?.en, containerClasses, key]);
+
+  const handleShowModal = useCallback(() => setShowUpdateTermsModal(true), []);
+  const handleHideModal = useCallback(() => setShowUpdateTermsModal(false), []);
 
   return (
     <>

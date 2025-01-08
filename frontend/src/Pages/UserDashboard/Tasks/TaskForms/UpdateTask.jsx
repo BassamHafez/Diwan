@@ -28,6 +28,7 @@ import {
   useEstatesOptions,
   useCompoundOptions,
   useServicesContact,
+  useAddContactInForms,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
@@ -35,8 +36,8 @@ import { Row, Col } from "../../../../shared/bootstrap";
 const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
   const estatesOptions = useEstatesOptions();
   const {compoundsOptions} = useCompoundOptions();
-  const servicesOptions = useServicesContact();
-
+  const {servicesOptions,refetchServices} = useServicesContact();
+  const {AddServices}=useAddContactInForms({refetchServices});
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -191,6 +192,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
+            {AddServices}
             <Col sm={12}>
               <div className="field">
                 <label htmlFor="title">

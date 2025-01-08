@@ -24,6 +24,7 @@ import {
   useFileHandler,
   useContactsOptions,
   useTagsOption,
+  useAddContactInForms,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -42,7 +43,12 @@ const AddCompound = ({ hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
   const [districtOptions, setDistrictOptions] = useState([]);
   const { tagsOptions, refetchTags } = useTagsOption();
-  const { brokersOptions, landlordOptions } = useContactsOptions();
+  const { brokersOptions, landlordOptions, refetchLandlord, refetchBroker } =
+    useContactsOptions();
+  const {addBrokersAndLandLords} = useAddContactInForms({
+    refetchBroker,
+    refetchLandlord,
+  });
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifyError = (message) => toast.error(message);
@@ -187,234 +193,238 @@ const AddCompound = ({ hideModal, refetch }) => {
   };
 
   return (
-    <Formik
-      initialValues={initialValues}
-      onSubmit={onSubmit}
-      validationSchema={validationSchema}
-    >
-      {({ setFieldValue, values }) => (
-        <Form>
-          <Row>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="name">
-                  {key("name")} {requiredLabel}
-                </label>
-                <Field type="text" id="name" name="name" />
-                <ErrorMessage name="name" component={InputErrorMessage} />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="region">
-                  {key("region")} {requiredLabel}
-                </label>
-                <Select
-                  id="region"
-                  name="region"
-                  options={isArLang ? SaudiRegionAr : SaudiRegion}
-                  onChange={(selected) =>
-                    handleRegionChange(selected, setFieldValue)
-                  }
-                  value={
-                    (isArLang ? SaudiRegionAr : SaudiRegion).find(
-                      (opt) => opt.value === values.region
-                    ) || null
-                  }
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="region" component={InputErrorMessage} />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label>
-                  {key("city")} {requiredLabel}
-                </label>
-                <Select
-                  options={cityOptions}
-                  onChange={(selected) =>
-                    handleCityChange(selected, setFieldValue)
-                  }
-                  value={
-                    cityOptions.find((opt) => opt.value === values.city) || null
-                  }
-                  isDisabled={!values.region}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="city" component="div" className="error" />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label>{key("district")}</label>
-                <Select
-                  options={districtOptions}
-                  onChange={(selected) =>
-                    setFieldValue("neighborhood", selected?.value)
-                  }
-                  value={
-                    districtOptions.find(
-                      (opt) => opt.value === values.neighborhood
-                    ) || null
-                  }
-                  isDisabled={!values.city}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage
-                  name="neighborhood"
-                  component="div"
-                  className="error"
-                />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="address">{key("address")}</label>
-                <Field type="text" id="address" name="address" />
-                <ErrorMessage name="address" component={InputErrorMessage} />
-              </div>
-              <div className="field mb-1">
-                <label htmlFor="tags">{key("searchKeys")}</label>
-                <CreatableSelect
-                  isClearable
-                  options={tagsOptions}
-                  isMulti
-                  onChange={(val) => setFieldValue("tags", val)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                  formatCreateLabel={(inputValue) =>
-                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                  }
-                />
-                <ErrorMessage name="tags" component={InputErrorMessage} />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="description">
-                  {key("description")} {requiredLabel}
-                </label>
-                <Field
-                  className="text_area"
-                  as="textarea"
-                  id="description"
-                  name="description"
-                />
-                <ErrorMessage
-                  name="description"
-                  component={InputErrorMessage}
-                />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="broker">{key("agent")}</label>
-                <Select
-                  id="broker"
-                  name="broker"
-                  options={brokersOptions}
-                  onChange={(val) => setFieldValue("broker", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="broker" component={InputErrorMessage} />
-              </div>
-            </Col>
-            <Col sm={6}>
-              <div className="field mb-1">
-                <label htmlFor="landlord">{key("theLandlord")}</label>
-                <Select
-                  id="landlord"
-                  name="landlord"
-                  options={landlordOptions}
-                  onChange={(val) => setFieldValue("landlord", val.value)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
-                />
-                <ErrorMessage name="landlord" component={InputErrorMessage} />
-              </div>
-            </Col>
-            {values.broker && (
+    <>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={validationSchema}
+      >
+        {({ setFieldValue, values }) => (
+          <Form>
+            <Row>
+              <Col sm={12}>{addBrokersAndLandLords}</Col>
               <Col sm={6}>
                 <div className="field mb-1">
-                  <label htmlFor="commissionPercentage">
-                    {key("commissionPercentage")} (%)
+                  <label htmlFor="name">
+                    {key("name")} {requiredLabel}
                   </label>
-                  <Field
-                    type="number"
-                    id="commissionPercentage"
-                    name="commissionPercentage"
+                  <Field type="text" id="name" name="name" />
+                  <ErrorMessage name="name" component={InputErrorMessage} />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="region">
+                    {key("region")} {requiredLabel}
+                  </label>
+                  <Select
+                    id="region"
+                    name="region"
+                    options={isArLang ? SaudiRegionAr : SaudiRegion}
+                    onChange={(selected) =>
+                      handleRegionChange(selected, setFieldValue)
+                    }
+                    value={
+                      (isArLang ? SaudiRegionAr : SaudiRegion).find(
+                        (opt) => opt.value === values.region
+                      ) || null
+                    }
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                  />
+                  <ErrorMessage name="region" component={InputErrorMessage} />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label>
+                    {key("city")} {requiredLabel}
+                  </label>
+                  <Select
+                    options={cityOptions}
+                    onChange={(selected) =>
+                      handleCityChange(selected, setFieldValue)
+                    }
+                    value={
+                      cityOptions.find((opt) => opt.value === values.city) ||
+                      null
+                    }
+                    isDisabled={!values.region}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                  />
+                  <ErrorMessage name="city" component="div" className="error" />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label>{key("district")}</label>
+                  <Select
+                    options={districtOptions}
+                    onChange={(selected) =>
+                      setFieldValue("neighborhood", selected?.value)
+                    }
+                    value={
+                      districtOptions.find(
+                        (opt) => opt.value === values.neighborhood
+                      ) || null
+                    }
+                    isDisabled={!values.city}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
                   />
                   <ErrorMessage
-                    name="commissionPercentage"
+                    name="neighborhood"
+                    component="div"
+                    className="error"
+                  />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="address">{key("address")}</label>
+                  <Field type="text" id="address" name="address" />
+                  <ErrorMessage name="address" component={InputErrorMessage} />
+                </div>
+                <div className="field mb-1">
+                  <label htmlFor="tags">{key("searchKeys")}</label>
+                  <CreatableSelect
+                    isClearable
+                    options={tagsOptions}
+                    isMulti
+                    onChange={(val) => setFieldValue("tags", val)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                    formatCreateLabel={(inputValue) =>
+                      isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                    }
+                  />
+                  <ErrorMessage name="tags" component={InputErrorMessage} />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="description">
+                    {key("description")} {requiredLabel}
+                  </label>
+                  <Field
+                    className="text_area"
+                    as="textarea"
+                    id="description"
+                    name="description"
+                  />
+                  <ErrorMessage
+                    name="description"
                     component={InputErrorMessage}
                   />
                 </div>
               </Col>
-            )}
-            <Col sm={12}>
-              <div className={styles.photo_field}>
-                <h6 className="mb-3">{key("compoundImage")}</h6>
-                <label
-                  className={
-                    imagePreviewUrl
-                      ? styles.photo_label_img
-                      : styles.photo_label
-                  }
-                  htmlFor="compoundImage"
-                >
-                  {imagePreviewUrl ? (
-                    <img
-                      src={imagePreviewUrl}
-                      alt="Uploaded_image"
-                      className={styles.image_preview}
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="broker">{key("agent")}</label>
+                  <Select
+                    id="broker"
+                    name="broker"
+                    options={brokersOptions}
+                    onChange={(val) => setFieldValue("broker", val.value)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                  />
+                  <ErrorMessage name="broker" component={InputErrorMessage} />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="landlord">{key("theLandlord")}</label>
+                  <Select
+                    id="landlord"
+                    name="landlord"
+                    options={landlordOptions}
+                    onChange={(val) => setFieldValue("landlord", val.value)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                  />
+                  <ErrorMessage name="landlord" component={InputErrorMessage} />
+                </div>
+              </Col>
+              {values.broker && (
+                <Col sm={6}>
+                  <div className="field mb-1">
+                    <label htmlFor="commissionPercentage">
+                      {key("commissionPercentage")} (%)
+                    </label>
+                    <Field
+                      type="number"
+                      id="commissionPercentage"
+                      name="commissionPercentage"
                     />
-                  ) : (
-                    <FontAwesomeIcon
-                      className={styles.img_icon}
-                      icon={faImage}
+                    <ErrorMessage
+                      name="commissionPercentage"
+                      component={InputErrorMessage}
                     />
-                  )}
-                </label>
-                <input
-                  type="file"
-                  id="compoundImage"
-                  name="image"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="d-none"
-                />
-                <ErrorMessage name="image" component={InputErrorMessage} />
-              </div>
-            </Col>
-          </Row>
-
-          <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
-            <button onClick={hideModal} className="cancel_btn my-2">
-              {key("cancel")}
-            </button>
-
-            <button className="submit_btn my-2" type="submit">
-              {isPending ? (
-                <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
-              ) : (
-                key("add")
+                  </div>
+                </Col>
               )}
-            </button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+              <Col sm={12}>
+                <div className={styles.photo_field}>
+                  <h6 className="mb-3">{key("compoundImage")}</h6>
+                  <label
+                    className={
+                      imagePreviewUrl
+                        ? styles.photo_label_img
+                        : styles.photo_label
+                    }
+                    htmlFor="compoundImage"
+                  >
+                    {imagePreviewUrl ? (
+                      <img
+                        src={imagePreviewUrl}
+                        alt="Uploaded_image"
+                        className={styles.image_preview}
+                      />
+                    ) : (
+                      <FontAwesomeIcon
+                        className={styles.img_icon}
+                        icon={faImage}
+                      />
+                    )}
+                  </label>
+                  <input
+                    type="file"
+                    id="compoundImage"
+                    name="image"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="d-none"
+                  />
+                  <ErrorMessage name="image" component={InputErrorMessage} />
+                </div>
+              </Col>
+            </Row>
+
+            <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
+              <button onClick={hideModal} className="cancel_btn my-2">
+                {key("cancel")}
+              </button>
+
+              <button className="submit_btn my-2" type="submit">
+                {isPending ? (
+                  <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
+                ) : (
+                  key("add")
+                )}
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </>
   );
 };
 

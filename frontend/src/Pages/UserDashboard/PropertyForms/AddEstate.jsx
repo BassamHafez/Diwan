@@ -24,6 +24,7 @@ import {
   toast,
   object,
   string,
+  number,
 } from "../../../shared/constants";
 import {
   useState,
@@ -159,8 +160,8 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
     city: string(),
     address: string(),
     neighborhood: string(),
-    price: string().required(key("fieldReq")),
-    area: string().required(key("fieldReq")),
+    price: number().min(0,key("positiveOnlyValidation")).required(key("fieldReq")),
+    area: number().min(0,key("positiveOnlyValidation")).required(key("fieldReq")),
   });
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {
@@ -283,7 +284,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 <label htmlFor="area">
                   {key("area")} ({key("areaUnit")}) {requiredLabel}
                 </label>
-                <Field type="text" id="area" name="area" />
+                <Field type="number" id="area" name="area" />
                 <ErrorMessage name="area" component={InputErrorMessage} />
               </div>
             </Col>
@@ -375,7 +376,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
                 <label htmlFor="price">
                   {key("unitPrice")} ({key("sar")}) {requiredLabel}
                 </label>
-                <Field type="text" id="price" name="price" />
+                <Field type="number" id="price" name="price" />
                 <ErrorMessage name="price" component={InputErrorMessage} />
               </div>
             </Col>
