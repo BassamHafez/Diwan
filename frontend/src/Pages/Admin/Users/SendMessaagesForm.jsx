@@ -22,6 +22,7 @@ import { InputErrorMessage } from "../../../shared/components";
 
 const SendMessaagesForm = ({
   selectedUsers,
+  allUsers,
   clearSelectedUsersIds,
   hideModal,
 }) => {
@@ -37,7 +38,8 @@ const SendMessaagesForm = ({
   };
 
   const onSubmit = (values, { resetForm }) => {
-    const updatedValues = { ...values, usersIds: selectedUsers };
+    const myIds = selectedUsers?.length > 0 ? selectedUsers : allUsers;
+    const updatedValues = { ...values, usersIds: myIds };
     console.log(updatedValues);
     toast.promise(
       new Promise((resolve, reject) => {

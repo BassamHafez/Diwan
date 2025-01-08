@@ -32,8 +32,6 @@ import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   citiesByRegion,
   citiesByRegionAr,
-  districtsByCity,
-  districtsByCityAr,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../Components/Logic/StaticLists";
@@ -41,11 +39,10 @@ import fetchAccountData from "../../../Store/accountInfo-actions";
 
 const AddCompound = ({ hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
-  const [districtOptions, setDistrictOptions] = useState([]);
   const { tagsOptions, refetchTags } = useTagsOption();
   const { brokersOptions, landlordOptions, refetchLandlord, refetchBroker } =
     useContactsOptions();
-  const {addBrokersAndLandLords} = useAddContactInForms({
+  const { addBrokersAndLandLords } = useAddContactInForms({
     refetchBroker,
     refetchLandlord,
   });
@@ -88,11 +85,11 @@ const AddCompound = ({ hideModal, refetch }) => {
     formData.append("description", values.description);
     formData.append("city", values.city);
     formData.append("region", values.region);
+    formData.append("neighborhood", values.neighborhood || "not specified");
 
     if (values.address) {
       formData.append("address", values.address);
     }
-    formData.append("neighborhood", values.neighborhood);
     if (values.landlord) {
       formData.append("landlord", values.landlord);
     }
@@ -154,7 +151,7 @@ const AddCompound = ({ hideModal, refetch }) => {
       .required(key("fieldReq")),
     city: string().required(key("fieldReq")),
     region: string().required(key("fieldReq")),
-    neighborhood: string().required(key("fieldReq")),
+    neighborhood: string(),
     address: string(),
     lessor: string(),
     broker: string(),
@@ -164,7 +161,6 @@ const AddCompound = ({ hideModal, refetch }) => {
   const handleRegionChange = (selectedRegion, setFieldValue) => {
     setFieldValue("region", selectedRegion?.value || "");
     setFieldValue("city", "");
-    setFieldValue("neighborhood", "");
     let cities;
     if (isArLang) {
       cities = citiesByRegionAr[selectedRegion?.value] || [];
@@ -173,23 +169,6 @@ const AddCompound = ({ hideModal, refetch }) => {
     }
 
     setCityOptions(cities);
-    setDistrictOptions([]);
-  };
-
-  const handleCityChange = (selectedCity, setFieldValue) => {
-    setFieldValue("city", selectedCity?.value || "");
-    setFieldValue("neighborhood", "");
-    let districts;
-    if (isArLang) {
-      districts = districtsByCityAr[selectedCity?.value] || [];
-    } else {
-      districts = districtsByCity[selectedCity?.value] || [];
-    }
-    let finalDistricts = [
-      { label: key("notSpecified"), value: "not specified" },
-      ...districts,
-    ];
-    setDistrictOptions(finalDistricts);
   };
 
   return (
@@ -210,6 +189,24 @@ const AddCompound = ({ hideModal, refetch }) => {
                   </label>
                   <Field type="text" id="name" name="name" />
                   <ErrorMessage name="name" component={InputErrorMessage} />
+                </div>
+              </Col>
+              <Col sm={6}>
+                <div className="field mb-1">
+                  <label htmlFor="tags">{key("searchKeys")}</label>
+                  <CreatableSelect
+                    isClearable
+                    options={tagsOptions}
+                    isMulti
+                    onChange={(val) => setFieldValue("tags", val)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                    formatCreateLabel={(inputValue) =>
+                      isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                    }
+                  />
+                  <ErrorMessage name="tags" component={InputErrorMessage} />
                 </div>
               </Col>
               <Col sm={6}>
@@ -244,7 +241,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                   <Select
                     options={cityOptions}
                     onChange={(selected) =>
-                      handleCityChange(selected, setFieldValue)
+                      setFieldValue("city", selected?.value || "")
                     }
                     value={
                       cityOptions.find((opt) => opt.value === values.city) ||
@@ -260,50 +257,17 @@ const AddCompound = ({ hideModal, refetch }) => {
               </Col>
               <Col sm={6}>
                 <div className="field mb-1">
-                  <label>{key("district")}</label>
-                  <Select
-                    options={districtOptions}
-                    onChange={(selected) =>
-                      setFieldValue("neighborhood", selected?.value)
-                    }
-                    value={
-                      districtOptions.find(
-                        (opt) => opt.value === values.neighborhood
-                      ) || null
-                    }
-                    isDisabled={!values.city}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? true : false}
-                    placeholder={isArLang ? "" : "select"}
-                  />
+                  <label htmlFor="neighborhood">{key("district")}</label>
+                  <Field type="text" id="neighborhood" name="neighborhood" />
                   <ErrorMessage
                     name="neighborhood"
-                    component="div"
-                    className="error"
+                    component={InputErrorMessage}
                   />
                 </div>
-              </Col>
-              <Col sm={6}>
                 <div className="field mb-1">
                   <label htmlFor="address">{key("address")}</label>
                   <Field type="text" id="address" name="address" />
                   <ErrorMessage name="address" component={InputErrorMessage} />
-                </div>
-                <div className="field mb-1">
-                  <label htmlFor="tags">{key("searchKeys")}</label>
-                  <CreatableSelect
-                    isClearable
-                    options={tagsOptions}
-                    isMulti
-                    onChange={(val) => setFieldValue("tags", val)}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? true : false}
-                    placeholder={isArLang ? "" : "select"}
-                    formatCreateLabel={(inputValue) =>
-                      isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                    }
-                  />
-                  <ErrorMessage name="tags" component={InputErrorMessage} />
                 </div>
               </Col>
               <Col sm={6}>

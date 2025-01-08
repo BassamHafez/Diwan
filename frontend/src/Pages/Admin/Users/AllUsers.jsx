@@ -47,7 +47,7 @@ const AllUsers = () => {
 
   const filteredData = useMemo(() => {
     if (!users || !Array.isArray(users?.data)) return [];
-    return users.data.filter(
+    return users?.data.filter(
       (user) =>
         !searchFilter ||
         user.name
@@ -73,6 +73,12 @@ const AllUsers = () => {
     setSelectedUsers([]);
   }, []);
 
+  const allUsers = useMemo(() => {
+    return users?.data?.map((user) => {
+      return user._id;
+    });
+  }, [users?.data]);
+
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
@@ -88,9 +94,12 @@ const AllUsers = () => {
             <ButtonOne
               onClick={handleShowAddModal}
               borderd={true}
-              text={key("sendMessages")}
+              text={
+                selectedUsers?.length > 0
+                  ? key("sendMessages")
+                  : key("sendMessagesAll")
+              }
               classes="my-2"
-              disabled={selectedUsers?.length > 0 ? false : true}
             />
           </div>
         </div>
@@ -115,6 +124,7 @@ const AllUsers = () => {
           <SendMessaagesForm
             clearSelectedUsersIds={clearSelectedUsers}
             selectedUsers={selectedUsers}
+            allUsers={allUsers}
             hideModal={handleHideAddModal}
           />
         </ModalForm>

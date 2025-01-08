@@ -9,6 +9,40 @@ const Test = () => {
 
 export default Test;
 
+// const handleCityChange = (selectedCity, setFieldValue) => {
+//   setFieldValue("city", selectedCity?.value || "");
+//   setFieldValue("neighborhood", "");
+//   let districts;
+//   if (isArLang) {
+//     districts = districtsByCityAr[selectedCity?.value] || [];
+//   } else {
+//     districts = districtsByCity[selectedCity?.value] || [];
+//   }
+//   let finalDistricts = [
+//     { label: key("notSpecified"), value: "not specified" },
+//     ...districts,
+//   ];
+//   setDistrictOptions(finalDistricts);
+// };
+
+{
+  /* <Select
+                    options={districtOptions}
+                    onChange={(selected) =>
+                      setFieldValue("neighborhood", selected?.value)
+                    }
+                    value={
+                      districtOptions.find(
+                        (opt) => opt.value === values.neighborhood
+                      ) || null
+                    }
+                    isDisabled={!values.city}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder={isArLang ? "" : "select"}
+                  /> */
+}
+
 //estate image and compound image 3:2
 
 // .matches(/^(1|2)\d{9}$/, key("nationalIdValidation"))
