@@ -11,61 +11,63 @@ import {
   useMutation,
   useTranslation,
   useSelector,
-  useDispatch,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
-import fetchConfigs from "../../../../Store/configs-actions";
 import { useEffect, useState } from "react";
 
-const UpdateTermsForm = ({ hideModal, terms }) => {
+const UpdateTermsForm = ({ hideModal, termsData, refetch }) => {
   const [termsArOptions, setTermsArOptions] = useState([]);
   const [termsEnOptions, setTermsEnOptions] = useState([]);
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
-  const dispatch = useDispatch();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   useEffect(() => {
-    const arOptions = terms["ar"]?.map((term) => {
+    const arOptions = termsData?.ar?.map((term) => {
       return { label: term, value: term };
     });
-    const enOptions = terms["en"]?.map((term) => {
+    const enOptions = termsData?.en?.map((term) => {
       return { label: term, value: term };
     });
 
     setTermsArOptions(arOptions);
     setTermsEnOptions(enOptions);
-  }, [terms]);
+  }, [termsData]);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
   const initialValues = {
-    termsAr: termsArOptions || {},
-    termsEn: termsEnOptions || {},
+    termsAr: termsArOptions || [],
+    termsEn: termsEnOptions || [],
   };
 
   const onSubmit = (values, { resetForm }) => {
-    const terms={
-        en:values.termsEn,
-        ar:values.termsAr
-    }
-    console.log(terms)
+    const convertedEnTerms = values.termsEn?.map((term) => term.value) || [];
+    const convertedArTerms = values.termsAr?.map((term) => term.value) || [];
+
+    const terms = {
+      en: convertedEnTerms,
+      ar: convertedArTerms,
+    };
+    console.log(terms);
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
           {
             formData: terms,
             token: token,
-            method: "patch",
-            type: `configs`,
+            method: "put",
+            type: `terms`,
           },
           {
             onSuccess: async (data) => {
               console.log(data);
               if (data?.status === "success") {
-                dispatch(fetchConfigs());
+                if (refetch) {
+                  refetch();
+                }
                 resetForm();
                 resolve();
                 hideModal();
@@ -88,9 +90,13 @@ const UpdateTermsForm = ({ hideModal, terms }) => {
     );
   };
 
+  const arrValidation = array()
+    .min(1, key("termValidation"))
+    .required(key("fieldReq"));
+
   const validationSchema = object({
-    termsAr: array().required(key("fieldReq")),
-    termsEn: array().required(key("fieldReq")),
+    termsAr: arrValidation,
+    termsEn: arrValidation,
   });
 
   return (
@@ -120,7 +126,12 @@ const UpdateTermsForm = ({ hideModal, terms }) => {
             <ErrorMessage name="termsAr" component={InputErrorMessage} />
           </div>
           <div className="field" dir="ltr">
-            <label className={isArLang?"text-end":"text-start"} htmlFor="termsEn">{key("termsEn")}</label>
+            <label
+              className={isArLang ? "text-end" : "text-start"}
+              htmlFor="termsEn"
+            >
+              {key("termsEn")}
+            </label>
             <CreatableSelect
               isClearable
               options={termsEnOptions}
