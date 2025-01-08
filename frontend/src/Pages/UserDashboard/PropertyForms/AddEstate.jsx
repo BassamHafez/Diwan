@@ -22,7 +22,6 @@ import {
   toast,
   object,
   string,
-  number,
 } from "../../../shared/constants";
 import {
   useState,
@@ -32,6 +31,7 @@ import {
   useFileHandler,
   useTagsOption,
   useCompoundOptions,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -41,7 +41,8 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const { tagsOptions, refetchTags } = useTagsOption();
   const { compoundsOptionsWithNot } = useCompoundOptions();
-
+  const { positiveNumbersValidation, mainReqValidation, messageValidation } =
+    useValidation();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -148,21 +149,15 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
   };
 
   const validationSchema = object().shape({
-    compound: string().required(key("fieldReq")),
-    name: string().required(key("fieldReq")),
-    description: string()
-      .min(5, key("descValidation"))
-      .required(key("fieldReq")),
+    compound: mainReqValidation,
+    name: mainReqValidation,
+    description: messageValidation,
     region: string(),
     city: string(),
     address: string(),
     neighborhood: string(),
-    price: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
-    area: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
+    price: positiveNumbersValidation.required(key("fieldReq")),
+    area: positiveNumbersValidation.required(key("fieldReq")),
   });
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {

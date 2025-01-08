@@ -18,12 +18,12 @@ import {
   toast,
   object,
   string,
-  date,
 } from "../../../../shared/constants";
 import {
   useState,
   useMutation,
   useTranslation,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
@@ -38,7 +38,11 @@ const ReportsForm = ({
 }) => {
   const [isCompound, setIsCompound] = useState(false);
   const { t: key } = useTranslation();
-
+  const {
+    dateGreater,
+    dateValidation,
+    selectOptionValidationTypeString,
+  } = useValidation();
   const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -94,7 +98,7 @@ const ReportsForm = ({
     }
 
     console.log(updatedValues);
-    const cleanedValues=cleanUpData({...updatedValues});
+    const cleanedValues = cleanUpData({ ...updatedValues });
 
     let endPoint = "income";
 
@@ -169,25 +173,10 @@ const ReportsForm = ({
 
   const validationSchema = object({
     landlord: string().nullable(),
-    estate: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
-    compound: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
-    startDate: date().required(key("fieldReq")),
-    endDate: date()
-      .required(key("fieldReq"))
-      .test("is-greater", key("endDateValidation"), function (value) {
-        const { startDate } = this.parent;
-        return value > startDate;
-      }),
+    estate: selectOptionValidationTypeString.nullable(),
+    compound: selectOptionValidationTypeString.nullable(),
+    startDate: dateValidation,
+    endDate: dateGreater,
     status: string().nullable(),
   });
 

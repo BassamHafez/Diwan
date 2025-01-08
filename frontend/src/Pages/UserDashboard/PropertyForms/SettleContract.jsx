@@ -9,18 +9,13 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  number,
-} from "../../../shared/constants";
+import { faSpinner, toast, object } from "../../../shared/constants";
 import {
   useMutation,
   useQueryClient,
   useTranslation,
   useParams,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
@@ -31,6 +26,7 @@ const SettleContract = ({
   hideModal,
 }) => {
   const token = JSON.parse(localStorage.getItem("token"));
+  const { positiveNumbersValidation, mainReqValidation } = useValidation();
   const { propId } = useParams();
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -89,11 +85,8 @@ const SettleContract = ({
   };
 
   const validationSchema = object({
-    paymentMethod: string().required(key("fieldReq")),
-    // paidAt: date(),
-    settlementAmount: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
+    paymentMethod: mainReqValidation,
+    settlementAmount: positiveNumbersValidation.required(key("fieldReq")),
   });
 
   return (
@@ -132,12 +125,6 @@ const SettleContract = ({
             />
             <ErrorMessage name="paymentMethod" component={InputErrorMessage} />
           </div>
-
-          {/* <div className="field">
-            <label htmlFor="paidAt">{key("paidAt")}</label>
-            <Field type="date" id="paidAt" name="paidAt" />
-            <ErrorMessage name="paidAt" component={InputErrorMessage} />
-          </div> */}
 
           <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
             <button onClick={hideModal} className="cancel_btn my-2">

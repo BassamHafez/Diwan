@@ -10,37 +10,38 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  date,
-  number,
-} from "../../../shared/constants";
+import { faSpinner, toast, object } from "../../../shared/constants";
 import {
   useMutation,
   useTranslation,
   useServicesContact,
   useAddContactInForms,
   useSelector,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
-  const {servicesOptions,refetchServices} = useServicesContact();
-  const {AddServices}=useAddContactInForms({refetchServices});
+  const { servicesOptions, refetchServices } = useServicesContact();
+  const { AddServices } = useAddContactInForms({ refetchServices });
+  const {
+    positiveNumbersValidation,
+    dateValidation,
+    noteValidation,
+    selectOptionValidationTypeString,
+  } = useValidation();
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
 
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+  const currenLang = isArLang ? "ar" : "en";
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
- 
+
   const initialValues = {
     amount: exDetails.amount || "",
     dueDate: formattedDate(exDetails.dueDate) || "",
@@ -111,23 +112,11 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    amount: number()
-      .min(0, key("positiveValidation"))
-      .required(key("fieldReq")),
-    dueDate: date().required(key("fieldReq")),
-    type: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .required(key("fieldReq")),
-    note: string(),
-    contact: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
+    amount: positiveNumbersValidation.required(key("fieldReq")),
+    dueDate: dateValidation,
+    type: selectOptionValidationTypeString.required(key("fieldReq")),
+    note: noteValidation,
+    contact: selectOptionValidationTypeString.nullable(),
   });
 
   return (
@@ -159,11 +148,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
                   id="type"
                   name="type"
                   value={values.type}
-                  options={
-                    isArLang
-                      ? expensesTypeOptions["ar"]
-                      : expensesTypeOptions["en"]
-                  }
+                  options={expensesTypeOptions[currenLang]}
                   onChange={(val) => setFieldValue("type", val)}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
@@ -194,7 +179,7 @@ const UpdateExpenses = ({ hideModal, refetch, exDetails, refetchDetails }) => {
                   onChange={(val) => setFieldValue("contact", val ? val : "")}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
-                  placeholder={isArLang ? "" : "select"}
+                  placeholder=""
                   isClearable
                 />
                 <ErrorMessage name="contact" component={InputErrorMessage} />

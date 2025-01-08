@@ -14,14 +14,20 @@ import {
   string,
   ref,
 } from "../../../../shared/constants";
-import { useMutation, useTranslation } from "../../../../shared/hooks";
+import {
+  useMutation,
+  useTranslation,
+  useValidation,
+} from "../../../../shared/hooks";
 import { InputErrorMessage, ButtonOne } from "../../../../shared/components";
 
 const SecurityForm = ({ LogOutProcess }) => {
   const { t: key } = useTranslation();
+  const { passwordValidation } = useValidation();
+  const token = JSON.parse(localStorage.getItem("token"));
+
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -61,18 +67,8 @@ const SecurityForm = ({ LogOutProcess }) => {
   };
 
   const validationSchema = object({
-    currentPassword: string()
-      .min(5, key("min5"))
-      .required(key("fieldReq"))
-      .matches(/[A-Z]+/, key("validationUpperCase"))
-      .matches(/[a-z]+/, key("validationLowerCase"))
-      .matches(/[0-9]+/, key("validationNumber")),
-    newPassword: string()
-      .min(5, key("min5"))
-      .required(key("fieldReq"))
-      .matches(/[A-Z]+/, key("validationUpperCase"))
-      .matches(/[a-z]+/, key("validationLowerCase"))
-      .matches(/[0-9]+/, key("validationNumber")),
+    currentPassword: passwordValidation,
+    newPassword: passwordValidation,
     passwordConfirm: string()
       .oneOf([ref("newPassword"), null], `${key("passwordMismatch")}`)
       .required(`${key("fieldReq")}`),

@@ -12,7 +12,6 @@ import {
   faImage,
   faSpinner,
   toast,
-  number,
   object,
   string,
 } from "../../../shared/constants";
@@ -25,6 +24,7 @@ import {
   useContactsOptions,
   useTagsOption,
   useAddContactInForms,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -46,7 +46,8 @@ const AddCompound = ({ hideModal, refetch }) => {
     refetchBroker,
     refetchLandlord,
   });
-
+  const { positiveNumbersValidation, mainReqValidation, messageValidation } =
+    useValidation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -145,17 +146,15 @@ const AddCompound = ({ hideModal, refetch }) => {
   };
 
   const validationSchema = object({
-    name: string().required(key("fieldReq")),
-    description: string()
-      .min(5, key("descValidation"))
-      .required(key("fieldReq")),
-    city: string().required(key("fieldReq")),
-    region: string().required(key("fieldReq")),
+    name: mainReqValidation,
+    description: messageValidation,
+    city: mainReqValidation,
+    region: mainReqValidation,
     neighborhood: string(),
     address: string(),
     lessor: string(),
     broker: string(),
-    commissionPercentage: number().min(0, key("positiveValidation")),
+    commissionPercentage: positiveNumbersValidation,
   });
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {

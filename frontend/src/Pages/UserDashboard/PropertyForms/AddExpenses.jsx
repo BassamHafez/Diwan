@@ -1,6 +1,5 @@
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { expensesTypeOptions } from "../../../Components/Logic/StaticLists";
-
 import {
   ErrorMessage,
   Field,
@@ -14,8 +13,6 @@ import {
   toast,
   object,
   string,
-  date,
-  number,
 } from "../../../shared/constants";
 import {
   useMutation,
@@ -24,14 +21,21 @@ import {
   useServicesContact,
   useAddContactInForms,
   useSelector,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 import { cleanUpData } from "../../../Components/Logic/LogicFun";
 
 const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
-  const {servicesOptions,refetchServices} = useServicesContact();
-  const {AddServices}=useAddContactInForms({refetchServices});
+  const { servicesOptions, refetchServices } = useServicesContact();
+  const { AddServices } = useAddContactInForms({ refetchServices });
+  const {
+    positiveNumbersValidation,
+    mainReqValidation,
+    noteValidation,
+    dateValidation,
+  } = useValidation();
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const params = useParams();
@@ -112,12 +116,10 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    amount: number()
-      .min(0, key("positiveValidation"))
-      .required(key("fieldReq")),
-    dueDate: date().required(key("fieldReq")),
-    type: string().required(key("fieldReq")),
-    note: string(),
+    amount: positiveNumbersValidation.required(key("fieldReq")),
+    dueDate: dateValidation,
+    type: mainReqValidation,
+    note: noteValidation,
     contact: string().nullable(),
   });
 

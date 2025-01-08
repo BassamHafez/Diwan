@@ -2,7 +2,6 @@ import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import DateField from "../../../../Components/Fields/DateField";
 import {
   countriesOptions,
-  phoneRejex,
   tenantTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
 import {
@@ -19,7 +18,7 @@ import {
   Select,
 } from "../../../../shared/index";
 import { faSpinner, toast, object, string } from "../../../../shared/constants";
-import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { useMutation, useTranslation, useValidation } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
@@ -30,11 +29,15 @@ const UpdateContactForm = ({
   refetchAllContacts,
   contact,
 }) => {
-  const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
+
+  const { phoneValidation, mainReqValidation,noteValidation } = useValidation();
   const { t: key } = useTranslation();
-  const requiredLabel = <span className="text-danger">*</span>;
+
+  const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
+
+  const notifyError = (message) => toast.error(message);
+  const requiredLabel = <span className="text-danger">*</span>;
   const currenLang = isArLang ? "ar" : "en";
 
   const { mutate, isPending } = useMutation({
@@ -145,12 +148,10 @@ const UpdateContactForm = ({
   };
 
   const validationSchema = object().shape({
-    name: string().required(key("fieldReq")),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
-    phone2: string().matches(phoneRejex, key("invalidPhone")),
-    notes: string(),
+    name:mainReqValidation,
+    phone:phoneValidation.required(key("fieldReq")),
+    phone2:phoneValidation,
+    notes: noteValidation,
     nationalId: string().when("type", {
       is: (type) => type === "individual",
       then: (schema) =>

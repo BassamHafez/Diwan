@@ -1,15 +1,17 @@
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { ErrorMessage, Field, Form, Formik } from "../../../shared/index";
-import { toast, object, number } from "../../../shared/constants";
+import { toast, object} from "../../../shared/constants";
 import {
   useMutation,
   useSelector,
   useTranslation,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
 const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
   const token = useSelector((state) => state.userInfo.token);
+  const { positiveNumbersValidation } = useValidation();
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
 
@@ -65,7 +67,7 @@ const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
   };
 
   const validationSchema = object({
-    price: number().min(0, key("positiveValidation")).required(key("fieldReq")),
+    price: positiveNumbersValidation.required(key("fieldReq")),
   });
 
   return (
