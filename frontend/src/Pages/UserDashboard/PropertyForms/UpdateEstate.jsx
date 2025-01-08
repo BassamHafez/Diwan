@@ -22,7 +22,6 @@ import {
   toast,
   object,
   string,
-  number,
 } from "../../../shared/constants";
 import {
   useEffect,
@@ -36,6 +35,7 @@ import {
   useContactsOptions,
   useCompoundOptions,
   useAddContactInForms,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -56,6 +56,13 @@ const UpdateEstate = ({
     refetchBroker,
     refetchLandlord,
   });
+  const {
+    positiveNumbersValidation,
+    elecCountValidation,
+    waterCountValidation,
+    messageValidation,
+    mainReqValidation,
+  } = useValidation();
   const queryClient = useQueryClient();
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -198,28 +205,19 @@ const UpdateEstate = ({
     compound: string()
       .nullable()
       .transform((value) => (value?.value ? value.value : value)),
-    name: string().required(key("fieldReq")),
-    description: string()
-      .min(5, key("descValidation"))
-      .required(key("fieldReq")),
+    name: mainReqValidation,
+    description: messageValidation,
     region: string(),
     city: string(),
     address: string(),
     neighborhood: string(),
-    price: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
-    area: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
+    price: positiveNumbersValidation.required(key("fieldReq")),
+    area: positiveNumbersValidation.required(key("fieldReq")),
     broker: string(),
-    commissionPercentage: number().min(0, key("positiveValidation")),
+    commissionPercentage: positiveNumbersValidation,
     lessor: string(),
-    waterAccountNumber: string().matches(/^\d{10}$/, key("waterMinValidation")),
-    electricityAccountNumber: string().matches(
-      /^\d{11}$/,
-      key("elcMinValidation")
-    ),
+    waterAccountNumber: waterCountValidation,
+    electricityAccountNumber: elecCountValidation,
   });
 
   useEffect(() => {

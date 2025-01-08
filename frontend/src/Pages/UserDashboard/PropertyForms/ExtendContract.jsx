@@ -8,7 +8,12 @@ import {
   FontAwesomeIcon,
 } from "../../../shared/index";
 import { faSpinner, toast, object, date } from "../../../shared/constants";
-import { useMutation, useTranslation, useParams } from "../../../shared/hooks";
+import {
+  useMutation,
+  useTranslation,
+  useParams,
+  useValidation,
+} from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
@@ -20,6 +25,7 @@ const ExtendContract = ({
 }) => {
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
+  const { noFutureDateValidation } = useValidation();
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
 
@@ -75,22 +81,14 @@ const ExtendContract = ({
 
   const validationSchema = object({
     endContract: date(),
-    newEndDate: date()
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      )
-      .required(key("fieldReq"))
-      .test("is-greater", key("endDateValidation2"), function (value) {
+    newEndDate: noFutureDateValidation.test(
+      "is-greater",
+      key("endDateValidation2"),
+      function (value) {
         const { endContract } = this.parent;
         return value > endContract;
-      }),
+      }
+    ),
   });
 
   return (

@@ -19,9 +19,6 @@ import {
   faSpinner,
   toast,
   object,
-  string,
-  date,
-  number,
 } from "../../../shared/constants";
 import {
   useEffect,
@@ -33,6 +30,7 @@ import {
   useTenantsOptions,
   useAddContactInForms,
   useSelector,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage, MainModal } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -50,6 +48,12 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
 
   const { tenantsOptions, refetchTenants } = useTenantsOptions();
   const { AddTenants } = useAddContactInForms({ refetchTenants });
+  const {
+    positiveNumbersValidation,
+    mainReqValidation,
+    endDateValidation,
+    dateValidation,
+  } = useValidation();
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const { propId } = useParams();
@@ -155,29 +159,12 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    tenant: string().required(key("fieldReq")),
-    startDate: date().required(key("fieldReq")),
-    endDate: date()
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      )
-      .required(key("fieldReq"))
-      .test("is-greater", key("endDateValidation"), function (value) {
-        const { startDate } = this.parent;
-        return value > startDate;
-      }),
-    totalAmount: number()
-      .min(0, key("positiveValidation"))
-      .required(key("fieldReq")),
-    paymentPeriodValue: string().required(key("fieldReq")),
-    paymentPeriodUnit: string().required(key("fieldReq")),
+    tenant: mainReqValidation,
+    startDate: dateValidation,
+    endDate: endDateValidation,
+    totalAmount: positiveNumbersValidation.required(key("fieldReq")),
+    paymentPeriodValue: mainReqValidation,
+    paymentPeriodUnit: mainReqValidation,
   });
 
   const showCalculatedRevenues = (values) => {

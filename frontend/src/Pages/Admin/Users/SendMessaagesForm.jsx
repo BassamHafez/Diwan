@@ -11,12 +11,12 @@ import {
   faSquareWhatsapp,
   toast,
   object,
-  string,
 } from "../../../shared/constants";
 import {
   useMutation,
   useSelector,
   useTranslation,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
@@ -27,6 +27,7 @@ const SendMessaagesForm = ({
   hideModal,
 }) => {
   const { t: key } = useTranslation();
+  const { messageValidation, mainReqValidation } = useValidation();
   const token = useSelector((state) => state.userInfo.token);
   const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -78,10 +79,8 @@ const SendMessaagesForm = ({
   };
 
   const validationSchema = object({
-    message: string()
-      .min(2, `${key("min2")}`)
-      .required(`${key("fieldReq")}`),
-    type: string().required(`${key("fieldReq")}`),
+    message: messageValidation,
+    type: mainReqValidation,
   });
 
   return (

@@ -3,7 +3,6 @@ import fetchAccountData from "../../../../Store/accountInfo-actions";
 import {
   citiesByRegion,
   citiesByRegionAr,
-  phoneRejex,
   SaudiRegion,
   SaudiRegionAr,
 } from "../../../../Components/Logic/StaticLists";
@@ -16,20 +15,27 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../../shared/index";
-import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import { faSpinner, toast, object } from "../../../../shared/constants";
 import {
   useEffect,
   useState,
   useMutation,
   useTranslation,
   useDispatch,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 
 const UpdateAccountData = ({ accountInfo, hideModal }) => {
   const [cityOptions, setCityOptions] = useState([]);
-  const token = JSON.parse(localStorage.getItem("token"));
   const dispatch = useDispatch();
+  const {
+    mainReqValidation,
+    phoneValidation,
+    commercialRecordValidation,
+    taxNumberValidation,
+  } = useValidation();
+  const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const { t: key } = useTranslation();
@@ -100,15 +106,13 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
   };
 
   const validationSchema = object().shape({
-    name: string().required(key("fieldReq")),
-    address: string().required(key("fieldReq")),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
-    commercialRecord: string().matches(/^\d{10}$/, key("CommercialValidation")),
-    taxNumber: string().matches(/^3\d{14}$/, key("taxNumberValidation")),
-    city: string().required(key("fieldReq")),
-    region: string().required(key("fieldReq")),
+    name: mainReqValidation,
+    address: mainReqValidation,
+    phone: phoneValidation.required(key("fieldReq")),
+    commercialRecord: commercialRecordValidation,
+    taxNumber: taxNumberValidation,
+    city: mainReqValidation,
+    region: mainReqValidation,
   });
 
   const handleRegionChange = (selectedRegion, setFieldValue) => {

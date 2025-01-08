@@ -20,7 +20,6 @@ import {
   toast,
   object,
   string,
-  number,
 } from "../../../shared/constants";
 import {
   useEffect,
@@ -32,12 +31,20 @@ import {
   useTagsOption,
   useContactsOptions,
   useAddContactInForms,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   const [cityOptions, setCityOptions] = useState([]);
+  const {
+    positiveNumbersValidation,
+    elecCountValidation,
+    waterCountValidation,
+    messageValidation,
+    mainReqValidation,
+  } = useValidation();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const { tagsOptions, refetchTags } = useTagsOption();
   const { brokersOptions, landlordOptions, refetchBroker, refetchLandlord } =
@@ -161,22 +168,17 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   };
 
   const validationSchema = object({
-    name: string().required(key("fieldReq")),
-    description: string()
-      .min(5, key("descValidation"))
-      .required(key("fieldReq")),
-    city: string().required(key("fieldReq")),
-    region: string().required(key("fieldReq")),
+    name: mainReqValidation,
+    description: messageValidation,
+    city: mainReqValidation,
+    region: mainReqValidation,
     neighborhood: string(),
     address: string(),
     broker: string(),
     lessor: string(),
-    waterAccountNumber: string().matches(/^\d{10}$/, key("waterMinValidation")),
-    electricityAccountNumber: string().matches(
-      /^\d{11}$/,
-      key("elcMinValidation")
-    ),
-    commissionPercentage: number().min(0, key("positiveValidation")),
+    waterAccountNumber: waterCountValidation,
+    electricityAccountNumber: elecCountValidation,
+    commissionPercentage: positiveNumbersValidation,
   });
 
   useEffect(() => {

@@ -15,10 +15,13 @@ import {
   toast,
   object,
   string,
-  date,
   array,
 } from "../../../../shared/constants";
-import { useMutation, useTranslation } from "../../../../shared/hooks";
+import {
+  useMutation,
+  useTranslation,
+  useValidation,
+} from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
@@ -29,7 +32,7 @@ const CompoundsReportForm = ({
   type,
 }) => {
   const { t: key } = useTranslation();
-
+  const { dateGreater, dateValidation, mainReqValidation } = useValidation();
   const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -106,16 +109,12 @@ const CompoundsReportForm = ({
       }
     );
   };
+
   const myValidationSchema = isDetails
     ? object({
-        compoundId: string().required(key("fieldReq")),
-        startDate: date().required(key("fieldReq")),
-        endDate: date()
-          .required(key("fieldReq"))
-          .test("is-greater", key("endDateValidation"), function (value) {
-            const { startDate } = this.parent;
-            return value > startDate;
-          }),
+        compoundId: mainReqValidation,
+        startDate: dateValidation,
+        endDate: dateGreater,
       })
     : object({
         landlord: string().nullable(),
@@ -127,13 +126,8 @@ const CompoundsReportForm = ({
             })
           )
           .nullable(),
-        startDate: date().required(key("fieldReq")),
-        endDate: date()
-          .required(key("fieldReq"))
-          .test("is-greater", key("endDateValidation"), function (value) {
-            const { startDate } = this.parent;
-            return value > startDate;
-          }),
+        startDate: dateValidation,
+        endDate: dateGreater,
       });
 
   const validationSchema = myValidationSchema;

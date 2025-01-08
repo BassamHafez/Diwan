@@ -7,18 +7,20 @@ import {
   Formik,
   FontAwesomeIcon,
 } from "../../../../shared/index";
-import { faSpinner, toast, object, string } from "../../../../shared/constants";
+import { faSpinner, toast, object} from "../../../../shared/constants";
 import {
   useMutation,
   useTranslation,
   useFileHandler,
   useSelector,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateTestimonial = ({ hideModal, refetch, content }) => {
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const {mainReqValidation,messageValidation}=useValidation();
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -82,9 +84,9 @@ const UpdateTestimonial = ({ hideModal, refetch, content }) => {
   };
 
   const validationSchema = object({
-    name: string().required(key("fieldReq")),
-    title: string().required(key("fieldReq")),
-    comment: string().min(5, key("min5")).required(key("fieldReq")),
+    name: mainReqValidation,
+    title: mainReqValidation,
+    comment: messageValidation,
   });
 
   return (

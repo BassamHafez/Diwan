@@ -14,23 +14,27 @@ import {
   faCamera,
   toast,
   object,
-  string,
 } from "../../../../shared/constants";
 import {
   useDispatch,
   useMutation,
   useTranslation,
   useFileHandler,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
-import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 
 const UpdateUserData = ({ profileInfo, hideModal }) => {
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const {
+    mainReqValidation,
+    emailValidation,
+    phoneValidation,
+  } = useValidation();
   const dispatch = useDispatch();
-
   const { t: key } = useTranslation();
+  const token = JSON.parse(localStorage.getItem("token"));
+
   const requiredLabel = <span className="text-danger">*</span>;
 
   const { mutate, isPending } = useMutation({
@@ -91,13 +95,9 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
   };
 
   const validationSchema = object().shape({
-    name: string().required(key("fieldReq")),
-    email: string()
-      .email(`${key("emailValidation1")}`)
-      .required(`${key("emailValidation2")}`),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
+    name: mainReqValidation,
+    email: emailValidation,
+    phone: phoneValidation.required(key("fieldReq")),
   });
 
   return (

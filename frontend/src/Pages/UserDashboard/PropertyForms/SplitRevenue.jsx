@@ -8,23 +8,15 @@ import {
   Formik,
   FontAwesomeIcon,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  faCoins,
-  toast,
-  object,
-  string,
-  date,
-  number,
-} from "../../../shared/constants";
+import { faSpinner, faCoins, toast, object } from "../../../shared/constants";
 import {
   useMutation,
   useTranslation,
   useParams,
+  useValidation,
 } from "../../../shared/hooks";
-import { InputErrorMessage} from "../../../shared/components";
+import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
-
 
 const SplitRevenue = ({
   hideModal,
@@ -33,6 +25,8 @@ const SplitRevenue = ({
   revenueDetails,
 }) => {
   const token = JSON.parse(localStorage.getItem("token"));
+  const { positiveNumbersValidation, dateValidation, noteValidation } =
+    useValidation();
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();
@@ -88,9 +82,9 @@ const SplitRevenue = ({
   };
 
   const validationSchema = object({
-    splitedAmount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
-    dueDate: date().required(key("fieldReq")),
-    note: string().min(5, key("min5")),
+    splitedAmount: positiveNumbersValidation.required(key("fieldReq")),
+    dueDate: dateValidation,
+    note: noteValidation,
   });
 
   return (

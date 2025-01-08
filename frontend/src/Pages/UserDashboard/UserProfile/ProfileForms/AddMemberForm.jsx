@@ -9,13 +9,7 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  array,
-} from "../../../../shared/constants";
+import { faSpinner, toast, object } from "../../../../shared/constants";
 import {
   useEffect,
   useState,
@@ -24,15 +18,21 @@ import {
   useSelector,
   useDispatch,
   useCompoundOptions,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
-import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 
 const AddMemberForm = ({ hideModal, allPermissions }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
-  const {compoundsOptions} = useCompoundOptions();
-
+  const { compoundsOptions } = useCompoundOptions();
+  const {
+    mainReqValidation,
+    arrOfOptionsValidation,
+    emailValidation,
+    phoneValidation,
+    passwordValidation,
+  } = useValidation();
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -127,36 +127,13 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
   };
 
   const validationSchema = object().shape({
-    name: string().required(key("fieldReq")),
-    tag: string().required(key("fieldReq")),
-    email: string()
-      .email(`${key("emailValidation1")}`)
-      .required(`${key("emailValidation2")}`),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
-    password: string()
-      .min(5, key("min5"))
-      .required(key("fieldReq"))
-      .matches(/[A-Z]+/, key("validationUpperCase"))
-      .matches(/[a-z]+/, key("validationLowerCase"))
-      .matches(/[0-9]+/, key("validationNumber")),
-    permissions: array()
-      .of(
-        object().shape({
-          label: string().required(key("labelReq")),
-          value: string().required(key("valueReq")),
-        })
-      )
-      .required(key("fieldReq")),
-    permittedCompounds: array()
-      .of(
-        object().shape({
-          label: string().required(key("labelReq")),
-          value: string().required(key("valueReq")),
-        })
-      )
-      .nullable(),
+    name: mainReqValidation,
+    tag: mainReqValidation,
+    email: emailValidation,
+    phone: phoneValidation.required(key("fieldReq")),
+    password: passwordValidation,
+    permissions: arrOfOptionsValidation.required(key("fieldReq")),
+    permittedCompounds: arrOfOptionsValidation.nullable(),
   });
 
   return (
