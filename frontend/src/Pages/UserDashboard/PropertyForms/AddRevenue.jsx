@@ -22,17 +22,21 @@ import {
   useTranslation,
   useParams,
   useTenantsOptions,
+  useAddContactInForms,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
-  const { tenantsOptions } = useTenantsOptions();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const { tenantsOptions, refetchTenants } = useTenantsOptions();
+  const { AddTenants } = useAddContactInForms({ refetchTenants });
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
+  const { propId } = useParams();
+
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const { propId } = useParams();
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -99,7 +103,9 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
 
   const validationSchema = object().shape({
     tenant: string().required(key("fieldReq")),
-    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
+    amount: number()
+      .min(0, key("positiveValidation"))
+      .required(key("fieldReq")),
     dueDate: date()
       .required(key("fieldReq"))
       .test(
@@ -125,6 +131,9 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
       {({ setFieldValue }) => (
         <Form>
           <Row>
+            <div className="d-flex justify-content-end align items-center">
+              {AddTenants}
+            </div>
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="tenant">

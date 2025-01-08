@@ -37,6 +37,7 @@ import {
   useTagsOption,
   useContactsOptions,
   useCompoundOptions,
+  useAddContactInForms,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -52,7 +53,12 @@ const UpdateEstate = ({
   const { compoundsOptionsWithNot } = useCompoundOptions();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const { tagsOptions, refetchTags } = useTagsOption();
-  const { brokersOptions, landlordOptions } = useContactsOptions();
+  const { brokersOptions, landlordOptions, refetchBroker, refetchLandlord } =
+    useContactsOptions();
+  const {addBrokersAndLandLords} = useAddContactInForms({
+    refetchBroker,
+    refetchLandlord,
+  });
   const queryClient = useQueryClient();
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
@@ -199,8 +205,12 @@ const UpdateEstate = ({
     city: string(),
     address: string(),
     neighborhood: string(),
-    price: string().required(key("fieldReq")),
-    area: string().required(key("fieldReq")),
+    price: number()
+      .min(0, key("positiveOnlyValidation"))
+      .required(key("fieldReq")),
+    area: number()
+      .min(0, key("positiveOnlyValidation"))
+      .required(key("fieldReq")),
     broker: string(),
     commissionPercentage: number().min(0, key("positiveValidation")),
     lessor: string(),
@@ -274,6 +284,9 @@ const UpdateEstate = ({
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
+            {values.compound && values.compound?.value !== "not" ? null : (
+              <Col sm={12}>{addBrokersAndLandLords}</Col>
+            )}
             <Col sm={6}>
               <div className="field mb-1">
                 <label htmlFor="compound">{key("compound")}</label>
@@ -373,7 +386,7 @@ const UpdateEstate = ({
                 <label htmlFor="area">
                   {key("area")} ({key("areaUnit")}) {requiredLabel}
                 </label>
-                <Field type="text" id="area" name="area" />
+                <Field type="number" id="area" name="area" />
                 <ErrorMessage name="area" component={InputErrorMessage} />
               </div>
             </Col>
@@ -464,7 +477,7 @@ const UpdateEstate = ({
                 <label htmlFor="price">
                   {key("unitPrice")} ({key("sar")}) {requiredLabel}
                 </label>
-                <Field type="text" id="price" name="price" />
+                <Field type="number" id="price" name="price" />
                 <ErrorMessage name="price" component={InputErrorMessage} />
               </div>
 
