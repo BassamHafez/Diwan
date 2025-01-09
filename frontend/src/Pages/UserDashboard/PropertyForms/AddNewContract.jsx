@@ -7,8 +7,6 @@ import {
   generatePeriodOptions,
 } from "../../../Components/Logic/LogicFun";
 import ContractRevenues from "../PropertyDetails/ContractRevenues";
-import AddContactForm from "../Contacts/ContactForms/AddContactForm";
-
 import {
   ErrorMessage,
   Field,
@@ -21,9 +19,6 @@ import {
   faSpinner,
   toast,
   object,
-  string,
-  date,
-  number,
 } from "../../../shared/constants";
 import {
   useEffect,
@@ -33,16 +28,14 @@ import {
   useTranslation,
   useParams,
   useTenantsOptions,
+  useAddContactInForms,
+  useSelector,
+  useValidation,
 } from "../../../shared/hooks";
-import {
-  InputErrorMessage,
-  MainModal,
-  ModalForm,
-} from "../../../shared/components";
+import { InputErrorMessage, MainModal } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
-  const { tenantsOptions, refetchTenants } = useTenantsOptions();
   const [paymentPeriodUnit, setPaymentPeriodUnit] = useState("");
   const [paymentPeriodValueOptions, setPaymentPeriodValueOptions] = useState(
     []
@@ -52,12 +45,21 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
   const [endDate, setEndDate] = useState("");
   const [revenues, setRevenues] = useState([]);
   const [showRevenuesTable, setShowRevenuesTable] = useState(false);
-  const [showAddTenantModal, setShowAddTenantModal] = useState(false);
-  const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
+
+  const { tenantsOptions, refetchTenants } = useTenantsOptions();
+  const { AddTenants } = useAddContactInForms({ refetchTenants });
+  const {
+    positiveNumbersValidation,
+    mainReqValidation,
+    endDateValidation,
+    dateValidation,
+  } = useValidation();
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const { propId } = useParams();
   const queryClient = useQueryClient();
+
+  const notifyError = (message) => toast.error(message);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const requiredLabel = <span className="text-danger">*</span>;
 
@@ -157,27 +159,12 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    tenant: string().required(key("fieldReq")),
-    startDate: date().required(key("fieldReq")),
-    endDate: date()
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      )
-      .required(key("fieldReq"))
-      .test("is-greater", key("endDateValidation"), function (value) {
-        const { startDate } = this.parent;
-        return value > startDate;
-      }),
-    totalAmount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
-    paymentPeriodValue: string().required(key("fieldReq")),
-    paymentPeriodUnit: string().required(key("fieldReq")),
+    tenant: mainReqValidation,
+    startDate: dateValidation,
+    endDate: endDateValidation,
+    totalAmount: positiveNumbersValidation.required(key("fieldReq")),
+    paymentPeriodValue: mainReqValidation,
+    paymentPeriodUnit: mainReqValidation,
   });
 
   const showCalculatedRevenues = (values) => {
@@ -238,13 +225,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
                     {key("showRevenues")}
                   </button>
 
-                  <button
-                    className="submit_btn bg-navy mx-2"
-                    type="button"
-                    onClick={() => setShowAddTenantModal(true)}
-                  >
-                    {`${key("add")} ${key("tenant")}`}
-                  </button>
+                  {AddTenants}
                 </div>
               </Col>
               <Col sm={6}>
@@ -394,20 +375,6 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
       >
         <ContractRevenues revenues={revenues} />
       </MainModal>
-
-      {showAddTenantModal && (
-        <ModalForm
-          show={showAddTenantModal}
-          onHide={() => setShowAddTenantModal(false)}
-          modalSize="lg"
-        >
-          <AddContactForm
-            hideModal={() => setShowAddTenantModal(false)}
-            contactType={"tenant"}
-            refetch={refetchTenants}
-          />
-        </ModalForm>
-      )}
     </>
   );
 };

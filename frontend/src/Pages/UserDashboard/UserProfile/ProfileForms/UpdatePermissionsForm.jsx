@@ -1,7 +1,5 @@
 import fetchAccountData from "../../../../Store/accountInfo-actions";
-import {
-  mainFormsHandlerTypeRaw,
-} from "../../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 
 import {
   ErrorMessage,
@@ -16,7 +14,6 @@ import {
   toast,
   object,
   string,
-  array,
 } from "../../../../shared/constants";
 import {
   useEffect,
@@ -26,6 +23,7 @@ import {
   useDispatch,
   useSelector,
   useCompoundOptions,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row } from "../../../../shared/bootstrap";
@@ -39,8 +37,10 @@ const UpdatePermissionsForm = ({
   tag,
 }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
-  const {compoundsOptions} = useCompoundOptions();
-
+  const { compoundsOptions } = useCompoundOptions();
+  const {
+    arrOfOptionsValidation,
+  } = useValidation();
   const token = JSON.parse(localStorage.getItem("token"));
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -119,23 +119,10 @@ const UpdatePermissionsForm = ({
 
   const validationSchema = object().shape({
     tag: string(),
-    permissions: array()
-      .of(
-        object().shape({
-          label: string().required(key("labelReq")),
-          value: string().required(key("valueReq")),
-        })
-      )
+    permissions: arrOfOptionsValidation
       .min(1, key("permissionsMin"))
       .required(key("fieldReq")),
-    permittedCompounds: array()
-      .of(
-        object().shape({
-          label: string().required(key("labelReq")),
-          value: string().required(key("valueReq")),
-        })
-      )
-      .nullable(),
+    permittedCompounds: arrOfOptionsValidation.nullable(),
   });
 
   return (

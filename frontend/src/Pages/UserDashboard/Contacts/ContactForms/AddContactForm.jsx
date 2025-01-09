@@ -2,7 +2,6 @@ import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import DateField from "../../../../Components/Fields/DateField";
 import {
   countriesOptions,
-  phoneRejex,
   tenantTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
 import { cleanUpData } from "../../../../Components/Logic/LogicFun";
@@ -16,7 +15,7 @@ import {
   Select,
 } from "../../../../shared/index";
 import { faSpinner, toast, object, string } from "../../../../shared/constants";
-import { useMutation, useTranslation } from "../../../../shared/hooks";
+import { useMutation, useTranslation, useValidation } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
@@ -29,6 +28,7 @@ const AddContactForm = ({
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
+  const { phoneValidation, mainReqValidation,noteValidation } = useValidation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currenLang = isArLang ? "ar" : "en";
@@ -134,12 +134,10 @@ const AddContactForm = ({
   };
 
   const validationSchema = object().shape({
-    name: string().required(key("fieldReq")),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
-    phone2: string().matches(phoneRejex, key("invalidPhone")),
-    notes: string(),
+    name: mainReqValidation,
+    phone:phoneValidation.required(key("fieldReq")),
+    phone2:phoneValidation,
+    notes:noteValidation,
     type: string().when("contactType", {
       is: (contactType) => contactType === "tenant",
       then: (schema) => schema.required(key("fieldReq")),

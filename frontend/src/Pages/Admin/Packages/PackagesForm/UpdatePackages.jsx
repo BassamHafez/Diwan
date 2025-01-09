@@ -3,7 +3,6 @@ import {
   maxEstatesInCompoundOriginalOptions,
   packagesDuration,
 } from "../../../../Components/Logic/StaticLists";
-
 import {
   ErrorMessage,
   Field,
@@ -12,20 +11,24 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../../shared/index";
+import { faSpinner, toast, object } from "../../../../shared/constants";
 import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  number,
-} from "../../../../shared/constants";
-import { useMutation, useSelector, useTranslation } from "../../../../shared/hooks";
+  useMutation,
+  useSelector,
+  useTranslation,
+  useValidation,
+} from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdatePackages = ({ pack, refetch, hideModal }) => {
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
+  const {
+    mainReqValidation,
+    positiveNumbersValidation,
+    selectOptionValidationTypeNumber,
+  } = useValidation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
 
@@ -137,25 +140,15 @@ const UpdatePackages = ({ pack, refetch, hideModal }) => {
   };
 
   const validationSchema = object({
-    arTitle: string().required(key("fieldReq")),
-    enTitle: string().required(key("fieldReq")),
-    price: number().min(0, key("positiveValidation")).required(key("fieldReq")),
-    originalPrice: number().required(key("fieldReq")),
-    usersCount: number().min(0, key("positiveValidation")),
-    compoundsCount: number().min(0, key("positiveValidation")),
-    estatesCount: number().min(0, key("positiveValidation")),
-    duration: object()
-      .shape({
-        label: string(),
-        value: number(),
-      })
-      .required(key("fieldReq")),
-    maxEstatesInCompound: object()
-      .shape({
-        label: string(),
-        value: number(),
-      })
-      .nullable(),
+    arTitle: mainReqValidation.required(key("fieldReq")),
+    enTitle: mainReqValidation.required(key("fieldReq")),
+    price: positiveNumbersValidation.required(key("fieldReq")),
+    originalPrice: positiveNumbersValidation,
+    usersCount: positiveNumbersValidation,
+    compoundsCount: positiveNumbersValidation,
+    estatesCount: positiveNumbersValidation,
+    duration: selectOptionValidationTypeNumber.required(key("fieldReq")),
+    maxEstatesInCompound: selectOptionValidationTypeNumber.nullable(),
   });
 
   return (

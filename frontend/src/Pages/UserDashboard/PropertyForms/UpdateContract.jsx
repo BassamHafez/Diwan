@@ -17,14 +17,7 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  date,
-  number,
-} from "../../../shared/constants";
+import { faSpinner, toast, object } from "../../../shared/constants";
 import {
   useEffect,
   useState,
@@ -32,6 +25,7 @@ import {
   useQueryClient,
   useTranslation,
   useParams,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage, MainModal } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -50,7 +44,12 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
   const [endDate, setEndDate] = useState(formattedDate(contract.endDate) || "");
   const [revenues, setRevenues] = useState([]);
   const [showRevenuesTable, setShowRevenuesTable] = useState(false);
-
+  const {
+    positiveNumbersValidation,
+    mainReqValidation,
+    dateValidation,
+    endDateValidation,
+  } = useValidation();
   const notifyError = (message) => toast.error(message);
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -164,27 +163,12 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
   };
 
   const validationSchema = object({
-    tenant: string().required(key("fieldReq")),
-    startDate: date().required(key("fieldReq")),
-    endDate: date()
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      )
-      .required(key("fieldReq"))
-      .test("is-greater", key("endDateValidation"), function (value) {
-        const { startDate } = this.parent;
-        return value > startDate;
-      }),
-    totalAmount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
-    paymentPeriodValue: string().required(key("fieldReq")),
-    paymentPeriodUnit: string().required(key("fieldReq")),
+    tenant: mainReqValidation,
+    startDate: dateValidation,
+    endDate: endDateValidation,
+    totalAmount: positiveNumbersValidation,
+    paymentPeriodValue: mainReqValidation,
+    paymentPeriodUnit: mainReqValidation,
   });
 
   const showCalculatedRevenues = (values) => {

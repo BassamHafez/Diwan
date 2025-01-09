@@ -20,8 +20,6 @@ import {
   toast,
   object,
   string,
-  date,
-  number,
 } from "../../../../shared/constants";
 import {
   useState,
@@ -31,21 +29,31 @@ import {
   useEstatesOptions,
   useCompoundOptions,
   useServicesContact,
+  useAddContactInForms,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddTask = ({ hideModal, refetch, propId, compId }) => {
-  const estatesOptions = useEstatesOptions();
-  const {compoundsOptions} = useCompoundOptions();
-  const servicesOptions = useServicesContact();
-
   const [isCompound, setIsCompound] = useState(compId ? true : false);
-  const token = JSON.parse(localStorage.getItem("token"));
+
+  const estatesOptions = useEstatesOptions();
+  const { compoundsOptions } = useCompoundOptions();
+  const { servicesOptions, refetchServices } = useServicesContact();
+  const { AddServices } = useAddContactInForms({ refetchServices });
+  const {
+    positiveNumbersValidation,
+    dateValidation,
+    mainReqValidation,
+    selectOptionValidationTypeString,
+  } = useValidation();
+  const queryClient = useQueryClient();
   const { t: key } = useTranslation();
+
+  const token = JSON.parse(localStorage.getItem("token"));
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const queryClient = useQueryClient();
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -78,7 +86,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
       updatedValues.compound = updatedValues.compound.value;
     }
 
-    const cleanedValues = cleanUpData({...updatedValues});
+    const cleanedValues = cleanUpData({ ...updatedValues });
     console.log(cleanedValues);
     toast.promise(
       new Promise((resolve, reject) => {
@@ -122,26 +130,14 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
   };
 
   const validationSchema = object({
-    title: string().required(key("fieldReq")),
-    date: date().required(key("fieldReq")),
-    estate: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
-    compound: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
+    title: mainReqValidation,
+    date: dateValidation,
+    estate: selectOptionValidationTypeString.nullable(),
+    compound: selectOptionValidationTypeString.nullable(),
     contact: string().nullable(),
-    type: string().required(key("fieldReq")),
-    cost: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
-    priority: string().required(key("fieldReq")),
+    type: mainReqValidation,
+    cost: positiveNumbersValidation.required(key("fieldReq")),
+    priority: mainReqValidation,
     description: string(),
   });
 
@@ -155,6 +151,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
+            {AddServices}
             <Col sm={12}>
               <div className="field">
                 <label htmlFor="title">
