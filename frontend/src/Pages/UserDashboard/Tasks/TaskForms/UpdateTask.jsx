@@ -4,7 +4,6 @@ import {
   taskTypeOptions,
 } from "../../../../Components/Logic/StaticLists";
 import { formattedDate } from "../../../../Components/Logic/LogicFun";
-
 import {
   ErrorMessage,
   Field,
@@ -13,14 +12,7 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  date,
-  number,
-} from "../../../../shared/constants";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
 import {
   useMutation,
   useQueryClient,
@@ -28,15 +20,23 @@ import {
   useEstatesOptions,
   useCompoundOptions,
   useServicesContact,
+  useAddContactInForms,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
   const estatesOptions = useEstatesOptions();
-  const {compoundsOptions} = useCompoundOptions();
-  const servicesOptions = useServicesContact();
-
+  const { compoundsOptions } = useCompoundOptions();
+  const { servicesOptions, refetchServices } = useServicesContact();
+  const { AddServices } = useAddContactInForms({ refetchServices });
+  const {
+    positiveNumbersValidation,
+    dateValidation,
+    mainReqValidation,
+    selectOptionValidationTypeString,
+  } = useValidation();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -143,41 +143,14 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
   };
 
   const validationSchema = object({
-    title: string().required(key("fieldReq")),
-    date: date().required(key("fieldReq")),
-    estate: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
-    compound: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
-    contact: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .nullable(),
-    type: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .required(key("fieldReq")),
-    cost: number()
-      .min(0, key("positiveOnlyValidation"))
-      .required(key("fieldReq")),
-    priority: object()
-      .shape({
-        label: string(),
-        value: string(),
-      })
-      .required(key("fieldReq")),
+    title: mainReqValidation,
+    date: dateValidation,
+    estate: selectOptionValidationTypeString.nullable(),
+    compound: selectOptionValidationTypeString.nullable(),
+    contact: selectOptionValidationTypeString.nullable(),
+    type: selectOptionValidationTypeString.required(key("fieldReq")),
+    cost: positiveNumbersValidation.required(key("fieldReq")),
+    priority: selectOptionValidationTypeString.required(key("fieldReq")),
     description: string(),
   });
 
@@ -191,6 +164,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
+            {AddServices}
             <Col sm={12}>
               <div className="field">
                 <label htmlFor="title">

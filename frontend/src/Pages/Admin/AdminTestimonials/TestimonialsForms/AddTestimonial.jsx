@@ -12,13 +12,13 @@ import {
   faImage,
   toast,
   object,
-  string,
 } from "../../../../shared/constants";
 import {
   useMutation,
   useTranslation,
   useFileHandler,
   useSelector,
+  useValidation,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
@@ -27,6 +27,7 @@ const AddTestimonial = ({ hideModal, refetch }) => {
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const {mainReqValidation,messageValidation}=useValidation();
   const requiredLabel = <span className="text-danger">*</span>;
 
   const { mutate, isPending } = useMutation({
@@ -87,9 +88,9 @@ const AddTestimonial = ({ hideModal, refetch }) => {
   };
 
   const validationSchema = object({
-    name: string().required(key("fieldReq")),
-    title: string().required(key("fieldReq")),
-    comment: string().min(5, key("min5")).required(key("fieldReq")),
+    name: mainReqValidation,
+    title: mainReqValidation,
+    comment: messageValidation,
   });
 
   return (

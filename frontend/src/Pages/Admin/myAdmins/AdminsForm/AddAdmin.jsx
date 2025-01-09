@@ -1,5 +1,4 @@
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
-import { phoneRejex } from "../../../../Components/Logic/StaticLists";
 import {
   ErrorMessage,
   Field,
@@ -7,19 +6,25 @@ import {
   Formik,
   FontAwesomeIcon,
 } from "../../../../shared/index";
+import { faSpinner, toast, object } from "../../../../shared/constants";
 import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  ref,
-} from "../../../../shared/constants";
-import { useMutation, useSelector, useTranslation } from "../../../../shared/hooks";
+  useMutation,
+  useSelector,
+  useTranslation,
+  useValidation,
+} from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddAdmin = ({ refetch, hideModal }) => {
   const { t: key } = useTranslation();
+  const {
+    nameValidation,
+    emailValidation,
+    phoneValidation,
+    passwordValidation,
+    confirmPasswordValidation,
+  } = useValidation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = useSelector((state) => state.userInfo.token);
 
@@ -79,25 +84,11 @@ const AddAdmin = ({ refetch, hideModal }) => {
   };
 
   const validationSchema = object({
-    name: string()
-      .min(3, `${key("nameValidation1")}`)
-      .max(20, `${key("nameValidation2")}`)
-      .required(`${key("nameValidation3")}`),
-    email: string()
-      .email(`${key("emailValidation1")}`)
-      .required(`${key("emailValidation2")}`),
-    phone: string()
-      .matches(phoneRejex, key("invalidPhone"))
-      .required(key("fieldReq")),
-    password: string()
-      .min(5, key("min5"))
-      .required(key("fieldReq"))
-      .matches(/[A-Z]+/, key("validationUpperCase"))
-      .matches(/[a-z]+/, key("validationLowerCase"))
-      .matches(/[0-9]+/, key("validationNumber")),
-    passwordConfirm: string()
-      .oneOf([ref("password"), null], `${key("passwordMismatch")}`)
-      .required(`${key("fieldReq")}`),
+    name: nameValidation,
+    email: emailValidation,
+    phone: phoneValidation,
+    password: passwordValidation,
+    passwordConfirm: confirmPasswordValidation,
   });
 
   return (

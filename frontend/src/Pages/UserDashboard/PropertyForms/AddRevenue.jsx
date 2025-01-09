@@ -9,30 +9,34 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-  date,
-  number,
-} from "../../../shared/constants";
+import { faSpinner, toast, object } from "../../../shared/constants";
 import {
   useMutation,
   useTranslation,
   useParams,
   useTenantsOptions,
+  useAddContactInForms,
+  useSelector,
+  useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 
 const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
-  const { tenantsOptions } = useTenantsOptions();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const { tenantsOptions, refetchTenants } = useTenantsOptions();
+  const { AddTenants } = useAddContactInForms({ refetchTenants });
+  const {
+    positiveNumbersValidation,
+    mainReqValidation,
+    noFutureDateValidation,
+    noteValidation,
+  } = useValidation();
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
+  const { propId } = useParams();
+
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const { propId } = useParams();
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
@@ -98,22 +102,11 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
   };
 
   const validationSchema = object().shape({
-    tenant: string().required(key("fieldReq")),
-    amount: number().min(0, key("positiveValidation")).required(key("fieldReq")),
-    dueDate: date()
-      .required(key("fieldReq"))
-      .test(
-        "is-present-or-future",
-        key("startDateValidation"),
-        function (value) {
-          if (!value) return false;
-          const today = new Date();
-          today.setHours(0, 0, 0, 0);
-          return new Date(value) >= today;
-        }
-      ),
-    type: string().required(key("fieldReq")),
-    note: string(),
+    tenant: mainReqValidation,
+    amount: positiveNumbersValidation.required(key("fieldReq")),
+    dueDate: noFutureDateValidation,
+    type: mainReqValidation,
+    note: noteValidation,
   });
 
   return (
@@ -125,6 +118,9 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
       {({ setFieldValue }) => (
         <Form>
           <Row>
+            <div className="d-flex justify-content-end align items-center">
+              {AddTenants}
+            </div>
             <Col sm={6}>
               <div className="field">
                 <label htmlFor="tenant">
