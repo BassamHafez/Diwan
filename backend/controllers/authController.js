@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Tag = require("../models/tagModel");
+const Config = require("../models/configModel");
 const ScheduledMission = require("../models/scheduledMissionModel");
 const { USER_ACCESS_PERMISSIONS } = require("../utils/globals");
 const catchAsync = require("../utils/catchAsync");
@@ -45,7 +46,14 @@ exports.signup = catchAsync(async (req, res, next) => {
     permissions: USER_ACCESS_PERMISSIONS,
   };
 
-  const subExpireDate = new Date(Date.now() + 5 * 24 * 60 * 60 * 1000);
+  const [newUser, FREE_TRIAL_DAYS] = await Promise.all([
+    User.create(userData),
+    Config.findOne({ key: "TRIAL_DAYS" }).select("value").lean(),
+  ]);
+
+  const subExpireDate = new Date(
+    Date.now() + FREE_TRIAL_DAYS.value * 24 * 60 * 60 * 1000
+  );
 
   const accountData = {
     _id: accountId,
@@ -59,8 +67,6 @@ exports.signup = catchAsync(async (req, res, next) => {
       },
     ],
   };
-
-  const newUser = await User.create(userData);
 
   await Promise.all([
     Tag.create({ account: accountId }),
