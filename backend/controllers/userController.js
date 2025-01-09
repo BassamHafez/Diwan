@@ -1,8 +1,9 @@
 const crypto = require("crypto");
 const sharp = require("sharp");
 const { uploadSingleImage } = require("../utils/uploadImage");
-const { sendWAText } = require("../utils/sendWAMessage");
+const { sendWAText, sendWAMedia } = require("../utils/sendWAMessage");
 const sendEmail = require("../utils/sendEmail");
+const { messageToUserHtml } = require("../utils/htmlMessages");
 const { formatSaudiNumber } = require("../utils/formatNumbers");
 
 const User = require("../models/userModel");
@@ -196,6 +197,8 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.uploadMediaImage = uploadSingleImage("image");
+
 exports.sendUsersMessage = catchAsync(async (req, res, next) => {
   const { message, type, usersIds } = req.body;
 
@@ -207,13 +210,44 @@ exports.sendUsersMessage = catchAsync(async (req, res, next) => {
     return next(new ApiError("No users found with that IDs", 404));
   }
 
+  let mediaBase64 = null;
+  let msgHtml = messageToUserHtml(message);
+  let attachments = null;
+
+  if (req.file && req.file.buffer) {
+    mediaBase64 = req.file.buffer.toString("base64");
+
+    msgHtml = messageToUserHtml(
+      message,
+      mediaBase64,
+      req.file.mimetype.split("/")[1].replace(" ", "")
+    );
+
+    attachments = [
+      {
+        filename: `image-from-diwan.${req.file.mimetype
+          .split("/")[1]
+          .replace(" ", "")}`,
+        content: mediaBase64,
+        encoding: "base64",
+        contentType: req.file.mimetype,
+      },
+    ];
+  }
+
   if (type === "whatsapp") {
-    users.forEach((user) => {
-      sendWAText(formatSaudiNumber(user.phone), message);
-    });
+    if (mediaBase64) {
+      users.forEach((user) => {
+        sendWAMedia(formatSaudiNumber(user.phone), null, mediaBase64, message);
+      });
+    } else {
+      users.forEach((user) => {
+        sendWAText(formatSaudiNumber(user.phone), message);
+      });
+    }
   } else if (type === "email") {
     users.forEach((user) => {
-      sendEmail(user.email, "Diwan Website", message);
+      sendEmail(user.email, "Diwan Website", message, msgHtml, attachments);
     });
   } else {
     return next(new ApiError("Invalid message type", 400));

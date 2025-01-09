@@ -45,6 +45,7 @@ router
 
 router.post(
   "/messages",
+  userController.uploadMediaImage,
   userValidator.validateSendUsersMessage,
   userController.sendUsersMessage
 );
