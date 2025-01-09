@@ -153,3 +153,11 @@ exports.subscriptionExpirationHtml = (name) => {
 </html>
     `;
 };
+
+exports.messageToUserHtml = (message) => {
+  return `
+  <div style="line-height: 1.6; padding: 5px;">
+  <p style="font-size: 18px;">${message}</p>
+    </div>
+    `;
+};
