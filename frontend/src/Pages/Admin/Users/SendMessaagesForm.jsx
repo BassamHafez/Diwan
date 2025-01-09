@@ -51,6 +51,7 @@ const SendMessaagesForm = ({
     }
 
     const myIds = selectedUsers?.length > 0 ? selectedUsers : allUsers;
+  
     myIds.forEach((val, index) => {
       formData.append(`usersIds[${index}]`, val);
     });
