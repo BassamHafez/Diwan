@@ -12,6 +12,7 @@ const configsSlice = createSlice({
     messageCodeReminder:"",
     whatsappMessage:"",
     VAT:"0",
+    TRIAL_DAYS:"5",
   },
   reducers: {
     setMainColor(state, action) {
@@ -34,6 +35,9 @@ const configsSlice = createSlice({
     },
     setVAT(state, action) {
       state.VAT = action.payload;
+    },
+    setFreeTrail(state, action) {
+      state.TRIAL_DAYS = action.payload;
     },
   },
 });

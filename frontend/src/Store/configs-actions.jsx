@@ -42,8 +42,11 @@ const fetchConfigs = () => {
       dispatch(
         configActions.setEmail(findConfigByKey(res?.data, "EMAIL")?.value)
       );
+      dispatch(configActions.setVAT(findConfigByKey(res?.data, "VAT")?.value));
       dispatch(
-        configActions.setVAT(findConfigByKey(res?.data, "VAT")?.value)
+        configActions.setFreeTrail(
+          findConfigByKey(res?.data, "TRIAL_DAYS")?.value
+        )
       );
     } catch (error) {
       console.error(error);
