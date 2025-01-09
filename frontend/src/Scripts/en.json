@@ -636,6 +636,7 @@
   "termValidation":"At least one term is required",
   "contactUsLinks":"Reach out to us through the following links if you need any assistance",
   "sendMessagesAll":"Send messages to all",
+  "poster":"Poster",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",
