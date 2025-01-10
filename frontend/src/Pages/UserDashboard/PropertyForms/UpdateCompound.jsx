@@ -15,12 +15,7 @@ import {
   Select,
   CreatableSelect,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-} from "../../../shared/constants";
+import { faSpinner, toast, object, string } from "../../../shared/constants";
 import {
   useEffect,
   useState,
@@ -120,8 +115,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
         values.electricityAccountNumber.toString()
       );
     }
-    const isTagsExist = values.tags?.length > 0;
-    if (isTagsExist) {
+    if (Array.isArray(values.tags)) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
       });
@@ -141,7 +135,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
               console.log(data);
               if (data?.status === "success") {
                 await refetch();
-                if (isTagsExist) {
+                if (values.tags?.length > 0) {
                   refetchTags();
                 }
                 queryClient.invalidateQueries(["compounds", token]);
@@ -271,7 +265,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                     isRtl={isArLang ? true : false}
                     placeholder=""
                   />
-                  <ErrorMessage name="city" component="div" className="error" />
+                  <ErrorMessage name="city" component={InputErrorMessage} />
                 </div>
               </Col>
               <Col sm={6}>

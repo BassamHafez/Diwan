@@ -76,34 +76,24 @@ const AddCompound = ({ hideModal, refetch }) => {
 
   const onSubmit = (values, { resetForm }) => {
     const formData = new FormData();
-    if (selectedFile) {
-      formData.append("image", selectedFile);
-    } else {
+
+    if (!selectedFile) {
       notifyError(key("uploadPhoto"));
       return;
     }
-    formData.append("name", values.name);
-    formData.append("description", values.description);
-    formData.append("city", values.city);
-    formData.append("region", values.region);
-    formData.append("neighborhood", values.neighborhood || "not specified");
-
-    if (values.address) {
-      formData.append("address", values.address);
+    if (values.broker && !values.commissionPercentage) {
+      formData.append("commissionPercentage", 0);
     }
-    if (values.landlord) {
-      formData.append("landlord", values.landlord);
-    }
-    if (values.broker) {
-      formData.append("broker", values.broker);
-      formData.append("commissionPercentage", values.commissionPercentage || 0);
-    }
-    const isTagsExist = values.tags?.length > 0;
-    if (isTagsExist) {
-      values.tags.forEach((obj, index) => {
-        formData.append(`tags[${index}]`, obj.value);
-      });
-    }
+    formData.append("image", selectedFile);
+    Object.entries(values).forEach(([key, value]) => {
+      if (key === "tags" && Array.isArray(value)) {
+        value.forEach((tag, index) =>
+          formData.append(`tags[${index}]`, tag.value)
+        );
+      } else if (value) {
+        formData.append(key, value);
+      }
+    });
 
     toast.promise(
       new Promise((resolve, reject) => {
@@ -120,7 +110,8 @@ const AddCompound = ({ hideModal, refetch }) => {
               if (data?.status === "success") {
                 await refetch();
                 dispatch(fetchAccountData(token));
-                if (isTagsExist) {
+                if (values.tags?.length > 0) {
+                  console.log("ddd");
                   refetchTags();
                 }
                 resolve();
@@ -251,7 +242,7 @@ const AddCompound = ({ hideModal, refetch }) => {
                     isRtl={isArLang ? true : false}
                     placeholder={isArLang ? "" : "select"}
                   />
-                  <ErrorMessage name="city" component="div" className="error" />
+                  <ErrorMessage name="city" component={InputErrorMessage} />
                 </div>
               </Col>
               <Col sm={6}>
