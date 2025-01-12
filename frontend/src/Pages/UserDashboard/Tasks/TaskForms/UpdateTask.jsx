@@ -77,6 +77,7 @@ const UpdateTask = ({ hideModal, refetch, task, propId, compId }) => {
         "",
   };
 
+
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = {
       title: values.title,

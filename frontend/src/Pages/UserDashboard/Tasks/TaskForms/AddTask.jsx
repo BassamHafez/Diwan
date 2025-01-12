@@ -83,8 +83,10 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
 
     if (!isCompound && updatedValues.estate) {
       updatedValues.estate = updatedValues.estate.value;
+      updatedValues.compound = "";
     } else if (isCompound && updatedValues.compound) {
       updatedValues.compound = updatedValues.compound.value;
+      updatedValues.estate = "";
     }
 
     const cleanedValues = cleanUpData({ ...updatedValues });
