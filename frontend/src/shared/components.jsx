@@ -22,6 +22,8 @@ import MainFooter from "../Components/Footer/MainFooter";
 import PolicyList from "../Components/UI/Blocks/PolicyList";
 import HomeTestimonalsSlider from "../Pages/Home/HomeTestimonalsSlider";
 import Hero from "../Components/Hero/Hero";
+import CheckMySubscriptions from "../Components/CheckPermissions/CheckMySubscriptions";
+import CheckPermissions from "../Components/CheckPermissions/CheckPermissions";
 
 export {
   MainTitle,
@@ -47,5 +49,7 @@ export {
   MainFooter,
   PolicyList,
   HomeTestimonalsSlider,
-  Hero
+  Hero,
+  CheckMySubscriptions,
+  CheckPermissions
 };

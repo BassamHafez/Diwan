@@ -30,15 +30,15 @@ import {
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import TaskContent from "../Tasks/TaskContent";
 import useEstateAnalysis from "../../../hooks/useEstateAnalysis";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const PropertyDetails = () => {
   const [isMarked, setIsMarked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const token = useSelector((state) => state.userInfo.token);
   const accountInfo = useSelector((state) => state.accountInfo.data);
-
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { propId } = useParams();
   const { t: key } = useTranslation();
   const queryClient = useQueryClient();
@@ -166,15 +166,11 @@ const PropertyDetails = () => {
     }
   };
 
-  const settingIsLoading = (bol) => {
-    setIsLoading(bol);
-  };
-
   return (
     <>
       <ScrollTopBtn />
       <div className="height_container">
-        {!data || isLoading ? (
+        {!data ? (
           <LoadingOne />
         ) : data ? (
           <div className={styles.detials_content}>
@@ -192,7 +188,9 @@ const PropertyDetails = () => {
                     {myData?.estate?.name}
                   </h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
-                    <CheckPermissions btnActions={["DELETE_ESTATE"]}>
+                    <CheckPermissions 
+                    profileInfo={profileInfo}
+                    btnActions={["DELETE_ESTATE"]}>
                       <div
                         className={`${styles.controller_btn} ${styles.delete_btn}`}
                         onClick={() => setShowDeleteModal(true)}
@@ -201,22 +199,28 @@ const PropertyDetails = () => {
                         <FontAwesomeIcon icon={faTrashCan} />
                       </div>
                     </CheckPermissions>
-
-                    <CheckPermissions btnActions={["FAVORITES"]}>
-                      <div
-                        className={
-                          isMarked ? styles.bookmarked : styles.no_bookmark
-                        }
-                        onClick={bookMarkEstate}
-                        title={`${
-                          isMarked ? key("removeBookMark") : key("bookmarked")
-                        }`}
-                      >
-                        <FontAwesomeIcon
-                          icon={isMarked ? solidHeart : faHeart}
-                        />
-                      </div>
-                    </CheckPermissions>
+                    <CheckMySubscriptions
+                      name="isFavoriteAllowed"
+                      accountInfo={accountInfo}
+                    >
+                      <CheckPermissions 
+                      profileInfo={profileInfo}
+                      btnActions={["FAVORITES"]}>
+                        <div
+                          className={
+                            isMarked ? styles.bookmarked : styles.no_bookmark
+                          }
+                          onClick={bookMarkEstate}
+                          title={`${
+                            isMarked ? key("removeBookMark") : key("bookmarked")
+                          }`}
+                        >
+                          <FontAwesomeIcon
+                            icon={isMarked ? solidHeart : faHeart}
+                          />
+                        </div>
+                      </CheckPermissions>
+                    </CheckMySubscriptions>
                   </div>
                 </div>
                 <Col
@@ -424,7 +428,6 @@ const PropertyDetails = () => {
                     details={myData?.estate}
                     estateParentCompound={myData?.compound}
                     refetch={refetch}
-                    settingIsLoading={settingIsLoading}
                   />
                 </Tab>
 

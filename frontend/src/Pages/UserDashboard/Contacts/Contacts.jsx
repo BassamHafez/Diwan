@@ -24,6 +24,7 @@ const Contacts = () => {
   const [showTenantDetials, setShowTenantDetails] = useState(false);
   const [isListView, setIsListView] = useState(false);
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const token = useSelector((state) => state.userInfo.token);
   const [selectedFilter, setSelectedFilter] = useState("contacts");
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
@@ -485,7 +486,10 @@ const Contacts = () => {
               <div className="my-1">
                 <SearchField onSearch={onSearch} text={key("searchContacts")} />
               </div>
-              <CheckPermissions btnActions={["ADD_CONTACT"]}>
+              <CheckPermissions
+                btnActions={["ADD_CONTACT"]}
+                profileInfo={profileInfo}
+              >
                 <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
                   <ButtonOne
                     onClick={showAddModal}

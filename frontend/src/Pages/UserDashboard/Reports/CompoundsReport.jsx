@@ -18,6 +18,7 @@ import Select from "react-select";
 import MainTitle from "../../../Components/UI/Words/MainTitle";
 import PrintFinancialReport from "../../../Components/Prints/PrintFinancialReport";
 import CompoundsReportForm from "./ReportForms/CompoundsReportForm";
+import { useSelector } from "react-redux";
 
 const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
   const [expenses, setExpenses] = useState([]);
@@ -29,7 +30,7 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
     landlord: "",
   });
   const [resultFilter, setResultFilter] = useState("");
-
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
@@ -128,7 +129,10 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
                 isClearable
               />
               <div>
-                <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["COMPOUNDS_REPORTS"]}
+                >
                   <ButtonOne
                     classes="m-2"
                     borderd

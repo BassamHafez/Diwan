@@ -15,7 +15,12 @@ import {
   Select,
 } from "../../../../shared/index";
 import { faSpinner, toast, object, string } from "../../../../shared/constants";
-import { useMutation, useTranslation, useValidation } from "../../../../shared/hooks";
+import {
+  useMutation,
+  useSelector,
+  useTranslation,
+  useValidation,
+} from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
@@ -26,9 +31,10 @@ const AddContactForm = ({
   refetchAllContacts,
 }) => {
   const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
-  const { phoneValidation, mainReqValidation,noteValidation } = useValidation();
+  const { phoneValidation, mainReqValidation, noteValidation } =
+    useValidation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currenLang = isArLang ? "ar" : "en";
@@ -135,9 +141,9 @@ const AddContactForm = ({
 
   const validationSchema = object().shape({
     name: mainReqValidation,
-    phone:phoneValidation.required(key("fieldReq")),
-    phone2:phoneValidation,
-    notes:noteValidation,
+    phone: phoneValidation.required(key("fieldReq")),
+    phone2: phoneValidation,
+    notes: noteValidation,
     type: string().when("contactType", {
       is: (contactType) => contactType === "tenant",
       then: (schema) => schema.required(key("fieldReq")),

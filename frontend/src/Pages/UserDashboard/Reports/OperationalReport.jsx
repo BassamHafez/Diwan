@@ -19,6 +19,7 @@ import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import PrintContractsReport from "../../../Components/Prints/PrintContractsReport";
 import Select from "react-select";
 import MainTitle from "../../../Components/UI/Words/MainTitle";
+import { useSelector } from "react-redux";
 
 const OperationalReport = ({
   compoundsOptions,
@@ -36,7 +37,7 @@ const OperationalReport = ({
     landlord: "",
     estate: "",
   });
-
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -198,7 +199,10 @@ const OperationalReport = ({
 
             <div>
               {contractsData && contractsData?.length > 0 && (
-                <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["CONTRACTS_REPORTS"]}
+                >
                   <ButtonOne
                     classes="m-2"
                     borderd

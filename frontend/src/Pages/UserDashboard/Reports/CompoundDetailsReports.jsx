@@ -16,6 +16,7 @@ import {
   useState,
   useCompoundAnlaysis,
   useTranslation,
+  useSelector,
 } from "../../../shared/hooks";
 import { ButtonOne, MainTitle } from "../../../shared/components";
 
@@ -34,7 +35,7 @@ const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
     netReturnsVal,
     collectionRatioVal,
   } = useCompoundAnlaysis(compoundData || {});
-
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
 
   const getSearchData = useCallback((compoundData, formValues) => {
@@ -145,7 +146,10 @@ const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
           <div className={`${styles.header} justify-content-end`}>
             <div>
               {compoundData && (
-                <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["COMPOUNDS_REPORTS"]}
+                >
                   <ButtonOne
                     classes="m-2"
                     borderd

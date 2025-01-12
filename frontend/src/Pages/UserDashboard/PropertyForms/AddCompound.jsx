@@ -25,8 +25,12 @@ import {
   useTagsOption,
   useAddContactInForms,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
-import { InputErrorMessage } from "../../../shared/components";
+import {
+  CheckMySubscriptions,
+  InputErrorMessage,
+} from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
@@ -48,13 +52,14 @@ const AddCompound = ({ hideModal, refetch }) => {
   });
   const { positiveNumbersValidation, mainReqValidation, messageValidation } =
     useValidation();
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const dispatch = useDispatch();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
+  const notifyError = (message) => toast.error(message);
 
   const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
@@ -366,14 +371,19 @@ const AddCompound = ({ hideModal, refetch }) => {
               <button onClick={hideModal} className="cancel_btn my-2">
                 {key("cancel")}
               </button>
-
-              <button className="submit_btn my-2" type="submit">
-                {isPending ? (
-                  <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
-                ) : (
-                  key("add")
-                )}
-              </button>
+              <CheckMySubscriptions
+                name="allowedEstates"
+                type="number"
+                accountInfo={accountInfo}
+              >
+                <button className="submit_btn my-2" type="submit">
+                  {isPending ? (
+                    <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
+                  ) : (
+                    key("add")
+                  )}
+                </button>
+              </CheckMySubscriptions>
             </div>
           </Form>
         )}

@@ -3,7 +3,7 @@ import logo from "../assets/logo.png";
 import whiteLogo from "../assets/whiteLogo.png";
 import avatar from "../assets/default.png";
 import noAvatar from "../assets/noAvatar.png";
-
+import organizationImage from "../assets/organization.png";
 //main
 import managmentImg from "../assets/house-with-garage-garage.webp";
 import cityImg from "../assets/luxurious-villa-with-modern-architectural-design.webp";
@@ -20,6 +20,7 @@ import registerImg from "../assets/register.webp";
 //icons
 import paid from "../assets/icons/paid.png";
 import profits from "../assets/icons/profits.png";
+import homeKey from "../assets/icons/home-key.png";
 import loss from "../assets/icons/loss.png";
 import pending from "../assets/icons/pending.png";
 import cash from "../assets/icons/cash.png";
@@ -60,5 +61,7 @@ export {
   registerImg,
   circles,
   dash,
-  terms
+  terms,
+  organizationImage,
+  homeKey
 };

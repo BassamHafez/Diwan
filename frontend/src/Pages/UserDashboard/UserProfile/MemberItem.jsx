@@ -1,18 +1,19 @@
 import styles from "./UserProfile.module.css";
-import avatar from "../../../assets/default.png";
-import Col from "react-bootstrap/esm/Col";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { mainDeleteFunHandler } from "../../../util/Http";
-import { useDispatch } from "react-redux";
 import fetchAccountData from "../../../Store/accountInfo-actions";
-import { toast } from "react-toastify";
 import PermissionControl from "./PermissionControl";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrown, faEye, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import UpdatePermissionsForm from "./ProfileForms/UpdatePermissionsForm";
+import { MainModal, ModalForm } from "../../../shared/components";
+import {
+  useState,
+  useTranslation,
+  useDispatch,
+  useSelector,
+} from "../../../shared/hooks";
+import { avatar } from "../../../shared/images";
+import { FontAwesomeIcon } from "../../../shared/index";
+import { Col } from "../../../shared/bootstrap";
+import { toast, faCrown, faEye, faTrashCan } from "../../../shared/constants";
 
 const MemberItem = ({
   allPermissions,
@@ -27,15 +28,16 @@ const MemberItem = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdatePermissionModal, setShowUpdatePermissionModal] =
     useState(false);
+
+  const token = useSelector((state) => state.userInfo.token);
+  const { t: key } = useTranslation();
+  const dispatch = useDispatch();
+
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-
-  const token = JSON.parse(localStorage.getItem("token"));
-  const { t: key } = useTranslation();
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const dispatch = useDispatch();
   const isIamOwner = userData?._id === accountOwner;
- 
+
   const deleteMember = async () => {
     setShowDeleteModal(false);
 
@@ -86,7 +88,7 @@ const MemberItem = ({
                   ) : (
                     ""
                   )}{" "}
-                  {tag ?key(tag):isIamOwner ? key("owner") : key("member")}
+                  {tag ? key(tag) : isIamOwner ? key("owner") : key("member")}
                 </span>
               </div>
             </div>

@@ -27,6 +27,7 @@ import {
   useContactsOptions,
   useAddContactInForms,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -50,7 +51,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   });
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const queryClient = useQueryClient();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;

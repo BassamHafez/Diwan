@@ -20,6 +20,7 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import Select from "react-select";
 import MainTitle from "../../../Components/UI/Words/MainTitle";
+import { useSelector } from "react-redux";
 
 const LandlordReport = ({
   compoundsOptions,
@@ -33,6 +34,7 @@ const LandlordReport = ({
   const [resultFilter, setResultFilter] = useState("");
 
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
 
@@ -185,7 +187,10 @@ const LandlordReport = ({
                 isClearable
               />
               <div>
-                <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["FINANCIAL_REPORTS"]}
+                >
                   <ButtonOne
                     classes="m-2"
                     borderd

@@ -10,6 +10,7 @@ import AddTask from "./TaskForms/AddTask";
 import styles from "./Tasks.module.css";
 import { useTranslation } from "react-i18next";
 import Row from "react-bootstrap/esm/Row";
+import { useSelector } from "react-redux";
 
 const TaskContent = ({
   timeFilter,
@@ -23,6 +24,7 @@ const TaskContent = ({
   const [searchFilter, setSearchFilter] = useState("");
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const onSearch = useCallback((searchInput) => {
@@ -72,7 +74,7 @@ const TaskContent = ({
               text={compId || propId ? key("searchTitle") : key("searchTasks")}
             />
           </div>
-          <CheckPermissions btnActions={["ADD_TASK"]}>
+          <CheckPermissions profileInfo={profileInfo} btnActions={["ADD_TASK"]}>
             <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
               <ButtonOne
                 onClick={() => setShowAddTaskModal(true)}

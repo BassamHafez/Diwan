@@ -52,6 +52,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [typeFilter, setTypeFilter] = useState("");
   const [revenueId, setRevenueId] = useState("");
   const deleteItem = useDeleteItem();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const curentLang = isArLang ? "ar" : "en";
@@ -214,8 +215,6 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
     );
   }, [filteredRevenuesList, details, key, estateParentCompound]);
 
-
-  
   const showAddModalHandler = useCallback(() => {
     setShowAddRevenueModal(true);
   }, []);
@@ -239,7 +238,10 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                 onClick={exportCsvHandler}
               />
             )}
-            <CheckPermissions btnActions={["ADD_REVENUE"]}>
+            <CheckPermissions
+              profileInfo={profileInfo}
+              btnActions={["ADD_REVENUE"]}
+            >
               <ButtonOne
                 onClick={showAddModalHandler}
                 classes="m-2 bg-navy"
@@ -327,6 +329,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                 {rev.status === "pending" && (
                                   <>
                                     <CheckPermissions
+                                      profileInfo={profileInfo}
                                       btnActions={["PAY_REVENUE"]}
                                     >
                                       <Dropdown.Item
@@ -339,6 +342,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                       </Dropdown.Item>
                                     </CheckPermissions>
                                     <CheckPermissions
+                                      profileInfo={profileInfo}
                                       btnActions={["ADD_REVENUE"]}
                                     >
                                       <Dropdown.Item
@@ -355,6 +359,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                 {rev.status === "paid" && (
                                   <>
                                     <CheckPermissions
+                                      profileInfo={profileInfo}
                                       btnActions={["UNPAY_REVENUE"]}
                                     >
                                       <Dropdown.Item
@@ -391,6 +396,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                 {rev.status !== "paid" &&
                                   rev.status !== "canceled" && (
                                     <CheckPermissions
+                                      profileInfo={profileInfo}
                                       btnActions={["CANCEL_REVENUE"]}
                                     >
                                       <Dropdown.Item
@@ -413,6 +419,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                   {key("details")}
                                 </Dropdown.Item>
                                 <CheckPermissions
+                                  profileInfo={profileInfo}
                                   btnActions={["DELETE_REVENUE"]}
                                 >
                                   <Dropdown.Item

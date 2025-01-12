@@ -125,6 +125,7 @@ const CustomPackageItem = ({
         <CheckPermissions
           btnActions={["UPDATE_ACCOUNT"]}
           noCheckingForExpired={true}
+          profileInfo={profileInfo}
         >
           <div className="text-center pt-4 pb-2">
             <ButtonThree

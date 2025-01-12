@@ -16,6 +16,7 @@ import {
 } from "../../../../shared/constants";
 import {
   useMutation,
+  useSelector,
   useTranslation,
   useValidation,
 } from "../../../../shared/hooks";
@@ -24,7 +25,7 @@ import { InputErrorMessage, ButtonOne } from "../../../../shared/components";
 const SecurityForm = ({ LogOutProcess }) => {
   const { t: key } = useTranslation();
   const { passwordValidation } = useValidation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
