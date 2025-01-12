@@ -21,6 +21,7 @@ import {
   useTranslation,
   useFileHandler,
   useValidation,
+  useSelector,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 
@@ -33,7 +34,7 @@ const UpdateUserData = ({ profileInfo, hideModal }) => {
   } = useValidation();
   const dispatch = useDispatch();
   const { t: key } = useTranslation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const requiredLabel = <span className="text-danger">*</span>;
 

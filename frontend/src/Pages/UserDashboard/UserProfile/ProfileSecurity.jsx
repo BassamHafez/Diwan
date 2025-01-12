@@ -17,14 +17,14 @@ import { saveIsLoginState } from "../../../Store/userInfo-actions";
 const ProfileSecurity = () => {
   const { t: key } = useTranslation();
   const [showDeActivateModal, setShowDeActivateModal] = useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const profileInfo = useSelector((state) => state.profileInfo.data);
-  const notifySuccess = (message) => toast.success(message);
-  const notifyError = (message) => toast.error(message);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-
+  const notifySuccess = (message) => toast.success(message);
+  const notifyError = (message) => toast.error(message);
+  
   const LogOutProcess = () => {
     localStorage.removeItem("userData");
     dispatch(userActions.setRole(""));

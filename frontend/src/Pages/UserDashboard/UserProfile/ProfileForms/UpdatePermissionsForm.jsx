@@ -41,7 +41,7 @@ const UpdatePermissionsForm = ({
   const {
     arrOfOptionsValidation,
   } = useValidation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
 

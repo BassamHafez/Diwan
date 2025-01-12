@@ -35,6 +35,7 @@ import Expenses from "./Expenses";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import { memo } from "react";
+import { useSelector } from "react-redux";
 
 const GeneralDetails = memo(
   ({
@@ -44,13 +45,12 @@ const GeneralDetails = memo(
     compoundEstates,
     showAddEstatesModal,
     refetch,
-    settingIsLoading,
   }) => {
     const parentCompound =
       !isCompound && estateParentCompound ? estateParentCompound : details;
     const [showUpdateDetailsModal, setShowAUpdateDetailsModal] =
       useState(false);
-
+    const profileInfo = useSelector((state) => state.profileInfo.data);
     const { t: key } = useTranslation();
     let isArLang = localStorage.getItem("i18nextLng") === "ar";
     useEffect(() => {
@@ -74,6 +74,7 @@ const GeneralDetails = memo(
             className={`${isArLang ? "text-start" : "text-end"} my-4`}
           >
             <CheckPermissions
+              profileInfo={profileInfo}
               btnActions={isCompound ? ["UPDATE_COMPOUND"] : ["UPDATE_ESTATE"]}
             >
               <CheckAllowedCompounds id={isCompound ? details._id : "estate"}>
@@ -375,7 +376,6 @@ const GeneralDetails = memo(
                 details={details}
                 estateParentCompound={estateParentCompound}
                 refetchDetails={refetch}
-                settingIsLoading={settingIsLoading}
               />
               <Revenue
                 refetchDetails={refetch}

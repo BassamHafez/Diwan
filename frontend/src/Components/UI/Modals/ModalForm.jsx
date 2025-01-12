@@ -1,7 +1,7 @@
 import styles from "./MainModal.module.css";
 import Modal from "react-bootstrap/Modal";
 
-const ModalForm = ({show, onHide, children,modalSize}) => {
+const ModalForm = ({show, onHide, children,modalSize,isStatic}) => {
   return (
     <Modal
       show={show}
@@ -11,6 +11,7 @@ const ModalForm = ({show, onHide, children,modalSize}) => {
       aria-labelledby="contained-modal-title-vcenter"
       centered
       className={styles.modal_container}
+      backdrop={isStatic?false:true}
     >
       <Modal.Body className={`${styles.modal_body} ${styles.rounded_modal_body} text-center`}>
         {children}

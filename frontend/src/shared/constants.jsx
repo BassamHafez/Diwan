@@ -22,7 +22,6 @@ export {
   faGears,
   faHouse,
   faLayerGroup,
-  faClipboard,
   faUsers,
   faScroll,
   faCrown,
@@ -39,6 +38,13 @@ export {
   faYinYang,
   faMapMarkedAlt,
   faPhoneFlip,
+  faTrash,
+  faCheckDouble,
+  faCircleQuestion,
+  faClockRotateLeft,
+  faTag,
+  faWrench,
+  faTrashCan 
 } from "@fortawesome/free-solid-svg-icons";
 export {
   faFolderOpen,
@@ -49,6 +55,9 @@ export {
   faStar,
   faEye,
   faEyeSlash,
+  faBell,
+  faClipboard,
+  faClock,
 } from "@fortawesome/free-regular-svg-icons";
 export {
   faSquareWhatsapp,

@@ -1,23 +1,7 @@
-import { useSelector } from "react-redux";
 import TotalExAndRev from "../../../Components/Charts/TotalExAndRev";
 import styles from "./UserHome.module.css";
-import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import { useTranslation } from "react-i18next";
-import profits from "../../../assets/icons/profits.png";
-import loss from "../../../assets/icons/loss.png";
-import office from "../../../assets/icons/office.png";
-import paid from "../../../assets/icons/paid.png";
-import homeKey from "../../../assets/icons/home-key.png";
 import RevenuesByMonth from "../../../Components/Charts/RevenuesByMonth";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCircleInfo,
-  faTriangleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
 import {
   convertISoIntoDate,
   convertNumbersToFixedTwo,
@@ -25,11 +9,24 @@ import {
   renamedExpensesStatusMethod,
   renamedRevenuesStatus,
 } from "../../../Components/Logic/LogicFun";
-import { faEye } from "@fortawesome/free-regular-svg-icons";
-import { Link, useNavigate } from "react-router-dom";
 import TaskContent from "../Tasks/TaskContent";
-import ScrollTopBtn from "../../../Components/UI/Buttons/ScrollTopBtn";
-import Alert from "react-bootstrap/Alert";
+import { profits, loss, office, paid, homeKey } from "../../../shared/images";
+import {
+  faEye,
+  faCircleInfo,
+  faTriangleExclamation,
+} from "../../../shared/constants";
+import { ScrollTopBtn, LoadingOne } from "../../../shared/components";
+import {
+  useNavigate,
+  useTranslation,
+  useQuery,
+  useSelector,
+  useCallback,
+  useMemo,
+} from "../../../shared/hooks";
+import { Link, FontAwesomeIcon } from "../../../shared/index";
+import { Alert, Row, Col } from "../../../shared/bootstrap";
 
 const UserHome = () => {
   const token = useSelector((state) => state.userInfo.token);
@@ -49,121 +46,126 @@ const UserHome = () => {
     enabled: !!token,
   });
 
-  const myData = data?.data || {};
+  const myData = useMemo(() => {
+    return data?.data || {};
+  }, [data]);
 
-  const calculateTotal = (num1, num2) => {
+  const calculateTotal = useCallback((num1, num2) => {
     if (num1 !== null && num2 !== null) {
       return Number(num1) + Number(num2);
     }
     return 0;
-  };
+  }, []);
 
-  const totalExpenses = calculateTotal(
-    myData?.totalPaidExpenses,
-    myData?.totalPendingExpenses
-  );
-  const totalRevenues = calculateTotal(
-    myData?.totalPaidRevenues,
-    myData?.totalPendingRevenues
-  );
+  const totalExpenses = useMemo(() => {
+    calculateTotal(myData?.totalPaidExpenses, myData?.totalPendingExpenses);
+  }, [myData, calculateTotal]);
 
-  const FinancialData = [
-    {
-      label: "totalRevenues",
-      value: totalRevenues,
-      isMoney: true,
-      icon: profits,
-    },
-    { label: "totalExpenses", value: totalExpenses, isMoney: true, icon: loss },
-    {
-      label: "estateCount",
-      value: myData?.totalEstatesCount || 0,
-      isMoney: false,
-      icon: office,
-    },
-    {
-      label: "totalPaidRevenues",
-      value: myData?.totalPaidRevenues || 0,
-      isMoney: true,
-      icon: paid,
-    },
-    {
-      label: "totalPaidExpenses",
-      value: myData?.totalPaidExpenses || 0,
-      isMoney: true,
-      icon: paid,
-    },
-    {
-      label: "rentedEstates",
-      value: myData?.rentedEstatesCount || 0,
-      isMoney: false,
-      icon: homeKey,
-    },
-  ];
- 
-  const ratioData = [
-    {
-      type: "esates",
-      total: myData?.totalEstatesCount || 0,
-      paidAmount: myData?.rentedEstatesCount || 0,
-    },
-    {
-      type: "revenues",
-      total: totalRevenues,
-      paidAmount: myData?.totalPaidRevenues || 0,
-    },
-    {
-      type: "expenses",
-      total: totalExpenses,
-      paidAmount: myData?.totalPaidExpenses || 0,
-    },
-  ];
-
-  const getStatusBgColor = (status) => {
-    switch (status) {
-      case "pending":
-        return styles.yellow;
-      case "canceled":
-        return styles.red;
-      case "paid":
-        return styles.green;
-      default:
-        return "";
-    }
-  };
-
-  const getExpensesStatusBgColor = (status) => {
-    switch (status) {
-      case "paid":
-        return styles.green;
-      case "pending":
-        return styles.orange;
-      case "cancelled":
-        return styles.red;
-      default:
-        return "";
-    }
-  };
-
-  const showDetails = (estateId, compoundId) => {
-    if (!estateId && !compoundId) {
-      return;
-    }
-    if (estateId) {
-      navigate(`/estate-unit-details/${estateId}`);
-    } else {
-      navigate(`/estate-details/${compoundId}`);
-    }
-  };
-
-  const today = new Date().setHours(0, 0, 0, 0);
-
-  const todayTasks = myData?.todayAndBeforeTasks?.filter(
-    (task) => convertISoIntoDate(task?.date) === today
+  const totalRevenues = useMemo(
+    () =>
+      calculateTotal(myData?.totalPaidRevenues, myData?.totalPendingRevenues),
+    [myData, calculateTotal]
   );
 
-  const overdueTasks = myData?.todayAndBeforeTasks?.filter(
-    (task) => convertISoIntoDate(task?.date) < today
+  const FinancialData = useMemo(() => {
+    return [
+      {
+        label: "totalRevenues",
+        value: totalRevenues,
+        isMoney: true,
+        icon: profits,
+      },
+      {
+        label: "totalExpenses",
+        value: totalExpenses,
+        isMoney: true,
+        icon: loss,
+      },
+      {
+        label: "estateCount",
+        value: myData?.totalEstatesCount || 0,
+        isMoney: false,
+        icon: office,
+      },
+      {
+        label: "totalPaidRevenues",
+        value: myData?.totalPaidRevenues || 0,
+        isMoney: true,
+        icon: paid,
+      },
+      {
+        label: "totalPaidExpenses",
+        value: myData?.totalPaidExpenses || 0,
+        isMoney: true,
+        icon: paid,
+      },
+      {
+        label: "rentedEstates",
+        value: myData?.rentedEstatesCount || 0,
+        isMoney: false,
+        icon: homeKey,
+      },
+    ];
+  }, [myData, totalExpenses, totalRevenues]);
+
+  const ratioData = useMemo(() => {
+    return [
+      {
+        type: "esates",
+        total: myData?.totalEstatesCount || 0,
+        paidAmount: myData?.rentedEstatesCount || 0,
+      },
+      {
+        type: "revenues",
+        total: totalRevenues,
+        paidAmount: myData?.totalPaidRevenues || 0,
+      },
+      {
+        type: "expenses",
+        total: totalExpenses,
+        paidAmount: myData?.totalPaidExpenses || 0,
+      },
+    ];
+  }, [myData, totalExpenses, totalRevenues]);
+
+  const getStatusBgColor = useCallback((status) => {
+    const colors = {
+      pending: styles.yellow,
+      canceled: styles.red,
+      paid: styles.green,
+      cancelled: styles.red,
+    };
+    return colors[status] || "";
+  }, []);
+
+  const showDetails = useCallback(
+    (estateId, compoundId) => {
+      if (!estateId && !compoundId) return;
+      navigate(
+        estateId
+          ? `/estate-unit-details/${estateId}`
+          : `/estate-details/${compoundId}`
+      );
+    },
+    [navigate]
+  );
+
+  const today = useMemo(() => new Date().setHours(0, 0, 0, 0), []);
+
+  const todayTasks = useMemo(
+    () =>
+      myData?.todayAndBeforeTasks?.filter(
+        (task) => convertISoIntoDate(task?.date) === today
+      ),
+    [myData, today]
+  );
+
+  const overdueTasks = useMemo(
+    () =>
+      myData?.todayAndBeforeTasks?.filter(
+        (task) => convertISoIntoDate(task?.date) < today
+      ),
+    [myData, today]
   );
 
   return (
@@ -267,9 +269,9 @@ const UserHome = () => {
                         <td>{formattedDate(ex.dueDate)}</td>
                         <td>
                           <span
-                            className={`${getExpensesStatusBgColor(
-                              ex.status
-                            )} ${styles.status_span}`}
+                            className={`${getStatusBgColor(ex.status)} ${
+                              styles.status_span
+                            }`}
                           >
                             {isArLang
                               ? renamedExpensesStatusMethod(ex.status, "ar")

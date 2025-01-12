@@ -34,6 +34,7 @@ import MainPayForm from "../PropertyForms/MainPayForm";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import useDeleteItem from "../../../hooks/useDeleteItem";
+import { useSelector } from "react-redux";
 
 const Expenses = ({
   isCompound,
@@ -51,6 +52,7 @@ const Expenses = ({
   const [exID, setExID] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const deleteItem = useDeleteItem();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -245,7 +247,10 @@ const Expenses = ({
                 onClick={exportCsvHandler}
               />
             )}
-            <CheckPermissions btnActions={["ADD_EXPENSE"]}>
+            <CheckPermissions
+              profileInfo={profileInfo}
+              btnActions={["ADD_EXPENSE"]}
+            >
               <CheckAllowedCompounds id={isCompound ? myParam : "estate"}>
                 <ButtonOne
                   onClick={showAddExModalHandler}
@@ -345,6 +350,7 @@ const Expenses = ({
                               <Dropdown.Menu>
                                 {ex.status === "pending" && (
                                   <CheckPermissions
+                                    profileInfo={profileInfo}
                                     btnActions={["PAY_EXPENSE"]}
                                   >
                                     <Dropdown.Item
@@ -359,6 +365,7 @@ const Expenses = ({
                                 )}
                                 {ex.status === "paid" && (
                                   <CheckPermissions
+                                    profileInfo={profileInfo}
                                     btnActions={["UNPAY_EXPENSE"]}
                                   >
                                     <Dropdown.Item
@@ -372,6 +379,7 @@ const Expenses = ({
                                   </CheckPermissions>
                                 )}
                                 <CheckPermissions
+                                  profileInfo={profileInfo}
                                   btnActions={["UPDATE_EXPENSE"]}
                                 >
                                   <Dropdown.Item
@@ -398,6 +406,7 @@ const Expenses = ({
                                 {ex.status !== "paid" &&
                                   ex.status !== "cancelled" && (
                                     <CheckPermissions
+                                      profileInfo={profileInfo}
                                       btnActions={["CANCEL_EXPENSE"]}
                                     >
                                       <Dropdown.Item
@@ -411,6 +420,7 @@ const Expenses = ({
                                     </CheckPermissions>
                                   )}
                                 <CheckPermissions
+                                  profileInfo={profileInfo}
                                   btnActions={["DELETE_EXPENSE"]}
                                 >
                                   <Dropdown.Item

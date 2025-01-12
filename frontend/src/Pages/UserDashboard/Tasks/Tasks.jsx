@@ -1,13 +1,13 @@
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
 import styles from "./Tasks.module.css";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import TaskContent from "./TaskContent";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { FontAwesomeIcon } from "../../../shared/index";
 import {
-  faBell,
-  faClipboard,
-  faClock,
-} from "@fortawesome/free-regular-svg-icons";
+  useSelector,
+  useQuery,
+  useState,
+  useTranslation,
+} from "../../../shared/hooks";
 import {
   faBagShopping,
   faCheckDouble,
@@ -17,22 +17,21 @@ import {
   faCubes,
   faTag,
   faWrench,
-} from "@fortawesome/free-solid-svg-icons";
-
-import TaskContent from "./TaskContent";
-import { useState } from "react";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import { useQuery } from "@tanstack/react-query";
+  faBell,
+  faClipboard,
+  faClock,
+} from "../../../shared/constants";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const Tasks = () => {
   const [timeFilter, setTimeFilter] = useState("all");
   const [tagsFilter, setTagsFilter] = useState("all");
   const [typesFilter, setTypesFilter] = useState("all");
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   let iconClass = isArLang ? "ms-2" : "me-2";
-  
+
   const { data: tasks, refetch } = useQuery({
     queryKey: ["tasks", token],
     queryFn: () =>

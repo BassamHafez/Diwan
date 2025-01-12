@@ -26,6 +26,7 @@ import {
   useTranslation,
   useParams,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage, MainModal } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -51,7 +52,7 @@ const UpdateContract = ({ contract, hideModal, refetch, refetchDetails }) => {
     endDateValidation,
   } = useValidation();
   const notifyError = (message) => toast.error(message);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   const { propId } = useParams();

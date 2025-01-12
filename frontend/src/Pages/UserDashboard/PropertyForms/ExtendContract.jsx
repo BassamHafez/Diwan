@@ -13,6 +13,7 @@ import {
   useTranslation,
   useParams,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -23,7 +24,7 @@ const ExtendContract = ({
   refetchDetails,
   contractDetails,
 }) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const { noFutureDateValidation } = useValidation();
   const requiredLabel = <span className="text-danger">*</span>;

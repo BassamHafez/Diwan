@@ -46,6 +46,7 @@ import fetchConfigs from "./Store/configs-actions";
 import Support from "./Pages/Admin/Support/Support";
 import AdminTerms from "./Pages/Admin/AdminTerms/AdminTerms";
 import TermsAndConditions from "./Pages/UserDashboard/TermsAndConditions/TermsAndConditions";
+import ProtectedRoute from "./Components/ProtectedRoute/ProtectedRoute";
 
 const router = createBrowserRouter(
   [
@@ -54,7 +55,7 @@ const router = createBrowserRouter(
       element: <Root />,
       errorElement: <MainError />,
       children: [
-        //main pages
+        //public pages
         { index: true, element: <Home /> },
         { path: "about", element: <About /> },
         { path: "contact", element: <Contact /> },
@@ -66,31 +67,171 @@ const router = createBrowserRouter(
         { path: "forget-password", element: <ForgetPassword /> },
         { path: "terms-conditions", element: <TermsAndConditions /> },
 
-        //after login
-        { path: "verify-phone", element: <VerifyPhonePage /> },
+        //private pages
+        {
+          path: "verify-phone",
+          element: (
+            <ProtectedRoute>
+              <VerifyPhonePage />
+            </ProtectedRoute>
+          ),
+        },
 
         //role userDashboard
-        { path: "dashboard", element: <UserHome /> },
-        { path: "properties", element: <Properties /> },
-        { path: "estate-unit-details/:propId", element: <PropertyDetails /> },
-        { path: "estate-details/:compId", element: <CompoundDetails /> },
-        { path: "contacts", element: <Contacts /> },
-        { path: "tasks", element: <Tasks /> },
-        { path: "profile/:userId", element: <UserProfile /> },
-        { path: "reports", element: <Reports /> },
+        {
+          path: "dashboard",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <UserHome />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "properties",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <Properties />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "estate-unit-details/:propId",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <PropertyDetails />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "estate-details/:compId",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <CompoundDetails />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "contacts",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <Contacts />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "tasks",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <Tasks />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "profile/:userId",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <UserProfile />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "reports",
+          element: (
+            <ProtectedRoute requiredRole="user">
+              <Reports />
+            </ProtectedRoute>
+          ),
+        },
 
         //role adminDashboard
-        { path: "admin-dashboard", element: <AdminHome /> },
-        { path: "admin-subscriptions", element: <AllSubscriptions /> },
-        { path: "admin-members", element: <AllAdmins /> },
-        { path: "admin-accounts", element: <AllAccounts /> },
-        { path: "admin-users", element: <AllUsers /> },
-        { path: "admin-packages", element: <AllPackages /> },
-        { path: "admin-settings", element: <AdminAccountSetting /> },
-        { path: "admin-configs", element: <Configs /> },
-        { path: "admin-testimonials", element: <AdminTestimonials /> },
-        { path: "admin-support", element: <Support /> },
-        { path: "admin-terms", element: <AdminTerms /> },
+        {
+          path: "admin-dashboard",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AdminHome />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-subscriptions",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AllSubscriptions />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-members",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AllAdmins />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-accounts",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AllAccounts />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-users",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AllUsers />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-packages",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AllPackages />{" "}
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-settings",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AdminAccountSetting />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-configs",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <Configs />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-testimonials",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AdminTestimonials />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-support",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <Support />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "admin-terms",
+          element: (
+            <ProtectedRoute requiredRole="admin">
+              <AdminTerms />{" "}
+            </ProtectedRoute>
+          ),
+        },
 
         //else
         { path: "*", element: <PageNotFound /> },

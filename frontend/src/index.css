@@ -262,9 +262,10 @@ p {
   color: var(--dark_white);
 }
 
-.expired{
+.expired *{
   pointer-events: none !important;
   opacity: .7 !important;
+  cursor:not-allowed !important;
 }
 
 .date_picker input{

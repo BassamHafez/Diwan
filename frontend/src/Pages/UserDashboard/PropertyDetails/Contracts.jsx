@@ -8,9 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  mainFormsHandlerTypeFormData,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -30,13 +28,9 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import ExtendContract from "../PropertyForms/ExtendContract";
 import SettleContract from "../PropertyForms/SettleContract";
 import useDeleteItem from "../../../hooks/useDeleteItem";
+import { useSelector } from "react-redux";
 
-const Contracts = ({
-  details,
-  estateParentCompound,
-  refetchDetails,
-  settingIsLoading,
-}) => {
+const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
   const [showUpdateContractModal, setShowUpdateContractModal] = useState(false);
   const [showExtendContractModal, setShowExtendContractModal] = useState(false);
@@ -48,6 +42,7 @@ const Contracts = ({
   const [statusFilter, setStatusFilter] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
   const deleteItem = useDeleteItem();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
@@ -201,7 +196,10 @@ const Contracts = ({
                 onClick={exportCsvHandler}
               />
             )}
-            <CheckPermissions btnActions={["ADD_CONTRACT"]}>
+            <CheckPermissions
+              profileInfo={profileInfo}
+              btnActions={["ADD_CONTRACT"]}
+            >
               <ButtonOne
                 onClick={showContractModalHandler}
                 classes="m-2 bg-navy"
@@ -280,6 +278,7 @@ const Contracts = ({
                                   contract.status !== "canceled" && (
                                     <>
                                       <CheckPermissions
+                                        profileInfo={profileInfo}
                                         btnActions={["UPDATE_CONTRACT"]}
                                       >
                                         <Dropdown.Item
@@ -314,6 +313,7 @@ const Contracts = ({
                                       </CheckPermissions>
 
                                       <CheckPermissions
+                                        profileInfo={profileInfo}
                                         btnActions={["CANCEL_CONTRACT"]}
                                       >
                                         <Dropdown.Item
@@ -365,7 +365,6 @@ const Contracts = ({
             hideModal={hideContractModalHandler}
             refetch={refetch}
             refetchDetails={refetchDetails}
-            settingIsLoading={settingIsLoading}
           />
         </ModalForm>
       )}

@@ -4,10 +4,9 @@ import Row from "react-bootstrap/esm/Row";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { useTranslation } from "react-i18next";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import AddMemberForm from "./ProfileForms/AddMemberForm";
-import { checkAccountFeatures } from "../../../Components/Logic/LogicFun";
-import { toast } from "react-toastify";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const Members = () => {
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -15,28 +14,29 @@ const Members = () => {
   const profileInfo = useSelector((state) => state.profileInfo.data);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
-  const notifyError = (message) => toast.error(message);
 
-  const checkPackage = () => {
-    const isAllowed = checkAccountFeatures(
-      accountInfo?.account,
-      "allowedUsers"
-    );
-    if (!isAllowed) {
-      notifyError(key("featureEnded"));
-      return;
-    }
-    setShowAddMemberModal(true)
-  };
+  const showModal = useCallback(() => {
+    setShowAddMemberModal(true);
+  }, []);
+
+  const hideModal = useCallback(() => {
+    setShowAddMemberModal(false);
+  }, []);
 
   return (
     <div className="p-4">
       <div className={`${isArLang ? "text-start" : "text-end"} mb-4`}>
-        <ButtonOne
-          borderd={true}
-          text={`${key("add")} ${key("member")}`}
-          onClick={checkPackage}
-        />
+        <CheckMySubscriptions
+          name="allowedUsers"
+          type="number"
+          accountInfo={accountInfo}
+        >
+          <ButtonOne
+            borderd={true}
+            text={`${key("add")} ${key("member")}`}
+            onClick={showModal}
+          />
+        </CheckMySubscriptions>
       </div>
       <Row>
         {accountInfo?.account?.members?.map((member, index) => (
@@ -53,13 +53,10 @@ const Members = () => {
         ))}
       </Row>
       {showAddMemberModal && (
-        <ModalForm
-          show={showAddMemberModal}
-          onHide={() => setShowAddMemberModal(false)}
-        >
+        <ModalForm show={showAddMemberModal} onHide={hideModal}>
           <AddMemberForm
             allPermissions={profileInfo?.permissions}
-            hideModal={() => setShowAddMemberModal(false)}
+            hideModal={hideModal}
           />
         </ModalForm>
       )}

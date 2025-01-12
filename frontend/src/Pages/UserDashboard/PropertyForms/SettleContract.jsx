@@ -16,6 +16,7 @@ import {
   useTranslation,
   useParams,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
@@ -25,7 +26,7 @@ const SettleContract = ({
   refetchDetails,
   hideModal,
 }) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { positiveNumbersValidation, mainReqValidation } = useValidation();
   const { propId } = useParams();
   const { t: key } = useTranslation();

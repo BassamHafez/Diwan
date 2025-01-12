@@ -14,6 +14,7 @@ import {
   useTranslation,
   useParams,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -24,7 +25,7 @@ const SplitRevenue = ({
   refetchDetails,
   revenueDetails,
 }) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { positiveNumbersValidation, dateValidation, noteValidation } =
     useValidation();
   const { t: key } = useTranslation();
