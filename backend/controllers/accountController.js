@@ -11,6 +11,7 @@ const { sendWAText } = require("../utils/sendWAMessage");
 const sendEmail = require("../utils/sendEmail");
 const { newMemberHtml } = require("../utils/htmlMessages");
 const { formatSaudiNumber } = require("../utils/formatNumbers");
+const { getSubscriptionPrice } = require("../utils/subscribeHelpers");
 
 const memberPopOptions = {
   path: "members.user",
@@ -85,14 +86,8 @@ exports.getMyPurchases = catchAsync(async (req, res, next) => {
 
 exports.subscribe = catchAsync(async (req, res, next) => {
   const { id } = req.params;
-  const {
-    usersCount,
-    compoundsCount,
-    estatesCount,
-    maxEstatesInCompound,
-    isFavoriteAllowed,
-    isRemindersAllowed,
-  } = req.body;
+  const { usersCount, compoundsCount, estatesCount, maxEstatesInCompound } =
+    req.body;
   let cost = 0;
 
   const expireDate = new Date(Date.now() + 30.25 * 24 * 60 * 60 * 1000);
@@ -102,10 +97,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   };
 
   const [account, subscriptions] = await Promise.all([
-    Account.findById(id)
-      .select("owner isFavoriteAllowed isRemindersAllowed")
-      .populate("owner", "name phone email")
-      .lean(),
+    Account.findById(id).populate("owner", "name phone email").lean(),
     Subscription.find().lean(),
     ScheduledMission.deleteOne({
       account: id,
@@ -127,9 +119,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   }
 
   if (usersCount && usersCount >= 1) {
-    const userPrice = subscriptions.find(
-      (sub) => sub.feature === "ADD_USER"
-    ).price;
+    const userPrice = getSubscriptionPrice(subscriptions, "ADD_USER");
 
     cost += userPrice * usersCount;
     accountData.allowedUsers = usersCount;
@@ -148,9 +138,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       compoundFeature = "ADD_COMPOUND_MORE_THAN_50";
     }
 
-    const compoundPrice = subscriptions.find(
-      (sub) => sub.feature === compoundFeature
-    ).price;
+    const compoundPrice = getSubscriptionPrice(subscriptions, compoundFeature);
 
     cost += compoundPrice * compoundsCount;
     accountData.allowedCompounds = compoundsCount;
@@ -169,9 +157,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       estateFeature = "ADD_ESTATE_MORE_THAN_50";
     }
 
-    const estatePrice = subscriptions.find(
-      (sub) => sub.feature === estateFeature
-    ).price;
+    const estatePrice = getSubscriptionPrice(subscriptions, estateFeature);
 
     cost += estatePrice * estatesCount;
     accountData.allowedEstates = estatesCount;
@@ -195,29 +181,34 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       accountData.maxEstatesInCompound = 300;
     }
 
-    const maxEstatesPrice = subscriptions.find(
-      (sub) => sub.feature === maxEstatesFeature
-    ).price;
+    const maxEstatesPrice = getSubscriptionPrice(
+      subscriptions,
+      maxEstatesFeature
+    );
 
     cost += maxEstatesPrice;
   }
 
-  if (!account.isFavoriteAllowed && isFavoriteAllowed) {
-    const favoritePrice = subscriptions.find(
-      (sub) => sub.feature === "FAVORITES"
-    ).price;
+  const booleanFeatures = [
+    { key: "isFavoriteAllowed", feature: "FAVORITES" },
+    { key: "isRemindersAllowed", feature: "REMINDERS" },
+    { key: "isAnalysisAllowed", feature: "ANALYSIS" },
+    { key: "isContractsAllowed", feature: "CONTRACTS" },
+    { key: "isFinancialReportsAllowed", feature: "FINANCIAL_REPORTS" },
+    { key: "isOperationalReportsAllowed", feature: "OPERATIONAL_REPORTS" },
+    { key: "isCompoundsReportsAllowed", feature: "COMPOUNDS_REPORTS" },
+    { key: "isTasksAllowed", feature: "TASKS" },
+    { key: "isFilesExtractAllowed", feature: "FILES_EXTRACT" },
+    { key: "isServiceContactsAllowed", feature: "SERVICE_CONTACTS" },
+    { key: "isUserPermissionsAllowed", feature: "USER_PERMISSIONS" },
+  ];
 
-    cost += favoritePrice;
-    accountData.isFavoriteAllowed = true;
-  }
-
-  if (!account.isRemindersAllowed && isRemindersAllowed) {
-    const remindersPrice = subscriptions.find(
-      (sub) => sub.feature === "REMINDERS"
-    ).price;
-
-    cost += remindersPrice;
-    accountData.isRemindersAllowed = true;
+  for (const { key, feature } of booleanFeatures) {
+    if (!account[key] && req.body[key]) {
+      const price = getSubscriptionPrice(subscriptions, feature);
+      cost += price;
+      accountData[key] = true;
+    }
   }
 
   if (!cost) {
@@ -238,14 +229,7 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       account: id,
       amount: cost,
       type: "custom",
-      customPackage: {
-        usersCount,
-        compoundsCount,
-        estatesCount,
-        maxEstatesInCompound,
-        isFavoriteAllowed,
-        isRemindersAllowed,
-      },
+      customPackage: req.body,
     }),
   ]);
 
@@ -262,10 +246,7 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
   const { packageId } = req.body;
 
   const [account, package] = await Promise.all([
-    Account.findById(id)
-      .select("owner isFavoriteAllowed isRemindersAllowed")
-      .populate("owner", "name phone email")
-      .lean(),
+    Account.findById(id).populate("owner", "name phone email").lean(),
     Package.findById(packageId).select("features price duration").lean(),
     ScheduledMission.deleteOne({
       account: id,
@@ -302,9 +283,20 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
       allowedUsers: parseInt(features.allowedUsers) || 0,
       allowedCompounds: parseInt(features.allowedCompounds) || 0,
       allowedEstates: parseInt(features.allowedEstates) || 0,
+      maxEstatesInCompound: parseInt(features.maxEstatesInCompound),
       isFavoriteAllowed: Boolean(features.isFavoriteAllowed),
       isRemindersAllowed: Boolean(features.isRemindersAllowed),
-      maxEstatesInCompound: parseInt(features.maxEstatesInCompound),
+      isAnalysisAllowed: Boolean(features.isAnalysisAllowed),
+      isContractsAllowed: Boolean(features.isContractsAllowed),
+      isFinancialReportsAllowed: Boolean(features.isFinancialReportsAllowed),
+      isOperationalReportsAllowed: Boolean(
+        features.isOperationalReportsAllowed
+      ),
+      isCompoundsReportsAllowed: Boolean(features.isCompoundsReportsAllowed),
+      isTasksAllowed: Boolean(features.isTasksAllowed),
+      isFilesExtractAllowed: Boolean(features.isFilesExtractAllowed),
+      isServiceContactsAllowed: Boolean(features.isServiceContactsAllowed),
+      isUserPermissionsAllowed: Boolean(features.isUserPermissionsAllowed),
     }),
 
     ScheduledMission.create({
@@ -334,7 +326,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   const account = await Account.findById(id)
-    .select("allowedUsers owner")
+    .select("allowedUsers isUserPermissionsAllowed owner")
     .lean();
 
   if (!account) {
@@ -346,7 +338,13 @@ exports.addMember = catchAsync(async (req, res, next) => {
   }
 
   if (account.allowedUsers <= 0) {
-    return next(new ApiError("Subscribe and get more users", 403));
+    return next(new ApiError("Subscribe to add more users", 403));
+  }
+
+  if (req.body?.permissions?.length > 0 && !account.isUserPermissionsAllowed) {
+    return next(
+      new ApiError("Your Subscription doesn't allow adding permissions", 403)
+    );
   }
 
   const userData = {
@@ -398,7 +396,9 @@ exports.addMember = catchAsync(async (req, res, next) => {
 exports.updateMember = catchAsync(async (req, res, next) => {
   const { id, userId } = req.params;
 
-  const account = await Account.findById(id).select("owner").lean();
+  const account = await Account.findById(id)
+    .select("owner isUserPermissionsAllowed")
+    .lean();
 
   if (!account) {
     return next(new ApiError("Account not found", 404));
@@ -412,6 +412,12 @@ exports.updateMember = catchAsync(async (req, res, next) => {
 
   if (userId === account.owner.toString()) {
     return next(new ApiError("Owner of the account can't be updated", 403));
+  }
+
+  if (req.body?.permissions?.length > 0 && !account.isUserPermissionsAllowed) {
+    return next(
+      new ApiError("Your Subscription doesn't allow adding permissions", 403)
+    );
   }
 
   const modifiedUserFields = {};

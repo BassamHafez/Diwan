@@ -60,6 +60,15 @@ exports.createPackageValidator = [
       "maxEstatesInCompound",
       "isFavoriteAllowed",
       "isRemindersAllowed",
+      "isAnalysisAllowed",
+      "isContractsAllowed",
+      "isFinancialReportsAllowed",
+      "isOperationalReportsAllowed",
+      "isCompoundsReportsAllowed",
+      "isTasksAllowed",
+      "isFilesExtractAllowed",
+      "isServiceContactsAllowed",
+      "isUserPermissionsAllowed",
     ])
     .withMessage((value) => `Invalid label: ${value}`),
 
@@ -130,6 +139,15 @@ exports.updatePackageValidator = [
       "maxEstatesInCompound",
       "isFavoriteAllowed",
       "isRemindersAllowed",
+      "isAnalysisAllowed",
+      "isContractsAllowed",
+      "isFinancialReportsAllowed",
+      "isOperationalReportsAllowed",
+      "isCompoundsReportsAllowed",
+      "isTasksAllowed",
+      "isFilesExtractAllowed",
+      "isServiceContactsAllowed",
+      "isUserPermissionsAllowed",
     ])
     .withMessage((value) => `Invalid label: ${value}`),
 

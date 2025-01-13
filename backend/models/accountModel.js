@@ -67,6 +67,42 @@ const accountSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isAnalysisAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isContractsAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isFinancialReportsAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isOperationalReportsAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isCompoundsReportsAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isTasksAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isFilesExtractAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isServiceContactsAllowed: {
+      type: Boolean,
+      default: false,
+    },
+    isUserPermissionsAllowed: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

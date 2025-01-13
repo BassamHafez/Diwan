@@ -6,7 +6,10 @@ const serviceContactController = require("../controllers/serviceContactControlle
 const contactValidator = require("../utils/validators/contactValidator");
 const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
-router.use(authController.protect);
+router.use(
+  authController.protect,
+  serviceContactController.checkContactsPermission
+);
 
 router
   .route("/")
