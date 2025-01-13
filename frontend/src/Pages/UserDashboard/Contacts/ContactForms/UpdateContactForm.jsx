@@ -18,7 +18,7 @@ import {
   Select,
 } from "../../../../shared/index";
 import { faSpinner, toast, object, string } from "../../../../shared/constants";
-import { useMutation, useTranslation, useValidation } from "../../../../shared/hooks";
+import { useMutation, useSelector, useTranslation, useValidation } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
@@ -33,7 +33,7 @@ const UpdateContactForm = ({
   const { phoneValidation, mainReqValidation,noteValidation } = useValidation();
   const { t: key } = useTranslation();
 
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const notifyError = (message) => toast.error(message);

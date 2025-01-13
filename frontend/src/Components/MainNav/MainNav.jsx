@@ -107,6 +107,7 @@ const MainNav = () => {
                   <CheckPermissions
                     btnActions={["CONTRACTS_REPORTS", "FINANCIAL_REPORTS"]}
                     noCheckingForExpired={true}
+                    profileInfo={profileInfo}
                   >
                     <NavLink
                       onClick={() => isCollapsed && setIsCollapsed(false)}

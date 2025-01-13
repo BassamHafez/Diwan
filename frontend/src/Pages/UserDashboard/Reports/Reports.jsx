@@ -20,6 +20,7 @@ import {
   useEstatesOptions,
   useCompoundOptions,
   useContactsOptions,
+  useSelector,
 } from "../../../shared/hooks";
 import { Row, Col } from "../../../shared/bootstrap";
 
@@ -28,6 +29,7 @@ const Reports = () => {
   const [landlordFilter, setLandlordFilter] = useState("incomeReport");
   const [operationalFilter, setOperationalFilter] = useState("contractsReport");
   const [compoundsFilter, setCompoundsFilter] = useState("compoundsReport");
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const estatesOptions = useEstatesOptions();
   const { compoundsOptions } = useCompoundOptions();
   const { landlordOptions } = useContactsOptions();
@@ -52,7 +54,10 @@ const Reports = () => {
                   {key("report")}
                 </h6>
                 <ul className={styles.filter_list}>
-                  <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["FINANCIAL_REPORTS"]}
+                  >
                     <li
                       className={
                         reportTypeFilter === "landlordReport"
@@ -65,7 +70,10 @@ const Reports = () => {
                       {key("landlordReport")}
                     </li>
                   </CheckPermissions>
-                  <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["CONTRACTS_REPORTS"]}
+                  >
                     <li
                       className={
                         reportTypeFilter === "operationalReport"
@@ -78,7 +86,10 @@ const Reports = () => {
                       {key("operationalReport")}
                     </li>
                   </CheckPermissions>
-                  <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["COMPOUNDS_REPORTS"]}
+                  >
                     <li
                       className={
                         reportTypeFilter === "compoundsReport"
@@ -98,7 +109,10 @@ const Reports = () => {
                   <FontAwesomeIcon className={`${iconClass}`} icon={faTags} />
                   {key("type")}
                 </h6>
-                <CheckPermissions btnActions={["FINANCIAL_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["FINANCIAL_REPORTS"]}
+                >
                   {reportTypeFilter === "landlordReport" && (
                     <ul className={styles.filter_list}>
                       <li
@@ -145,7 +159,10 @@ const Reports = () => {
                   )}
                 </CheckPermissions>
 
-                <CheckPermissions btnActions={["CONTRACTS_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["CONTRACTS_REPORTS"]}
+                >
                   {reportTypeFilter === "operationalReport" && (
                     <ul className={styles.filter_list}>
                       <li
@@ -166,7 +183,10 @@ const Reports = () => {
                   )}
                 </CheckPermissions>
 
-                <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["COMPOUNDS_REPORTS"]}
+                >
                   {reportTypeFilter === "compoundsReport" && (
                     <ul className={styles.filter_list}>
                       <li

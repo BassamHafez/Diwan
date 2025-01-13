@@ -18,7 +18,7 @@ import fetchAccountData from "../../Store/accountInfo-actions";
 
 const PackageItem = ({ pack, type }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const isLogin = useSelector((state) => state.userInfo.isLogin);

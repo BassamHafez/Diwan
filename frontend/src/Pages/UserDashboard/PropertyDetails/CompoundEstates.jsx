@@ -11,6 +11,8 @@ import { useCallback, useMemo, useState } from "react";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import { useParams } from "react-router-dom";
+import { CheckMySubscriptions } from "../../../shared/components";
+import { useSelector } from "react-redux";
 
 const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
   const { t: key } = useTranslation();
@@ -18,7 +20,8 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
   const [statusFilter, setStatusFilter] = useState("");
   const [searchFilter, setSearchFilter] = useState("");
   const { compId } = useParams();
-  
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const onSearch = useCallback((searchInput) => {
     setSearchFilter(searchInput);
   }, []);
@@ -41,18 +44,24 @@ const CompoundEstates = ({ compoundEstates, showAddEstatesModal }) => {
       <div className={styles.contracts_body}>
         <div className={styles.header}>
           <h4>{key("properties")}</h4>
-          <CheckPermissions btnActions={["ADD_ESTATE"]}>
-            <CheckAllowedCompounds id={compId}>
-              <div>
-                <ButtonOne
-                  onClick={showAddEstatesModal}
-                  classes="m-2 bg-navy"
-                  borderd
-                  text={key("addEstate")}
-                />
-              </div>
-            </CheckAllowedCompounds>
-          </CheckPermissions>
+          <CheckMySubscriptions
+            name="allowedEstates"
+            type="number"
+            accountInfo={accountInfo}
+          >
+            <CheckPermissions profileInfo={profileInfo} btnActions={["ADD_ESTATE"]}>
+              <CheckAllowedCompounds id={compId}>
+                <div>
+                  <ButtonOne
+                    onClick={showAddEstatesModal}
+                    classes="m-2 bg-navy"
+                    borderd
+                    text={key("addEstate")}
+                  />
+                </div>
+              </CheckAllowedCompounds>
+            </CheckPermissions>
+          </CheckMySubscriptions>
         </div>
 
         <div

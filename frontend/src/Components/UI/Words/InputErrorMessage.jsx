@@ -2,7 +2,7 @@ import styles from "./InputErrorMessage.module.css";
 
 const InputErrorMessage = (props) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  console.log(props.text);
+
   return (
     <p
       className={`${styles.error_message} ${

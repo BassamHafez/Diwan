@@ -58,6 +58,7 @@ const UserProfile = () => {
                 <span>{key("main")}</span>
               </li>
               <CheckPermissions
+              profileInfo={profileInfo}
                 btnActions={["UPDATE_ACCOUNT"]}
                 noCheckingForExpired={true}
               >

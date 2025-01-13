@@ -23,6 +23,7 @@ import {
   useTranslation,
   useDispatch,
   useValidation,
+  useSelector,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 
@@ -35,7 +36,7 @@ const UpdateAccountData = ({ accountInfo, hideModal }) => {
     commercialRecordValidation,
     taxNumberValidation,
   } = useValidation();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const { t: key } = useTranslation();

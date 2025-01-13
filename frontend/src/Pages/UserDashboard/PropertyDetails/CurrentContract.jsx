@@ -3,9 +3,7 @@ import styles from "./Contracts.module.css";
 import { useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  mainFormsHandlerTypeFormData,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -31,8 +29,9 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [contractDetails, setContractDetails] = useState({});
   const [contractId, setContractId] = useState("");
-  const deleteItem=useDeleteItem();
-  const queryClient=useQueryClient();
+  const deleteItem = useDeleteItem();
+  const queryClient = useQueryClient();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -121,7 +120,10 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
                           </Dropdown.Toggle>
 
                           <Dropdown.Menu>
-                            <CheckPermissions btnActions={["UPDATE_CONTRACT"]}>
+                            <CheckPermissions
+                              profileInfo={profileInfo}
+                              btnActions={["UPDATE_CONTRACT"]}
+                            >
                               <Dropdown.Item
                                 onClick={() => {
                                   setContractDetails(currentContract?.data);
@@ -132,7 +134,10 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
                                 {key("ediet")}
                               </Dropdown.Item>
                             </CheckPermissions>
-                            <CheckPermissions btnActions={["CANCEL_CONTRACT"]}>
+                            <CheckPermissions
+                              profileInfo={profileInfo}
+                              btnActions={["CANCEL_CONTRACT"]}
+                            >
                               <Dropdown.Item
                                 onClick={() => {
                                   setContractId(

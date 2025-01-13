@@ -196,228 +196,6 @@ export const expensesTypeOptions = {
     { label: "أخري", value: "other" },
   ],
 };
-// ----------------------------------------------------------Saudi Arabia----------------------------
-//saudi arabia En
-export const SaudiRegion = [
-  { label: "Riyadh", value: "Riyadh" },
-  { label: "Makkah", value: "Makkah" },
-  { label: "Al-Madinah", value: "Madinah" },
-  { label: "Al-Qassim", value: "Al-Qassim" },
-  { label: "Eastern", value: "Eastern" },
-  { label: "Asir", value: "Asir" },
-  { label: "Tabuk", value: "Tabuk" },
-  { label: "Najran", value: "Najran" },
-  { label: "Jazan", value: "Jazan" },
-];
-
-export const citiesByRegion = {
-  Riyadh: [
-    { label: "Al Malaz", value: "Al Malaz" },
-    { label: "Al Olaya", value: "Al Olaya" },
-    { label: "Al Khuzama", value: "Al Khuzama" },
-    { label: "Diriyah", value: "Diriyah" },
-  ],
-  Makkah: [
-    { label: "Jeddah", value: "Jeddah" },
-    { label: "Taif", value: "Taif" },
-    { label: "Rabigh", value: "Rabigh" },
-    { label: "Mina", value: "Mina" },
-  ],
-  Madinah: [
-    { label: "Yanbu", value: "Yanbu" },
-    { label: "Al-Ula", value: "Al-Ula" },
-    { label: "Khaybar", value: "Khaybar" },
-    { label: "Badr", value: "Badr" },
-  ],
-  "Al-Qassim": [
-    { label: "Buraydah", value: "Buraydah" },
-    { label: "Unaizah", value: "Unaizah" },
-    { label: "Al Rass", value: "Al Rass" },
-    { label: "Al Bukayriyah", value: "Al Bukayriyah" },
-  ],
-  Eastern: [
-    { label: "Dammam", value: "Dammam" },
-    { label: "Al Khobar", value: "Al Khobar" },
-    { label: "Dhahran", value: "Dhahran" },
-    { label: "Jubail", value: "Jubail" },
-  ],
-  Asir: [
-    { label: "Abha", value: "Abha" },
-    { label: "Khamis Mushait", value: "Khamis Mushait" },
-    { label: "Bisha", value: "Bisha" },
-    { label: "Al Namas", value: "Al Namas" },
-  ],
-  Tabuk: [
-    { label: "Tabuk", value: "Tabuk" },
-    { label: "Duba", value: "Duba" },
-    { label: "Haql", value: "Haql" },
-    { label: "Al Wajh", value: "Al Wajh" },
-  ],
-  Najran: [
-    { label: "Najran", value: "Najran" },
-    { label: "Sharurah", value: "Sharurah" },
-  ],
-  Jazan: [
-    { label: "Jazan", value: "Jazan" },
-    { label: "Sabya", value: "Sabya" },
-    { label: "Abu Arish", value: "Abu Arish" },
-  ],
-};
-
-export const districtsByCity = {
-  "Al Malaz": [
-    { label: "Al Faisaliah", value: "Al Faisaliah" },
-    { label: "Al Nahdah", value: "Al Nahdah" },
-  ],
-  "Al Olaya": [
-    { label: "King Fahd District", value: "King Fahd District" },
-    { label: "Sulaimaniah", value: "Sulaimaniah" },
-  ],
-  Jeddah: [
-    { label: "Al Salamah", value: "Al Salamah" },
-    { label: "Al Hamra", value: "Al Hamra" },
-    { label: "Al Rawdah", value: "Al Rawdah" },
-  ],
-  Taif: [
-    { label: "Al Hawiyah", value: "Al Hawiyah" },
-    { label: "Al Shafa", value: "Al Shafa" },
-  ],
-  Yanbu: [
-    { label: "Yanbu Al Sinaiyah", value: "Yanbu Al Sinaiyah" },
-    { label: "Al Aziziyah", value: "Al Aziziyah" },
-  ],
-  Abha: [
-    { label: "Al Manhal", value: "Al Manhal" },
-    { label: "Al Rabwah", value: "Al Rabwah" },
-  ],
-  Dammam: [
-    { label: "Al Faisaliah", value: "Al Faisaliah" },
-    { label: "Al Shatea", value: "Al Shatea" },
-  ],
-  "Al Khobar": [
-    { label: "Al Aqrabiyah", value: "Al Aqrabiyah" },
-    { label: "Al Khuzama", value: "Al Khuzama" },
-  ],
-  Najran: [
-    { label: "Al Faysaliah", value: "Al Faysaliah" },
-    { label: "Al Dawasir", value: "Al Dawasir" },
-  ],
-  Jazan: [
-    { label: "Al Rawdah", value: "Al Rawdah" },
-    { label: "Al Safa", value: "Al Safa" },
-  ],
-};
-
-//saudi arabia Ar
-export const SaudiRegionAr = [
-  { label: "الرياض", value: "الرياض" },
-  { label: "مكة", value: "مكة" },
-  { label: "المدينة المنورة", value: "المدينة المنورة" },
-  { label: "القصيم", value: "القصيم" },
-  { label: "المنطقة الشرقية", value: "المنطقة الشرقية" },
-  { label: "عسير", value: "عسير" },
-  { label: "تبوك", value: "تبوك" },
-  { label: "نجران", value: "نجران" },
-  { label: "جازان", value: "جازان" },
-];
-
-export const citiesByRegionAr = {
-  الرياض: [
-    { label: "الملز", value: "الملز" },
-    { label: "العليا", value: "العليا" },
-    { label: "الخزامى", value: "الخزامى" },
-    { label: "الدرعية", value: "الدرعية" },
-  ],
-  مكة: [
-    { label: "جدة", value: "جدة" },
-    { label: "الطائف", value: "الطائف" },
-    { label: "رابغ", value: "رابغ" },
-    { label: "منى", value: "منى" },
-  ],
-  "المدينة المنورة": [
-    { label: "ينبع", value: "ينبع" },
-    { label: "العلا", value: "العلا" },
-    { label: "خيبر", value: "خيبر" },
-    { label: "بدر", value: "بدر" },
-  ],
-  القصيم: [
-    { label: "بريدة", value: "بريدة" },
-    { label: "عنيزة", value: "عنيزة" },
-    { label: "الرس", value: "الرس" },
-    { label: "البكيرية", value: "البكيرية" },
-  ],
-  "المنطقة الشرقية": [
-    { label: "الدمام", value: "الدمام" },
-    { label: "الخبر", value: "الخبر" },
-    { label: "الظهران", value: "الظهران" },
-    { label: "الجبيل", value: "الجبيل" },
-  ],
-  عسير: [
-    { label: "أبها", value: "أبها" },
-    { label: "خميس مشيط", value: "خميس مشيط" },
-    { label: "بيشة", value: "بيشة" },
-    { label: "النماص", value: "النماص" },
-  ],
-  تبوك: [
-    { label: "تبوك", value: "تبوك" },
-    { label: "ضباء", value: "ضباء" },
-    { label: "حقل", value: "حقل" },
-    { label: "الوجه", value: "الوجه" },
-  ],
-  نجران: [
-    { label: "نجران", value: "نجران" },
-    { label: "شرورة", value: "شرورة" },
-  ],
-  جازان: [
-    { label: "جازان", value: "جازان" },
-    { label: "صبيا", value: "صبيا" },
-    { label: "أبو عريش", value: "أبو عريش" },
-  ],
-};
-
-export const districtsByCityAr = {
-  الملز: [
-    { label: "الفيصلية", value: "الفيصلية" },
-    { label: "النهضة", value: "النهضة" },
-  ],
-  العليا: [
-    { label: "حي الملك فهد", value: "حي الملك فهد" },
-    { label: "السليمانية", value: "السليمانية" },
-  ],
-  جدة: [
-    { label: "السلامة", value: "السلامة" },
-    { label: "الحمرا", value: "الحمرا" },
-    { label: "الروضة", value: "الروضة" },
-  ],
-  الطائف: [
-    { label: "الحوية", value: "الحوية" },
-    { label: "الشفا", value: "الشفا" },
-  ],
-  ينبع: [
-    { label: "ينبع الصناعية", value: "ينبع الصناعية" },
-    { label: "العزيزية", value: "العزيزية" },
-  ],
-  أبها: [
-    { label: "المنهل", value: "المنهل" },
-    { label: "الربوة", value: "الربوة" },
-  ],
-  الدمام: [
-    { label: "الفيصلية", value: "الفيصلية" },
-    { label: "الشاطئ", value: "الشاطئ" },
-  ],
-  الخبر: [
-    { label: "العقربية", value: "العقربية" },
-    { label: "الخزامى", value: "الخزامى" },
-  ],
-  نجران: [
-    { label: "الفيصلية", value: "الفيصلية" },
-    { label: "الدواسر", value: "الدواسر" },
-  ],
-  جازان: [
-    { label: "الروضة", value: "الروضة" },
-    { label: "الصفا", value: "الصفا" },
-  ],
-};
 
 //hash images
 export const imgHash = {
@@ -983,29 +761,244 @@ export const chartsData = [
   { totalPaid: 1800, totalPending: 1100, month: 12 },
 ];
 
-export const terms = {
-  en: [
-    "Acceptance of Terms: By using this service, you agree to the terms and conditions outlined here.",
-    "Modification of Terms: The company reserves the right to update or modify these terms at any time without prior notice.",
-    "User Responsibilities: Users are responsible for providing accurate information and maintaining the confidentiality of their account.",
-    "Prohibited Activities: Users must not engage in illegal activities or misuse the platform.",
-    "Intellectual Property: All content on this platform is protected by copyright laws.",
-    "Termination of Service: The company reserves the right to suspend or terminate services for users who violate these terms.",
-    "Limitation of Liability: The company is not responsible for any damages resulting from the use of this service.",
-    "Dispute Resolution: Any disputes will be resolved under the jurisdiction of [Your Country].",
-    "Privacy Policy: Please refer to our Privacy Policy for details on how we handle user data.",
-    "Contact Information: For any inquiries, contact us at [email/contact].",
+
+// ----------------------------------------------------------Saudi Arabia----------------------------
+
+//saudi arabia En
+export const SaudiRegion = [
+  { label: "Riyadh", value: "Riyadh" },
+  { label: "Makkah", value: "Makkah" },
+  { label: "Al-Madinah", value: "Al-Madinah" },
+  { label: "Al-Qassim", value: "Al-Qassim" },
+  { label: "Eastern", value: "Eastern" },
+  { label: "Asir", value: "Asir" },
+  { label: "Tabuk", value: "Tabuk" },
+  { label: "Hail", value: "Hail" },
+  { label: "Northern Borders", value: "Northern Borders" },
+  { label: "Jazan", value: "Jazan" },
+  { label: "Najran", value: "Najran" },
+  { label: "Bahah", value: "Bahah" },
+  { label: "Al-Jouf", value: "Al-Jouf" },
+];
+
+export const citiesByRegion = {
+  Riyadh: [
+    { label: "Al Malaz", value: "Al Malaz" },
+    { label: "Al Olaya", value: "Al Olaya" },
+    { label: "Al Khuzama", value: "Al Khuzama" },
+    { label: "Diriyah", value: "Diriyah" },
+    { label: "Al Mughrizat", value: "Al Mughrizat" },
+    { label: "Al Yamama", value: "Al Yamama" },
+    { label: "Al Falah", value: "Al Falah" },
+    { label: "Al Kharj", value: "Al Kharj" },
+    { label: "Al Duwadimi", value: "Al Duwadimi" },
+    { label: "Thadiq", value: "Thadiq" },
+    { label: "Riyadh", value: "Riyadh" },
   ],
-  ar: [
-    "قبول الشروط: باستخدامك لهذه الخدمة، فإنك توافق على الشروط والأحكام الموضحة هنا.",
-    "تعديل الشروط: تحتفظ الشركة بالحق في تحديث أو تعديل هذه الشروط في أي وقت دون إشعار مسبق.",
-    "مسؤوليات المستخدم: يتحمل المستخدمون مسؤولية تقديم معلومات دقيقة والحفاظ على سرية حساباتهم.",
-    "الأنشطة المحظورة: يجب على المستخدمين عدم الانخراط في أنشطة غير قانونية أو إساءة استخدام المنصة.",
-    "الملكية الفكرية: جميع المحتويات على هذه المنصة محمية بموجب قوانين حقوق النشر.",
-    "إنهاء الخدمة: تحتفظ الشركة بالحق في تعليق أو إنهاء الخدمات للمستخدمين الذين ينتهكون هذه الشروط.",
-    "تحديد المسؤولية: الشركة غير مسؤولة عن أي أضرار ناتجة عن استخدام هذه الخدمة.",
-    "حل النزاعات: يتم حل أي نزاعات تحت ولاية [بلدك].",
-    "سياسة الخصوصية: يُرجى الرجوع إلى سياسة الخصوصية الخاصة بنا لمعرفة تفاصيل كيفية التعامل مع بيانات المستخدم.",
-    "معلومات الاتصال: لأي استفسارات، يُرجى التواصل معنا عبر [البريد الإلكتروني/الاتصال].",
+  Makkah: [
+    { label: "Mecca", value: "Mecca" },
+    { label: "Jeddah", value: "Jeddah" },
+    { label: "Ta'if", value: "Ta'if" },
+    { label: "Khamis Mushait", value: "Khamis Mushait" },
+    { label: "Al Lith", value: "Al Lith" },
+    { label: "Al Quwai'iyah", value: "Al Quwai'iyah" },
+    { label: "Mina", value: "Mina" },
+    { label: "Arafat", value: "Arafat" },
+    { label: "Jeddah", value: "Jeddah" },
+    { label: "Rabigh", value: "Rabigh" },
+  ],
+  "Al-Madinah": [
+    { label: "Medina", value: "Medina" },
+    { label: "Yanbu", value: "Yanbu" },
+    { label: "Al Ula", value: "Al Ula" },
+    { label: "Badr", value: "Badr" },
+    { label: "Khobar", value: "Khobar" },
+    { label: "Al-Mahd", value: "Al-Mahd" },
+    { label: "Khaybar", value: "Khaybar" },
+  ],
+  "Al-Qassim": [
+    { label: "Buraydah", value: "Buraydah" },
+    { label: "Unaizah", value: "Unaizah" },
+    { label: "Al-Rass", value: "Al-Rass" },
+    { label: "Al-Mithnab", value: "Al-Mithnab" },
+    { label: "Al-Bukayriyah", value: "Al-Bukayriyah" },
+    { label: "Al Asyah", value: "Al Asyah" },
+  ],
+  Eastern: [
+    { label: "Dammam", value: "Dammam" },
+    { label: "Khobar", value: "Khobar" },
+    { label: "Dhahran", value: "Dhahran" },
+    { label: "Al Ahsa", value: "Al Ahsa" },
+    { label: "Al Qatif", value: "Al Qatif" },
+    { label: "Al-Jubail", value: "Al-Jubail" },
+    { label: "Qatif", value: "Qatif" },
+    { label: "Al-Khobar", value: "Al-Khobar" },
+  ],
+  Asir: [
+    { label: "Abha", value: "Abha" },
+    { label: "Khamis Mushait", value: "Khamis Mushait" },
+    { label: "Bisha", value: "Bisha" },
+    { label: "Sahab", value: "Sahab" },
+    { label: "Al-Namas", value: "Al-Namas" },
+  ],
+  Tabuk: [
+    { label: "Tabuk", value: "Tabuk" },
+    { label: "Duba", value: "Duba" },
+    { label: "Umluj", value: "Umluj" },
+  ],
+  Hail: [
+    { label: "Hail", value: "Hail" },
+    { label: "Al-Midhnab", value: "Al-Midhnab" },
+    { label: "Ghazalah", value: "Ghazalah" },
+  ],
+  "Northern Borders": [
+    { label: "Arar", value: "Arar" },
+    { label: "Rafha", value: "Rafha" },
+    { label: "Turaif", value: "Turaif" },
+  ],
+  Jazan: [
+    { label: "Jazan", value: "Jazan" },
+    { label: "Sanaa", value: "Sanaa" },
+    { label: "Sabya", value: "Sabya" },
+    { label: "Abu Arish", value: "Abu Arish" },
+    { label: "Al-Darb", value: "Al-Darb" },
+  ],
+  Najran: [
+    { label: "Najran", value: "Najran" },
+    { label: "Sharurah", value: "Sharurah" },
+    { label: "Badr Al Janoub", value: "Badr Al Janoub" },
+  ],
+  Bahah: [
+    { label: "Al-Bahah", value: "Al-Bahah" },
+    { label: "Al-Qunfudhah", value: "Al-Qunfudhah" },
+  ],
+  "Al-Jouf": [
+    { label: "Sakaka", value: "Sakaka" },
+    { label: "Al Qurayyat", value: "Al Qurayyat" },
+    { label: "Dawmat Al Jandal", value: "Dawmat Al Jandal" },
+    { label: "Tubarjal", value: "Tubarjal" },
+    { label: "Al Hamad", value: "Al Hamad" },
+    { label: "Al Murayshdiyah", value: "Al Murayshdiyah" },
+    { label: "Al Qarqar", value: "Al Qarqar" },
+    { label: "Ithrah", value: "Ithrah" },
+    { label: "Ghutayy", value: "Ghutayy" },
+    { label: "Qulayyib Khudr", value: "Qulayyib Khudr" },
+  ],
+};
+
+//saudi arabia Ar
+export const SaudiRegionAr = [
+  { label: "الرياض", value: "الرياض" },
+  { label: "مكة المكرمة", value: "مكة المكرمة" },
+  { label: "المدينة المنورة", value: "المدينة المنورة" },
+  { label: "القصيم", value: "القصيم" },
+  { label: "المنطقة الشرقية", value: "المنطقة الشرقية" },
+  { label: "عسير", value: "عسير" },
+  { label: "تبوك", value: "تبوك" },
+  { label: "حائل", value: "حائل" },
+  { label: "الحدود الشمالية", value: "الحدود الشمالية" },
+  { label: "جازان", value: "جازان" },
+  { label: "نجران", value: "نجران" },
+  { label: "الباحة", value: "الباحة" },
+  { label: "الجوف", value: "الجوف" },
+];
+
+export const citiesByRegionAr = {
+  الرياض: [
+    { label: "الملز", value: "الملز" },
+    { label: "العيون", value: "العيون" },
+    { label: "الخبزة", value: "الخبزة" },
+    { label: "الدير", value: "الدير" },
+    { label: "المغرزات", value: "المغرزات" },
+    { label: "اليامامة", value: "اليامامة" },
+    { label: "الفلح", value: "الفلح" },
+    { label: "الخارج", value: "الخارج" },
+    { label: "الدوادمي", value: "الدوادمي" },
+    { label: "ثادق", value: "ثادق" },
+    { label: "الرياض", value: "الرياض" },
+  ],
+  "مكة المكرمة": [
+    { label: "مكة", value: "مكة" },
+    { label: "جدة", value: "جدة" },
+    { label: "الطائف", value: "الطائف" },
+    { label: "خميس مشيط", value: "خميس مشيط" },
+    { label: "الليث", value: "الليث" },
+    { label: "القويعية", value: "القويعية" },
+    { label: "منى", value: "منى" },
+    { label: "عرفة", value: "عرفة" },
+    { label: "جدة", value: "جدة" },
+    { label: "رابغ", value: "رابغ" },
+  ],
+  "المدينة المنورة": [
+    { label: "المدينة", value: "المدينة" },
+    { label: "ينبع", value: "ينبع" },
+    { label: "العلا", value: "العلا" },
+    { label: "بدر", value: "بدر" },
+    { label: "الخبر", value: "الخبر" },
+    { label: "المهد", value: "المهد" },
+    { label: "خيبر", value: "خيبر" },
+  ],
+  القصيم: [
+    { label: "بريدة", value: "بريدة" },
+    { label: "الرس", value: "الرس" },
+    { label: "المذنب", value: "المذنب" },
+    { label: "المصنف", value: "المصنف" },
+    { label: "البكيرية", value: "البكيرية" },
+    { label: "الأسياح", value: "الأسياح" },
+  ],
+  "المنطقة الشرقية": [
+    { label: "الدمام", value: "الدمام" },
+    { label: "الخبر", value: "الخبر" },
+    { label: "الظهران", value: "الظهران" },
+    { label: "الأحساء", value: "الأحساء" },
+    { label: "القطيف", value: "القطيف" },
+    { label: "الجبيل", value: "الجبيل" },
+    { label: "الخفجي", value: "الخفجي" },
+  ],
+  عسير: [
+    { label: "أبها", value: "أبها" },
+    { label: "خميس مشيط", value: "خميس مشيط" },
+    { label: "بيشة", value: "بيشة" },
+    { label: "سحاب", value: "سحاب" },
+    { label: "النماص", value: "النماص" },
+  ],
+  تبوك: [
+    { label: "تبوك", value: "تبوك" },
+    { label: "ضبا", value: "ضبا" },
+    { label: "أملج", value: "أملج" },
+  ],
+  حائل: [
+    { label: "حائل", value: "حائل" },
+    { label: "الميدنة", value: "الميدنة" },
+    { label: "غزالة", value: "غزالة" },
+  ],
+  "الحدود الشمالية": [
+    { label: "عرعر", value: "عرعر" },
+    { label: "رفحاء", value: "رفحاء" },
+    { label: "طريف", value: "طريف" },
+  ],
+  جازان: [
+    { label: "جازان", value: "جازان" },
+    { label: "صامطة", value: "صامطة" },
+    { label: "صبيا", value: "صبيا" },
+    { label: "أبو عريش", value: "أبو عريش" },
+    { label: "الدرب", value: "الدرب" },
+  ],
+  نجران: [
+    { label: "نجران", value: "نجران" },
+    { label: "شرورة", value: "شرورة" },
+    { label: "بدع الجنوب", value: "بدع الجنوب" },
+  ],
+  الباحة: [
+    { label: "الباحة", value: "الباحة" },
+    { label: "القنفذة", value: "القنفذة" },
+  ],
+  الجوف: [
+    { label: "سكاكا", value: "سكاكا" },
+    { label: "القريات", value: "القريات" },
+    { label: "دومة الجندل", value: "دومة الجندل" },
+    { label: "تبارك", value: "تبارك" },
+    { label: "الحمد", value: "الحمد" },
+    { label: "الموراشدية", value: "الموراشدية" },
   ],
 };

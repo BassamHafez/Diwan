@@ -17,6 +17,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import ContractDetails from "./ContractDetails";
+import { useSelector } from "react-redux";
 
 const CompoundContracts = ({ compoundEstates }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -25,7 +26,7 @@ const CompoundContracts = ({ compoundEstates }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { compId } = useParams();
   const navigate = useNavigate();
 

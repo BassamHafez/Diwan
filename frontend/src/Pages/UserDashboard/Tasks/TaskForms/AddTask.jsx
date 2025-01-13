@@ -31,6 +31,7 @@ import {
   useServicesContact,
   useAddContactInForms,
   useValidation,
+  useSelector,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
@@ -51,7 +52,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
   const queryClient = useQueryClient();
   const { t: key } = useTranslation();
 
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -82,8 +83,10 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
 
     if (!isCompound && updatedValues.estate) {
       updatedValues.estate = updatedValues.estate.value;
+      updatedValues.compound = "";
     } else if (isCompound && updatedValues.compound) {
       updatedValues.compound = updatedValues.compound.value;
+      updatedValues.estate = "";
     }
 
     const cleanedValues = cleanUpData({ ...updatedValues });
