@@ -15,12 +15,7 @@ import {
   Select,
   CreatableSelect,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-} from "../../../shared/constants";
+import { faSpinner, toast, object, string } from "../../../shared/constants";
 import {
   useEffect,
   useState,
@@ -32,6 +27,7 @@ import {
   useContactsOptions,
   useAddContactInForms,
   useValidation,
+  useSelector,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 import { Row, Col } from "../../../shared/bootstrap";
@@ -55,7 +51,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
   });
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const queryClient = useQueryClient();
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
 
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
@@ -120,8 +116,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
         values.electricityAccountNumber.toString()
       );
     }
-    const isTagsExist = values.tags?.length > 0;
-    if (isTagsExist) {
+    if (Array.isArray(values.tags)) {
       values.tags.forEach((obj, index) => {
         formData.append(`tags[${index}]`, obj.value);
       });
@@ -141,7 +136,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
               console.log(data);
               if (data?.status === "success") {
                 await refetch();
-                if (isTagsExist) {
+                if (values.tags?.length > 0) {
                   refetchTags();
                 }
                 queryClient.invalidateQueries(["compounds", token]);
@@ -271,7 +266,7 @@ const UpdateCompound = ({ compoundData, hideModal, refetch }) => {
                     isRtl={isArLang ? true : false}
                     placeholder=""
                   />
-                  <ErrorMessage name="city" component="div" className="error" />
+                  <ErrorMessage name="city" component={InputErrorMessage} />
                 </div>
               </Col>
               <Col sm={6}>

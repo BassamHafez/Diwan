@@ -1,6 +1,3 @@
-import noAvatar from "../../../assets/default.png";
-import organizationImage from "../../../assets/organization.png";
-import noAvatarGray from "../../../assets/noAvatar.png";
 import styles from "./Contacts.module.css";
 import {
   formatPhoneNumber,
@@ -8,22 +5,29 @@ import {
   formatWhatsAppLink,
   renameContactType,
 } from "../../../Components/Logic/LogicFun";
-import { useTranslation } from "react-i18next";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import UpdateContactForm from "./ContactForms/UpdateContactForm";
+import AOS from "aos";
+import { FontAwesomeIcon } from "../../../shared/index";
+import {
+  useSelector,
+  useDeleteItem,
+  useEffect,
+  useState,
+  useTranslation,
+} from "../../../shared/hooks";
+import {
+  CheckPermissions,
+  MainModal,
+  ModalForm,
+} from "../../../shared/components";
+import { Col } from "../../../shared/bootstrap";
+import { noAvatar, organizationImage, avatar } from "../../../shared/images";
 import {
   faPenToSquare,
   faSquarePhone,
   faTrash,
-} from "@fortawesome/free-solid-svg-icons";
-import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
-import Col from "react-bootstrap/esm/Col";
-import { useEffect, useState } from "react";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import UpdateContactForm from "./ContactForms/UpdateContactForm";
-import AOS from "aos";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
-import useDeleteItem from "../../../hooks/useDeleteItem";
+  faWhatsapp,
+} from "../../../shared/constants";
 
 const ContactItem = ({
   contact,
@@ -38,6 +42,7 @@ const ContactItem = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateContactModal, setShowUpdateContactModal] = useState(false);
   const deleteItem = useDeleteItem();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -95,8 +100,8 @@ const ContactItem = ({
                   type === "tenant"
                     ? contact.type === "organization"
                       ? organizationImage
-                      : noAvatarGray
-                    : noAvatar
+                      : noAvatar
+                    : avatar
                 }
                 alt="avatar"
               />
@@ -116,7 +121,10 @@ const ContactItem = ({
                   : styles.controller_icons_en
               }`}
             >
-              <CheckPermissions btnActions={["DELETE_CONTACT"]}>
+              <CheckPermissions
+                btnActions={["DELETE_CONTACT"]}
+                profileInfo={profileInfo}
+              >
                 <FontAwesomeIcon
                   title={key("delete")}
                   className="text-danger"
@@ -124,7 +132,10 @@ const ContactItem = ({
                   onClick={() => setShowDeleteModal(true)}
                 />
               </CheckPermissions>
-              <CheckPermissions btnActions={["UPDATE_CONTACT"]}>
+              <CheckPermissions
+                btnActions={["UPDATE_CONTACT"]}
+                profileInfo={profileInfo}
+              >
                 <FontAwesomeIcon
                   onClick={() => setShowUpdateContactModal(true)}
                   title={key("ediet")}

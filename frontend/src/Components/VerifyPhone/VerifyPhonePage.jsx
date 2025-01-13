@@ -100,6 +100,7 @@ const VerifyPhonePage = () => {
           show={showVerifyCodeModal}
           onHide={() => setShowVerifyCodeModal(false)}
           modalSize={"md"}
+          isStatic={true}
         >
           <VerifyPhoneForm hideModal={() => setShowVerifyCodeModal(false)} />
         </ModalForm>

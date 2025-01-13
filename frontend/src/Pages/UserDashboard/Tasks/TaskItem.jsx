@@ -24,9 +24,7 @@ import UpdateTask from "./TaskForms/UpdateTask";
 import { useCallback, useState } from "react";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { useSelector } from "react-redux";
-import {
-  mainFormsHandlerTypeRaw,
-} from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { toast } from "react-toastify";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import { useQueryClient } from "@tanstack/react-query";
@@ -38,6 +36,7 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
   const [taskData, setTaskData] = useState({});
   const [taskID, setTaskID] = useState("");
   const deleteItem = useDeleteItem();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const token = useSelector((state) => state.userInfo.token);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const { t: key } = useTranslation();
@@ -71,7 +70,7 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
         break;
     }
     return iconType;
-  },[task?.type]);
+  }, [task?.type]);
 
   const deleteTask = async () => {
     const formData = {
@@ -167,7 +166,10 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
               </span>
             </div>
             <div>
-              <CheckPermissions btnActions={["DELETE_TASK"]}>
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={["DELETE_TASK"]}
+              >
                 <FontAwesomeIcon
                   title={key("delete")}
                   className="text-danger"
@@ -178,7 +180,10 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
                   }}
                 />
               </CheckPermissions>
-              <CheckPermissions btnActions={["UPDATE_TASK"]}>
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={["UPDATE_TASK"]}
+              >
                 <FontAwesomeIcon
                   onClick={() => {
                     setTaskData(task);
@@ -188,7 +193,10 @@ const TaskItem = ({ task, refetch, compId, propId }) => {
                   icon={faEdit}
                 />
               </CheckPermissions>
-              <CheckPermissions btnActions={["COMPLETE_TASK"]}>
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={["COMPLETE_TASK"]}
+              >
                 <FontAwesomeIcon
                   onClick={() => completeTask(task._id, task.isCompleted)}
                   title={task.isCompleted ? key("unFinished") : key("done")}

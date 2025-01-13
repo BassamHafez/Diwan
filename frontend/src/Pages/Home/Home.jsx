@@ -1,16 +1,20 @@
-import { useEffect } from "react";
 import styles from "./Home.module.css";
-import { useTranslation } from "react-i18next";
 import AOS from "aos";
-import Hero from "../../Components/Hero/Hero";
-import MainTitle from "../../Components/UI/Words/MainTitle";
 import Packages from "../Packages/Packages";
-import HomeTestimonalsSlider from "./HomeTestimonalsSlider";
 import About from "../About/About";
 import Contact from "../Contact/Contact";
-import ScrollTopBtn from "../../Components/UI/Buttons/ScrollTopBtn";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import {
+  useSelector,
+  useNavigate,
+  useTranslation,
+  useEffect,
+} from "../../shared/hooks";
+import {
+  MainTitle,
+  HomeTestimonalsSlider,
+  ScrollTopBtn,
+  Hero,
+} from "../../shared/components";
 
 const Home = () => {
   const { t: key } = useTranslation();

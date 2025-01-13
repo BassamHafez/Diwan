@@ -1,20 +1,24 @@
-import { useQuery } from "@tanstack/react-query";
-import { useTranslation } from "react-i18next";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
-import { useSelector } from "react-redux";
-import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
-import NoData from "../../../Components/UI/Blocks/NoData";
 import ContactItem from "./ContactItem";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import SearchField from "../../../Components/Search/SearchField";
-import Row from "react-bootstrap/esm/Row";
-import { useCallback, useState } from "react";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddContactForm from "./ContactForms/AddContactForm";
 import styles from "./Contacts.module.css";
-import Col from "react-bootstrap/esm/Col";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
+import {
+  NoData,
+  LoadingOne,
+  ButtonOne,
+  SearchField,
+  ModalForm,
+  MainModal,
+  CheckPermissions,
+} from "../../../shared/components";
+import {
+  useCallback,
+  useState,
+  useTranslation,
+  useQuery,
+  useSelector,
+} from "../../../shared/hooks";
+import { Row, Col } from "../../../shared/bootstrap";
 
 const Contacts = () => {
   const [showAddContactModal, setShowAddContactModal] = useState(false);
@@ -24,6 +28,7 @@ const Contacts = () => {
   const [showTenantDetials, setShowTenantDetails] = useState(false);
   const [isListView, setIsListView] = useState(false);
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const token = useSelector((state) => state.userInfo.token);
   const [selectedFilter, setSelectedFilter] = useState("contacts");
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
@@ -102,76 +107,95 @@ const Contacts = () => {
     enabled: selectedFilter === "tenant" && !!token,
   });
 
-  const handleFilterChange = (event) => {
+  const handleFilterChange = useCallback((event) => {
     setSelectedFilter(event.target.value);
-  };
-  const handleTenantType = (event) => {
+  }, []);
+
+  const handleTenantType = useCallback((event) => {
     setTenantTypeFilter(event.target.value);
-  };
+  }, []);
 
   const onSearch = useCallback((searchInput) => {
     setSearchFilter(searchInput);
   }, []);
 
-  const renderContacts = (contacts, type, isFetching) => {
-    if (isFetching) return <LoadingOne />;
+  const renderContacts = useCallback(
+    (contacts, type, isFetching) => {
+      if (isFetching) return <LoadingOne />;
 
-    if (!contacts?.data?.length) return <NoData text={key("noContacts")} />;
+      if (!contacts?.data?.length) return <NoData text={key("noContacts")} />;
 
-    const getRefetchFunction = () => {
-      switch (selectedFilter) {
-        case "broker":
-          return refetchBrokers;
-        case "landlord":
-          return refetchLandlords;
-        case "service":
-          return refetchServices;
-        case "tenant":
-          return refetchTenants;
-        default:
-          return refetchAllContacts;
-      }
-    };
+      const getRefetchFunction = () => {
+        switch (selectedFilter) {
+          case "broker":
+            return refetchBrokers;
+          case "landlord":
+            return refetchLandlords;
+          case "service":
+            return refetchServices;
+          case "tenant":
+            return refetchTenants;
+          default:
+            return refetchAllContacts;
+        }
+      };
 
-    const filteredData =
-      contacts && Array.isArray(contacts.data)
-        ? contacts.data.filter((contact) => {
-            const normalizedSearchFilter = searchFilter.toLowerCase();
-            const contactName = contact.name?.toLowerCase() || "";
-            const contactPhone = contact.phone?.toLowerCase() || "";
-            const contactPhone2 = contact.phone2?.toLowerCase() || "";
+      const filteredData =
+        contacts && Array.isArray(contacts.data)
+          ? contacts.data.filter((contact) => {
+              const normalizedSearchFilter = searchFilter.toLowerCase();
+              const contactName = contact.name?.toLowerCase() || "";
+              const contactPhone = contact.phone?.toLowerCase() || "";
+              const contactPhone2 = contact.phone2?.toLowerCase() || "";
 
-            const isNameMatch = contactName.includes(normalizedSearchFilter);
-            const isPhoneMatch = contactPhone.includes(normalizedSearchFilter);
-            const isPhone2Match = contactPhone2.includes(
-              normalizedSearchFilter
-            );
-
-            if (selectedFilter === "tenant") {
-              return (
-                (tenantTypeFilter === "all" ||
-                  contact.type === tenantTypeFilter) &&
-                (isNameMatch || isPhoneMatch || isPhone2Match)
+              const isNameMatch = contactName.includes(normalizedSearchFilter);
+              const isPhoneMatch = contactPhone.includes(
+                normalizedSearchFilter
               );
-            }
+              const isPhone2Match = contactPhone2.includes(
+                normalizedSearchFilter
+              );
 
-            return isNameMatch || isPhoneMatch || isPhone2Match;
-          })
-        : [];
+              if (selectedFilter === "tenant") {
+                return (
+                  (tenantTypeFilter === "all" ||
+                    contact.type === tenantTypeFilter) &&
+                  (isNameMatch || isPhoneMatch || isPhone2Match)
+                );
+              }
 
-    return filteredData.map((contact) => (
-      <ContactItem
-        key={contact._id}
-        contact={contact}
-        type={type}
-        showNotes={showNotes}
-        showTenantDetials={showTenantDetials}
-        isListView={isListView}
-        refetch={getRefetchFunction()}
-        refetchAllContacts={refetchAllContacts}
-      />
-    ));
-  };
+              return isNameMatch || isPhoneMatch || isPhone2Match;
+            })
+          : [];
+
+      return filteredData.map((contact) => (
+        <ContactItem
+          key={contact._id}
+          contact={contact}
+          type={type}
+          showNotes={showNotes}
+          showTenantDetials={showTenantDetials}
+          isListView={isListView}
+          refetch={getRefetchFunction()}
+          refetchAllContacts={refetchAllContacts}
+        />
+      ));
+    },
+    [
+      isListView,
+      key,
+      refetchAllContacts,
+      refetchBrokers,
+      refetchLandlords,
+      refetchServices,
+      refetchTenants,
+      searchFilter,
+      selectedFilter,
+      showNotes,
+      showTenantDetials,
+      tenantTypeFilter,
+    ]
+  );
 
   const showAddModal = useCallback(() => {
     if (selectedFilter === "contacts") {
@@ -181,19 +205,19 @@ const Contacts = () => {
     }
   }, [selectedFilter]);
 
-  const triggerAddModalDependsOnSelection = (selection) => {
+  const triggerAddModalDependsOnSelection = useCallback((selection) => {
     setShowSelectContactTypeModal(false);
     setSelectedFilter(selection);
     setShowAddContactModal(true);
-  };
+  }, []);
 
-  const toggleSwitchBtn = () => {
+  const toggleSwitchBtn = useCallback(() => {
     if (selectedFilter === "tenant") {
       setShowTenantDetails(!showTenantDetials);
     } else {
       setShowNotes(!showNotes);
     }
-  };
+  }, [selectedFilter, showNotes, showTenantDetials]);
 
   return (
     <div className={styles.contacts_body}>
@@ -485,7 +509,10 @@ const Contacts = () => {
               <div className="my-1">
                 <SearchField onSearch={onSearch} text={key("searchContacts")} />
               </div>
-              <CheckPermissions btnActions={["ADD_CONTACT"]}>
+              <CheckPermissions
+                btnActions={["ADD_CONTACT"]}
+                profileInfo={profileInfo}
+              >
                 <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
                   <ButtonOne
                     onClick={showAddModal}

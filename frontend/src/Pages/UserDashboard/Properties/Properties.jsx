@@ -4,7 +4,6 @@ import AddCompound from "../PropertyForms/AddCompound";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import AddEstate from "../PropertyForms/AddEstate";
 import { checkAccountFeatures } from "../../../Components/Logic/LogicFun";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import { FontAwesomeIcon, Select } from "../../../shared/index";
 import {
   faBuilding,
@@ -32,6 +31,8 @@ import {
   MainModal,
   AccordionContent,
   LoadingOne,
+  CheckPermissions,
+  CheckMySubscriptions,
 } from "../../../shared/components";
 import { Row, Col, Accordion, Container } from "../../../shared/bootstrap";
 
@@ -48,7 +49,7 @@ const Properties = () => {
   const [statusFiltering, setStatusFiltering] = useState("all");
   const [searchFilter, setSearchFilter] = useState("");
   const [compoundStatusFiltering, setCompoundStatusFiltering] = useState("all");
-
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
   const role = useSelector((state) => state.userInfo.role);
@@ -683,7 +684,10 @@ const Properties = () => {
                 <SearchField onSearch={onSearch} text={key("searchEstate")} />
               </div>
               <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
-                <CheckPermissions btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}>
+                <CheckPermissions
+                  profileInfo={profileInfo}
+                  btnActions={["ADD_COMPOUND", "ADD_ESTATE"]}
+                >
                   <ButtonOne
                     onClick={showMainModalHandler}
                     borderd={true}
@@ -724,25 +728,43 @@ const Properties = () => {
           modalSize="lg"
         >
           <div className="d-flex justify-content-center align-items-center p-1 p-md-4">
-            <CheckPermissions btnActions={["ADD_ESTATE"]}>
-              <div
-                className={styles.add_prop_div}
-                onClick={() => showNextModal("estate")}
+            <CheckMySubscriptions
+              name="allowedEstates"
+              type="number"
+              accountInfo={accountInfo}
+            >
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={["ADD_ESTATE"]}
               >
-                <h5>{key("createProp")}</h5>
-                <p>{key("exProp")}</p>
-              </div>
-            </CheckPermissions>
+                <div
+                  className={styles.add_prop_div}
+                  onClick={() => showNextModal("estate")}
+                >
+                  <h5>{key("createProp")}</h5>
+                  <p>{key("exProp")}</p>
+                </div>
+              </CheckPermissions>
+            </CheckMySubscriptions>
 
-            <CheckPermissions btnActions={["ADD_COMPOUND"]}>
-              <div
-                className={styles.add_prop_div}
-                onClick={() => showNextModal("compound")}
+            <CheckMySubscriptions
+              name="allowedCompounds"
+              type="number"
+              accountInfo={accountInfo}
+            >
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={["ADD_COMPOUND"]}
               >
-                <h5>{key("addCompound")}</h5>
-                <p>{key("exCompound")}</p>
-              </div>
-            </CheckPermissions>
+                <div
+                  className={styles.add_prop_div}
+                  onClick={() => showNextModal("compound")}
+                >
+                  <h5>{key("addCompound")}</h5>
+                  <p>{key("exCompound")}</p>
+                </div>
+              </CheckPermissions>
+            </CheckMySubscriptions>
           </div>
         </MainModal>
       )}

@@ -43,11 +43,13 @@ const UpdateConfigs = () => {
     WHATSAPP: configs?.whatsappNumber || "",
     EMAIL: configs?.email || "",
     VAT: Number(configs?.VAT?.trim()) || 0,
+    TRIAL_DAYS:Number(configs?.TRIAL_DAYS?.trim())||0
   };
 
   const onSubmit = (values, { resetForm }) => {
     const updatedValues = { ...values };
     updatedValues.VAT = updatedValues.VAT?.toString();
+    updatedValues.TRIAL_DAYS = updatedValues.TRIAL_DAYS?.toString();
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
@@ -106,6 +108,7 @@ const UpdateConfigs = () => {
     WHATSAPP: string().nullable(),
     EMAIL: string().email(key("invalidEmail")).nullable(),
     VAT: number().min(0, key("positiveValidation")).nullable(),
+    TRIAL_DAYS: number().min(0, key("positiveValidation")).nullable(),
   });
   // .matches(/^((966)|00966)?5\d{8}$/, key("invalidWhatsApp"))
   return (
@@ -183,6 +186,13 @@ const UpdateConfigs = () => {
                 <label htmlFor="VAT">{key("VAT")} (%)</label>
                 <Field type="number" id="VAT" name="VAT" />
                 <ErrorMessage name="VAT" component={InputErrorMessage} />
+              </div>
+            </Col>
+            <Col sm={6}>
+              <div className="field ltr_input">
+                <label htmlFor="TRIAL_DAYS">{key("freeTrial")} ({key("inDays")})</label>
+                <Field type="number" id="TRIAL_DAYS" name="TRIAL_DAYS" />
+                <ErrorMessage name="TRIAL_DAYS" component={InputErrorMessage} />
               </div>
             </Col>
           </Row>

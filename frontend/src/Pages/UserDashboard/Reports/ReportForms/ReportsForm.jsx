@@ -24,6 +24,7 @@ import {
   useMutation,
   useTranslation,
   useValidation,
+  useSelector,
 } from "../../../../shared/hooks";
 import { InputErrorMessage } from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
@@ -38,11 +39,9 @@ const ReportsForm = ({
 }) => {
   const [isCompound, setIsCompound] = useState(false);
   const { t: key } = useTranslation();
-  const {
-    dateGreater,
-    dateValidation,
-    selectOptionValidationTypeString,
-  } = useValidation();
+  const { dateGreater, dateValidation, selectOptionValidationTypeString } =
+    useValidation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -324,7 +323,10 @@ const ReportsForm = ({
               ))}
 
             <div className="d-flex  align-items-center mt-3 px-4">
-              <CheckPermissions btnActions={[permissionArr]}>
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={[permissionArr]}
+              >
                 <button className="submit_btn" type="submit">
                   {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faSpinner} />

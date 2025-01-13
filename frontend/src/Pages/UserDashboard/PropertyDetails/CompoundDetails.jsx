@@ -33,6 +33,7 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import TaskContent from "../Tasks/TaskContent";
 import useCompoundAnlaysis from "../../../hooks/useCompoundAnlaysis";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const CompoundDetails = () => {
   const [showAddEstateModal, setShowAddEstateModal] = useState(false);
@@ -43,6 +44,7 @@ const CompoundDetails = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
 
@@ -141,7 +143,10 @@ const CompoundDetails = () => {
                 >
                   <h3 className="my-4 mx-1">{compDetails?.compound?.name}</h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
-                    <CheckPermissions btnActions={["DELETE_COMPOUND"]}>
+                    <CheckPermissions
+                      profileInfo={profileInfo}
+                      btnActions={["DELETE_COMPOUND"]}
+                    >
                       <CheckAllowedCompounds id={compId}>
                         <div
                           className={`${styles.controller_btn} ${styles.delete_btn}`}
@@ -152,17 +157,27 @@ const CompoundDetails = () => {
                         </div>
                       </CheckAllowedCompounds>
                     </CheckPermissions>
-                    <CheckPermissions btnActions={["ADD_ESTATE"]}>
-                      <CheckAllowedCompounds id={compId}>
-                        <div
-                          className={styles.bookmarked}
-                          onClick={checkIsAllowed}
-                          title={key("addEstate")}
-                        >
-                          <FontAwesomeIcon icon={faPlus} />
-                        </div>
-                      </CheckAllowedCompounds>
-                    </CheckPermissions>
+
+                    <CheckMySubscriptions
+                      name="allowedEstates"
+                      type="number"
+                      accountInfo={accountInfo}
+                    >
+                      <CheckPermissions
+                        profileInfo={profileInfo}
+                        btnActions={["ADD_ESTATE"]}
+                      >
+                        <CheckAllowedCompounds id={compId}>
+                          <div
+                            className={styles.bookmarked}
+                            onClick={checkIsAllowed}
+                            title={key("addEstate")}
+                          >
+                            <FontAwesomeIcon icon={faPlus} />
+                          </div>
+                        </CheckAllowedCompounds>
+                      </CheckPermissions>
+                    </CheckMySubscriptions>
                   </div>
                 </div>
 

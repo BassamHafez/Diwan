@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeRaw } from "../../../util/Http";
+import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import {
   ErrorMessage,
   Field,
@@ -11,14 +11,17 @@ import {
   faSquareWhatsapp,
   toast,
   object,
+  faImage,
 } from "../../../shared/constants";
 import {
+  useFileHandler,
   useMutation,
   useSelector,
   useTranslation,
   useValidation,
 } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
+import styles from "../Admin.module.css";
 
 const SendMessaagesForm = ({
   selectedUsers,
@@ -28,25 +31,38 @@ const SendMessaagesForm = ({
 }) => {
   const { t: key } = useTranslation();
   const { messageValidation, mainReqValidation } = useValidation();
+  const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const token = useSelector((state) => state.userInfo.token);
   const { mutate } = useMutation({
-    mutationFn: mainFormsHandlerTypeRaw,
+    mutationFn: mainFormsHandlerTypeFormData,
   });
 
   const initialValues = {
+    image: "",
     message: "",
     type: "email",
   };
 
   const onSubmit = (values, { resetForm }) => {
+    const formData = new FormData();
+
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
+
     const myIds = selectedUsers?.length > 0 ? selectedUsers : allUsers;
-    const updatedValues = { ...values, usersIds: myIds };
-    console.log(updatedValues);
+  
+    myIds.forEach((val, index) => {
+      formData.append(`usersIds[${index}]`, val);
+    });
+    formData.append("message", values.message);
+    formData.append("type", values.type);
+
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
           {
-            formData: updatedValues,
+            formData: formData,
             token: token,
             method: "add",
             type: "users/messages",
@@ -90,6 +106,35 @@ const SendMessaagesForm = ({
       validationSchema={validationSchema}
     >
       <Form>
+        <div className={styles.photo_field}>
+          <h6 className="mb-3">{key("poster")}</h6>
+          <label
+            className={
+              imagePreviewUrl ? styles.photo_label_img : styles.photo_label
+            }
+            htmlFor="poster"
+          >
+            {imagePreviewUrl ? (
+              <img
+                src={imagePreviewUrl}
+                alt="Uploaded_image"
+                className={styles.image_preview}
+              />
+            ) : (
+              <FontAwesomeIcon className={styles.img_icon} icon={faImage} />
+            )}
+          </label>
+          <input
+            type="file"
+            id="poster"
+            name="image"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="d-none"
+          />
+          <ErrorMessage name="image" component={InputErrorMessage} />
+        </div>
+
         <div className="field">
           <label htmlFor="message">{key("message")}</label>
           <Field

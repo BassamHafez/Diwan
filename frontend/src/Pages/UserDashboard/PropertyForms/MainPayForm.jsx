@@ -17,11 +17,11 @@ import {
   string,
   date,
 } from "../../../shared/constants";
-import { useMutation, useTranslation, useParams } from "../../../shared/hooks";
+import { useMutation, useTranslation, useParams, useSelector } from "../../../shared/hooks";
 import { InputErrorMessage } from "../../../shared/components";
 
 const MainPayForm = ({ hideModal, refetch, type, Id, refetchDetails }) => {
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   const requiredLabel = <span className="text-danger">*</span>;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";

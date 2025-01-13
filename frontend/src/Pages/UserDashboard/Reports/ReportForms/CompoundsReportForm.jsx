@@ -19,6 +19,7 @@ import {
 } from "../../../../shared/constants";
 import {
   useMutation,
+  useSelector,
   useTranslation,
   useValidation,
 } from "../../../../shared/hooks";
@@ -33,6 +34,7 @@ const CompoundsReportForm = ({
 }) => {
   const { t: key } = useTranslation();
   const { dateGreater, dateValidation, mainReqValidation } = useValidation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
   const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
@@ -223,7 +225,10 @@ const CompoundsReportForm = ({
             </Col>
 
             <div className="d-flex  align-items-center mt-3 px-4">
-              <CheckPermissions btnActions={["COMPOUNDS_REPORTS"]}>
+              <CheckPermissions
+                profileInfo={profileInfo}
+                btnActions={["COMPOUNDS_REPORTS"]}
+              >
                 <button className="submit_btn" type="submit">
                   {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faSpinner} />

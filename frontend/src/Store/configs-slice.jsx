@@ -3,15 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const configsSlice = createSlice({
   name: "configs",
   initialState: {
-    mainColor: "#b62026",
-    subColor: "#2D3A58",
+    mainColor: "#d39833",
+    subColor: "#2a3a47",
     instagramLink: "",
     twitterLink: "",
-    whatsappNumber:"",
-    email:"",
-    messageCodeReminder:"",
-    whatsappMessage:"",
-    VAT:"0",
+    whatsappNumber: "",
+    email: "",
+    VAT: "0",
+    TRIAL_DAYS: "5",
   },
   reducers: {
     setMainColor(state, action) {
@@ -34,6 +33,9 @@ const configsSlice = createSlice({
     },
     setVAT(state, action) {
       state.VAT = action.payload;
+    },
+    setFreeTrail(state, action) {
+      state.TRIAL_DAYS = action.payload;
     },
   },
 });
