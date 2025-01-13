@@ -6,7 +6,7 @@ const taskController = require("../controllers/taskController");
 const taskValidator = require("../utils/validators/taskValidator");
 const { setAccountId, filterAccountResults } = require("../utils/requestUtils");
 
-router.use(authController.protect);
+router.use(authController.protect, taskController.checkTasksPermission);
 
 router
   .route("/")

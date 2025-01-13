@@ -22,6 +22,21 @@ const taskPopOptions = [
   },
 ];
 
+exports.checkTasksPermission = async (req, res, next) => {
+  if (req.user && req.user.account) {
+    const account = await Account.findById(req.user.account)
+      .select("isTasksAllowed")
+      .lean();
+
+    if (!account || !account.isTasksAllowed) {
+      return next(
+        new ApiError("Your Subscription does not allow this feature", 403)
+      );
+    }
+  }
+  next();
+};
+
 exports.getAllTasks = factory.getAll(Task, taskPopOptions);
 exports.getTask = factory.getOne(Task, taskPopOptions);
 exports.updateTask = factory.updateOne(Task);

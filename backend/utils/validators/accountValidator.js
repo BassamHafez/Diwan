@@ -48,13 +48,67 @@ exports.subscribeValidator = [
     .exists()
     .withMessage("Favorite allowed is required")
     .isBoolean()
-    .withMessage("Invalid favorite allowed"),
+    .withMessage("Invalid boolean value"),
 
   check("isRemindersAllowed")
     .exists()
     .withMessage("Reminders allowed is required")
     .isBoolean()
-    .withMessage("Invalid reminders allowed"),
+    .withMessage("Invalid boolean value"),
+
+  check("isAnalysisAllowed")
+    .exists()
+    .withMessage("Analysis allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isContractsAllowed")
+    .exists()
+    .withMessage("Contracts allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isFinancialReportsAllowed")
+    .exists()
+    .withMessage("Financial Reports allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isOperationalReportsAllowed")
+    .exists()
+    .withMessage("Operational Reports allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isCompoundsReportsAllowed")
+    .exists()
+    .withMessage("Compounds Reports allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isTasksAllowed")
+    .exists()
+    .withMessage("Tasks allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isFilesExtractAllowed")
+    .exists()
+    .withMessage("Files Extract allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isServiceContactsAllowed")
+    .exists()
+    .withMessage("Contacts allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
+
+  check("isUserPermissionsAllowed")
+    .exists()
+    .withMessage("User Permissions allowed is required")
+    .isBoolean()
+    .withMessage("Invalid boolean value"),
 
   validatorMiddleware,
 ];
@@ -164,6 +218,51 @@ exports.updateAccountValidator = [
     .exists()
     .withMessage("Reminders allowed is not allowed"),
 
+  check("isAnalysisAllowed")
+    .not()
+    .exists()
+    .withMessage("Analysis allowed is not allowed"),
+
+  check("isContractsAllowed")
+    .not()
+    .exists()
+    .withMessage("Contracts allowed is not allowed"),
+
+  check("isFinancialReportsAllowed")
+    .not()
+    .exists()
+    .withMessage("Financial Reports allowed is not allowed"),
+
+  check("isOperationalReportsAllowed")
+    .not()
+    .exists()
+    .withMessage("Operational Reports allowed is not allowed"),
+
+  check("isCompoundsReportsAllowed")
+    .not()
+    .exists()
+    .withMessage("Compounds Reports allowed is not allowed"),
+
+  check("isTasksAllowed")
+    .not()
+    .exists()
+    .withMessage("Tasks allowed is not allowed"),
+
+  check("isFilesExtractAllowed")
+    .not()
+    .exists()
+    .withMessage("Files Extract allowed is not allowed"),
+
+  check("isServiceContactsAllowed")
+    .not()
+    .exists()
+    .withMessage("Contacts allowed is not allowed"),
+
+  check("isUserPermissionsAllowed")
+    .not()
+    .exists()
+    .withMessage("User Permissions allowed is not allowed"),
+
   validatorMiddleware,
 ];
 
@@ -215,8 +314,8 @@ exports.addMemberValidator = [
   check("permissions")
     .exists()
     .withMessage("Permissions required")
-    .isArray({ min: 1 })
-    .withMessage("Permissions must be an array with at least one permission"),
+    .isArray()
+    .withMessage("Permissions must be an array"),
 
   check("permissions.*")
     .isString()
@@ -253,8 +352,8 @@ exports.updateMemberValidator = [
 
   check("permissions")
     .optional()
-    .isArray({ min: 1 })
-    .withMessage("Permissions must be an array with at least one permission"),
+    .isArray()
+    .withMessage("Permissions must be an array"),
 
   check("permissions.*")
     .isString()

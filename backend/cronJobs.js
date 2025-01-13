@@ -279,6 +279,15 @@ const checkSubscriptions = async () => {
         maxEstatesInCompound: 0,
         isFavoriteAllowed: false,
         isRemindersAllowed: false,
+        isAnalysisAllowed: false,
+        isContractsAllowed: false,
+        isFinancialReportsAllowed: false,
+        isOperationalReportsAllowed: false,
+        isCompoundsReportsAllowed: false,
+        isTasksAllowed: false,
+        isFilesExtractAllowed: false,
+        isServiceContactsAllowed: false,
+        isUserPermissionsAllowed: false,
       };
 
       accountBulkUpdates.push({

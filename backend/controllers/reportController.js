@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
+const Account = require("../models/accountModel");
 const Compound = require("../models/compoundModel");
 const Expense = require("../models/expenseModel");
 const Revenue = require("../models/revenueModel");
 const Contract = require("../models/contractModel");
 const catchAsync = require("../utils/catchAsync");
+const ApiError = require("../utils/ApiError");
 
 // Financial Reports (Lessor)
 
@@ -16,6 +18,16 @@ exports.getIncomeReport = catchAsync(async (req, res, next) => {
 
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
+
+  const account = await Account.findById(accountId)
+    .select("isFinancialReportsAllowed")
+    .lean();
+
+  if (!account || !account.isFinancialReportsAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
 
   const match = {
     status: "paid",
@@ -116,6 +128,16 @@ exports.getIncomeDetailsReport = catchAsync(async (req, res, next) => {
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
 
+  const account = await Account.findById(accountId)
+    .select("isFinancialReportsAllowed")
+    .lean();
+
+  if (!account || !account.isFinancialReportsAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
+
   const filter = {
     status: "paid",
     paidAt: { $gte: start, $lte: end },
@@ -182,6 +204,16 @@ exports.getPaymentsReport = catchAsync(async (req, res, next) => {
   const end = new Date(endDueDate);
   end.setHours(23, 59, 59, 999);
 
+  const account = await Account.findById(accountId)
+    .select("isFinancialReportsAllowed")
+    .lean();
+
+  if (!account || !account.isFinancialReportsAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
+
   const filter = {
     dueDate: { $gte: start, $lte: end },
     account: accountId,
@@ -247,6 +279,16 @@ exports.getContractsReport = catchAsync(async (req, res, next) => {
   const end = new Date(endDueDate);
   end.setHours(23, 59, 59, 999);
 
+  const account = await Account.findById(accountId)
+    .select("isOperationalReportsAllowed")
+    .lean();
+
+  if (!account || !account.isOperationalReportsAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
+
   const filter = {
     account: accountId,
     startDate: { $lte: end },
@@ -305,6 +347,16 @@ exports.getCompoundsReport = catchAsync(async (req, res, next) => {
 
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
+
+  const account = await Account.findById(accountId)
+    .select("isCompoundsReportsAllowed")
+    .lean();
+
+  if (!account || !account.isCompoundsReportsAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
 
   const match = {
     compound: { $exists: true, $ne: null },
@@ -387,6 +439,7 @@ exports.getCompoundsReport = catchAsync(async (req, res, next) => {
 });
 
 exports.getCompoundDetailsReport = catchAsync(async (req, res, next) => {
+  const accountId = req.user.account;
   const { startDate, endDate, compoundId } = req.body;
 
   const start = new Date(startDate);
@@ -394,6 +447,16 @@ exports.getCompoundDetailsReport = catchAsync(async (req, res, next) => {
 
   const end = new Date(endDate);
   end.setHours(23, 59, 59, 999);
+
+  const account = await Account.findById(accountId)
+    .select("isCompoundsReportsAllowed")
+    .lean();
+
+  if (!account || !account.isCompoundsReportsAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
 
   const popOptions = [
     {

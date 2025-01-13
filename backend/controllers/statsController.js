@@ -7,12 +7,23 @@ const Revenue = require("../models/revenueModel");
 const Expense = require("../models/expenseModel");
 const Task = require("../models/taskModel");
 const catchAsync = require("../utils/catchAsync");
+const ApiError = require("../utils/ApiError");
 
 exports.getStats = catchAsync(async (req, res, next) => {
   const accountId = req.user.account;
   const startOfYear = new Date(new Date().getFullYear(), 0, 1);
   // const endOfYear = new Date(new Date().getFullYear() + 1, 0, 1); // 1st Jan next year
   const endOfYear = new Date(new Date().getFullYear(), 11, 31); // 31st Dec this year
+
+  const account = await Account.findById(accountId)
+    .select("isAnalysisAllowed")
+    .lean();
+
+  if (!account || !account.isAnalysisAllowed) {
+    return next(
+      new ApiError("Your Subscription does not allow this feature", 403)
+    );
+  }
 
   const estatesAggregatePromise = Estate.aggregate([
     { $match: { account: accountId } },
