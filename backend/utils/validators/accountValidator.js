@@ -62,12 +62,6 @@ exports.subscribeValidator = [
     .isBoolean()
     .withMessage("Invalid boolean value"),
 
-  check("isContractsAllowed")
-    .exists()
-    .withMessage("Contracts allowed is required")
-    .isBoolean()
-    .withMessage("Invalid boolean value"),
-
   check("isFinancialReportsAllowed")
     .exists()
     .withMessage("Financial Reports allowed is required")
@@ -222,11 +216,6 @@ exports.updateAccountValidator = [
     .not()
     .exists()
     .withMessage("Analysis allowed is not allowed"),
-
-  check("isContractsAllowed")
-    .not()
-    .exists()
-    .withMessage("Contracts allowed is not allowed"),
 
   check("isFinancialReportsAllowed")
     .not()

@@ -21,16 +21,6 @@ const contractPopOptions = [
 exports.getAllContracts = catchAsync(async (req, res, next) => {
   const { estateId } = req.params;
 
-  const account = await Account.findById(req.user.account)
-    .select("isContractsAllowed")
-    .lean();
-
-  if (!account || !account.isContractsAllowed) {
-    return next(
-      new ApiError("Your Subscription does not allow this feature", 403)
-    );
-  }
-
   const [estate, contracts] = await Promise.all([
     Estate.findById(estateId).select("_id").lean(),
 
@@ -63,9 +53,7 @@ exports.createContract = catchAsync(async (req, res, next) => {
     return next(new ApiError("Start date must be before end date", 400));
   }
 
-  const [account, overlappingContract, tenant] = await Promise.all([
-    Account.findById(req.user.account).select("isContractsAllowed").lean(),
-
+  const [overlappingContract, tenant] = await Promise.all([
     Contract.findOne({
       estate: estateId,
       startDate: { $lte: newEndDate },
@@ -77,12 +65,6 @@ exports.createContract = catchAsync(async (req, res, next) => {
 
     TenantContact.findById(req.body.tenant).select("name phone").lean(),
   ]);
-
-  if (!account || !account.isContractsAllowed) {
-    return next(
-      new ApiError("Your Subscription does not allow this feature", 403)
-    );
-  }
 
   if (overlappingContract) {
     return next(
