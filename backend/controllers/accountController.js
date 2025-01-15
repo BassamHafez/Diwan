@@ -193,7 +193,6 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     { key: "isFavoriteAllowed", feature: "FAVORITES" },
     { key: "isRemindersAllowed", feature: "REMINDERS" },
     { key: "isAnalysisAllowed", feature: "ANALYSIS" },
-    { key: "isContractsAllowed", feature: "CONTRACTS" },
     { key: "isFinancialReportsAllowed", feature: "FINANCIAL_REPORTS" },
     { key: "isOperationalReportsAllowed", feature: "OPERATIONAL_REPORTS" },
     { key: "isCompoundsReportsAllowed", feature: "COMPOUNDS_REPORTS" },
@@ -287,7 +286,6 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
       isFavoriteAllowed: Boolean(features.isFavoriteAllowed),
       isRemindersAllowed: Boolean(features.isRemindersAllowed),
       isAnalysisAllowed: Boolean(features.isAnalysisAllowed),
-      isContractsAllowed: Boolean(features.isContractsAllowed),
       isFinancialReportsAllowed: Boolean(features.isFinancialReportsAllowed),
       isOperationalReportsAllowed: Boolean(
         features.isOperationalReportsAllowed

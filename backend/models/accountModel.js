@@ -71,10 +71,6 @@ const accountSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    isContractsAllowed: {
-      type: Boolean,
-      default: false,
-    },
     isFinancialReportsAllowed: {
       type: Boolean,
       default: false,

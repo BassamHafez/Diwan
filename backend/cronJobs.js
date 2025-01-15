@@ -280,7 +280,6 @@ const checkSubscriptions = async () => {
         isFavoriteAllowed: false,
         isRemindersAllowed: false,
         isAnalysisAllowed: false,
-        isContractsAllowed: false,
         isFinancialReportsAllowed: false,
         isOperationalReportsAllowed: false,
         isCompoundsReportsAllowed: false,
