@@ -1,3 +1,4 @@
+const Account = require("../models/accountModel");
 const BrokerContact = require("../models/brokerContactModel");
 const ServiceContact = require("../models/serviceContactModel");
 const LandlordContact = require("../models/landlordContactModel");
@@ -6,12 +7,20 @@ const catchAsync = require("../utils/catchAsync");
 
 exports.getAllContacts = catchAsync(async (req, res, next) => {
   const accountId = req.user.account;
-  const collections = [
-    BrokerContact,
-    ServiceContact,
-    LandlordContact,
-    TenantContact,
-  ];
+
+  const account = await Account.findById(accountId)
+    .select("isServiceContactsAllowed")
+    .lean();
+
+  if (!account) {
+    return next(new AppError("Account not found", 404));
+  }
+
+  const collections = [BrokerContact, LandlordContact, TenantContact];
+
+  if (account.isServiceContactsAllowed) {
+    collections.push(ServiceContact);
+  }
 
   const contactPromises = collections.map((collection) =>
     collection.find({ account: accountId }).lean()
