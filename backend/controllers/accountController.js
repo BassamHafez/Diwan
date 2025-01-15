@@ -203,11 +203,13 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   ];
 
   for (const { key, feature } of booleanFeatures) {
-    if (!account[key] && req.body[key]) {
+    const val = Boolean(req.body[key]);
+
+    if (val) {
       const price = getSubscriptionPrice(subscriptions, feature);
       cost += price;
-      accountData[key] = true;
     }
+    accountData[key] = val;
   }
 
   if (!cost) {
