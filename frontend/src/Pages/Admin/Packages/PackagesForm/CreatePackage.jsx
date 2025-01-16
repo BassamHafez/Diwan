@@ -133,7 +133,7 @@ const CreatePackage = ({ refetch, hideModal }) => {
           {
             formData: updatedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `packages`,
           },
           {

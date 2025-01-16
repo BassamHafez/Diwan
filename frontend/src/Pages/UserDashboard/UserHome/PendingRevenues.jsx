@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from "../../../shared/index";
 
 const PendingRevenues = ({ myData, getStatusBgColor, showDetails }) => {
   const { t: key } = useTranslation();
-  console.log("PendingRevenues")
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   return (

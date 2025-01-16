@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import UserItem from "./UserItem";
 import SendMessaagesForm from "./SendMessaagesForm";
 import {
@@ -33,9 +33,10 @@ const AllUsers = () => {
   } = useQuery({
     queryKey: ["allUsers", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "users?role=user",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!token,

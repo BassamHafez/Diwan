@@ -26,7 +26,7 @@ const AdminTestimonials = () => {
 
   const { data, isFetching, refetch } = useQuery({
     queryKey: ["testimonials"],
-    queryFn: () => mainFormsHandlerTypeRaw({ type: "testimonials" }),
+    queryFn: () => mainFormsHandlerTypeRaw({ type: "testimonials",isLimited:true }),
     staleTime: Infinity,
   });
 

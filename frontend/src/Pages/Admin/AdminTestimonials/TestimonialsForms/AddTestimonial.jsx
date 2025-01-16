@@ -57,7 +57,7 @@ const AddTestimonial = ({ hideModal, refetch }) => {
           {
             formData: formData,
             token: token,
-            method: "add",
+            method: "post",
             type: `testimonials`,
           },
           {

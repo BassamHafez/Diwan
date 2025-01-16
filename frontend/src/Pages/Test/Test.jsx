@@ -9,6 +9,17 @@ const Test = () => {
 
 export default Test;
 
+// delete account
+
+{
+  /* <div className={styles.container}>
+  <p>{key("deleteAccWarning")}</p>
+  <div className={`mt-4 ${isArLang ? "text-start" : "text-end"}`}>
+    <ButtonOne borderd={true} text={key("deleteAcc")} classes="bg-danger" />
+  </div>
+</div>; */
+}
+
 // const handleCityChange = (selectedCity, setFieldValue) => {
 //   setFieldValue("city", selectedCity?.value || "");
 //   setFieldValue("neighborhood", "");
@@ -27,19 +38,19 @@ export default Test;
 
 {
   /* <Select
-                    options={districtOptions}
-                    onChange={(selected) =>
-                      setFieldValue("neighborhood", selected?.value)
-                    }
-                    value={
-                      districtOptions.find(
-                        (opt) => opt.value === values.neighborhood
-                      ) || null
-                    }
-                    isDisabled={!values.city}
-                    className={`${isArLang ? "text-end" : "text-start"}`}
-                    isRtl={isArLang ? true : false}
-                    placeholder={isArLang ? "" : "select"}
+ options={districtOptions}
+ onChange={(selected) =>
+   setFieldValue("neighborhood", selected?.value)
+ }
+ value={
+   districtOptions.find(
+     (opt) => opt.value === values.neighborhood
+   ) || null
+ }
+ isDisabled={!values.city}
+ className={`${isArLang ? "text-end" : "text-start"}`}
+ isRtl={isArLang ? true : false}
+ placeholder={isArLang ? "" : "select"}
                   /> */
 }
 

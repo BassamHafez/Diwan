@@ -9,7 +9,7 @@ const useFilterPackagesDuration = () => {
     refetch,
   } = useQuery({
     queryKey: ["allPackages"],
-    queryFn: () => getPublicData({ type: "packages" }),
+    queryFn: () => getPublicData({type: "packages"}),
     staleTime: Infinity,
   });
 

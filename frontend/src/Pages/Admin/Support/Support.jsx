@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { supportMessagesStatusOptions } from "../../../Components/Logic/StaticLists";
 import SupportItem from "./SupportItem";
 import styles from "../Admin.module.css";
@@ -34,9 +34,10 @@ const Support = () => {
   } = useQuery({
     queryKey: ["allSupportMessages", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "support/messages",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!token,

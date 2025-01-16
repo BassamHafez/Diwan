@@ -17,7 +17,7 @@ const HomeTestimonalsSlider = () => {
   
   const { data, isFetching } = useQuery({
     queryKey: ["testimonials"],
-    queryFn: () => mainFormsHandlerTypeRaw({ type: "testimonials" }),
+    queryFn: () => mainFormsHandlerTypeRaw({ type: "testimonials",isLimited:true}),
     staleTime: Infinity,
   });
 

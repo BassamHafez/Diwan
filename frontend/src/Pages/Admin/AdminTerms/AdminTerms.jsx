@@ -12,7 +12,7 @@ import {
   useSelector,
   useMemo,
 } from "../../../shared/hooks";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import {mainFormsHandlerTypeRaw } from "../../../util/Http";
 import styles from "../Admin.module.css";
 import UpdateTermsForm from "./AdminTermsForm/UpdateTermsForm";
 
@@ -26,7 +26,7 @@ const AdminTerms = ({ isUserPage }) => {
   } = useQuery({
     queryKey: ["terms", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "terms",
         token: token,
       }),

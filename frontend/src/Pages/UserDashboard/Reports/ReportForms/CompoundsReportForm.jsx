@@ -75,7 +75,7 @@ const CompoundsReportForm = ({
           {
             formData: cleanedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `reports/${endPoint}`,
           },
           {

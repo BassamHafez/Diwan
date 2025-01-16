@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, requiredRole }) => {
     return <Navigate to="/login" />;
   }
 
-  if (currentRole === requiredRole) {
+  if (currentRole === requiredRole || !requiredRole) {
     return children;
   }
 

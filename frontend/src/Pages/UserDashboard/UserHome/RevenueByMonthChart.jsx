@@ -5,7 +5,7 @@ import styles from "./UserHome.module.css";
 const RevenueByMonthChart = ({ myData }) => {
 
   const { t: key } = useTranslation();
-console.log("RevenueByMonthChart")
+
   return (
     <div className={`${styles.information_section} p-1`}>
       <h4 className="fw-bold mx-2 my-4">{key("monthlyRevenues")}</h4>

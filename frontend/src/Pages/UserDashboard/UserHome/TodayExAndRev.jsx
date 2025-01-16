@@ -13,7 +13,7 @@ import { memo } from "react";
 const TodayExAndRev = memo(({ getStatusBgColor, myData, showDetails }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  console.log("TodayExAndRev")
+
   return (
     <>
       {/* expenses */}

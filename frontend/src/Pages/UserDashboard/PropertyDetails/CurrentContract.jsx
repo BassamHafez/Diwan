@@ -3,7 +3,7 @@ import styles from "./Contracts.module.css";
 import { useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import {mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -47,7 +47,7 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   } = useQuery({
     queryKey: ["currentContract", propId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
@@ -67,14 +67,6 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
     queryClient.invalidateQueries(["estates", token]);
     queryClient.invalidateQueries(["compounds", token]);
   };
-
-  // const checkDownloading=()=>{
-  //   if(accountInfo?.account?.isFilesExtractAllowed){
-
-  //   }else{
-      
-  //   }
-  // }
 
   return (
     <div className={styles.contracts_body}>

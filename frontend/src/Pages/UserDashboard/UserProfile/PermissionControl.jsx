@@ -2,9 +2,13 @@ import Row from "react-bootstrap/esm/Row";
 import styles from "./PermissionControl.module.css";
 import Col from "react-bootstrap/esm/Col";
 import { useTranslation } from "react-i18next";
+import { Alert } from "../../../shared/bootstrap";
 
 const PermissionControl = ({ userPermissions, allPermissions }) => {
   const { t: key } = useTranslation();
+  const filteredAllPermissions = allPermissions?.filter(
+    (perm) => !userPermissions.includes(perm)
+  );
 
   return (
     <div className={styles.perm_header}>
@@ -27,9 +31,8 @@ const PermissionControl = ({ userPermissions, allPermissions }) => {
       <hr />
       <h5>{key("remainingPermissions")}</h5>
       <Row>
-        {allPermissions
-          ?.filter((perm) => !userPermissions.includes(perm))
-          .map((perm, index) => (
+        {filteredAllPermissions?.length > 0 ? (
+          filteredAllPermissions?.map((perm, index) => (
             <Col
               className="d-flex justify-content-center align-items-center"
               sm={6}
@@ -41,7 +44,12 @@ const PermissionControl = ({ userPermissions, allPermissions }) => {
                 <span>{key(perm)}</span>
               </div>
             </Col>
-          ))}
+          ))
+        ) : (
+          <Alert variant="warning">
+            <span>{key("noPermissionsLeft")}</span>
+          </Alert>
+        )}
       </Row>
     </div>
   );

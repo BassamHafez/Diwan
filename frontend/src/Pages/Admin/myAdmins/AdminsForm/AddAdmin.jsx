@@ -47,7 +47,7 @@ const AddAdmin = ({ refetch, hideModal }) => {
           {
             formData: values,
             token: token,
-            method: "add",
+            method: "post",
             type: "users/admin",
           },
           {

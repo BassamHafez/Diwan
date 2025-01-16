@@ -1,5 +1,5 @@
 import styles from "./AdminHome.module.css";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { FontAwesomeIcon, CountUp } from "../../../shared/index";
 import {
   faStar,
@@ -47,7 +47,7 @@ const AdminHome = () => {
   const { data: analytics, isFetching } = useQuery({
     queryKey: ["analytics", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "stats/admin",
         token: token,
       }),

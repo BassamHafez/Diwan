@@ -89,7 +89,7 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
           {
             formData: updatedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `accounts/${accountInfo?.account?._id}/members`,
           },
           {

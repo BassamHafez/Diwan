@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   mainEmptyBodyFun,
   mainDeleteFunHandler,
-  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -54,7 +54,7 @@ const PropertyDetails = () => {
   const { data, refetch } = useQuery({
     queryKey: ["singleProp", token, propId],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
+      mainFormsHandlerTypeRaw({ type: `estates/${propId}`, token: token }),
     staleTime: Infinity,
     enabled: !!propId && !!token,
   });
@@ -62,18 +62,19 @@ const PropertyDetails = () => {
   const { data: tasks, refetch: refetchTasks } = useQuery({
     queryKey: ["estateTasks", propId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `tasks?estate=${propId}`,
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
-    enabled: !!token,
+    enabled: !!token && !!accountInfo?.account?.isTasksAllowed,
   });
 
   const { data: currentContract } = useQuery({
     queryKey: ["currentContract", propId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
@@ -188,9 +189,10 @@ const PropertyDetails = () => {
                     {myData?.estate?.name}
                   </h3>
                   <div className="d-flex align-items-center justify-content-center flex-wrap">
-                    <CheckPermissions 
-                    profileInfo={profileInfo}
-                    btnActions={["DELETE_ESTATE"]}>
+                    <CheckPermissions
+                      profileInfo={profileInfo}
+                      btnActions={["DELETE_ESTATE"]}
+                    >
                       <div
                         className={`${styles.controller_btn} ${styles.delete_btn}`}
                         onClick={() => setShowDeleteModal(true)}
@@ -203,9 +205,10 @@ const PropertyDetails = () => {
                       name="isFavoriteAllowed"
                       accountInfo={accountInfo}
                     >
-                      <CheckPermissions 
-                      profileInfo={profileInfo}
-                      btnActions={["FAVORITES"]}>
+                      <CheckPermissions
+                        profileInfo={profileInfo}
+                        btnActions={["FAVORITES"]}
+                      >
                         <div
                           className={
                             isMarked ? styles.bookmarked : styles.no_bookmark
