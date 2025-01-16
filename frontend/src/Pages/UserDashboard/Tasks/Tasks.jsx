@@ -1,6 +1,6 @@
 import styles from "./Tasks.module.css";
 import TaskContent from "./TaskContent";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { FontAwesomeIcon } from "../../../shared/index";
 import {
   useSelector,
@@ -39,9 +39,10 @@ const Tasks = () => {
   const { data: tasks, refetch } = useQuery({
     queryKey: ["tasks", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "tasks",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!isTasksAllowed && !!token,

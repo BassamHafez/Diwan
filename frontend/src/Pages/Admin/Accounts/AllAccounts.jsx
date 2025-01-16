@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import AccountItem from "./AccountItem";
 import {
   useState,
@@ -29,9 +29,10 @@ const AllAccounts = () => {
   } = useQuery({
     queryKey: ["allAccounts", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "accounts",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!token,

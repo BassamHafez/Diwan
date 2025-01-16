@@ -6,7 +6,7 @@ const useTagsOption = () => {
 
   const { data: tags, refetch: refetchTags } = useQuery({
     queryKey: ["tags", token],
-    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags" }),
+    queryFn: () => mainFormsHandlerTypeRaw({ token: token, type: "tags",isLimited:true }),
     enabled: !!token,
     staleTime: Infinity,
   });

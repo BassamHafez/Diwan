@@ -23,7 +23,11 @@ import {
   useSelector,
 } from "../../../shared/hooks";
 import { Row, Col } from "../../../shared/bootstrap";
-import { CheckMySubscriptions, NoData } from "../../../shared/components";
+import {
+  CheckMySubscriptions,
+  LoadingOne,
+  NoData,
+} from "../../../shared/components";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
@@ -265,6 +269,7 @@ const Reports = () => {
 
           <Col sm={8} lg={9} xl={10}>
             <div className={`${styles.report_content} position-relative`}>
+              {accountData === undefined && <LoadingOne />}
               {reportTypeFilter === "landlordReport" &&
                 (accountData?.isFinancialReportsAllowed ? (
                   <LandlordReport

@@ -1,7 +1,7 @@
 import styles from "./Properties.module.css";
 import Property from "../../../Components/Property/Property";
 import AddCompound from "../PropertyForms/AddCompound";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import AddEstate from "../PropertyForms/AddEstate";
 import { checkAccountFeatures } from "../../../Components/Logic/LogicFun";
 import { FontAwesomeIcon, Select } from "../../../shared/index";
@@ -90,7 +90,11 @@ const Properties = () => {
   } = useQuery({
     queryKey: ["estates", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "estates", token: token }),
+      mainFormsHandlerTypeRaw({
+        type: "estates",
+        token: token,
+        isLimited: true,
+      }),
     enabled: selectedFilter === "estates" && !!token,
     staleTime: Infinity,
   });
@@ -98,9 +102,10 @@ const Properties = () => {
   const { data: bookmarked, isFetching: fetchingBookmarked } = useQuery({
     queryKey: ["bookmarked", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "estates?inFavorites=true",
         token: token,
+        isLimited: true,
       }),
     enabled:
       selectedFilter === "bookmarked" &&

@@ -1,5 +1,10 @@
-import { mainFormsHandlerTypeFormData } from "../util/Http";
-import { useQuery, useMemo, useTranslation, useSelector } from "../shared/hooks";
+import { mainFormsHandlerTypeRaw } from "../util/Http";
+import {
+  useQuery,
+  useMemo,
+  useTranslation,
+  useSelector,
+} from "../shared/hooks";
 import { convertTpOptionsFormate } from "../Components/Logic/LogicFun";
 
 const useCompoundOptions = () => {
@@ -13,7 +18,11 @@ const useCompoundOptions = () => {
   } = useQuery({
     queryKey: ["compounds", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "compounds", token: token }),
+      mainFormsHandlerTypeRaw({
+        type: "compounds",
+        token: token,
+        isLimited: true,
+      }),
     enabled: !!token,
     staleTime: Infinity,
   });

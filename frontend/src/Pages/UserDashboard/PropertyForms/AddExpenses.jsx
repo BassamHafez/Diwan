@@ -84,7 +84,7 @@ const AddExpenses = ({ hideModal, refetch, isCompound, refetchDetails }) => {
           {
             formData: cleanedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `expenses`,
           },
           {

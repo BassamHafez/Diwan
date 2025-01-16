@@ -44,7 +44,7 @@ const ContactForm = () => {
           {
             formData: cleanedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `support/messages`,
           },
           {

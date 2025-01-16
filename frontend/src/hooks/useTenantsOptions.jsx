@@ -1,6 +1,6 @@
 import { convertTpOptionsFormate } from "../Components/Logic/LogicFun";
 import { useQuery, useMemo, useSelector } from "../shared/hooks";
-import { mainFormsHandlerTypeFormData } from "../util/Http";
+import { mainFormsHandlerTypeRaw } from "../util/Http";
 
 const useTenantsOptions = () => {
   const token = useSelector((state) => state.userInfo.token);
@@ -8,9 +8,10 @@ const useTenantsOptions = () => {
   const { data: tenants, refetch: refetchTenants } = useQuery({
     queryKey: ["tenant", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "contacts/tenants",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!token,

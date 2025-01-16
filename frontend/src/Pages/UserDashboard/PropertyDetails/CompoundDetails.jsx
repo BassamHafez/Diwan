@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   mainDeleteFunHandler,
-  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -51,7 +51,7 @@ const CompoundDetails = () => {
   const { data, isFetching, refetch } = useQuery({
     queryKey: ["singleCompound", compId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `compounds/${compId}`,
         token: token,
       }),
@@ -62,12 +62,13 @@ const CompoundDetails = () => {
   const { data: tasks, refetch: refetchTasks } = useQuery({
     queryKey: ["compoundTasks", compId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `tasks?compound=${compId}`,
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
-    enabled: !!token,
+    enabled: !!token && !!accountInfo?.account?.isTasksAllowed,
   });
 
   const compDetails = data?.data;

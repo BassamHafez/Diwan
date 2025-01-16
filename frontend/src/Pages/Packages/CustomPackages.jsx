@@ -135,7 +135,7 @@ const CustomPackages = () => {
                     styles.select_type
                   } my-3`}
                   isRtl={isArLang ? true : false}
-                  placeholder=""
+                  placeholder={maxEstatesInCompoundOptions[curentLang][0]?.label}
                 />
               </div>
             </Col>
@@ -297,7 +297,12 @@ const CustomPackages = () => {
           </Row>
         </Col>
         <Col sm={6} xl={4}>
-          <CustomPackageItem features={myFeatures} isNoFixedHeight={true} />
+          <CustomPackageItem
+            features={myFeatures}
+            estatesCount={features.estatesCount}
+            compoundsCount={features.compoundsCount}
+            isNoFixedHeight={true}
+          />
         </Col>
       </Row>
     </div>

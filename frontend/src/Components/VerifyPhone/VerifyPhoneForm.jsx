@@ -37,7 +37,7 @@ const VerifyPhoneForm = ({ hideModal }) => {
         formData: values,
         token: token,
         type: "users/verify-phone",
-        method: "add",
+        method: "post",
       },
       {
         onSuccess: (data) => {

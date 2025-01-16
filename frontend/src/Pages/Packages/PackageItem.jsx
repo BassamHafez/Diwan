@@ -47,7 +47,7 @@ const PackageItem = ({ pack, type }) => {
     const res = await mainFormsHandlerTypeRaw({
       formData: values,
       token: token,
-      method: "add",
+      method: "post",
       type: `accounts/${accountInfo?.account?._id}/subscribe-package`,
     });
     if (res.status === "success") {
@@ -55,6 +55,21 @@ const PackageItem = ({ pack, type }) => {
       setSubCost(res.data?.subscriptionCost);
       dispatch(fetchAccountData(token));
       setShowPackageData(true);
+    } else if (
+      res.response.data.message ===
+      "Package compounds less than the existing compounds"
+    ) {
+      notifyError(key("subErrorCompound"));
+    } else if (
+      res.response.data.message ===
+      "Package estates less than the existing estates"
+    ) {
+      notifyError(key("subErrorEstates"));
+    } else if (
+      res.response.data.message ===
+      "Package users less than the existing members"
+    ) {
+      notifyError(key("subErrorUsers"));
     } else {
       notifyError(key("wrong"));
     }

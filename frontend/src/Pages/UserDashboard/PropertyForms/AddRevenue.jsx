@@ -70,7 +70,7 @@ const AddRevenue = ({ hideModal, refetch, refetchDetails }) => {
           {
             formData: updatedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `estates/${propId}/revenues`,
           },
           {
