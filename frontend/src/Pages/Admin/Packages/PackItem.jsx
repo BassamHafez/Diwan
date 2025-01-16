@@ -173,13 +173,6 @@ const PackItem = ({ pack, type, refetch }) => {
                       </li>
                     ) : null;
                   })}
-                  <li>
-                    <FontAwesomeIcon
-                      className={iconClass}
-                      icon={faCircleCheck}
-                    />
-                    {key("upgradeAnyTime")}
-                  </li>
                 </ul>
               </AccordionContent>
             </Accordion>

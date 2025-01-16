@@ -19,6 +19,7 @@ import MainTitle from "../../../Components/UI/Words/MainTitle";
 import PrintFinancialReport from "../../../Components/Prints/PrintFinancialReport";
 import CompoundsReportForm from "./ReportForms/CompoundsReportForm";
 import { useSelector } from "react-redux";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
   const [expenses, setExpenses] = useState([]);
@@ -31,6 +32,7 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
   });
   const [resultFilter, setResultFilter] = useState("");
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
@@ -81,18 +83,20 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
     handleDownloadExcelSheet(
       filteredData,
       `${key(filterType)}.xlsx`,
-      `${key(filterType)}`
+      `${key(filterType)}`,
+      accountInfo?.account?.isFilesExtractAllowed
     );
-  }, [filteredData, filterType, key]);
+  }, [filteredData, accountInfo, filterType, key]);
 
   const downloadPdfHandler = useCallback(() => {
     generatePDF(
       "compoundsReport",
       `${key(filterType)}_(${dataEnteried.startDate || ""}) (${
         dataEnteried.endDate || ""
-      })`
+      })`,
+      accountInfo?.account?.isFilesExtractAllowed
     );
-  }, [dataEnteried, filterType, key]);
+  }, [dataEnteried, accountInfo, filterType, key]);
 
   return (
     <>
@@ -129,24 +133,29 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
                 isClearable
               />
               <div>
-                <CheckPermissions
-                  profileInfo={profileInfo}
-                  btnActions={["COMPOUNDS_REPORTS"]}
+                <CheckMySubscriptions
+                  name="isFilesExtractAllowed"
+                  accountInfo={accountInfo}
                 >
-                  <ButtonOne
-                    classes="m-2"
-                    borderd
-                    color="white"
-                    text={key("exportCsv")}
-                    onClick={exportCsvHandler}
-                  />
-                  <ButtonOne
-                    onClick={downloadPdfHandler}
-                    classes="m-2 bg-navy"
-                    borderd
-                    text={key("download")}
-                  />
-                </CheckPermissions>
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["COMPOUNDS_REPORTS"]}
+                  >
+                    <ButtonOne
+                      classes="m-2"
+                      borderd
+                      color="white"
+                      text={key("exportCsv")}
+                      onClick={exportCsvHandler}
+                    />
+                    <ButtonOne
+                      onClick={downloadPdfHandler}
+                      classes="m-2 bg-navy"
+                      borderd
+                      text={key("download")}
+                    />
+                  </CheckPermissions>{" "}
+                </CheckMySubscriptions>
               </div>
             </div>
           )}

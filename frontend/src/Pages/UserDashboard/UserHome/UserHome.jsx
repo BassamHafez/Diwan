@@ -1,7 +1,7 @@
 import styles from "./UserHome.module.css";
 import { mainFormsHandlerTypeFormData } from "../../../util/Http";
 import { faTriangleExclamation } from "../../../shared/constants";
-import { ScrollTopBtn, LoadingOne } from "../../../shared/components";
+import { ScrollTopBtn, LoadingOne, NoData } from "../../../shared/components";
 import {
   useNavigate,
   useTranslation,
@@ -22,6 +22,8 @@ import PendingRevenues from "./PendingRevenues";
 const UserHome = () => {
   const token = useSelector((state) => state.userInfo.token);
   const isTimeExpired = useSelector((state) => state.packageTime.isTimeExpired);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const isAnalysisAllowed = accountInfo?.account?.isAnalysisAllowed;
   const { t: key } = useTranslation();
   const navigate = useNavigate();
 
@@ -33,7 +35,7 @@ const UserHome = () => {
         token: token,
       }),
     staleTime: Infinity,
-    enabled: !!token,
+    enabled: !!isAnalysisAllowed && !!token,
   });
 
   const myData = useMemo(() => {
@@ -81,59 +83,71 @@ const UserHome = () => {
 
   return (
     <div className="height_container d-flex flex-column justify-content-center align-items-center px-2 py-5 p-md-4">
-      {isFetching && <LoadingOne />}
-      <ScrollTopBtn />
-      <Row className="g-3 w-100 height_container">
-        <Col xl={3} md={4} className="my-3">
-          <CirleNumbers
-            myData={myData}
-            totalExpenses={totalExpenses}
-            totalRevenues={totalRevenues}
-          />
-        </Col>
-
-        <Col xl={9} md={8}>
-          <Row className="g-3 w-100">
-            {isTimeExpired && (
-              <Alert variant="warning" className="mt-4">
-                <FontAwesomeIcon
-                  className="fa-fade mx-2"
-                  icon={faTriangleExclamation}
-                />
-                {key("subExpired")} <Link to={"/packages"}>{key("here")}</Link>
-              </Alert>
-            )}
-
-            <Col md={12} className="my-3">
-              <FinancialOverview
+      {isAnalysisAllowed ? (
+        <>
+          {isFetching && <LoadingOne />}
+          <ScrollTopBtn />
+          <Row className="g-3 w-100 height_container">
+            <Col xl={3} md={4} className="my-3">
+              <CirleNumbers
                 myData={myData}
                 totalExpenses={totalExpenses}
                 totalRevenues={totalRevenues}
               />
             </Col>
 
-            <Col md={12} className="my-3">
-              <RevenueByMonthChart myData={myData} />
+            <Col xl={9} md={8}>
+              <Row className="g-3 w-100">
+                {isTimeExpired && (
+                  <Alert variant="warning" className="mt-4">
+                    <FontAwesomeIcon
+                      className="fa-fade mx-2"
+                      icon={faTriangleExclamation}
+                    />
+                    {key("subExpired")}{" "}
+                    <Link to={"/packages"}>{key("here")}</Link>
+                  </Alert>
+                )}
+
+                <Col md={12} className="my-3">
+                  <FinancialOverview
+                    myData={myData}
+                    totalExpenses={totalExpenses}
+                    totalRevenues={totalRevenues}
+                  />
+                </Col>
+
+                <Col md={12} className="my-3">
+                  <RevenueByMonthChart myData={myData} />
+                </Col>
+              </Row>
+            </Col>
+
+            <TodayExAndRev
+              myData={myData}
+              getStatusBgColor={getStatusBgColor}
+              showDetails={showDetails}
+            />
+
+            <OverdueTasks myData={myData} refetch={refetch} />
+
+            <Col sm={12}>
+              <PendingRevenues
+                myData={myData}
+                getStatusBgColor={getStatusBgColor}
+                showDetails={showDetails}
+              />
             </Col>
           </Row>
-        </Col>
-
-        <TodayExAndRev
-          myData={myData}
-          getStatusBgColor={getStatusBgColor}
-          showDetails={showDetails}
-        />
-
-        <OverdueTasks myData={myData} refetch={refetch} />
-
-        <Col sm={12}>
-          <PendingRevenues
-            myData={myData}
-            getStatusBgColor={getStatusBgColor}
-            showDetails={showDetails}
+        </>
+      ) : (
+        <div>
+          <NoData
+            type="upgrade"
+            text={`${key("upgradePackage")} ${key("isAnalysisAllowed")}`}
           />
-        </Col>
-      </Row>
+        </div>
+      )}
     </div>
   );
 };

@@ -11,6 +11,7 @@ import styles from "./Tasks.module.css";
 import { useTranslation } from "react-i18next";
 import Row from "react-bootstrap/esm/Row";
 import { useSelector } from "react-redux";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const TaskContent = ({
   timeFilter,
@@ -20,6 +21,8 @@ const TaskContent = ({
   refetch,
   propId,
   compId,
+  isTasksAllowed,
+  accountInfo,
 }) => {
   const [searchFilter, setSearchFilter] = useState("");
   const [showAddTaskModal, setShowAddTaskModal] = useState(false);
@@ -69,43 +72,63 @@ const TaskContent = ({
           style={{ height: "fit-content" }}
         >
           <div className="my-1">
-            <SearchField
-              onSearch={onSearch}
-              text={compId || propId ? key("searchTitle") : key("searchTasks")}
-            />
-          </div>
-          <CheckPermissions profileInfo={profileInfo} btnActions={["ADD_TASK"]}>
-            <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
-              <ButtonOne
-                onClick={() => setShowAddTaskModal(true)}
-                text={`${key("add")} ${key("task")}`}
-                borderd={true}
+            <CheckMySubscriptions
+              name="isTasksAllowed"
+              accountInfo={accountInfo}
+            >
+              <SearchField
+                onSearch={onSearch}
+                text={
+                  compId || propId ? key("searchTitle") : key("searchTasks")
+                }
               />
-            </div>
-          </CheckPermissions>
-        </div>
-        <Row
-          className="mt-3 gy-3 position-relative"
-          style={{ minHeight: "50vh" }}
-        >
-          {tasks ? (
-            filteredTasks?.length > 0 ? (
-              filteredTasks?.map((task) => (
-                <TaskItem
-                  key={task._id}
-                  task={task}
-                  refetch={refetch}
-                  compId={compId}
-                  propId={propId}
+            </CheckMySubscriptions>
+          </div>
+
+          <CheckMySubscriptions name="isTasksAllowed" accountInfo={accountInfo}>
+            <CheckPermissions
+              profileInfo={profileInfo}
+              btnActions={["ADD_TASK"]}
+            >
+              <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
+                <ButtonOne
+                  onClick={() => setShowAddTaskModal(true)}
+                  text={`${key("add")} ${key("task")}`}
+                  borderd={true}
                 />
-              ))
+              </div>
+            </CheckPermissions>
+          </CheckMySubscriptions>
+        </div>
+        {isTasksAllowed ? (
+          <Row
+            className="mt-3 gy-3 position-relative"
+            style={{ minHeight: "50vh" }}
+          >
+            {tasks ? (
+              filteredTasks?.length > 0 ? (
+                filteredTasks?.map((task) => (
+                  <TaskItem
+                    key={task._id}
+                    task={task}
+                    refetch={refetch}
+                    compId={compId}
+                    propId={propId}
+                  />
+                ))
+              ) : (
+                <NoData type="tasks" text={key("noTasks")} />
+              )
             ) : (
-              <NoData type="tasks" text={key("noTasks")} />
-            )
-          ) : (
-            <LoadingOne />
-          )}
-        </Row>
+              <LoadingOne />
+            )}
+          </Row>
+        ) : (
+          <NoData
+            type="upgrade"
+            text={`${key("upgradePackage")} ${key("isTasksAllowed")}`}
+          />
+        )}
       </div>
       {showAddTaskModal && (
         <ModalForm
