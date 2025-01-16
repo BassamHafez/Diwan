@@ -72,11 +72,18 @@ exports.getAll = (Model, popOptions = [], selectedFields = "") =>
       .limitFields()
       .paginate();
 
-    const docs = await features.query.populate(popOptions).lean();
+    const [totalDocs, docs] = await Promise.all([
+      Model.countDocuments(filter),
+      features.query.populate(popOptions).lean(),
+    ]);
+
+    const limit = +req.query.limit || 100;
+    const totalPages = Math.ceil(totalDocs / limit);
 
     res.status(200).json({
       status: "success",
       results: docs.length,
+      totalPages,
       data: docs,
     });
   });
