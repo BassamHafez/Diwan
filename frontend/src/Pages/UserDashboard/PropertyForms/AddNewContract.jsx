@@ -119,7 +119,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
           {
             formData: values,
             token: token,
-            method: "add",
+            method: "post",
             type: `estates/${propId}/contracts`,
           },
           {

@@ -64,7 +64,7 @@ const SendMessaagesForm = ({
           {
             formData: formData,
             token: token,
-            method: "add",
+            method: "post",
             type: "users/messages",
           },
           {

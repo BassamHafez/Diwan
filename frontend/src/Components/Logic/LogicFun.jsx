@@ -404,16 +404,14 @@ export const calculatePeriod = (startDate, endDate, isArLang) => {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
-  // Calculate differences in years, months, weeks, and days
   const totalDays = Math.floor((end - start) / (1000 * 60 * 60 * 24));
   const years = Math.floor(totalDays / 365);
   const remainingDaysAfterYears = totalDays % 365;
   const months = Math.floor(remainingDaysAfterYears / 30);
-  // const remainingDaysAfterMonths = remainingDaysAfterYears % 30;
+
   const weeks = Math.floor(totalDays / 7);
   const days = totalDays;
 
-  // Determine the most suitable unit
   if (years >= 1) {
     return isArLang ? `${years} سنة` : `${years} year${years > 1 ? "s" : ""}`;
   } else if (months >= 1) {

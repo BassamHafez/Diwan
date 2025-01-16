@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import {mainFormsHandlerTypeRaw } from "../../../util/Http";
 import UserItem from "../Users/UserItem";
 import AddAdmin from "./AdminsForm/AddAdmin";
 import {
@@ -33,9 +33,10 @@ const AllAdmins = () => {
   } = useQuery({
     queryKey: ["allAdmins", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "users?role=admin",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!token,

@@ -44,7 +44,11 @@ const Members = () => {
             key={`${member._id}_${index}`}
             accountId={accountInfo?.account?._id}
             allPermissions={profileInfo?.permissions}
-            userPermissions={member?.permissions}
+            userPermissions={
+              member?.permissions?.length > 0
+                ? member?.permissions
+                : profileInfo?.permissions
+            }
             userData={member?.user}
             permittedCompounds={member?.permittedCompounds}
             accountOwner={accountInfo?.account?.owner}

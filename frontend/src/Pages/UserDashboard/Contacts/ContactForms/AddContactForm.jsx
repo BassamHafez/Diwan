@@ -104,7 +104,7 @@ const AddContactForm = ({
           {
             formData: cleanedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `contacts/${contactType}s`,
           },
           {

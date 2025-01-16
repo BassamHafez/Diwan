@@ -134,7 +134,7 @@ const ReportsForm = ({
           {
             formData: cleanedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `reports/${endPoint}`,
           },
           {
