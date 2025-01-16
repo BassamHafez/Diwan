@@ -270,15 +270,13 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { packageId } = req.body;
 
-  const [account, package] = await Promise.all([
-    Account.findById(id).populate("owner", "name phone email").lean(),
-    Package.findById(packageId).select("features price duration").lean(),
-    ScheduledMission.deleteOne({
-      account: id,
-      type: "SUBSCRIPTION_EXPIRATION",
-      isDone: false,
-    }),
-  ]);
+  const [account, package, existCompoundsCount, existEstatesCount] =
+    await Promise.all([
+      Account.findById(id).populate("owner", "name phone email").lean(),
+      Package.findById(packageId).select("features price duration").lean(),
+      Compound.countDocuments({ account: id }).lean(),
+      Estate.countDocuments({ account: id }).lean(),
+    ]);
 
   if (!account) {
     return next(new ApiError("Account not found", 404));
@@ -296,6 +294,24 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     acc[feature.label] = feature.value;
     return acc;
   }, {});
+
+  if (existCompoundsCount > +features.allowedCompounds) {
+    return next(
+      new ApiError("Package compounds less than the existing compounds", 400)
+    );
+  }
+
+  if (existEstatesCount > +features.allowedEstates) {
+    return next(
+      new ApiError("Package estates less than the existing estates", 400)
+    );
+  }
+
+  if (account.members?.length > +features.allowedUsers) {
+    return next(
+      new ApiError("Package users less than the existing members", 400)
+    );
+  }
 
   const expireDate = new Date(
     Date.now() + package.duration * 30.25 * 24 * 60 * 60 * 1000 // 30 days + 6 hours
@@ -328,6 +344,12 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
       accountOwner: account.owner,
       type: "SUBSCRIPTION_EXPIRATION",
       scheduledAt: expireDate,
+    }),
+
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
     }),
 
     Purchase.create({
