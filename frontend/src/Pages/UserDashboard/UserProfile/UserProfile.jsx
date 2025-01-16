@@ -58,7 +58,7 @@ const UserProfile = () => {
                 <span>{key("main")}</span>
               </li>
               <CheckPermissions
-              profileInfo={profileInfo}
+                profileInfo={profileInfo}
                 btnActions={["UPDATE_ACCOUNT"]}
                 noCheckingForExpired={true}
               >
@@ -95,7 +95,7 @@ const UserProfile = () => {
                   onClick={() => setActivePage("subscription")}
                 >
                   <FontAwesomeIcon className={iconMArginClass} icon={faStar} />
-                  <span>{key("upgradeSubscription")}</span>
+                  <span>{key("customPackage")}</span>
                 </li>
               </CheckPermissions>
               <li

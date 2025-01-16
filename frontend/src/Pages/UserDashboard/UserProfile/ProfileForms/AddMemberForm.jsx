@@ -20,7 +20,10 @@ import {
   useCompoundOptions,
   useValidation,
 } from "../../../../shared/hooks";
-import { InputErrorMessage } from "../../../../shared/components";
+import {
+  CheckMySubscriptions,
+  InputErrorMessage,
+} from "../../../../shared/components";
 import { Row, Col } from "../../../../shared/bootstrap";
 
 const AddMemberForm = ({ hideModal, allPermissions }) => {
@@ -132,7 +135,7 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
     email: emailValidation,
     phone: phoneValidation.required(key("fieldReq")),
     password: passwordValidation,
-    permissions: arrOfOptionsValidation.required(key("fieldReq")),
+    permissions: arrOfOptionsValidation.nullable(),
     permittedCompounds: arrOfOptionsValidation.nullable(),
   });
 
@@ -164,24 +167,27 @@ const AddMemberForm = ({ hideModal, allPermissions }) => {
               </div>
             </Col>
             <Col sm={6}>
-              <div className="field">
-                <label htmlFor="permissions">
-                  {key("permissions")} {requiredLabel}
-                </label>
-                <Select
-                  isClearable
-                  options={permissionsOptions}
-                  isMulti
-                  onChange={(val) => setFieldValue("permissions", val)}
-                  className={`${isArLang ? "text-end" : "text-start"}`}
-                  isRtl={isArLang ? true : false}
-                  placeholder=""
-                />
-                <ErrorMessage
-                  name="permissions"
-                  component={InputErrorMessage}
-                />
-              </div>
+              <CheckMySubscriptions
+                name="isUserPermissionsAllowed"
+                accountInfo={accountInfo}
+              >
+                <div className="field">
+                  <label htmlFor="permissions">{key("permissions")}</label>
+                  <Select
+                    isClearable
+                    options={permissionsOptions}
+                    isMulti
+                    onChange={(val) => setFieldValue("permissions", val)}
+                    className={`${isArLang ? "text-end" : "text-start"}`}
+                    isRtl={isArLang ? true : false}
+                    placeholder=""
+                  />
+                  <ErrorMessage
+                    name="permissions"
+                    component={InputErrorMessage}
+                  />
+                </div>
+              </CheckMySubscriptions>
             </Col>
             <Col sm={6}>
               <div className="field">

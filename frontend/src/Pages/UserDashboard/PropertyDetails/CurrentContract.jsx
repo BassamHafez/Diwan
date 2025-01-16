@@ -21,6 +21,7 @@ import { useSelector } from "react-redux";
 import PrintContract from "../../../Components/Prints/PrintContract";
 import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
 import useDeleteItem from "../../../hooks/useDeleteItem";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   const token = useSelector((state) => state.userInfo.token);
@@ -31,6 +32,7 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
   const [contractId, setContractId] = useState("");
   const deleteItem = useDeleteItem();
   const queryClient = useQueryClient();
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
 
@@ -49,7 +51,7 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
-    enabled: propId && !!token,
+    enabled: !!propId && !!token,
     staleTime: Infinity,
   });
 
@@ -65,6 +67,14 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
     queryClient.invalidateQueries(["estates", token]);
     queryClient.invalidateQueries(["compounds", token]);
   };
+
+  // const checkDownloading=()=>{
+  //   if(accountInfo?.account?.isFilesExtractAllowed){
+
+  //   }else{
+      
+  //   }
+  // }
 
   return (
     <div className={styles.contracts_body}>
@@ -150,16 +160,20 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
                                 {key("cancel")}
                               </Dropdown.Item>
                             </CheckPermissions>
-
-                            <Dropdown.Item
-                              onClick={() => {
-                                setContractDetails(currentContract?.data);
-                                setShowDetailsModal(true);
-                              }}
-                              className="text-center"
+                            <CheckMySubscriptions
+                              name="isFilesExtractAllowed"
+                              accountInfo={accountInfo}
                             >
-                              {key("details")}
-                            </Dropdown.Item>
+                              <Dropdown.Item
+                                onClick={() => {
+                                  setContractDetails(currentContract?.data);
+                                  setShowDetailsModal(true);
+                                }}
+                                className="text-center"
+                              >
+                                {key("details")}
+                              </Dropdown.Item>
+                            </CheckMySubscriptions>
                           </Dropdown.Menu>
                         </Dropdown>
                       </td>
@@ -210,7 +224,7 @@ const CurrentContract = ({ details, estateParentCompound, refetchDetails }) => {
               contractDetails.contract?._id,
               `${key("contract")}_${details?.name}(${
                 estateParentCompound?.name
-              })_${contractDetails?.tenant?.name}`
+              })_${contractDetails?.tenant?.name}`,accountInfo?.account?.isFilesExtractAllowed
             )
           }
           title={key("contractDetails")}

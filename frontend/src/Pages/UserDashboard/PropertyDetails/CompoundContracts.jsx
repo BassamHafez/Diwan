@@ -18,6 +18,7 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import ContractDetails from "./ContractDetails";
 import { useSelector } from "react-redux";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const CompoundContracts = ({ compoundEstates }) => {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -27,6 +28,7 @@ const CompoundContracts = ({ compoundEstates }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const currentLang = isArLang ? "ar" : "en";
   const token = useSelector((state) => state.userInfo.token);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const { compId } = useParams();
   const navigate = useNavigate();
 
@@ -95,9 +97,10 @@ const CompoundContracts = ({ compoundEstates }) => {
     handleDownloadExcelSheet(
       filteredContractsList,
       "CurrentContracts.xlsx",
-      "CurrentContracts"
+      "CurrentContracts",
+      accountInfo?.account?.isFilesExtractAllowed
     );
-  }, [filteredContractsList]);
+  }, [filteredContractsList, accountInfo]);
 
   return (
     <div className={styles.contracts_body}>
@@ -105,13 +108,18 @@ const CompoundContracts = ({ compoundEstates }) => {
         <h4>{key("currentContracts")}</h4>
         {contractsData && contractsData?.data?.contracts?.length > 0 && (
           <div>
-            <ButtonOne
-              classes="m-2"
-              borderd
-              color="white"
-              text={key("exportCsv")}
-              onClick={exportCsvHandler}
-            />
+            <CheckMySubscriptions
+              name="isFilesExtractAllowed"
+              accountInfo={accountInfo}
+            >
+              <ButtonOne
+                classes="m-2"
+                borderd
+                color="white"
+                text={key("exportCsv")}
+                onClick={exportCsvHandler}
+              />
+            </CheckMySubscriptions>
           </div>
         )}
       </div>

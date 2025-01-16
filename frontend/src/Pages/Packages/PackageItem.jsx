@@ -24,7 +24,7 @@ const PackageItem = ({ pack, type }) => {
   const isLogin = useSelector((state) => state.userInfo.isLogin);
   const [showPackageData, setShowPackageData] = useState(false);
   const [subCost, setSubCost] = useState(0);
-  // isMostPopular isBestOffer
+
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const PackageItem = ({ pack, type }) => {
               </span>
             )}
           </div>
-          <div className={styles.features}>
+          <div className={`${styles.features} ${styles.fixed_height}`}>
             <h4 className="mx-3 mb-3">{key("features")}</h4>
             <ul>
               {pack?.features?.map((feature, index) => {
@@ -164,17 +164,12 @@ const PackageItem = ({ pack, type }) => {
                 ) : null;
               })}
 
-              <li>
-                <FontAwesomeIcon
-                  className={`${styles.list_icon}`}
-                  icon={faCircleCheck}
-                />
-                {key("upgradeAnyTime")}
-              </li>
               {type === "custom" && (
-                <div className={styles.chooseFeatures}>
-                  <img src={chooseFeatures} alt="chooseFeatures" />
-                </div>
+                <>
+                  <div className={styles.chooseFeatures}>
+                    <img src={chooseFeatures} alt="chooseFeatures" />
+                  </div>
+                </>
               )}
             </ul>
           </div>

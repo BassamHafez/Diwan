@@ -1,8 +1,9 @@
 import AddContactForm from "../Pages/UserDashboard/Contacts/ContactForms/AddContactForm";
-import { ModalForm } from "../shared/components";
+import { CheckMySubscriptions, ModalForm } from "../shared/components";
 import {
   useCallback,
   useMemo,
+  useSelector,
   useState,
   useTranslation,
 } from "../shared/hooks";
@@ -17,7 +18,7 @@ const useAddContactInForms = ({
   const [showAddLandlordModal, setShowAddLandlordModal] = useState(false);
   const [showAddTenantModal, setShowAddTenantModal] = useState(false);
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
-
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const { t: key } = useTranslation();
 
   const showContactModal = useCallback((type) => {
@@ -143,15 +144,20 @@ const useAddContactInForms = ({
   const AddServices = useMemo(() => {
     return (
       <>
-        <div className="d-flex align-items-center justify-content-end">
-          <button
-            className="submit_btn bg-navy mx-2"
-            type="button"
-            onClick={showServiceModal}
-          >
-            {`${key("add")} ${key("service")}`}
-          </button>
-        </div>
+        <CheckMySubscriptions
+          name="isServiceContactsAllowed"
+          accountInfo={accountInfo}
+        >
+          <div className="d-flex align-items-center justify-content-end">
+            <button
+              className="submit_btn bg-navy mx-2"
+              type="button"
+              onClick={showServiceModal}
+            >
+              {`${key("add")} ${key("service")}`}
+            </button>
+          </div>
+        </CheckMySubscriptions>
 
         {showAddServiceModal && (
           <ModalForm
@@ -174,6 +180,7 @@ const useAddContactInForms = ({
     showAddServiceModal,
     hideServiceModal,
     showServiceModal,
+    accountInfo,
   ]);
 
   return { addBrokersAndLandLords, AddTenants, AddServices };

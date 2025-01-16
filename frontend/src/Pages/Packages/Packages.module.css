@@ -1,4 +1,4 @@
-.time_span{
+.time_span {
   font-size: 11px;
   color: var(--dark_white);
 }
@@ -80,10 +80,12 @@
 }
 .features {
   padding: 0.625rem 0;
-  min-height: 25rem;
   background-color: rgb(251, 250, 250);
-  border-radius: 20px;
+  border-radius: 1.25rem;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.184);
+}
+.fixed_height {
+  min-height: 550px;
 }
 .features ul {
   padding-left: 0.625rem;
@@ -150,20 +152,16 @@
 }
 
 .package_side {
-  height: 100%;
   padding: 1.25rem;
-  background-color: var(--sub_white);
-  box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.279);
-  border-radius: 0 0 1.25rem 0;
 }
 .chooseFeatures {
-  width: 11.25rem;
+  width: 16.25rem;
   margin: auto;
 }
 .chooseFeatures img {
   width: 100%;
 }
-.select_type{
+.select_type {
   min-width: 9.375rem;
 }
 @media screen and (min-width: 770px) and (max-width: 1158px) {

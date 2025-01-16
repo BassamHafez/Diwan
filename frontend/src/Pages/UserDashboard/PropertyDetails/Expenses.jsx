@@ -35,6 +35,7 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import useDeleteItem from "../../../hooks/useDeleteItem";
 import { useSelector } from "react-redux";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const Expenses = ({
   isCompound,
@@ -53,6 +54,8 @@ const Expenses = ({
   const [statusFilter, setStatusFilter] = useState("");
   const deleteItem = useDeleteItem();
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+
   const { t: key } = useTranslation();
 
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -204,9 +207,10 @@ const Expenses = ({
       `${key("expenses")}_${details?.name}${
         estateParentCompound ? `_(${estateParentCompound?.name})` : ""
       }.xlsx`,
-      "expenses"
+      "expenses",
+      accountInfo?.account?.isFilesExtractAllowed
     );
-  }, [filteredExpensesList, estateParentCompound, key, details]);
+  }, [filteredExpensesList, accountInfo, estateParentCompound, key, details]);
 
   const showAddExModalHandler = useCallback(() => {
     setShowAddExModal(true);
@@ -239,13 +243,18 @@ const Expenses = ({
           <h4>{key("expenses")}</h4>
           <div>
             {filteredExpensesList && filteredExpensesList?.length > 0 && (
-              <ButtonOne
-                classes="m-2"
-                borderd
-                color="white"
-                text={key("exportCsv")}
-                onClick={exportCsvHandler}
-              />
+              <CheckMySubscriptions
+                name="isFilesExtractAllowed"
+                accountInfo={accountInfo}
+              >
+                <ButtonOne
+                  classes="m-2"
+                  borderd
+                  color="white"
+                  text={key("exportCsv")}
+                  onClick={exportCsvHandler}
+                />
+              </CheckMySubscriptions>
             )}
             <CheckPermissions
               profileInfo={profileInfo}
@@ -392,16 +401,20 @@ const Expenses = ({
                                     {key("ediet")}
                                   </Dropdown.Item>
                                 </CheckPermissions>
-
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setExDetails(ex);
-                                    setShowDetailsModal(true);
-                                  }}
-                                  className="text-center"
+                                <CheckMySubscriptions
+                                  name="isFilesExtractAllowed"
+                                  accountInfo={accountInfo}
                                 >
-                                  {key("details")}
-                                </Dropdown.Item>
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setExDetails(ex);
+                                      setShowDetailsModal(true);
+                                    }}
+                                    className="text-center"
+                                  >
+                                    {key("details")}
+                                  </Dropdown.Item>
+                                </CheckMySubscriptions>
 
                                 {ex.status !== "paid" &&
                                   ex.status !== "cancelled" && (
@@ -490,7 +503,13 @@ const Expenses = ({
           onHide={hideDetailsModalHandler}
           cancelBtn={key("cancel")}
           okBtn={key("download")}
-          confirmFun={() => generatePDF(exDetails._id, "ExpenseDetails")}
+          confirmFun={() =>
+            generatePDF(
+              exDetails._id,
+              "ExpenseDetails",
+              accountInfo?.account?.isFilesExtractAllowed
+            )
+          }
           title={key("expensesDetails")}
           modalSize={"lg"}
         >

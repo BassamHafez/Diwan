@@ -9,12 +9,7 @@ import {
   FontAwesomeIcon,
   CreatableSelect,
 } from "../../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-  string,
-} from "../../../../shared/constants";
+import { faSpinner, toast, object, string } from "../../../../shared/constants";
 import {
   useEffect,
   useState,
@@ -25,7 +20,10 @@ import {
   useCompoundOptions,
   useValidation,
 } from "../../../../shared/hooks";
-import { InputErrorMessage } from "../../../../shared/components";
+import {
+  CheckMySubscriptions,
+  InputErrorMessage,
+} from "../../../../shared/components";
 import { Row } from "../../../../shared/bootstrap";
 
 const UpdatePermissionsForm = ({
@@ -38,9 +36,7 @@ const UpdatePermissionsForm = ({
 }) => {
   const [permissionsOptions, setPermissionsOptions] = useState([]);
   const { compoundsOptions } = useCompoundOptions();
-  const {
-    arrOfOptionsValidation,
-  } = useValidation();
+  const { arrOfOptionsValidation } = useValidation();
   const token = useSelector((state) => state.userInfo.token);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const dispatch = useDispatch();
@@ -135,23 +131,32 @@ const UpdatePermissionsForm = ({
       {({ setFieldValue, values }) => (
         <Form>
           <Row>
-            <div className="field">
-              <label htmlFor="permissions">{key("permissions")}</label>
-              <CreatableSelect
-                isClearable
-                options={permissionsOptions}
-                isMulti
-                onChange={(val) => setFieldValue("permissions", val)}
-                value={values.permissions}
-                className={`${isArLang ? "text-end" : "text-start"}`}
-                isRtl={isArLang ? true : false}
-                placeholder={isArLang ? "" : "select"}
-                formatCreateLabel={(inputValue) =>
-                  isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
-                }
-              />
-              <ErrorMessage name="permissions" component={InputErrorMessage} />
-            </div>
+            <CheckMySubscriptions
+              name="isUserPermissionsAllowed"
+              accountInfo={accountInfo}
+            >
+              <div className="field">
+                <label htmlFor="permissions">{key("permissions")}</label>
+                <CreatableSelect
+                  isClearable
+                  options={permissionsOptions}
+                  isMulti
+                  onChange={(val) => setFieldValue("permissions", val)}
+                  value={values.permissions}
+                  className={`${isArLang ? "text-end" : "text-start"}`}
+                  isRtl={isArLang ? true : false}
+                  placeholder={isArLang ? "" : "select"}
+                  formatCreateLabel={(inputValue) =>
+                    isArLang ? `إضافة "${inputValue}"` : `Add "${inputValue}"`
+                  }
+                />
+                <ErrorMessage
+                  name="permissions"
+                  component={InputErrorMessage}
+                />
+              </div>
+            </CheckMySubscriptions>
+
             <div className="field">
               <label htmlFor="permittedCompounds">
                 {key("permittedCompounds")}

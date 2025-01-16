@@ -102,7 +102,10 @@ const Properties = () => {
         type: "estates?inFavorites=true",
         token: token,
       }),
-    enabled: selectedFilter === "bookmarked" && !!token,
+    enabled:
+      selectedFilter === "bookmarked" &&
+      !!token &&
+      !!accountInfo?.account?.isFavoriteAllowed,
     staleTime: Infinity,
   });
 
@@ -351,25 +354,29 @@ const Properties = () => {
             >
               {key("compounds")}
             </label>
-
-            <input
-              type="radio"
-              className="btn-check"
-              name="types"
-              id="bookmarkedSmall"
-              value="bookmarked"
-              autoComplete="off"
-              checked={selectedFilter === "bookmarked"}
-              onChange={handleFilterChange}
-            />
-            <label
-              className={`${
-                selectedFilter === "bookmarked" && styles.label_checked
-              } btn`}
-              htmlFor="bookmarkedSmall"
+            <CheckMySubscriptions
+              name="isFavoriteAllowed"
+              accountInfo={accountInfo}
             >
-              {key("bookmarked")}
-            </label>
+              <input
+                type="radio"
+                className="btn-check"
+                name="types"
+                id="bookmarkedSmall"
+                value="bookmarked"
+                autoComplete="off"
+                checked={selectedFilter === "bookmarked"}
+                onChange={handleFilterChange}
+              />
+              <label
+                className={`${
+                  selectedFilter === "bookmarked" && styles.label_checked
+                } btn`}
+                htmlFor="bookmarkedSmall"
+              >
+                {key("bookmarked")}
+              </label>
+            </CheckMySubscriptions>
           </div>
 
           {selectedFilter !== "compounds" && (
@@ -487,24 +494,28 @@ const Properties = () => {
                       {key("compounds")}
                     </label>
                   </div>
-
-                  <div>
-                    <input
-                      className={`${styles.filter_input} form-check-input`}
-                      type="radio"
-                      name="typesSelection"
-                      value="bookmarked"
-                      id="bookmarkedSelection"
-                      checked={selectedFilter === "bookmarked"}
-                      onChange={handleFilterChange}
-                    />
-                    <label
-                      className={`form-check-label ${styles.filter_label}`}
-                      htmlFor="bookmarkedSelection"
-                    >
-                      {key("bookmarked")}
-                    </label>
-                  </div>
+                  <CheckMySubscriptions
+                    name="isFavoriteAllowed"
+                    accountInfo={accountInfo}
+                  >
+                    <div>
+                      <input
+                        className={`${styles.filter_input} form-check-input`}
+                        type="radio"
+                        name="typesSelection"
+                        value="bookmarked"
+                        id="bookmarkedSelection"
+                        checked={selectedFilter === "bookmarked"}
+                        onChange={handleFilterChange}
+                      />
+                      <label
+                        className={`form-check-label ${styles.filter_label}`}
+                        htmlFor="bookmarkedSelection"
+                      >
+                        {key("bookmarked")}
+                      </label>
+                    </div>
+                  </CheckMySubscriptions>
                 </div>
               </AccordionContent>
               {selectedFilter !== "compounds" ? (

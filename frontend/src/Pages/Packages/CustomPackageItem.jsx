@@ -22,6 +22,7 @@ const CustomPackageItem = ({
   btnText,
   chooseActiveActive,
   remainingTime,
+  isNoFixedHeight,
 }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
@@ -82,7 +83,7 @@ const CustomPackageItem = ({
   };
 
   return (
-    <div className={`${styles.package_side}`}>
+    <div className={styles.package_side}>
       <div className={`${styles.package} ${styles.custom_border}`}>
         <div className={styles.package_type}>
           <img src={fire} alt="fire" />
@@ -97,7 +98,11 @@ const CustomPackageItem = ({
             )}
           </div>
         </div>
-        <div className={styles.features}>
+        <div
+          className={`${styles.features} ${
+            isNoFixedHeight ? "" : styles.fixed_height
+          }`}
+        >
           <ul>
             {features?.map(
               (feature, index) =>
