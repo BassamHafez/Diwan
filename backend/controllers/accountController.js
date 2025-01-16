@@ -3,6 +3,8 @@ const User = require("../models/userModel");
 const Package = require("../models/packageModel");
 const Subscription = require("../models/subscriptionModel");
 const Purchase = require("../models/purchaseModel");
+const Compound = require("../models/compoundModel");
+const Estate = require("../models/estateModel");
 const ScheduledMission = require("../models/scheduledMissionModel");
 const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
@@ -96,15 +98,13 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     subscriptionEndDate: expireDate,
   };
 
-  const [account, subscriptions] = await Promise.all([
-    Account.findById(id).populate("owner", "name phone email").lean(),
-    Subscription.find().lean(),
-    ScheduledMission.deleteOne({
-      account: id,
-      type: "SUBSCRIPTION_EXPIRATION",
-      isDone: false,
-    }),
-  ]);
+  const [account, subscriptions, existCompoundsCount, existEstatesCount] =
+    await Promise.all([
+      Account.findById(id).populate("owner", "name phone email").lean(),
+      Subscription.find().lean(),
+      Compound.countDocuments({ account: id }).lean(),
+      Estate.countDocuments({ account: id }).lean(),
+    ]);
 
   if (!account) {
     return next(new ApiError("Account not found", 404));
@@ -116,6 +116,24 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
   if (!subscriptions || !subscriptions.length) {
     return next(new ApiError("Error getting subscription plans", 500));
+  }
+
+  if (existCompoundsCount > compoundsCount) {
+    return next(
+      new ApiError("Subscribed compounds less than the existing compounds", 400)
+    );
+  }
+
+  if (existEstatesCount > estatesCount) {
+    return next(
+      new ApiError("Subscribed estates less than the existing estates", 400)
+    );
+  }
+
+  if (account.members?.length > usersCount) {
+    return next(
+      new ApiError("Subscribed users less than the existing members", 400)
+    );
   }
 
   if (usersCount && usersCount >= 1) {
@@ -224,6 +242,12 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       accountOwner: account.owner,
       type: "SUBSCRIPTION_EXPIRATION",
       scheduledAt: expireDate,
+    }),
+
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
     }),
 
     Purchase.create({
