@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Package = require("../models/packageModel");
@@ -98,13 +99,32 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     subscriptionEndDate: expireDate,
   };
 
-  const [account, subscriptions, existCompoundsCount, existEstatesCount] =
+  const [account, subscriptions, existEstatesCount, compoundAggregation] =
     await Promise.all([
       Account.findById(id).populate("owner", "name phone email").lean(),
       Subscription.find().lean(),
-      Compound.countDocuments({ account: id }).lean(),
       Estate.countDocuments({ account: id }).lean(),
+
+      Compound.aggregate([
+        {
+          $match: { account: new mongoose.Types.ObjectId(id) },
+        },
+        {
+          $group: {
+            _id: null,
+            existCompoundsCount: { $sum: 1 },
+            maxExistEstates: { $max: "$estatesCount" },
+          },
+        },
+      ]),
     ]);
+
+  const [
+    { existCompoundsCount, maxExistEstates } = {
+      existCompoundsCount: 0,
+      maxExistEstates: 0,
+    },
+  ] = compoundAggregation;
 
   if (!account) {
     return next(new ApiError("Account not found", 404));
@@ -133,6 +153,15 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   if (account.members?.length > usersCount) {
     return next(
       new ApiError("Subscribed users less than the existing members", 400)
+    );
+  }
+
+  if (maxExistEstates > maxEstatesInCompound) {
+    return next(
+      new ApiError(
+        "Max estates in compound less than existing max estates",
+        400
+      )
     );
   }
 
@@ -270,13 +299,32 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { packageId } = req.body;
 
-  const [account, package, existCompoundsCount, existEstatesCount] =
+  const [account, package, existEstatesCount, compoundAggregation] =
     await Promise.all([
       Account.findById(id).populate("owner", "name phone email").lean(),
       Package.findById(packageId).select("features price duration").lean(),
-      Compound.countDocuments({ account: id }).lean(),
       Estate.countDocuments({ account: id }).lean(),
+
+      Compound.aggregate([
+        {
+          $match: { account: new mongoose.Types.ObjectId(id) },
+        },
+        {
+          $group: {
+            _id: null,
+            existCompoundsCount: { $sum: 1 },
+            maxExistEstates: { $max: "$estatesCount" },
+          },
+        },
+      ]),
     ]);
+
+  const [
+    { existCompoundsCount, maxExistEstates } = {
+      existCompoundsCount: 0,
+      maxExistEstates: 0,
+    },
+  ] = compoundAggregation;
 
   if (!account) {
     return next(new ApiError("Account not found", 404));
@@ -310,6 +358,15 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
   if (account.members?.length > +features.allowedUsers) {
     return next(
       new ApiError("Package users less than the existing members", 400)
+    );
+  }
+
+  if (maxExistEstates > +features.maxEstatesInCompound) {
+    return next(
+      new ApiError(
+        "Max estates in compound less than existing max estates",
+        400
+      )
     );
   }
 
