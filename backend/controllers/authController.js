@@ -163,7 +163,10 @@ exports.checkPermission = (requiredPermission) => (req, res, next) => {
     return next(new ApiError("Access denied: Account not found", 403));
   }
 
-  if (!user.permissions.includes(requiredPermission)) {
+  if (
+    user.permissions?.length > 0 &&
+    !user.permissions.includes(requiredPermission)
+  ) {
     return next(new ApiError("Access denied: Missing permission", 403));
   }
 
