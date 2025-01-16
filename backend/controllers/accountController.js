@@ -99,6 +99,12 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     subscriptionEndDate: expireDate,
   };
 
+  if (compoundsCount > 0 && estatesCount < 1) {
+    return next(
+      new ApiError("You must subscribe to estates to manage compounds", 400)
+    );
+  }
+
   const [account, subscriptions, existEstatesCount, compoundAggregation] =
     await Promise.all([
       Account.findById(id).populate("owner", "name phone email").lean(),
