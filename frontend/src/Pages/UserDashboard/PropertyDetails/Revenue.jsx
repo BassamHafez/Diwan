@@ -12,7 +12,7 @@ import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
 import {
   mainEmptyBodyFun,
-  mainFormsHandlerTypeFormData,
+  mainFormsHandlerTypeRaw,
 } from "../../../util/Http";
 import { useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
@@ -71,9 +71,10 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   } = useQuery({
     queryKey: ["revenuesData", propId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `estates/${propId}/revenues`,
         token: token,
+        isLimited: true,
       }),
     enabled: !!propId && !!token,
     staleTime: Infinity,

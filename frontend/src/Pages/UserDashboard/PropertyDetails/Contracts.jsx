@@ -8,7 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import AddNewContract from "../PropertyForms/AddNewContract";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -59,9 +59,10 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   } = useQuery({
     queryKey: ["contracts", propId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `estates/${propId}/contracts`,
         token: token,
+        isLimited: true,
       }),
     enabled: !!propId && !!token,
     staleTime: Infinity,

@@ -9,10 +9,7 @@ import {
 import { useCallback, useMemo, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import { useQuery } from "@tanstack/react-query";
-import {
-  mainEmptyBodyFun,
-  mainFormsHandlerTypeFormData,
-} from "../../../util/Http";
+import { mainEmptyBodyFun, mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -76,9 +73,10 @@ const Expenses = ({
   } = useQuery({
     queryKey: [myQueryKey, myParam, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `${myEndPoint}/${myParam}/expenses`,
         token: token,
+        isLimited: true,
       }),
     enabled: myParam && !!token,
     staleTime: Infinity,

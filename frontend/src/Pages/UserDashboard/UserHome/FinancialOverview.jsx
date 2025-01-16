@@ -7,7 +7,7 @@ import { convertNumbersToFixedTwo } from "../../../Components/Logic/LogicFun";
 const FinancialOverview = ({ myData, totalExpenses, totalRevenues }) => {
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  console.log("FinancialOverview")
+
   const FinancialData = useMemo(() => {
     return [
       {

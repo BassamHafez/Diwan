@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import {mainFormsHandlerTypeRaw } from "../../../util/Http";
 import styles from "../Admin.module.css";
 import SubscriptionItem from "./SubscriptionItem";
 import { useTranslation, useMemo, useQuery, useSelector } from "../../../shared/hooks";
@@ -17,9 +17,10 @@ const AllSubscriptions = () => {
   } = useQuery({
     queryKey: ["subscriptions", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "subscriptions",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: !!token,

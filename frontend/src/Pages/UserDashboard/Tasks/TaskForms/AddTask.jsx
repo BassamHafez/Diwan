@@ -97,7 +97,7 @@ const AddTask = ({ hideModal, refetch, propId, compId }) => {
           {
             formData: cleanedValues,
             token: token,
-            method: "add",
+            method: "post",
             type: `tasks`,
           },
           {

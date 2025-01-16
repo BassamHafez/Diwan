@@ -27,7 +27,7 @@ const useSaveLoginData = () => {
     dispatch(saveTokenState(token));
     notifySuccess(key("logged"));
     if (role !== "admin") {
-      navigate("/dashboard");
+      navigate("/properties");
     } else {
       navigate("/admin-dashboard");
     }

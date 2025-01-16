@@ -1,5 +1,5 @@
 import styles from "./UserHome.module.css";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { faTriangleExclamation } from "../../../shared/constants";
 import { ScrollTopBtn, LoadingOne, NoData } from "../../../shared/components";
 import {
@@ -30,7 +30,7 @@ const UserHome = () => {
   const { data, isFetching, refetch } = useQuery({
     queryKey: ["analytics", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "stats",
         token: token,
       }),
@@ -81,8 +81,23 @@ const UserHome = () => {
     [navigate]
   );
 
+  const expiredAlert = useMemo(() => {
+    return (
+      isTimeExpired && (
+        <Alert variant="warning" className="mt-4">
+          <FontAwesomeIcon
+            className="fa-fade mx-2"
+            icon={faTriangleExclamation}
+          />
+          {key("subExpired")} <Link to={"/packages"}>{key("here")}</Link>
+        </Alert>
+      )
+    );
+  }, [isTimeExpired, key]);
+
   return (
     <div className="height_container d-flex flex-column justify-content-center align-items-center px-2 py-5 p-md-4">
+      {isAnalysisAllowed === undefined && <LoadingOne />}
       {isAnalysisAllowed ? (
         <>
           {isFetching && <LoadingOne />}
@@ -98,16 +113,7 @@ const UserHome = () => {
 
             <Col xl={9} md={8}>
               <Row className="g-3 w-100">
-                {isTimeExpired && (
-                  <Alert variant="warning" className="mt-4">
-                    <FontAwesomeIcon
-                      className="fa-fade mx-2"
-                      icon={faTriangleExclamation}
-                    />
-                    {key("subExpired")}{" "}
-                    <Link to={"/packages"}>{key("here")}</Link>
-                  </Alert>
-                )}
+                {expiredAlert}
 
                 <Col md={12} className="my-3">
                   <FinancialOverview
@@ -128,8 +134,20 @@ const UserHome = () => {
               getStatusBgColor={getStatusBgColor}
               showDetails={showDetails}
             />
-
-            <OverdueTasks myData={myData} refetch={refetch} />
+            {accountInfo?.account?.isTasksAllowed === false ? (
+              <div className={styles.information_section}>
+                <NoData
+                  type="upgrade"
+                  text={`${key("upgradePackage")} ${key("isTasksAllowed")}`}
+                />
+              </div>
+            ) : (
+              <OverdueTasks
+                myData={myData}
+                refetch={refetch}
+                accountInfo={accountInfo}
+              />
+            )}
 
             <Col sm={12}>
               <PendingRevenues
@@ -146,6 +164,7 @@ const UserHome = () => {
             type="upgrade"
             text={`${key("upgradePackage")} ${key("isAnalysisAllowed")}`}
           />
+          {expiredAlert}
         </div>
       )}
     </div>

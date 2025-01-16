@@ -4,7 +4,6 @@ import passImage from "../../../assets/Login-amico.png";
 import styles from "./UserProfile.module.css";
 import SecurityForm from "./ProfileForms/SecurityForm";
 import { useTranslation } from "react-i18next";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import MainModal from "../../../Components/UI/Modals/MainModal";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +20,6 @@ const ProfileSecurity = () => {
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   
@@ -63,16 +61,7 @@ const ProfileSecurity = () => {
               <h4 className="mb-4">{key("changePassword")}</h4>
               <SecurityForm LogOutProcess={LogOutProcess} />
             </div>
-            <div className={styles.container}>
-              <p>{key("deleteAccWarning")}</p>
-              <div className={`mt-4 ${isArLang ? "text-start" : "text-end"}`}>
-                <ButtonOne
-                  borderd={true}
-                  text={key("deleteAcc")}
-                  classes="bg-danger"
-                />
-              </div>
-            </div>
+            {/* delete account here */}
           </Col>
           <Col
             md={6}

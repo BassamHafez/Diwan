@@ -23,6 +23,8 @@ const CustomPackageItem = ({
   chooseActiveActive,
   remainingTime,
   isNoFixedHeight,
+  estatesCount,
+  compoundsCount,
 }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
@@ -38,14 +40,11 @@ const CustomPackageItem = ({
   const notifyError = (message) => toast.error(message);
   const dispatch = useDispatch();
 
-  const buttonText = btnText
-    ? btnText
-    : accountInfo?.account?.allowedUsers > 1 ||
-      accountInfo?.account?.allowedCompounds > 1
-    ? key("addToYourPackage")
-    : key("orderPackage");
-
   const sendPackageData = async () => {
+    if (compoundsCount && !estatesCount) {
+      notifyError(key("uselessCompound"));
+      return;
+    }
     if (btnText && chooseActiveActive) {
       chooseActiveActive("subscription");
       return;
@@ -60,7 +59,7 @@ const CustomPackageItem = ({
       const res = await mainFormsHandlerTypeRaw({
         token: token,
         formData: formData,
-        method: "add",
+        method: "post",
         type: myType,
       });
       console.log(res);
@@ -69,6 +68,21 @@ const CustomPackageItem = ({
         setSubCost(res.data?.subscriptionCost);
         dispatch(fetchAccountData(token));
         setShowPackageData(true);
+      } else if (
+        res.response.data.message ===
+        "Subscribed compounds less than the existing compounds"
+      ) {
+        notifyError(key("subErrorCompound"));
+      } else if (
+        res.response.data.message ===
+        "Subscribed estates less than the existing estates"
+      ) {
+        notifyError(key("subErrorEstates"));
+      } else if (
+        res.response.data.message ===
+        "Subscribed users less than the existing members"
+      ) {
+        notifyError(key("subErrorUsers"));
       } else {
         notifyError(key("wrong"));
       }
@@ -136,7 +150,7 @@ const CustomPackageItem = ({
             <ButtonThree
               onClick={sendPackageData}
               color="white"
-              text={buttonText}
+              text={key("orderPackage")}
             />
           </div>
         </CheckPermissions>

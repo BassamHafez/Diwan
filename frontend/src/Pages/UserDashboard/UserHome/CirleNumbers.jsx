@@ -23,7 +23,7 @@ const CirleNumbers = ({ myData, totalExpenses, totalRevenues }) => {
       },
     ];
   }, [myData, totalExpenses, totalRevenues]);
-  console.log("CirleNumbers")
+
   return (
     <div className={styles.information_section}>
       <Row className="g-3 w-100">

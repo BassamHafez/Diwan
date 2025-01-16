@@ -3,7 +3,7 @@ import styles from "./Contracts.module.css";
 import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
 import { useCallback, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { useNavigate, useParams } from "react-router-dom";
 import LoadingOne from "../../../Components/UI/Loading/LoadingOne";
 import NoData from "../../../Components/UI/Blocks/NoData";
@@ -35,9 +35,10 @@ const CompoundContracts = ({ compoundEstates }) => {
   const { data: contractsData, isFetching } = useQuery({
     queryKey: ["compContracts", compId, token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: `compounds/${compId}/current-contracts`,
         token: token,
+        isLimited: true,
       }),
     enabled: compId && !!token,
     staleTime: Infinity,

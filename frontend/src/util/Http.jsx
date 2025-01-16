@@ -1,5 +1,6 @@
 import axios from "axios";
 const baseServerUrl = import.meta.env.VITE_Base_API_URL;
+const validFormMethods = ["post", "patch", "put"];
 
 export const signFormsHandler = async ({ type, formData, method }) => {
   try {
@@ -28,39 +29,30 @@ export const mainFormsHandlerTypeFormData = async ({
   formData,
   method,
   token,
+  isLimited,
 }) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "multipart/form-data",
+  };
+  const myUrl = `${baseServerUrl}${type}`;
+
   try {
     let response = null;
-    if (method === "add") {
-      response = await axios.post(`${baseServerUrl}${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-    } else if (method === "patch") {
-      response = await axios.patch(`${baseServerUrl}${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-    } else if (method === "put") {
-      response = await axios.put(`${baseServerUrl}${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+    if (validFormMethods.includes(method)) {
+      response = await axios[method](myUrl, formData, {
+        headers,
       });
     } else {
       if (!token) {
         console.log("Unauthorized");
         return null;
       }
-      response = await axios.get(`${baseServerUrl}${type}`, {
+      response = await axios.get(myUrl, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        params: isLimited ? { limit: Infinity } : undefined,
       });
     }
     return response.data;
@@ -75,32 +67,23 @@ export const mainFormsHandlerTypeRaw = async ({
   formData,
   method,
   token,
+  isLimited,
 }) => {
+  const headers = {
+    Authorization: `Bearer ${token}`,
+  };
+  const url = `${baseServerUrl}${type}`;
+
   try {
     let response = null;
-    if (method === "add") {
-      response = await axios.post(`${baseServerUrl}${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    } else if (method === "patch") {
-      response = await axios.patch(`${baseServerUrl}${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    } else if (method === "put") {
-      response = await axios.put(`${baseServerUrl}${type}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    if (validFormMethods.includes(method)) {
+      response = await axios[method](url, formData, {
+        headers,
       });
     } else {
-      response = await axios.get(`${baseServerUrl}${type}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      response = await axios.get(url, {
+        headers,
+        params: isLimited ? { limit: Infinity } : undefined,
       });
     }
     return response.data;
@@ -126,25 +109,14 @@ export const mainDeleteFunHandler = async ({ id, token, type }) => {
 };
 
 export const mainEmptyBodyFun = async ({ token, type, method }) => {
-  let response;
   try {
-    if (method === "post") {
-      response = await axios.post(
-        `${import.meta.env.VITE_Base_API_URL}${type}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    } else if (method === "patch") {
-      response = await axios.patch(
-        `${import.meta.env.VITE_Base_API_URL}${type}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-    }
+    const response = await axios[method](
+      `${baseServerUrl}${type}`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
     return response.data;
   } catch (error) {

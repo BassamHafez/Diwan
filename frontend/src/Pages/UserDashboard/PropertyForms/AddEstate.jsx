@@ -123,7 +123,7 @@ const AddEstate = ({ hideModal, refetch, compId }) => {
       {
         formData: formData,
         token: token,
-        method: "add",
+        method: "post",
         type: "estates",
       },
       {

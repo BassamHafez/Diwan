@@ -1,4 +1,4 @@
-import { mainFormsHandlerTypeFormData } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import ContactItem from "./ContactItem";
 import AddContactForm from "./ContactForms/AddContactForm";
 import styles from "./Contacts.module.css";
@@ -44,9 +44,10 @@ const Contacts = () => {
   } = useQuery({
     queryKey: ["contacts", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "contacts",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: selectedFilter === "contacts" && !!token,
@@ -59,7 +60,11 @@ const Contacts = () => {
   } = useQuery({
     queryKey: ["brokers", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({ type: "contacts/brokers", token: token }),
+      mainFormsHandlerTypeRaw({
+        type: "contacts/brokers",
+        token: token,
+        isLimited: true,
+      }),
     staleTime: Infinity,
     enabled: selectedFilter === "broker" && !!token,
   });
@@ -71,9 +76,10 @@ const Contacts = () => {
   } = useQuery({
     queryKey: ["landlord", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "contacts/landlords",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: selectedFilter === "landlord" && !!token,
@@ -86,9 +92,10 @@ const Contacts = () => {
   } = useQuery({
     queryKey: ["service", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "contacts/services",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: selectedFilter === "service" && !!token,
@@ -101,9 +108,10 @@ const Contacts = () => {
   } = useQuery({
     queryKey: ["tenant", token],
     queryFn: () =>
-      mainFormsHandlerTypeFormData({
+      mainFormsHandlerTypeRaw({
         type: "contacts/tenants",
         token: token,
+        isLimited: true,
       }),
     staleTime: Infinity,
     enabled: selectedFilter === "tenant" && !!token,
