@@ -68,7 +68,21 @@ export const checkAccountFeatures = (accInfo, value) => {
   return typeof feature === "number" ? feature > 0 : Boolean(feature);
 };
 
-export const handleDownloadExcelSheet = (data, name, title) => {
+const notifyError = () =>
+  toast(
+    "Un Available Feature in your package!! - !!هذه الميزة غير متاحة في باقتك الحالية"
+  );
+
+export const handleDownloadExcelSheet = (
+  data,
+  name,
+  title,
+  isFilesExtractAllowed
+) => {
+  if (isFilesExtractAllowed === false) {
+    notifyError();
+    return;
+  }
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(data);
   XLSX.utils.book_append_sheet(wb, ws, `${title}`);
@@ -76,7 +90,11 @@ export const handleDownloadExcelSheet = (data, name, title) => {
   XLSX.writeFile(wb, `${name}`);
 };
 
-export const generatePDF = (id, name) => {
+export const generatePDF = (id, name, isFilesExtractAllowed) => {
+  if (isFilesExtractAllowed === false) {
+    notifyError();
+    return;
+  }
   const element = document.getElementById(`${id}`);
   const options = {
     margin: 2,

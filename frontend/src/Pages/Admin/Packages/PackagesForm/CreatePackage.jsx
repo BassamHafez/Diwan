@@ -1,5 +1,6 @@
 import { mainFormsHandlerTypeRaw } from "../../../../util/Http";
 import {
+  checkBoxCircle,
   maxEstatesInCompoundOriginalOptions,
   packagesDuration,
 } from "../../../../Components/Logic/StaticLists";
@@ -52,6 +53,14 @@ const CreatePackage = ({ refetch, hideModal }) => {
     duration: "",
     isFavoriteAllowed: false,
     isRemindersAllowed: false,
+    isAnalysisAllowed: false,
+    isCompoundsReportsAllowed: false,
+    isFilesExtractAllowed: false,
+    isFinancialReportsAllowed: false,
+    isOperationalReportsAllowed: false,
+    isServiceContactsAllowed: false,
+    isTasksAllowed: false,
+    isUserPermissionsAllowed: false,
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -70,6 +79,38 @@ const CreatePackage = ({ refetch, hideModal }) => {
       {
         label: "isRemindersAllowed",
         value: `${values.isRemindersAllowed || false}`,
+      },
+      {
+        label: "isAnalysisAllowed",
+        value: `${values.isAnalysisAllowed || false}`,
+      },
+      {
+        label: "isCompoundsReportsAllowed",
+        value: `${values.isCompoundsReportsAllowed || false}`,
+      },
+      {
+        label: "isOperationalReportsAllowed",
+        value: `${values.isOperationalReportsAllowed || false}`,
+      },
+      {
+        label: "isFinancialReportsAllowed",
+        value: `${values.isFinancialReportsAllowed || false}`,
+      },
+      {
+        label: "isFilesExtractAllowed",
+        value: `${values.isFilesExtractAllowed || false}`,
+      },
+      {
+        label: "isServiceContactsAllowed",
+        value: `${values.isServiceContactsAllowed || false}`,
+      },
+      {
+        label: "isTasksAllowed",
+        value: `${values.isTasksAllowed || false}`,
+      },
+      {
+        label: "isUserPermissionsAllowed",
+        value: `${values.isUserPermissionsAllowed || false}`,
       },
     ];
 
@@ -135,6 +176,10 @@ const CreatePackage = ({ refetch, hideModal }) => {
     duration: selectOptionValidationTypeNumber.required(key("fieldReq")),
     maxEstatesInCompound: selectOptionValidationTypeNumber.nullable(),
   });
+
+  const listClasses = `checkbox-wrapper-15 my-3 ${
+    isArLang ? "checkbox-wrapper_ar" : "checkbox-wrapper_en"
+  }`;
 
   return (
     <Formik
@@ -251,58 +296,176 @@ const CreatePackage = ({ refetch, hideModal }) => {
                 />
               </div>
             </Col>
-            <Col
-              sm={12}
-              className="d-flex align-items-center justify-content-between flex-wrap"
-            >
-              <div>
-                <Field
-                  name="isFavoriteAllowed"
-                  type="checkbox"
-                  id="isFavoriteAllowed"
-                  className=" fs-5 m-0"
-                  style={{ cursor: "pointer" }}
-                />
-                <label className=" m-0 mx-2" htmlFor="isFavoriteAllowed">
-                  {key("add")} {key("bookmarked")}
-                </label>
-              </div>
-              <div>
-                <Field
-                  name="isRemindersAllowed"
-                  type="checkbox"
-                  id="isRemindersAllowed"
-                  className=" fs-5 m-0"
-                  style={{ cursor: "pointer" }}
-                />
-                <label className=" m-0 mx-2" htmlFor="isRemindersAllowed">
-                  {key("isRemindersAllowed")}
-                </label>
-              </div>
+            <Col sm={12}>
+              <Row>
+                <Col sm={6}>
+                  <ul className={`p-0 ${isArLang ? "text-end" : "text-start"}`}>
+                    <li className={listClasses}>
+                      <Field
+                        name="isMostPopular"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isMostPopular"
+                      />
+                      <label className="cbx" htmlFor="isMostPopular">
+                        {checkBoxCircle}
+                        <span>{key("isMostPopular")}</span>
+                      </label>
+                    </li>
 
-              <div>
-                <Field
-                  name="isMostPopular"
-                  type="checkbox"
-                  id="isMostPopular"
-                  style={{ cursor: "pointer" }}
-                />
-                <label className=" m-0 mx-2" htmlFor="isMostPopular">
-                  {key("isMostPopular")}
-                </label>
-              </div>
+                    <li className={listClasses}>
+                      <Field
+                        name="isBestOffer"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isBestOffer"
+                      />
+                      <label className="cbx" htmlFor="isBestOffer">
+                        {checkBoxCircle}
+                        <span>{key("isBestOffer")}</span>
+                      </label>
+                    </li>
 
-              <div>
-                <Field
-                  name="isBestOffer"
-                  type="checkbox"
-                  id="isBestOffer"
-                  style={{ cursor: "pointer" }}
-                />
-                <label className="m-0 mx-2" htmlFor="isBestOffer">
-                  {key("isBestOffer")}
-                </label>
-              </div>
+                    <li className={listClasses}>
+                      <Field
+                        name="isFavoriteAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isFavoriteAllowed"
+                      />
+                      <label className="cbx" htmlFor="isFavoriteAllowed">
+                        {checkBoxCircle}
+                        <span>
+                          {key("add")} {key("bookmarked")}
+                        </span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isRemindersAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isRemindersAllowed"
+                      />
+                      <label className="cbx" htmlFor="isRemindersAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isRemindersAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isAnalysisAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isAnalysisAllowed"
+                      />
+                      <label className="cbx" htmlFor="isAnalysisAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isAnalysisAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isTasksAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isTasksAllowed"
+                      />
+                      <label className="cbx" htmlFor="isTasksAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isTasksAllowed")}</span>
+                      </label>
+                    </li>
+                  </ul>
+                </Col>
+                <Col sm={6}>
+                  <ul className={`p-0 ${isArLang ? "text-end" : "text-start"}`}>
+                    <li className={listClasses}>
+                      <Field
+                        name="isCompoundsReportsAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isCompoundsReportsAllowed"
+                      />
+                      <label
+                        className="cbx"
+                        htmlFor="isCompoundsReportsAllowed"
+                      >
+                        {checkBoxCircle}
+                        <span>{key("isCompoundsReportsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isOperationalReportsAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isOperationalReportsAllowed"
+                      />
+
+                      <label
+                        className="cbx"
+                        htmlFor="isOperationalReportsAllowed"
+                      >
+                        {checkBoxCircle}
+                        <span>{key("isOperationalReportsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isFinancialReportsAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isFinancialReportsAllowed"
+                      />
+
+                      <label
+                        className="cbx"
+                        htmlFor="isFinancialReportsAllowed"
+                      >
+                        {checkBoxCircle}
+                        <span>{key("isFinancialReportsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isFilesExtractAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isFilesExtractAllowed"
+                      />
+                      <label className="cbx" htmlFor="isFilesExtractAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isFilesExtractAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isServiceContactsAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isServiceContactsAllowed"
+                      />
+                      <label className="cbx" htmlFor="isServiceContactsAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isServiceContactsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <Field
+                        name="isUserPermissionsAllowed"
+                        type="checkbox"
+                        className="inp-cbx d-none"
+                        id="isUserPermissionsAllowed"
+                      />
+                      <label className="cbx" htmlFor="isUserPermissionsAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isUserPermissionsAllowed")}</span>
+                      </label>
+                    </li>
+                  </ul>
+                </Col>
+              </Row>
             </Col>
             <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 px-3">
               <button onClick={hideModal} className="cancel_btn my-2">

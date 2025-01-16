@@ -10,14 +10,7 @@ import {
 const AccountFeatures = ({ account }) => {
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
-  const currentFeatures = useCurrentFeatures({
-    allowedUsers: account.allowedUsers,
-    allowedCompounds: account.allowedCompounds,
-    isFavoriteAllowed: account.isFavoriteAllowed,
-    allowedEstates: account.allowedEstates,
-    maxEstatesInCompound: account.maxEstatesInCompound,
-    isRemindersAllowed: account?.isRemindersAllowed,
-  });
+  const currentFeatures = useCurrentFeatures(account);
 
   const { t: key } = useTranslation();
 

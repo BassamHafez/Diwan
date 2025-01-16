@@ -2,6 +2,14 @@
 export const mainAlertTime = 30 * 60 * 1000;
 export const maxFileSize = 5 * 1024 * 1024;
 export const phoneRejex = /^05\d{8}$/;
+export const checkBoxCircle = (
+  <span>
+    <svg width="12px" height="9px" viewBox="0 0 12 9">
+      <polyline points="1 5 4 8 11 1"></polyline>
+    </svg>
+  </span>
+);
+
 // packages
 export const packagesDuration = {
   en: [
@@ -35,7 +43,22 @@ export const maxEstatesInCompoundOriginalOptions = [
   { label: "50", value: 50 },
   { label: "300", value: 300 },
 ];
-
+export const maxEstatesInCompoundOptions = {
+  en: [
+    { label: "Three units (3)", value: 3 },
+    { label: "Ten units (10)", value: 10 },
+    { label: "Thirty units (30)", value: 30 },
+    { label: "Fify units (50)", value: 50 },
+    { label: "Three hundred (300)", value: 300 },
+  ],
+  ar: [
+    { label: "ثلاث وحدات (3)", value: 3 },
+    { label: "عشر وحدات (10)", value: 10 },
+    { label: "ثلاثون وحدة (30)", value: 30 },
+    { label: "خمسون وحدة (50)", value: 50 },
+    { label: "ثلاثمائة وحدة (300)", value: 300 },
+  ],
+};
 //contract
 export const contractStatusOptions = {
   en: [
@@ -760,7 +783,6 @@ export const chartsData = [
   { totalPaid: 1800, totalPending: 1100, month: 11 },
   { totalPaid: 1800, totalPending: 1100, month: 12 },
 ];
-
 
 // ----------------------------------------------------------Saudi Arabia----------------------------
 

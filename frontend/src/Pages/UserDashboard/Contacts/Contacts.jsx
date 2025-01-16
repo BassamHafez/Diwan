@@ -10,6 +10,7 @@ import {
   ModalForm,
   MainModal,
   CheckPermissions,
+  CheckMySubscriptions,
 } from "../../../shared/components";
 import {
   useCallback,
@@ -33,6 +34,7 @@ const Contacts = () => {
   const [selectedFilter, setSelectedFilter] = useState("contacts");
   const [tenantTypeFilter, setTenantTypeFilter] = useState("all");
   const [searchFilter, setSearchFilter] = useState("");
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const {
@@ -351,26 +353,31 @@ const Contacts = () => {
                   xxl={4}
                   className="d-flex justify-content-center algn-items-center"
                 >
-                  <div>
-                    <input
-                      type="radio"
-                      className="btn-check"
-                      name="types"
-                      id="service"
-                      value="service"
-                      autoComplete="off"
-                      checked={selectedFilter === "service"}
-                      onChange={handleFilterChange}
-                    />
-                    <label
-                      className={`${
-                        selectedFilter === "service" && styles.label_checked
-                      } btn mx-1`}
-                      htmlFor="service"
-                    >
-                      {key("serviceType")}
-                    </label>
-                  </div>
+                  <CheckMySubscriptions
+                    name="isServiceContactsAllowed"
+                    accountInfo={accountInfo}
+                  >
+                    <div>
+                      <input
+                        type="radio"
+                        className="btn-check"
+                        name="types"
+                        id="service"
+                        value="service"
+                        autoComplete="off"
+                        checked={selectedFilter === "service"}
+                        onChange={handleFilterChange}
+                      />
+                      <label
+                        className={`${
+                          selectedFilter === "service" && styles.label_checked
+                        } btn mx-1`}
+                        htmlFor="service"
+                      >
+                        {key("serviceType")}
+                      </label>
+                    </div>
+                  </CheckMySubscriptions>
                 </Col>
               </Row>
             </div>
@@ -514,11 +521,24 @@ const Contacts = () => {
                 profileInfo={profileInfo}
               >
                 <div className={`${isArLang ? "me-auto" : "ms-auto"} my-1`}>
-                  <ButtonOne
-                    onClick={showAddModal}
-                    text={`${key("add")} ${key(selectedFilter)}`}
-                    borderd={true}
-                  />
+                  {selectedFilter === "service" ? (
+                    <CheckMySubscriptions
+                      name="isServiceContactsAllowed"
+                      accountInfo={accountInfo}
+                    >
+                      <ButtonOne
+                        onClick={showAddModal}
+                        text={`${key("add")} ${key(selectedFilter)}`}
+                        borderd={true}
+                      />
+                    </CheckMySubscriptions>
+                  ) : (
+                    <ButtonOne
+                      onClick={showAddModal}
+                      text={`${key("add")} ${key(selectedFilter)}`}
+                      borderd={true}
+                    />
+                  )}
                 </div>
               </CheckPermissions>
             </div>
@@ -585,11 +605,16 @@ const Contacts = () => {
                 {key("add")} {key("landlord")}
               </h5>
             </div>
-            <div onClick={() => triggerAddModalDependsOnSelection("service")}>
-              <h5>
-                {key("add")} {key("service")}
-              </h5>
-            </div>
+            <CheckMySubscriptions
+              name="isServiceContactsAllowed"
+              accountInfo={accountInfo}
+            >
+              <div onClick={() => triggerAddModalDependsOnSelection("service")}>
+                <h5>
+                  {key("add")} {key("service")}
+                </h5>
+              </div>
+            </CheckMySubscriptions>
           </div>
         </MainModal>
       )}

@@ -56,7 +56,7 @@ const PropertyDetails = () => {
     queryFn: () =>
       mainFormsHandlerTypeFormData({ type: `estates/${propId}`, token: token }),
     staleTime: Infinity,
-    enabled: propId && !!token,
+    enabled: !!propId && !!token,
   });
 
   const { data: tasks, refetch: refetchTasks } = useQuery({
@@ -77,7 +77,7 @@ const PropertyDetails = () => {
         type: `estates/${propId}/contracts/current`,
         token: token,
       }),
-    enabled: propId && !!token,
+    enabled: !!propId && !!token,
     staleTime: Infinity,
   });
 

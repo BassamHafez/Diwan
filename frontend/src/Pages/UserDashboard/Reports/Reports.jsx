@@ -23,6 +23,7 @@ import {
   useSelector,
 } from "../../../shared/hooks";
 import { Row, Col } from "../../../shared/bootstrap";
+import { CheckMySubscriptions, NoData } from "../../../shared/components";
 
 const Reports = () => {
   const [reportTypeFilter, setReportTypeFilter] = useState("landlordReport");
@@ -30,6 +31,8 @@ const Reports = () => {
   const [operationalFilter, setOperationalFilter] = useState("contractsReport");
   const [compoundsFilter, setCompoundsFilter] = useState("compoundsReport");
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
+  const accountData = accountInfo?.account;
   const estatesOptions = useEstatesOptions();
   const { compoundsOptions } = useCompoundOptions();
   const { landlordOptions } = useContactsOptions();
@@ -54,54 +57,69 @@ const Reports = () => {
                   {key("report")}
                 </h6>
                 <ul className={styles.filter_list}>
-                  <CheckPermissions
-                    profileInfo={profileInfo}
-                    btnActions={["FINANCIAL_REPORTS"]}
+                  <CheckMySubscriptions
+                    name="isFinancialReportsAllowed"
+                    accountInfo={accountInfo}
                   >
-                    <li
-                      className={
-                        reportTypeFilter === "landlordReport"
-                          ? styles.active
-                          : ""
-                      }
-                      onClick={() => setReportTypeFilter("landlordReport")}
+                    <CheckPermissions
+                      profileInfo={profileInfo}
+                      btnActions={["FINANCIAL_REPORTS"]}
                     >
-                      {circleIcon}
-                      {key("landlordReport")}
-                    </li>
-                  </CheckPermissions>
-                  <CheckPermissions
-                    profileInfo={profileInfo}
-                    btnActions={["CONTRACTS_REPORTS"]}
+                      <li
+                        className={
+                          reportTypeFilter === "landlordReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setReportTypeFilter("landlordReport")}
+                      >
+                        {circleIcon}
+                        {key("landlordReport")}
+                      </li>
+                    </CheckPermissions>
+                  </CheckMySubscriptions>
+                  <CheckMySubscriptions
+                    name="isOperationalReportsAllowed"
+                    accountInfo={accountInfo}
                   >
-                    <li
-                      className={
-                        reportTypeFilter === "operationalReport"
-                          ? styles.active
-                          : ""
-                      }
-                      onClick={() => setReportTypeFilter("operationalReport")}
+                    <CheckPermissions
+                      profileInfo={profileInfo}
+                      btnActions={["CONTRACTS_REPORTS"]}
                     >
-                      {circleIcon}
-                      {key("operationalReport")}
-                    </li>
-                  </CheckPermissions>
-                  <CheckPermissions
-                    profileInfo={profileInfo}
-                    btnActions={["COMPOUNDS_REPORTS"]}
+                      <li
+                        className={
+                          reportTypeFilter === "operationalReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setReportTypeFilter("operationalReport")}
+                      >
+                        {circleIcon}
+                        {key("operationalReport")}
+                      </li>
+                    </CheckPermissions>
+                  </CheckMySubscriptions>
+                  <CheckMySubscriptions
+                    name="isCompoundsReportsAllowed"
+                    accountInfo={accountInfo}
                   >
-                    <li
-                      className={
-                        reportTypeFilter === "compoundsReport"
-                          ? styles.active
-                          : ""
-                      }
-                      onClick={() => setReportTypeFilter("compoundsReport")}
+                    <CheckPermissions
+                      profileInfo={profileInfo}
+                      btnActions={["COMPOUNDS_REPORTS"]}
                     >
-                      {circleIcon}
-                      {key("COMPOUNDS_REPORTS")}
-                    </li>
-                  </CheckPermissions>
+                      <li
+                        className={
+                          reportTypeFilter === "compoundsReport"
+                            ? styles.active
+                            : ""
+                        }
+                        onClick={() => setReportTypeFilter("compoundsReport")}
+                      >
+                        {circleIcon}
+                        {key("COMPOUNDS_REPORTS")}
+                      </li>
+                    </CheckPermissions>
+                  </CheckMySubscriptions>
                 </ul>
 
                 <hr />
@@ -109,158 +127,210 @@ const Reports = () => {
                   <FontAwesomeIcon className={`${iconClass}`} icon={faTags} />
                   {key("type")}
                 </h6>
-                <CheckPermissions
-                  profileInfo={profileInfo}
-                  btnActions={["FINANCIAL_REPORTS"]}
+                <CheckMySubscriptions
+                  name="isFinancialReportsAllowed"
+                  accountInfo={accountInfo}
                 >
-                  {reportTypeFilter === "landlordReport" && (
-                    <ul className={styles.filter_list}>
-                      <li
-                        className={
-                          landlordFilter === "incomeReport" ? styles.active : ""
-                        }
-                        onClick={() => setLandlordFilter("incomeReport")}
-                      >
-                        <FontAwesomeIcon
-                          className={`${iconClass}`}
-                          icon={faSackDollar}
-                        />
-                        {key("incomeReport")}
-                      </li>
-                      <li
-                        className={
-                          landlordFilter === "incomeReportDetails"
-                            ? styles.active
-                            : ""
-                        }
-                        onClick={() => setLandlordFilter("incomeReportDetails")}
-                      >
-                        <FontAwesomeIcon
-                          className={`${iconClass}`}
-                          icon={faFileInvoiceDollar}
-                        />
-                        {key("incomeReportDetails")}
-                      </li>
-                      <li
-                        className={
-                          landlordFilter === "paymentsReport"
-                            ? styles.active
-                            : ""
-                        }
-                        onClick={() => setLandlordFilter("paymentsReport")}
-                      >
-                        <FontAwesomeIcon
-                          className={`${iconClass}`}
-                          icon={faMoneyBillTrendUp}
-                        />
-                        {key("paymentsReport")}
-                      </li>
-                    </ul>
-                  )}
-                </CheckPermissions>
-
-                <CheckPermissions
-                  profileInfo={profileInfo}
-                  btnActions={["CONTRACTS_REPORTS"]}
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["FINANCIAL_REPORTS"]}
+                  >
+                    {reportTypeFilter === "landlordReport" && (
+                      <ul className={styles.filter_list}>
+                        <li
+                          className={
+                            landlordFilter === "incomeReport"
+                              ? styles.active
+                              : ""
+                          }
+                          onClick={() => setLandlordFilter("incomeReport")}
+                        >
+                          <FontAwesomeIcon
+                            className={`${iconClass}`}
+                            icon={faSackDollar}
+                          />
+                          {key("incomeReport")}
+                        </li>
+                        <li
+                          className={
+                            landlordFilter === "incomeReportDetails"
+                              ? styles.active
+                              : ""
+                          }
+                          onClick={() =>
+                            setLandlordFilter("incomeReportDetails")
+                          }
+                        >
+                          <FontAwesomeIcon
+                            className={`${iconClass}`}
+                            icon={faFileInvoiceDollar}
+                          />
+                          {key("incomeReportDetails")}
+                        </li>
+                        <li
+                          className={
+                            landlordFilter === "paymentsReport"
+                              ? styles.active
+                              : ""
+                          }
+                          onClick={() => setLandlordFilter("paymentsReport")}
+                        >
+                          <FontAwesomeIcon
+                            className={`${iconClass}`}
+                            icon={faMoneyBillTrendUp}
+                          />
+                          {key("paymentsReport")}
+                        </li>
+                      </ul>
+                    )}
+                  </CheckPermissions>
+                </CheckMySubscriptions>
+                <CheckMySubscriptions
+                  name="isOperationalReportsAllowed"
+                  accountInfo={accountInfo}
                 >
-                  {reportTypeFilter === "operationalReport" && (
-                    <ul className={styles.filter_list}>
-                      <li
-                        className={
-                          operationalFilter === "contractsReport"
-                            ? styles.active
-                            : ""
-                        }
-                        onClick={() => setOperationalFilter("contractsReport")}
-                      >
-                        <FontAwesomeIcon
-                          className={`${iconClass}`}
-                          icon={faFileContract}
-                        />
-                        {key("contractsReport")}
-                      </li>
-                    </ul>
-                  )}
-                </CheckPermissions>
-
-                <CheckPermissions
-                  profileInfo={profileInfo}
-                  btnActions={["COMPOUNDS_REPORTS"]}
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["CONTRACTS_REPORTS"]}
+                  >
+                    {reportTypeFilter === "operationalReport" && (
+                      <ul className={styles.filter_list}>
+                        <li
+                          className={
+                            operationalFilter === "contractsReport"
+                              ? styles.active
+                              : ""
+                          }
+                          onClick={() =>
+                            setOperationalFilter("contractsReport")
+                          }
+                        >
+                          <FontAwesomeIcon
+                            className={`${iconClass}`}
+                            icon={faFileContract}
+                          />
+                          {key("contractsReport")}
+                        </li>
+                      </ul>
+                    )}
+                  </CheckPermissions>
+                </CheckMySubscriptions>
+                <CheckMySubscriptions
+                  name="isCompoundsReportsAllowed"
+                  accountInfo={accountInfo}
                 >
-                  {reportTypeFilter === "compoundsReport" && (
-                    <ul className={styles.filter_list}>
-                      <li
-                        className={
-                          compoundsFilter === "compoundsReport"
-                            ? styles.active
-                            : ""
-                        }
-                        onClick={() => setCompoundsFilter("compoundsReport")}
-                      >
-                        <FontAwesomeIcon
-                          className={`${iconClass}`}
-                          icon={faFileContract}
-                        />
-                        {key("compoundsReport")}
-                      </li>
-                      <li
-                        className={
-                          compoundsFilter === "compoundDetailsReport"
-                            ? styles.active
-                            : ""
-                        }
-                        onClick={() =>
-                          setCompoundsFilter("compoundDetailsReport")
-                        }
-                      >
-                        <FontAwesomeIcon
-                          className={`${iconClass}`}
-                          icon={faFileContract}
-                        />
-                        {key("compoundDetailsReport")}
-                      </li>
-                    </ul>
-                  )}
-                </CheckPermissions>
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["COMPOUNDS_REPORTS"]}
+                  >
+                    {reportTypeFilter === "compoundsReport" && (
+                      <ul className={styles.filter_list}>
+                        <li
+                          className={
+                            compoundsFilter === "compoundsReport"
+                              ? styles.active
+                              : ""
+                          }
+                          onClick={() => setCompoundsFilter("compoundsReport")}
+                        >
+                          <FontAwesomeIcon
+                            className={`${iconClass}`}
+                            icon={faFileContract}
+                          />
+                          {key("compoundsReport")}
+                        </li>
+                        <li
+                          className={
+                            compoundsFilter === "compoundDetailsReport"
+                              ? styles.active
+                              : ""
+                          }
+                          onClick={() =>
+                            setCompoundsFilter("compoundDetailsReport")
+                          }
+                        >
+                          <FontAwesomeIcon
+                            className={`${iconClass}`}
+                            icon={faFileContract}
+                          />
+                          {key("compoundDetailsReport")}
+                        </li>
+                      </ul>
+                    )}
+                  </CheckPermissions>
+                </CheckMySubscriptions>
               </div>
             </div>
           </Col>
 
           <Col sm={8} lg={9} xl={10}>
             <div className={`${styles.report_content} position-relative`}>
-              {reportTypeFilter === "landlordReport" && (
-                <LandlordReport
-                  landlordOptions={landlordOptions}
-                  compoundsOptions={compoundsOptions}
-                  estatesOptions={estatesOptions}
-                  filterType={landlordFilter}
-                />
-              )}
+              {reportTypeFilter === "landlordReport" &&
+                (accountData?.isFinancialReportsAllowed ? (
+                  <LandlordReport
+                    landlordOptions={landlordOptions}
+                    compoundsOptions={compoundsOptions}
+                    estatesOptions={estatesOptions}
+                    filterType={landlordFilter}
+                  />
+                ) : (
+                  <NoData
+                    type="upgrade"
+                    text={`${key("upgradePackage")} ${key(
+                      "isFinancialReportsAllowed"
+                    )}`}
+                  />
+                ))}
 
-              {reportTypeFilter === "operationalReport" && (
-                <OperationalReport
-                  landlordOptions={landlordOptions}
-                  compoundsOptions={compoundsOptions}
-                  estatesOptions={estatesOptions}
-                  filterType={operationalFilter}
-                />
-              )}
+              {reportTypeFilter === "operationalReport" &&
+                (accountData?.isOperationalReportsAllowed ? (
+                  <OperationalReport
+                    landlordOptions={landlordOptions}
+                    compoundsOptions={compoundsOptions}
+                    estatesOptions={estatesOptions}
+                    filterType={operationalFilter}
+                  />
+                ) : (
+                  <NoData
+                    type="upgrade"
+                    text={`${key("upgradePackage")} ${key(
+                      "isOperationalReportsAllowed"
+                    )}`}
+                  />
+                ))}
 
               {reportTypeFilter === "compoundsReport" &&
               compoundsFilter === "compoundsReport" ? (
-                <CompoundsReport
-                  landlordOptions={landlordOptions}
-                  compoundsOptions={compoundsOptions}
-                  filterType={compoundsFilter}
-                />
+                accountData?.isCompoundsReportsAllowed ? (
+                  <CompoundsReport
+                    landlordOptions={landlordOptions}
+                    compoundsOptions={compoundsOptions}
+                    filterType={compoundsFilter}
+                  />
+                ) : (
+                  <NoData
+                    type="upgrade"
+                    text={`${key("upgradePackage")} ${key(
+                      "isCompoundsReportsAllowed"
+                    )}`}
+                  />
+                )
               ) : (
                 reportTypeFilter === "compoundsReport" &&
-                compoundsFilter === "compoundDetailsReport" && (
+                compoundsFilter === "compoundDetailsReport" &&
+                (accountData?.isCompoundsReportsAllowed ? (
                   <CompoundDetailsReports
                     compoundsOptions={compoundsOptions}
                     filterType={compoundsFilter}
                   />
-                )
+                ) : (
+                  <NoData
+                    type="upgrade"
+                    text={`${key("upgradePackage")} ${key(
+                      "isCompoundsReportsAllowed"
+                    )}`}
+                  />
+                ))
               )}
             </div>
           </Col>

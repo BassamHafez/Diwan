@@ -6,14 +6,22 @@ const useCurrentFeatures = (props) => {
   const myAccount = props || accountInfo?.account;
 
   const currentFeatures = {
-    usersCount: myAccount?.allowedUsers,
-    compoundsCount: myAccount?.allowedCompounds,
+    allowedUsers: myAccount?.allowedUsers,
+    allowedCompounds: myAccount?.allowedCompounds,
     allowedEstates: myAccount?.allowedEstates,
     maxEstatesInCompound: myAccount?.maxEstatesInCompound,
     isFavoriteAllowed: myAccount?.isFavoriteAllowed,
     isRemindersAllowed: myAccount?.isRemindersAllowed,
+    isAnalysisAllowed: myAccount?.isAnalysisAllowed,
+    isCompoundsReportsAllowed: myAccount?.isCompoundsReportsAllowed,
+    isFilesExtractAllowed: myAccount?.isFilesExtractAllowed,
+    isFinancialReportsAllowed: myAccount?.isFinancialReportsAllowed,
+    isOperationalReportsAllowed: myAccount?.isOperationalReportsAllowed,
+    isServiceContactsAllowed: myAccount?.isServiceContactsAllowed,
+    isTasksAllowed: myAccount?.isTasksAllowed,
+    isUserPermissionsAllowed: myAccount?.isUserPermissionsAllowed,
   };
-
+  
   return currentFeatures;
 };
 
