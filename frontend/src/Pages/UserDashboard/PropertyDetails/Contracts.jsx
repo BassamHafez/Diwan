@@ -29,6 +29,7 @@ import ExtendContract from "../PropertyForms/ExtendContract";
 import SettleContract from "../PropertyForms/SettleContract";
 import useDeleteItem from "../../../hooks/useDeleteItem";
 import { useSelector } from "react-redux";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   const [showAddContractModal, setShowAddContractModal] = useState(false);
@@ -43,6 +44,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
   const [searchFilter, setSearchFilter] = useState("");
   const deleteItem = useDeleteItem();
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
   const token = JSON.parse(localStorage.getItem("token"));
@@ -61,7 +63,7 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
         type: `estates/${propId}/contracts`,
         token: token,
       }),
-    enabled: propId && !!token,
+    enabled: !!propId && !!token,
     staleTime: Infinity,
   });
 
@@ -149,9 +151,10 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
       `${key("contracts")}_${details?.name} ${
         estateParentCompound ? `_(${estateParentCompound?.name})` : ""
       }.xlsx`,
-      key("contracts")
+      key("contracts"),
+      accountInfo?.account?.isFilesExtractAllowed
     );
-  }, [filteredContractsList, details, estateParentCompound, key]);
+  }, [filteredContractsList, accountInfo, details, estateParentCompound, key]);
 
   const showContractModalHandler = useCallback(() => {
     setShowAddContractModal(true);
@@ -188,13 +191,18 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
           <h4>{key("contracts")}</h4>
           <div>
             {filteredContractsList && filteredContractsList?.length > 0 && (
-              <ButtonOne
-                classes="m-2"
-                borderd
-                color="white"
-                text={key("exportCsv")}
-                onClick={exportCsvHandler}
-              />
+              <CheckMySubscriptions
+                name="isFilesExtractAllowed"
+                accountInfo={accountInfo}
+              >
+                <ButtonOne
+                  classes="m-2"
+                  borderd
+                  color="white"
+                  text={key("exportCsv")}
+                  onClick={exportCsvHandler}
+                />
+              </CheckMySubscriptions>
             )}
             <CheckPermissions
               profileInfo={profileInfo}
@@ -328,16 +336,20 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
                                       </CheckPermissions>
                                     </>
                                   )}
-
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setContractDetails(contract);
-                                    setShowDetailsModal(true);
-                                  }}
-                                  className="text-center"
+                                <CheckMySubscriptions
+                                  name="isFilesExtractAllowed"
+                                  accountInfo={accountInfo}
                                 >
-                                  {key("details")}
-                                </Dropdown.Item>
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setContractDetails(contract);
+                                      setShowDetailsModal(true);
+                                    }}
+                                    className="text-center"
+                                  >
+                                    {key("details")}
+                                  </Dropdown.Item>
+                                </CheckMySubscriptions>
                               </Dropdown.Menu>
                             </Dropdown>
                           </td>
@@ -434,13 +446,13 @@ const Contracts = ({ details, estateParentCompound, refetchDetails }) => {
               contractDetails?._id,
               `${key("contract")}_${details?.name}${
                 estateParentCompound ? `(${estateParentCompound?.name})` : ""
-              }_${contractDetails?.tenant?.name}`
+              }_${contractDetails?.tenant?.name}`,
+              accountInfo?.account?.isFilesExtractAllowed
             )
           }
           title={key("contractDetails")}
           modalSize={"lg"}
         >
-          {/* <ContractDetails contract={contractDetails} /> */}
           <PrintContract
             contract={contractDetails}
             estateParentCompound={estateParentCompound}

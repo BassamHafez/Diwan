@@ -4,24 +4,34 @@ import Row from "react-bootstrap/esm/Row";
 import CustomPackageItem from "./CustomPackageItem";
 import { useTranslation } from "react-i18next";
 import styles from "./Packages.module.css";
-import { useSelector } from "react-redux";
 import Select from "react-select";
+import {
+  checkBoxCircle,
+  maxEstatesInCompoundOptions,
+} from "../../Components/Logic/StaticLists";
+import { MainTitle } from "../../shared/components";
+import { Alert } from "../../shared/bootstrap";
 
 const CustomPackages = () => {
-  //here
   const [features, setFeatures] = useState({
     usersCount: 1,
     compoundsCount: 1,
     estatesCount: 1,
-    maxEstatesInCompound: 0,
+    maxEstatesInCompound: 3,
     isFavoriteAllowed: false,
     isRemindersAllowed: false,
+    isAnalysisAllowed: false,
+    isCompoundsReportsAllowed: false,
+    isFilesExtractAllowed: false,
+    isFinancialReportsAllowed: false,
+    isOperationalReportsAllowed: false,
+    isServiceContactsAllowed: false,
+    isTasksAllowed: false,
+    isUserPermissionsAllowed: false,
   });
   const { t: key } = useTranslation();
-  const accountInfo = useSelector((state) => state.accountInfo.data);
-  const myAccount = accountInfo?.account;
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
-  const centerClass = "d-flex justify-content-center align-items-center";
+  const curentLang = isArLang ? "ar" : "en";
 
   useEffect(() => {
     scrollTo(0, 0);
@@ -44,23 +54,6 @@ const CustomPackages = () => {
     }));
   };
 
-  const filteredMaxEstateCompoundOptions = useMemo(() => {
-    const maxEstatesInCompoundOptions = [
-      {
-        label: `${key("withoutChange")} (${myAccount.maxEstatesInCompound})`,
-        value: 0,
-      },
-      { label: key("threeUnits"), value: 3 },
-      { label: key("tenUnits"), value: 10 },
-      { label: key("ThirtyUnits"), value: 30 },
-      { label: key("fiftyUnits"), value: 50 },
-      { label: key("threeHundredUnits"), value: 300 },
-    ];
-    return maxEstatesInCompoundOptions.filter(
-      (val) => val.value !== myAccount.maxEstatesInCompound
-    );
-  }, [myAccount.maxEstatesInCompound, key]);
-
   const myFeatures = useMemo(() => {
     return Object.entries(features).map(([key, value]) => ({
       label: key,
@@ -68,13 +61,19 @@ const CustomPackages = () => {
     }));
   }, [features]);
 
+  const listClasses = `checkbox-wrapper-15 my-3 ${
+    isArLang ? "checkbox-wrapper_ar" : "checkbox-wrapper_en"
+  }`;
+
   return (
     <div className="height_container">
       <Row>
-        <Col sm={6} xl={8} className={styles.control_side}>
-          <h4 className="m-3 mt-4 color-main fw-bold">{key("features")}</h4>
-          <Row>
-            <Col sm={6} className={centerClass}>
+        <Col sm={6} xl={8}>
+          <div className="my-3">
+            <MainTitle title={key("features")} />
+          </div>
+          <Row className="px-3">
+            <Col sm={6}>
               <div className="field">
                 <label htmlFor="usersCount">{key("usersCount")}</label>
                 <input
@@ -90,7 +89,7 @@ const CustomPackages = () => {
                 />
               </div>
             </Col>
-            <Col sm={6} className={centerClass}>
+            <Col sm={6}>
               <div className="field">
                 <label htmlFor="compoundsCount">{key("compoundsCount")}</label>
                 <input
@@ -106,7 +105,7 @@ const CustomPackages = () => {
                 />
               </div>
             </Col>
-            <Col sm={6} className={centerClass}>
+            <Col sm={6}>
               <div className="field">
                 <label htmlFor="estatesCount">{key("estatesCount")}</label>
                 <input
@@ -122,13 +121,13 @@ const CustomPackages = () => {
                 />
               </div>
             </Col>
-            <Col sm={6} className={centerClass}>
+            <Col sm={6}>
               <div className="field">
-                <label htmlFor="maxEstatesInCompound">
+                <label className="mb-0" htmlFor="maxEstatesInCompound">
                   {key("maxEstatesInCompound")}
                 </label>
                 <Select
-                  options={filteredMaxEstateCompoundOptions}
+                  options={maxEstatesInCompoundOptions[curentLang]}
                   onChange={(val) =>
                     handleFeatureChange(val ? val : null, true)
                   }
@@ -136,56 +135,169 @@ const CustomPackages = () => {
                     styles.select_type
                   } my-3`}
                   isRtl={isArLang ? true : false}
-                  placeholder={filteredMaxEstateCompoundOptions[0].label}
+                  placeholder=""
                 />
               </div>
             </Col>
+            <Col sm={12}>
+              <Row>
+                <Col sm={6}>
+                  <ul className={`p-0 ${isArLang ? "text-end" : "text-start"}`}>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isFavoriteAllowed"
+                        checked={features.isFavoriteAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isFavoriteAllowed">
+                        {checkBoxCircle}
+                        <span>
+                          {key("add")} {key("bookmarked")}
+                        </span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isRemindersAllowed"
+                        checked={features.isRemindersAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isRemindersAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isRemindersAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isAnalysisAllowed"
+                        checked={features.isAnalysisAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isAnalysisAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isAnalysisAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isTasksAllowed"
+                        checked={features.isTasksAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isTasksAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isTasksAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isServiceContactsAllowed"
+                        checked={features.isServiceContactsAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isServiceContactsAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isServiceContactsAllowed")}</span>
+                      </label>
+                    </li>
+                  </ul>
+                </Col>
 
-            {!myAccount?.isFavoriteAllowed && (
-              <Col sm={6} className={centerClass}>
-                <div className="form-check form-switch p-0 m-0 mt-3 d-flex justify-content-between align-items-center ">
-                  <label
-                    className="form-check-label m-0 fs-sm-5 mx-2"
-                    htmlFor="isFavoriteAllowed"
-                  >
-                    {key("add")} {key("bookmarked")}
-                  </label>
-                  <input
-                    className="form-check-input fs-3 m-0"
-                    style={{ cursor: "pointer" }}
-                    type="checkbox"
-                    id="isFavoriteAllowed"
-                    checked={features.isFavoriteAllowed}
-                    onChange={handleFeatureChange}
-                  />
-                </div>
-              </Col>
-            )}
-            
-            {!myAccount?.isRemindersAllowed && (
-              <Col sm={6} className={centerClass}>
-                <div className="form-check form-switch p-0 m-0 mt-3 d-flex justify-content-between align-items-center ">
-                  <label
-                    className="form-check-label m-0 fs-sm-5 mx-2"
-                    htmlFor="isRemindersAllowed"
-                  >
-                    {key("isRemindersAllowed")}
-                  </label>
-                  <input
-                    className="form-check-input fs-3 m-0"
-                    style={{ cursor: "pointer" }}
-                    type="checkbox"
-                    id="isRemindersAllowed"
-                    checked={features.isRemindersAllowed}
-                    onChange={handleFeatureChange}
-                  />
-                </div>
-              </Col>
-            )}
+                <Col sm={6}>
+                  <ul className={`p-0 ${isArLang ? "text-end" : "text-start"}`}>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isCompoundsReportsAllowed"
+                        checked={features.isCompoundsReportsAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label
+                        className="cbx"
+                        htmlFor="isCompoundsReportsAllowed"
+                      >
+                        {checkBoxCircle}
+                        <span>{key("isCompoundsReportsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isOperationalReportsAllowed"
+                        checked={features.isOperationalReportsAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label
+                        className="cbx"
+                        htmlFor="isOperationalReportsAllowed"
+                      >
+                        {checkBoxCircle}
+                        <span>{key("isOperationalReportsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isFinancialReportsAllowed"
+                        checked={features.isFinancialReportsAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label
+                        className="cbx"
+                        htmlFor="isFinancialReportsAllowed"
+                      >
+                        {checkBoxCircle}
+                        <span>{key("isFinancialReportsAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isFilesExtractAllowed"
+                        checked={features.isFilesExtractAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isFilesExtractAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isFilesExtractAllowed")}</span>
+                      </label>
+                    </li>
+                    <li className={listClasses}>
+                      <input
+                        className="inp-cbx d-none"
+                        type="checkbox"
+                        id="isUserPermissionsAllowed"
+                        checked={features.isUserPermissionsAllowed}
+                        onChange={handleFeatureChange}
+                      />
+                      <label className="cbx" htmlFor="isUserPermissionsAllowed">
+                        {checkBoxCircle}
+                        <span>{key("isUserPermissionsAllowed")}</span>
+                      </label>
+                    </li>
+                  </ul>
+                </Col>
+              </Row>
+            </Col>
+            <Alert variant="primary">{key("customPackageNote")}</Alert>
           </Row>
         </Col>
         <Col sm={6} xl={4}>
-          <CustomPackageItem features={myFeatures} />
+          <CustomPackageItem features={myFeatures} isNoFixedHeight={true} />
         </Col>
       </Row>
     </div>

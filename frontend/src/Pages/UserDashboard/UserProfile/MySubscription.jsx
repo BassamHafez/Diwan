@@ -45,6 +45,7 @@ const MySubscription = ({ chooseActiveActive }) => {
           btnText={key("updatePackage")}
           chooseActiveActive={chooseActiveActive}
           remainingTime={remainingTime}
+          isNoFixedHeight={true}
         />
       </Col>
     </Row>

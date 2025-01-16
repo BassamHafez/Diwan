@@ -18,7 +18,11 @@ import {
   useTranslation,
   useSelector,
 } from "../../../shared/hooks";
-import { ButtonOne, MainTitle } from "../../../shared/components";
+import {
+  ButtonOne,
+  CheckMySubscriptions,
+  MainTitle,
+} from "../../../shared/components";
 
 const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
   const [compoundData, setCompoundData] = useState({});
@@ -36,6 +40,7 @@ const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
     collectionRatioVal,
   } = useCompoundAnlaysis(compoundData || {});
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const { t: key } = useTranslation();
 
   const getSearchData = useCallback((compoundData, formValues) => {
@@ -138,47 +143,52 @@ const CompoundDetailsReports = ({ compoundsOptions, filterType }) => {
             type={filterType}
           />
         </div>
-
         <hr />
-
         <div>
           <MainTitle>{key("compound")}</MainTitle>
           <div className={`${styles.header} justify-content-end`}>
             <div>
               {compoundData && (
-                <CheckPermissions
-                  profileInfo={profileInfo}
-                  btnActions={["COMPOUNDS_REPORTS"]}
+                <CheckMySubscriptions
+                  name="isFilesExtractAllowed"
+                  accountInfo={accountInfo}
                 >
-                  <ButtonOne
-                    classes="m-2"
-                    borderd
-                    color="white"
-                    text={key("exportCsv")}
-                    onClick={() =>
-                      handleDownloadExcelSheet(
-                        [filteredCompoundDetail],
-                        `${key(filterType)}.xlsx`,
-                        `${key(filterType)}`
-                      )
-                    }
-                  />
-                  <ButtonOne
-                    onClick={() =>
-                      generatePDF(
-                        `compoundDetailsReport_${dataEnteried?.startDate}`,
-                        `${key("compoundDetailsReport")}_(${
-                          dataEnteried?.startDate
-                        }) (${dataEnteried?.endDate}) ${
-                          dataEnteried.compound || ""
-                        }`
-                      )
-                    }
-                    classes="m-2 bg-navy"
-                    borderd
-                    text={key("download")}
-                  />
-                </CheckPermissions>
+                  <CheckPermissions
+                    profileInfo={profileInfo}
+                    btnActions={["COMPOUNDS_REPORTS"]}
+                  >
+                    <ButtonOne
+                      classes="m-2"
+                      borderd
+                      color="white"
+                      text={key("exportCsv")}
+                      onClick={() =>
+                        handleDownloadExcelSheet(
+                          [filteredCompoundDetail],
+                          `${key(filterType)}.xlsx`,
+                          `${key(filterType)}`,
+                          accountInfo?.account?.isFilesExtractAllowed
+                        )
+                      }
+                    />
+                    <ButtonOne
+                      onClick={() =>
+                        generatePDF(
+                          `compoundDetailsReport_${dataEnteried?.startDate}`,
+                          `${key("compoundDetailsReport")}_(${
+                            dataEnteried?.startDate
+                          }) (${dataEnteried?.endDate}) ${
+                            dataEnteried.compound || ""
+                          }`,
+                          accountInfo?.account?.isFilesExtractAllowed
+                        )
+                      }
+                      classes="m-2 bg-navy"
+                      borderd
+                      text={key("download")}
+                    />
+                  </CheckPermissions>
+                </CheckMySubscriptions>
               )}
             </div>
           </div>

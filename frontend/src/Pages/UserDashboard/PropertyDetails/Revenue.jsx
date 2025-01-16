@@ -37,6 +37,7 @@ import { useSelector } from "react-redux";
 import PrintTaxInvoice from "../../../Components/Prints/PrintTaxInvoice";
 import SplitRevenue from "../PropertyForms/SplitRevenue";
 import useDeleteItem from "../../../hooks/useDeleteItem";
+import { CheckMySubscriptions } from "../../../shared/components";
 
 const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
   const [showAddRevenueModal, setShowAddRevenueModal] = useState(false);
@@ -74,7 +75,7 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
         type: `estates/${propId}/revenues`,
         token: token,
       }),
-    enabled: propId && !!token,
+    enabled: !!propId && !!token,
     staleTime: Infinity,
   });
 
@@ -211,9 +212,10 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
       `${key("revenues")}_${details?.name}${
         estateParentCompound ? `_(${estateParentCompound?.name})` : ""
       }.xlsx`,
-      key("revenues")
+      key("revenues"),
+      accountInfo?.account?.isFilesExtractAllowed
     );
-  }, [filteredRevenuesList, details, key, estateParentCompound]);
+  }, [filteredRevenuesList,accountInfo, details, key, estateParentCompound]);
 
   const showAddModalHandler = useCallback(() => {
     setShowAddRevenueModal(true);
@@ -230,13 +232,18 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
           <h4>{key("revenues")}</h4>
           <div>
             {filteredRevenuesList && filteredRevenuesList?.length > 0 && (
-              <ButtonOne
-                classes="m-2"
-                borderd
-                color="white"
-                text={key("exportCsv")}
-                onClick={exportCsvHandler}
-              />
+              <CheckMySubscriptions
+                name="isFilesExtractAllowed"
+                accountInfo={accountInfo}
+              >
+                <ButtonOne
+                  classes="m-2"
+                  borderd
+                  color="white"
+                  text={key("exportCsv")}
+                  onClick={exportCsvHandler}
+                />
+              </CheckMySubscriptions>
             )}
             <CheckPermissions
               profileInfo={profileInfo}
@@ -371,26 +378,31 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                         {key("unPaid")}
                                       </Dropdown.Item>
                                     </CheckPermissions>
-                                    <Dropdown.Item
-                                      onClick={() => {
-                                        setRevDetails(rev);
-                                        setShowCashReceiptModal(true);
-                                      }}
-                                      className="text-center"
+                                    <CheckMySubscriptions
+                                      name="isFilesExtractAllowed"
+                                      accountInfo={accountInfo}
                                     >
-                                      {key("cashReceipt")}
-                                    </Dropdown.Item>
-                                    {accountInfo?.account?.taxNumber && (
                                       <Dropdown.Item
                                         onClick={() => {
                                           setRevDetails(rev);
-                                          setShowTaxInvoiceModal(true);
+                                          setShowCashReceiptModal(true);
                                         }}
                                         className="text-center"
                                       >
-                                        {key("taxInvoice")}
+                                        {key("cashReceipt")}
                                       </Dropdown.Item>
-                                    )}
+                                      {accountInfo?.account?.taxNumber && (
+                                        <Dropdown.Item
+                                          onClick={() => {
+                                            setRevDetails(rev);
+                                            setShowTaxInvoiceModal(true);
+                                          }}
+                                          className="text-center"
+                                        >
+                                          {key("taxInvoice")}
+                                        </Dropdown.Item>
+                                      )}{" "}
+                                    </CheckMySubscriptions>
                                   </>
                                 )}
                                 {rev.status !== "paid" &&
@@ -409,15 +421,21 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
                                       </Dropdown.Item>
                                     </CheckPermissions>
                                   )}
-                                <Dropdown.Item
-                                  onClick={() => {
-                                    setRevDetails(rev);
-                                    setShowDetailsModal(true);
-                                  }}
-                                  className="text-center"
+                                <CheckMySubscriptions
+                                  name="isFilesExtractAllowed"
+                                  accountInfo={accountInfo}
                                 >
-                                  {key("details")}
-                                </Dropdown.Item>
+                                  <Dropdown.Item
+                                    onClick={() => {
+                                      setRevDetails(rev);
+                                      setShowDetailsModal(true);
+                                    }}
+                                    className="text-center"
+                                  >
+                                    {key("details")}
+                                  </Dropdown.Item>
+                                </CheckMySubscriptions>
+
                                 <CheckPermissions
                                   profileInfo={profileInfo}
                                   btnActions={["DELETE_REVENUE"]}
@@ -502,7 +520,13 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
           onHide={() => setShowDetailsModal(false)}
           cancelBtn={key("cancel")}
           okBtn={key("download")}
-          confirmFun={() => generatePDF(revDetails._id, "revenueDetails")}
+          confirmFun={() =>
+            generatePDF(
+              revDetails._id,
+              "revenueDetails",
+              accountInfo?.account?.isFilesExtractAllowed
+            )
+          }
           title={key("revenueDetails")}
           modalSize={"lg"}
         >
@@ -529,7 +553,8 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
               revDetails._id,
               `${key("cashReceipt")}_${details?.name}(${
                 estateParentCompound.name
-              })_${revDetails?.tenant?.name}`
+              })_${revDetails?.tenant?.name}`,
+              accountInfo?.account?.isFilesExtractAllowed
             )
           }
           title={key("cashReceipt")}
@@ -554,7 +579,8 @@ const Revenue = memo(({ refetchDetails, estateParentCompound, details }) => {
               revDetails._id,
               `${key("taxInvoice")}_${details?.name} ${
                 estateParentCompound ? `(${estateParentCompound?.name})` : ""
-              }_${revDetails?.tenant?.name}`
+              }_${revDetails?.tenant?.name}`,
+              accountInfo?.account?.isFilesExtractAllowed
             )
           }
           title={key("taxInvoice")}

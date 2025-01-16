@@ -25,6 +25,7 @@
     transform: translate(-50%,-50%);
     rotate: 15deg;
     opacity: 0;
+    display: none;
     transition: all .4s;
 }
 .white_btn .btn_one_layer{
@@ -36,6 +37,7 @@
 }
 
 .btn_one:hover .btn_one_layer{
+    display: block;
     animation-name: buttonMovement;
     animation-duration: .3s;
     animation-direction: alternate;

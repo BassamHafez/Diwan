@@ -8,6 +8,10 @@ import organizationImage from "../assets/organization.png";
 import managmentImg from "../assets/house-with-garage-garage.webp";
 import cityImg from "../assets/luxurious-villa-with-modern-architectural-design.webp";
 import forgetPassImg from "../assets/forgetPassword.png";
+import noDataImg from "../assets/noData.webp";
+import finishTasks from "../assets/finishTasks.jpg";
+import noExpenses from "../assets/noExpenses.webp";
+import estate from "../assets/estate.webp";
 
 //payment methods
 import mada from "../assets/logo/mada.png";
@@ -34,6 +38,9 @@ import popular from "../assets/popular.webp";
 import circles from "../assets/svg/circles.svg";
 import dash from "../assets/svg/dash.svg";
 import terms from "../assets/svg/terms.svg";
+
+import support from "../assets/svg/support.svg";
+import upgrade from "../assets/svg/Upgrade-rafiki.svg";
 
 export {
   logo,
@@ -63,5 +70,11 @@ export {
   dash,
   terms,
   organizationImage,
-  homeKey
+  homeKey,
+  noDataImg,
+  finishTasks,
+  noExpenses,
+  estate,
+  support,
+  upgrade
 };

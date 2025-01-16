@@ -14,6 +14,7 @@ import LoadingOne from "../../Components/UI/Loading/LoadingOne";
 import TestimonialItem from "../../Components/TestimonialItem/TestimonialItem";
 
 const HomeTestimonalsSlider = () => {
+  
   const { data, isFetching } = useQuery({
     queryKey: ["testimonials"],
     queryFn: () => mainFormsHandlerTypeRaw({ type: "testimonials" }),
