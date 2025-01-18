@@ -83,6 +83,11 @@ const CustomPackageItem = ({
         "Subscribed users less than the existing members"
       ) {
         notifyError(key("subErrorUsers"));
+      } else if (
+        res.response.data.message ===
+        "Max estates in compound less than existing max estates"
+      ) {
+        notifyError(key("subErrorMaxEstate"));
       } else {
         notifyError(key("wrong"));
       }
