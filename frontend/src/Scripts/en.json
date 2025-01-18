@@ -645,6 +645,7 @@
   "subErrorEstates":"The number of current Units is greater than what the new package allows. Choose a more suitable package or remove some Units to proceed.",
   "subErrorUsers":"The number of current Admins is greater than what the new package allows. Choose a more suitable package or remove some Admins to proceed.",
   "uselessCompound":"Managing estates without units is not feasible, as units are essential for effective management.",
+  "subErrorMaxEstate":"Max units per estate less than existing max units, Choose a more suitable package or remove some units to proceed.",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",
