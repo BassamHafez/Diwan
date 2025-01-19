@@ -23,15 +23,15 @@ const app = express();
 startCronJobs();
 ensureDirectories();
 
-// set security HTTP headers
-app.use(helmet());
-
 // Enable CORS
 app.use(cors());
 app.options("*", cors());
 
 // Serve static files
 app.use(express.static(path.join(__dirname, "uploads")));
+
+// set security HTTP headers
+app.use(helmet());
 
 // development logging
 if (process.env.NODE_ENV === "development") {
