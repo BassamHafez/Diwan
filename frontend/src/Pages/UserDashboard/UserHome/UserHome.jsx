@@ -49,9 +49,11 @@ const UserHome = () => {
     return 0;
   }, []);
 
-  const totalExpenses = useMemo(() => {
-    calculateTotal(myData?.totalPaidExpenses, myData?.totalPendingExpenses);
-  }, [myData, calculateTotal]);
+  const totalExpenses = useMemo(
+    () =>
+      calculateTotal(myData?.totalPaidExpenses, myData?.totalPendingExpenses),
+    [myData, calculateTotal]
+  );
 
   const totalRevenues = useMemo(
     () =>

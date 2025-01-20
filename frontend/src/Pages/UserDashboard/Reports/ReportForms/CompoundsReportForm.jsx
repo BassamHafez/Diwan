@@ -33,7 +33,12 @@ const CompoundsReportForm = ({
   type,
 }) => {
   const { t: key } = useTranslation();
-  const { dateGreater, dateValidation, mainReqValidation } = useValidation();
+  const {
+    dateGreater,
+    dateValidation,
+    mainReqValidation,
+    selectOptionValidationTypeString,
+  } = useValidation();
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const token = JSON.parse(localStorage.getItem("token"));
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -53,7 +58,9 @@ const CompoundsReportForm = ({
 
   const onSubmit = (values) => {
     let updatedValues = { ...values };
-
+    if (updatedValues.landlord) {
+      updatedValues.landlord = updatedValues.landlord.value;
+    }
     if (updatedValues.compoundsIds) {
       updatedValues.compoundsIds = updatedValues.compoundsIds.map(
         (comp) => comp.value
@@ -61,10 +68,13 @@ const CompoundsReportForm = ({
     }
 
     const cleanedValues = cleanUpData({ ...updatedValues });
-
+    console.log(cleanedValues)
     const endPoint = isDetails ? "compound-details" : "compounds";
 
     const printDataValues = { ...updatedValues };
+    if (printDataValues.landlord) {
+      printDataValues.landlord = values.landlord?.label;
+    }
     if (printDataValues.compoundId) {
       printDataValues.compoundId = printDataValues.compoundId.label;
     }
@@ -119,7 +129,7 @@ const CompoundsReportForm = ({
         endDate: dateGreater,
       })
     : object({
-        landlord: string().nullable(),
+        landlord: selectOptionValidationTypeString.nullable(),
         compoundsIds: array()
           .of(
             object().shape({
@@ -192,7 +202,7 @@ const CompoundsReportForm = ({
                     name="landlord"
                     options={landlordOptions}
                     onChange={(val) =>
-                      setFieldValue("landlord", val ? val.value : "")
+                      setFieldValue("landlord", val ? val : "")
                     }
                     className={`${isArLang ? "text-end" : "text-start"}`}
                     isRtl={isArLang ? true : false}
