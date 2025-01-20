@@ -12,7 +12,7 @@ import {
   useSelector,
   useMemo,
 } from "../../../shared/hooks";
-import {mainFormsHandlerTypeRaw } from "../../../util/Http";
+import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import styles from "../Admin.module.css";
 import UpdateTermsForm from "./AdminTermsForm/UpdateTermsForm";
 
@@ -79,7 +79,7 @@ const AdminTerms = ({ isUserPage }) => {
   return (
     <>
       <div className="admin_body height_container position-relative p-2">
-        {!terms || (isFetching && <LoadingOne />)}
+        {(!terms || isFetching) && <LoadingOne />}
         {!isUserPage && (
           <div className="d-flex justify-content-end align-items-center position-relative my-3 p-2">
             <div>

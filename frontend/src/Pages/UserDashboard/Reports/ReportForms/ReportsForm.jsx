@@ -89,7 +89,7 @@ const ReportsForm = ({
     }
 
     if (values.landlord) {
-      updatedValues.landlord = values.landlord;
+      updatedValues.landlord = values.landlord.value;
     }
 
     if (values.status) {
@@ -122,6 +122,9 @@ const ReportsForm = ({
     const printDataValues = {
       ...updatedValues,
     };
+    if (values.landlord) {
+      printDataValues.landlord = values.landlord?.label;
+    }
     if (!isCompound && values.estate) {
       printDataValues.estate = values.estate?.label;
     } else if (isCompound && values.compound) {
@@ -171,7 +174,7 @@ const ReportsForm = ({
   };
 
   const validationSchema = object({
-    landlord: string().nullable(),
+    landlord: selectOptionValidationTypeString.nullable(),
     estate: selectOptionValidationTypeString.nullable(),
     compound: selectOptionValidationTypeString.nullable(),
     startDate: dateValidation,
@@ -264,9 +267,7 @@ const ReportsForm = ({
                   id="landlord"
                   name="landlord"
                   options={landlordOptions}
-                  onChange={(val) =>
-                    setFieldValue("landlord", val ? val.value : "")
-                  }
+                  onChange={(val) => setFieldValue("landlord", val ? val : "")}
                   className={`${isArLang ? "text-end" : "text-start"}`}
                   isRtl={isArLang ? true : false}
                   placeholder={isArLang ? "" : "select"}

@@ -6,7 +6,6 @@ import {
   renameContactType,
 } from "../../../Components/Logic/LogicFun";
 import UpdateContactForm from "./ContactForms/UpdateContactForm";
-import AOS from "aos";
 import { FontAwesomeIcon } from "../../../shared/index";
 import {
   useSelector,
@@ -57,10 +56,6 @@ const ContactItem = ({
     : null;
 
   useEffect(() => {
-    AOS.init({ disable: "mobile" });
-  }, []);
-
-  useEffect(() => {
     const myType = type === "contact" ? contact.contactType : type;
     const language = isArLang ? "ar" : "en";
 
@@ -87,11 +82,7 @@ const ContactItem = ({
   return (
     <>
       <Col lg={gridLgSystem} xxl={gridXXLSystem}>
-        <div
-          className={styles.contact_item}
-          data-aos="fade-in"
-          data-aos-duration="1000"
-        >
+        <div className={styles.contact_item}>
           <div className={styles.contact_header}>
             <div className={styles.img_side}>
               <img

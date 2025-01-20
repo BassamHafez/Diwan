@@ -638,6 +638,8 @@
   "poster": "Poster",
   "freeTrial": "Free Trial",
   "inDays": "In Days",
+  "theAdmin":"Admin",
+  "theDetails":"Details",
   "upgradePackage":"Upgrade your package to get",
   "noPermissionsLeft":"There are no more Permissions remaining",
   "customPackageNote":"This package will replace your current package and activate a new one, which will remain valid for one month",
