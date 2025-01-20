@@ -134,6 +134,13 @@ exports.validateSendUsersMessage = [
     .isIn(["whatsapp", "email"])
     .withMessage("Type must be either 'whatsapp' or 'email'"),
 
+  check("emailSubject")
+    .if((value, { req }) => req.body.type === "email")
+    .exists()
+    .withMessage("Email subject is required")
+    .notEmpty()
+    .withMessage("Email subject is required"),
+
   check("usersIds")
     .exists()
     .withMessage("Users IDs are required")
