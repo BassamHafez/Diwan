@@ -7,8 +7,8 @@ import {
 import { formattedDate } from "../Logic/LogicFun";
 import { FontAwesomeIcon } from "../../shared/index";
 import { faCircleInfo } from "../../shared/constants";
-import { useTranslation } from "../../shared/hooks";
-import { PrintNavBar, ReportsDetailsHeader } from "../../shared/components";
+import { useSelector, useTranslation } from "../../shared/hooks";
+import { MainTitle, PrintNavBar, ReportsDetailsHeader } from "../../shared/components";
 
 const PrintFinancialReport = ({
   filterType,
@@ -19,6 +19,7 @@ const PrintFinancialReport = ({
   isCompoundsReport,
 }) => {
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
 
   const tableHeaders =
     filterType === "incomeReport"
@@ -45,13 +46,13 @@ const PrintFinancialReport = ({
     >
       <PrintNavBar
         title={isCompoundsReport ? key("compoundsReport") : key(filterType)}
+        profileInfo={profileInfo}
       />
       <ReportsDetailsHeader dataEnteried={dataEnteried} />
       <div className={styles.information}>
-        <h5 className="my-4">
-          {isCompoundsReport ? key("compounds") : key("incomePerEstate")}
-        </h5>
-
+        <div className="d-flex justify-content-center">
+          <MainTitle small={true} title={isCompoundsReport ? key("compounds") : key("incomePerEstate")} />
+        </div>
         <div className="scrollableTable">
           <table className={`${styles.contract_table} table`}>
             <thead className={styles.table_head}>
@@ -124,7 +125,9 @@ const PrintFinancialReport = ({
       </div>
 
       <div className={styles.information}>
-        <h5 className="my-4">{key("summary")}</h5>
+        <div className="d-flex justify-content-center">
+          <MainTitle small={true} title={key("summary")}/>
+        </div>
         <div className="scrollableTable">
           <table className={`${styles.contract_table} table`}>
             <thead className={styles.table_head}>

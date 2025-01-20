@@ -12,11 +12,47 @@ const PrintHeader = ({
   const { t: key } = useTranslation();
   const mainColClass = "d-flex justify-content-center align-items-center mx-3";
   const profileInfo = useSelector((state) => state.profileInfo.data);
+  const accountInfo = useSelector((state) => state.accountInfo.data);
   const centerTitleClass = "d-flex justify-content-center";
 
   return (
     <>
-      <PrintNavBar title={title} />
+      <PrintNavBar title={title} profileInfo={profileInfo} />
+      <div className={styles.information}>
+        <div className="d-flex justify-content-center">
+          <MainTitle small={true} title={key("theAdmin")} />
+        </div>
+        <div className="d-flex flex-wrap justify-content-evenly">
+          <div className={mainColClass}>
+            <div className={styles.details_content}>
+              <div className={styles.title}>
+                <span>{key("employee")}</span>
+              </div>
+              <p>{profileInfo?.name}</p>
+            </div>
+          </div>
+
+          <div className={mainColClass}>
+            <div className={styles.details_content}>
+              <div className={styles.title}>
+                <span>{key("employeePhone")}</span>
+              </div>
+              <p>{profileInfo?.phone}</p>
+            </div>
+          </div>
+
+          {accountInfo?.account?.name && (
+            <div className={mainColClass}>
+              <div className={styles.details_content}>
+                <div className={styles.title}>
+                  <span>{key("office")}</span>
+                </div>
+                <p>{accountInfo?.account?.name}</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
       <div className={styles.information}>
         <div className={centerTitleClass}>
           <MainTitle small={true} title={key("estateDetails")} />
@@ -60,24 +96,6 @@ const PrintHeader = ({
               </div>
             </div>
           )}
-
-          <div className={mainColClass}>
-            <div className={styles.details_content}>
-              <div className={styles.title}>
-                <span>{key("employee")}</span>
-              </div>
-              <p>{profileInfo?.name}</p>
-            </div>
-          </div>
-
-          <div className={mainColClass}>
-            <div className={styles.details_content}>
-              <div className={styles.title}>
-                <span>{key("employeePhone")}</span>
-              </div>
-              <p>{profileInfo?.phone}</p>
-            </div>
-          </div>
         </div>
       </div>
       <div className={styles.information}>
