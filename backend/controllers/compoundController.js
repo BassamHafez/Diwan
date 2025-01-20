@@ -307,6 +307,10 @@ exports.createCompound = catchAsync(async (req, res, next) => {
 });
 
 exports.updateCompound = catchAsync(async (req, res, next) => {
+  // TODO: update compound -or- estate revenues & expenses when update landlord or ...
+  // revenue: landlord
+  // expense:
+
   const { tags } = req.body;
   const { id } = req.params;
   const permittedCompounds = req.user.permittedCompounds;
@@ -342,9 +346,19 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
     }
   );
 
+  const updateRevenuesPromise = req.body?.landlord
+    ? Revenue.updateMany({ compound: id }, { landlord: req.body.landlord })
+    : Promise.resolve();
+
+  const updateExpensesPromise = req.body?.landlord
+    ? Expense.updateMany({ compound: id }, { landlord: req.body.landlord })
+    : Promise.resolve();
+
   const [_, compound] = await Promise.all([
     tagUpdatePromise,
     compoundUpdatePromise,
+    updateRevenuesPromise,
+    updateExpensesPromise,
   ]);
 
   if (!compound) {

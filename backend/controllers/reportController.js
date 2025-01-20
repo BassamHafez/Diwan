@@ -366,7 +366,7 @@ exports.getCompoundsReport = catchAsync(async (req, res, next) => {
   };
 
   if (landlord) {
-    match.landlord = landlord;
+    match.landlord = new mongoose.Types.ObjectId(landlord);
   }
 
   if (compoundsIds && compoundsIds.length) {
