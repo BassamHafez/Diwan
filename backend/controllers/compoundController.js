@@ -307,10 +307,6 @@ exports.createCompound = catchAsync(async (req, res, next) => {
 });
 
 exports.updateCompound = catchAsync(async (req, res, next) => {
-  // TODO: update compound -or- estate revenues & expenses when update landlord or ...
-  // revenue: landlord
-  // expense:
-
   const { tags } = req.body;
   const { id } = req.params;
   const permittedCompounds = req.user.permittedCompounds;
