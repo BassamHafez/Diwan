@@ -342,9 +342,19 @@ exports.updateCompound = catchAsync(async (req, res, next) => {
     }
   );
 
+  const updateRevenuesPromise = req.body?.landlord
+    ? Revenue.updateMany({ compound: id }, { landlord: req.body.landlord })
+    : Promise.resolve();
+
+  const updateExpensesPromise = req.body?.landlord
+    ? Expense.updateMany({ compound: id }, { landlord: req.body.landlord })
+    : Promise.resolve();
+
   const [_, compound] = await Promise.all([
     tagUpdatePromise,
     compoundUpdatePromise,
+    updateRevenuesPromise,
+    updateExpensesPromise,
   ]);
 
   if (!compound) {
