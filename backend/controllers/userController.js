@@ -200,7 +200,7 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
 exports.uploadMediaImage = uploadSingleImage("image");
 
 exports.sendUsersMessage = catchAsync(async (req, res, next) => {
-  const { message, type, usersIds } = req.body;
+  const { message, type, emailSubject, usersIds } = req.body;
 
   const users = await User.find({ _id: { $in: usersIds } })
     .select("phone email")
@@ -247,7 +247,7 @@ exports.sendUsersMessage = catchAsync(async (req, res, next) => {
     }
   } else if (type === "email") {
     users.forEach((user) => {
-      sendEmail(user.email, "Diwan Website", message, msgHtml, attachments);
+      sendEmail(user.email, emailSubject, message, msgHtml, attachments);
     });
   } else {
     return next(new ApiError("Invalid message type", 400));
