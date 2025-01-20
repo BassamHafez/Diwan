@@ -105,6 +105,30 @@ export const generatePDF = (id, name, isFilesExtractAllowed) => {
   html2pdf(element, options);
 };
 
+// export const generatePDF = (id, name, isFilesExtractAllowed) => {
+//   if (isFilesExtractAllowed === false) {
+//     notifyError();
+//     return;
+//   }
+
+//   const element = document.getElementById(`${id}`);
+//   const options = {
+//     margin: 2,
+//     filename: name ? name : "file",
+//     html2canvas: {
+//       scale: 4, // Increase resolution
+//       useCORS: true, // Enable cross-origin image loading
+//     },
+//     jsPDF: {
+//       unit: "mm",
+//       format: "a4",
+//       orientation: "portrait",
+//     },
+//   };
+
+//   html2pdf().set(options).from(element).save();
+// };
+
 export const filterAndRenameKeys = (
   data,
   keysToKeepAndRename,

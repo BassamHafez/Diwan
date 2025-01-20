@@ -1,6 +1,6 @@
 import styles from "./PrintContract.module.css";
-import {useTranslation } from "../../shared/hooks";
-import {PrintNavBar,ReportsDetailsHeader } from "../../shared/components";
+import { useSelector, useTranslation } from "../../shared/hooks";
+import { MainTitle, PrintNavBar, ReportsDetailsHeader } from "../../shared/components";
 
 const PrintContractsReport = ({
   id,
@@ -11,6 +11,7 @@ const PrintContractsReport = ({
   operationalTable,
 }) => {
   const { t: key } = useTranslation();
+  const profileInfo = useSelector((state) => state.profileInfo.data);
 
   const totalAmount = !isCompoundDetails
     ? contractsData?.reduce(
@@ -27,14 +28,15 @@ const PrintContractsReport = ({
             ? key("compoundDetailsReport")
             : key("contractsReport")
         }
+        profileInfo={profileInfo}
       />
 
       <ReportsDetailsHeader dataEnteried={dataEnteried} />
 
       <div className={styles.information}>
-        <h5 className="my-4">
-          {isCompoundDetails ? key("compound") : key("incomePerEstate")}
-        </h5>
+        <div className="d-flex justify-content-center">
+          <MainTitle small={true} title={isCompoundDetails ? key("compound") : key("incomePerEstate")}/>
+        </div>
         <div className="scrollableTable">
           {compoundDetailsTable && isCompoundDetails
             ? compoundDetailsTable

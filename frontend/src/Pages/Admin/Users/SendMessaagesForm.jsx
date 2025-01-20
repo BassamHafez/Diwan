@@ -33,6 +33,8 @@ const SendMessaagesForm = ({
   const { messageValidation, mainReqValidation } = useValidation();
   const { selectedFile, imagePreviewUrl, handleFileChange } = useFileHandler();
   const token = useSelector((state) => state.userInfo.token);
+  const myIds = selectedUsers?.length > 0 ? selectedUsers : allUsers;
+
   const { mutate } = useMutation({
     mutationFn: mainFormsHandlerTypeFormData,
   });
@@ -50,11 +52,10 @@ const SendMessaagesForm = ({
       formData.append("image", selectedFile);
     }
 
-    const myIds = selectedUsers?.length > 0 ? selectedUsers : allUsers;
-  
     myIds.forEach((val, index) => {
       formData.append(`usersIds[${index}]`, val);
     });
+
     formData.append("message", values.message);
     formData.append("type", values.type);
 
@@ -72,22 +73,22 @@ const SendMessaagesForm = ({
               console.log(data);
               if (data?.status === "success") {
                 clearSelectedUsersIds();
-                resolve(key("sentSuccess"));
+                resolve();
                 resetForm();
                 hideModal();
               } else {
-                reject(key("wrong"));
+                reject();
               }
             },
             onError: (error) => {
               console.log(error);
-              reject(key("wrong"));
+              reject();
             },
           }
         );
       }),
       {
-        pending: key(key("sending")),
+        pending: key("sending"),
         success: key("sentSuccess"),
         error: key("wrong"),
       }
@@ -146,8 +147,8 @@ const SendMessaagesForm = ({
           <ErrorMessage name="message" component={InputErrorMessage} />
         </div>
         <div className="d-flex flex-column align-items-start my-4">
-          <h6>{key("sendingMethod")}</h6>
-          <div className="btn-group flex-wrap my-3">
+          <h6 className="mx-1">{key("sendingMethod")}</h6>
+          <div className="btn-group flex-wrap">
             <Field
               type="radio"
               name="type"
