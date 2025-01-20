@@ -281,9 +281,25 @@ exports.updateEstate = catchAsync(async (req, res, next) => {
       )
     : Promise.resolve();
 
+  const updateRevenuesPromise = req.body?.landlord
+    ? Revenue.updateMany(
+        { estate: estateId, compound: null },
+        { landlord: req.body.landlord }
+      )
+    : Promise.resolve();
+
+  const updateExpensesPromise = req.body?.landlord
+    ? Expense.updateMany(
+        { estate: estateId, compound: null },
+        { landlord: req.body.landlord }
+      )
+    : Promise.resolve();
+
   const [_, updatedEstate] = await Promise.all([
     tagUpdatePromise,
     estateUpdatePromise,
+    updateRevenuesPromise,
+    updateExpensesPromise,
   ]);
 
   if (!updatedEstate) {
