@@ -41,6 +41,7 @@ const SendMessaagesForm = ({
 
   const initialValues = {
     image: "",
+    emailSubject: "",
     message: "",
     type: "email",
   };
@@ -56,6 +57,7 @@ const SendMessaagesForm = ({
       formData.append(`usersIds[${index}]`, val);
     });
 
+    formData.append("emailSubject", values.emailSubject);
     formData.append("message", values.message);
     formData.append("type", values.type);
 
@@ -96,6 +98,7 @@ const SendMessaagesForm = ({
   };
 
   const validationSchema = object({
+    emailSubject: mainReqValidation,
     message: messageValidation,
     type: mainReqValidation,
   });
@@ -134,6 +137,12 @@ const SendMessaagesForm = ({
             className="d-none"
           />
           <ErrorMessage name="image" component={InputErrorMessage} />
+        </div>
+
+        <div className="field">
+          <label htmlFor="emailSubject">{key("subject")}</label>
+          <Field type="text" id="emailSubject" name="emailSubject" />
+          <ErrorMessage name="emailSubject" component={InputErrorMessage} />
         </div>
 
         <div className="field">
