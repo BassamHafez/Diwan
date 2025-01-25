@@ -304,6 +304,7 @@ const checkSubscriptions = async () => {
         allowedCompounds: 0,
         allowedEstates: 0,
         maxEstatesInCompound: 0,
+        isVIP: false,
         isFavoriteAllowed: false,
         isRemindersAllowed: false,
         isAnalysisAllowed: false,

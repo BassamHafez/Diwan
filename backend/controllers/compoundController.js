@@ -269,14 +269,14 @@ exports.createCompound = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
 
   const account = await Account.findById(req.user.account)
-    .select("allowedCompounds subscriptionEndDate")
+    .select("isVIP allowedCompounds subscriptionEndDate")
     .lean();
 
   if (account.subscriptionEndDate < new Date()) {
     return next(new ApiError("Your subscription has expired", 403));
   }
 
-  if (account.allowedCompounds <= 0) {
+  if (!account.isVIP && account.allowedCompounds <= 0) {
     return next(new ApiError("Subscribe and get more compounds", 403));
   }
 

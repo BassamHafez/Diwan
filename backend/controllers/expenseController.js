@@ -27,7 +27,7 @@ exports.createExpense = catchAsync(async (req, res, next) => {
   const { estate, compound } = req.body;
 
   const account = await Account.findById(req.user.account)
-    .select("isRemindersAllowed subscriptionEndDate")
+    .select("isRemindersAllowed subscriptionEndDate isVIP")
     .lean();
 
   if (account.subscriptionEndDate < new Date()) {
@@ -68,7 +68,7 @@ exports.createExpense = catchAsync(async (req, res, next) => {
   const expenseId = new mongoose.Types.ObjectId();
 
   const scheduleTaskPromise =
-    account && account.isRemindersAllowed
+    account && !account.isVIP && account.isRemindersAllowed
       ? ScheduledMission.create({
           type: "EXPENSE_REMINDER",
           scheduledAt: new Date(req.body.dueDate).setHours(10, 0, 0, 0),
@@ -168,6 +168,7 @@ exports.unpayExpense = catchAsync(async (req, res, next) => {
 
   if (
     account &&
+    !account.isVIP &&
     account.isRemindersAllowed &&
     updatedExpense.dueDate > new Date()
   ) {

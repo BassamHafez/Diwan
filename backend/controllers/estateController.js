@@ -171,14 +171,14 @@ exports.createEstate = catchAsync(async (req, res, next) => {
   const { tags } = req.body;
 
   const account = await Account.findById(req.user.account)
-    .select("allowedEstates maxEstatesInCompound subscriptionEndDate")
+    .select("isVIP allowedEstates maxEstatesInCompound subscriptionEndDate")
     .lean();
 
   if (account.subscriptionEndDate < new Date()) {
     return next(new ApiError("Your subscription has expired", 403));
   }
 
-  if (account.allowedEstates <= 0) {
+  if (!account.isVIP && account.allowedEstates <= 0) {
     return next(new ApiError("Subscribe and get more estates", 403));
   }
 
@@ -353,7 +353,7 @@ exports.favoriteEstate = catchAsync(async (req, res, next) => {
     return next(new ApiError("Your subscription has expired", 403));
   }
 
-  if (!account.isFavoriteAllowed) {
+  if (!account.isVIP && !account.isFavoriteAllowed) {
     return next(new ApiError("Subscribe in favorite feature first", 403));
   }
 

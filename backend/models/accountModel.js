@@ -43,6 +43,10 @@ const accountSchema = new mongoose.Schema(
       type: Date,
       default: new Date(),
     },
+    isVIP: {
+      type: Boolean,
+      default: false,
+    },
     allowedUsers: {
       type: Number,
       default: 0,

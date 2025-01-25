@@ -16,10 +16,10 @@ exports.getStats = catchAsync(async (req, res, next) => {
   const endOfYear = new Date(new Date().getFullYear(), 11, 31); // 31st Dec this year
 
   const account = await Account.findById(accountId)
-    .select("isAnalysisAllowed")
+    .select("isAnalysisAllowed isVIP")
     .lean();
 
-  if (!account || !account.isAnalysisAllowed) {
+  if (!account || !account.isAnalysisAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );

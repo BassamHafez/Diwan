@@ -20,10 +20,10 @@ exports.getIncomeReport = catchAsync(async (req, res, next) => {
   end.setHours(23, 59, 59, 999);
 
   const account = await Account.findById(accountId)
-    .select("isFinancialReportsAllowed")
+    .select("isVIP isFinancialReportsAllowed")
     .lean();
 
-  if (!account || !account.isFinancialReportsAllowed) {
+  if (!account || !account.isFinancialReportsAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -129,10 +129,10 @@ exports.getIncomeDetailsReport = catchAsync(async (req, res, next) => {
   end.setHours(23, 59, 59, 999);
 
   const account = await Account.findById(accountId)
-    .select("isFinancialReportsAllowed")
+    .select("isVIP isFinancialReportsAllowed")
     .lean();
 
-  if (!account || !account.isFinancialReportsAllowed) {
+  if (!account || !account.isFinancialReportsAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -205,10 +205,10 @@ exports.getPaymentsReport = catchAsync(async (req, res, next) => {
   end.setHours(23, 59, 59, 999);
 
   const account = await Account.findById(accountId)
-    .select("isFinancialReportsAllowed")
+    .select("isVIP isFinancialReportsAllowed")
     .lean();
 
-  if (!account || !account.isFinancialReportsAllowed) {
+  if (!account || !account.isFinancialReportsAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -280,10 +280,10 @@ exports.getContractsReport = catchAsync(async (req, res, next) => {
   end.setHours(23, 59, 59, 999);
 
   const account = await Account.findById(accountId)
-    .select("isOperationalReportsAllowed")
+    .select("isVIP isOperationalReportsAllowed")
     .lean();
 
-  if (!account || !account.isOperationalReportsAllowed) {
+  if (!account || !account.isOperationalReportsAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -349,10 +349,10 @@ exports.getCompoundsReport = catchAsync(async (req, res, next) => {
   end.setHours(23, 59, 59, 999);
 
   const account = await Account.findById(accountId)
-    .select("isCompoundsReportsAllowed")
+    .select("isVIP isCompoundsReportsAllowed")
     .lean();
 
-  if (!account || !account.isCompoundsReportsAllowed) {
+  if (!account || !account.isCompoundsReportsAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -449,10 +449,10 @@ exports.getCompoundDetailsReport = catchAsync(async (req, res, next) => {
   end.setHours(23, 59, 59, 999);
 
   const account = await Account.findById(accountId)
-    .select("isCompoundsReportsAllowed")
+    .select("isVIP isCompoundsReportsAllowed")
     .lean();
 
-  if (!account || !account.isCompoundsReportsAllowed) {
+  if (!account || !account.isCompoundsReportsAllowed || !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );

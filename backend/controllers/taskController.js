@@ -25,10 +25,10 @@ const taskPopOptions = [
 exports.checkTasksPermission = async (req, res, next) => {
   if (req.user && req.user.account) {
     const account = await Account.findById(req.user.account)
-      .select("isTasksAllowed")
+      .select("isTasksAllowed isVIP")
       .lean();
 
-    if (!account || !account.isTasksAllowed) {
+    if (!account || !account.isTasksAllowed || !account.isVIP) {
       return next(
         new ApiError("Your Subscription does not allow this feature", 403)
       );
@@ -86,11 +86,11 @@ exports.createTask = catchAsync(async (req, res, next) => {
     const expenseId = new mongoose.Types.ObjectId();
 
     const account = await Account.findById(req.user.account)
-      .select("isRemindersAllowed")
+      .select("isVIP isRemindersAllowed")
       .lean();
 
     const scheduleTaskPromise =
-      account && account.isRemindersAllowed
+      account && (account.isRemindersAllowed || account.isVIP)
         ? ScheduledMission.create({
             type: "EXPENSE_REMINDER",
             scheduledAt: new Date(date).setHours(10, 0, 0, 0),

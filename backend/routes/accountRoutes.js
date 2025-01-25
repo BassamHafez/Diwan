@@ -57,4 +57,11 @@ router.post(
   accountController.subscribeInPackage
 );
 
+router.post(
+  "/:id/vip",
+  authController.restrictTo("admin"),
+  accountValidator.validateAddVIP,
+  accountController.addVIP
+);
+
 module.exports = router;
