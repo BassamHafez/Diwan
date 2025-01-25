@@ -370,3 +370,27 @@ exports.deleteMemberValidator = [
 
   validatorMiddleware,
 ];
+
+exports.validateAddVIP = [
+  check("id")
+    .exists()
+    .withMessage("Account ID is required")
+    .isMongoId()
+    .withMessage("Invalid account ID"),
+
+  check("price")
+    .exists()
+    .withMessage("Price is required")
+    .isNumeric()
+    .withMessage("Invalid price")
+    .isFloat({ min: 0 })
+    .withMessage("Invalid price"),
+
+  check("months")
+    .exists()
+    .withMessage("Months are required")
+    .isInt({ min: 1 })
+    .withMessage("Invalid months"),
+
+  validatorMiddleware,
+];

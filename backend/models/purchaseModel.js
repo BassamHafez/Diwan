@@ -18,8 +18,12 @@ const purchaseSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["package", "custom"],
+    enum: ["vip", "package", "custom"],
     required: true,
+  },
+  vipMonths: {
+    type: Number,
+    min: 0,
   },
   package: {
     type: mongoose.Schema.Types.ObjectId,

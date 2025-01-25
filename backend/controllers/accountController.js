@@ -140,6 +140,10 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     return next(new ApiError("Owner of the account can only subscribe", 403));
   }
 
+  if (account.isVIP) {
+    return next(new ApiError("VIP account can't subscribe", 403));
+  }
+
   if (!subscriptions || !subscriptions.length) {
     return next(new ApiError("Error getting subscription plans", 500));
   }
@@ -278,13 +282,6 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   await Promise.all([
     Account.findByIdAndUpdate(id, accountData),
 
-    ScheduledMission.create({
-      account: id,
-      accountOwner: account.owner,
-      type: "SUBSCRIPTION_EXPIRATION",
-      scheduledAt: expireDate,
-    }),
-
     ScheduledMission.deleteOne({
       account: id,
       type: "SUBSCRIPTION_EXPIRATION",
@@ -297,6 +294,24 @@ exports.subscribe = catchAsync(async (req, res, next) => {
       type: "custom",
       customPackage: req.body,
     }),
+  ]);
+
+  await Promise.all([
+    ScheduledMission.create({
+      account: id,
+      accountOwner: account.owner,
+      type: "SUBSCRIPTION_EXPIRATION",
+      scheduledAt: expireDate,
+    }),
+
+    sendWAText(
+      formatSaudiNumber(account.owner.phone),
+      `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
+
+      \n\n
+      تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.
+      `
+    ),
   ]);
 
   res.status(200).json({
@@ -344,6 +359,10 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
 
   if (account.owner._id.toString() !== req.user.id) {
     return next(new ApiError("Owner of the account can only subscribe", 403));
+  }
+
+  if (account.isVIP) {
+    return next(new ApiError("VIP account can't subscribe", 403));
   }
 
   if (!package) {
@@ -408,13 +427,6 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
       isUserPermissionsAllowed: Boolean(features.isUserPermissionsAllowed),
     }),
 
-    ScheduledMission.create({
-      account: id,
-      accountOwner: account.owner,
-      type: "SUBSCRIPTION_EXPIRATION",
-      scheduledAt: expireDate,
-    }),
-
     ScheduledMission.deleteOne({
       account: id,
       type: "SUBSCRIPTION_EXPIRATION",
@@ -429,6 +441,23 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     }),
   ]);
 
+  await Promise.all([
+    ScheduledMission.create({
+      account: id,
+      accountOwner: account.owner,
+      type: "SUBSCRIPTION_EXPIRATION",
+      scheduledAt: expireDate,
+    }),
+
+    sendWAText(
+      formatSaudiNumber(account.owner.phone),
+      `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
+
+      \n\n
+      تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.`
+    ),
+  ]);
+
   res.status(200).json({
     status: "success",
     data: {
@@ -441,7 +470,7 @@ exports.addMember = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
   const account = await Account.findById(id)
-    .select("allowedUsers isUserPermissionsAllowed owner")
+    .select("isVIP allowedUsers isUserPermissionsAllowed owner")
     .lean();
 
   if (!account) {
@@ -452,11 +481,15 @@ exports.addMember = catchAsync(async (req, res, next) => {
     return next(new ApiError("Owner of the account can only add members", 403));
   }
 
-  if (account.allowedUsers <= 0) {
+  if (!account.isVIP && account.allowedUsers <= 0) {
     return next(new ApiError("Subscribe to add more users", 403));
   }
 
-  if (req.body?.permissions?.length > 0 && !account.isUserPermissionsAllowed) {
+  if (
+    !account.isVIP &&
+    req.body?.permissions?.length > 0 &&
+    !account.isUserPermissionsAllowed
+  ) {
     return next(
       new ApiError("Your Subscription doesn't allow adding permissions", 403)
     );
@@ -533,7 +566,11 @@ exports.updateMember = catchAsync(async (req, res, next) => {
     return next(new ApiError("Owner of the account can't be updated", 403));
   }
 
-  if (req.body?.permissions?.length > 0 && !account.isUserPermissionsAllowed) {
+  if (
+    !account.isVIP &&
+    req.body?.permissions?.length > 0 &&
+    !account.isUserPermissionsAllowed
+  ) {
     return next(
       new ApiError("Your Subscription doesn't allow adding permissions", 403)
     );
@@ -609,5 +646,59 @@ exports.deleteMember = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: "success",
     message: "Member deleted successfully",
+  });
+});
+
+exports.addVIP = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const expireDate = new Date(
+    Date.now() + req.body.months * 30.25 * 24 * 60 * 60 * 1000 // 30 days + 6 hours
+  );
+
+  const [updatedAccount] = await Promise.all([
+    Account.findByIdAndUpdate(id, {
+      isVIP: true,
+      subscriptionEndDate: expireDate,
+    }).populate("owner", "name phone email"),
+
+    ScheduledMission.deleteOne({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      isDone: false,
+    }),
+  ]);
+
+  if (!updatedAccount) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  await Promise.all([
+    ScheduledMission.create({
+      account: id,
+      type: "SUBSCRIPTION_EXPIRATION",
+      scheduledAt: expireDate,
+    }),
+
+    Purchase.create({
+      account: id,
+      amount: req.body.price,
+      type: "vip",
+      vipMonths: req.body.months,
+    }),
+  ]);
+
+  sendWAText(
+    formatSaudiNumber(updatedAccount.owner.phone),
+    `Your account at Diiwan.com is now VIP. Your VIP subscription will end at ${expireDate.toLocaleString()}.
+
+    \n\n
+    حسابك في Diiwan.com الآن VIP. سينتهي اشتراكك VIP في ${expireDate.toLocaleString()}.
+    `
+  );
+
+  res.status(200).json({
+    status: "success",
+    message: "Account is now VIP",
   });
 });

@@ -6,10 +6,10 @@ const ApiError = require("../utils/ApiError");
 exports.checkContactsPermission = async (req, res, next) => {
   if (req.user && req.user.account) {
     const account = await Account.findById(req.user.account)
-      .select("isServiceContactsAllowed")
+      .select("isServiceContactsAllowed isVIP")
       .lean();
 
-    if (!account || !account.isServiceContactsAllowed) {
+    if (!account || !account.isServiceContactsAllowed || !account.isVIP) {
       return next(
         new ApiError("Your Subscription does not allow this feature", 403)
       );

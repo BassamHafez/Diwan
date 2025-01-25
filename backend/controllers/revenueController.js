@@ -37,7 +37,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
   const [estate, account] = await Promise.all([
     Estate.findById(estateId).select("compound landlord").lean(),
     Account.findById(req.user.account)
-      .select("isRemindersAllowed subscriptionEndDate")
+      .select("isVIP isRemindersAllowed subscriptionEndDate")
       .lean(),
   ]);
 
@@ -70,7 +70,7 @@ exports.createRevenue = catchAsync(async (req, res, next) => {
   });
 
   const scheduleTaskPromise =
-    account && account.isRemindersAllowed
+    account && (account.isRemindersAllowed || account.isVIP)
       ? ScheduledMission.create({
           type: "REVENUE_REMINDER",
           scheduledAt: new Date(req.body.dueDate).setHours(8, 0, 0, 0),
@@ -159,7 +159,7 @@ exports.unpayRevenue = catchAsync(async (req, res, next) => {
 
   if (
     account &&
-    account.isRemindersAllowed &&
+    (account.isRemindersAllowed || account.isVIP) &&
     updatedRevenue.dueDate > new Date()
   ) {
     await ScheduledMission.create({

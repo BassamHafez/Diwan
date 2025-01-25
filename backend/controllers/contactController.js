@@ -9,7 +9,7 @@ exports.getAllContacts = catchAsync(async (req, res, next) => {
   const accountId = req.user.account;
 
   const account = await Account.findById(accountId)
-    .select("isServiceContactsAllowed")
+    .select("isVIP isServiceContactsAllowed ")
     .lean();
 
   if (!account) {
@@ -18,7 +18,7 @@ exports.getAllContacts = catchAsync(async (req, res, next) => {
 
   const collections = [BrokerContact, LandlordContact, TenantContact];
 
-  if (account.isServiceContactsAllowed) {
+  if (!account.isVIP && account.isServiceContactsAllowed) {
     collections.push(ServiceContact);
   }
 
