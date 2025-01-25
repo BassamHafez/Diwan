@@ -485,7 +485,11 @@ exports.addMember = catchAsync(async (req, res, next) => {
 
     sendWAText(
       formatSaudiNumber(req.body.phone),
-      `Welcome to your new account on Diiwan.com. Your account has been created successfully. Your login credentials are as follows: \nPhone: ${req.body.phone}\nPassword: ${req.body.password}`
+      `Welcome to your new account on Diiwan.com. Your account has been created successfully. Your login credentials are as follows: \nPhone: ${req.body.phone}\nPassword: ${req.body.password}
+      
+      \n\n
+      أهلاً بك في حسابك الجديد على Diiwan.com. تم إنشاء حسابك بنجاح. بيانات تسجيل الدخول الخاصة بك هي كالتالي: \nالهاتف: ${req.body.phone}\nكلمة المرور: ${req.body.password}
+      `
     ),
 
     sendEmail(

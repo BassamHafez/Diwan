@@ -119,7 +119,10 @@ exports.getPhoneWACode = catchAsync(async (req, res, next) => {
     user.save(),
     sendWAText(
       formatSaudiNumber(user.phone),
-      `Your verification code is ${verificationCode}`
+      `Your verification code is ${verificationCode}
+
+      \n\n
+      كود التحقق الخاص بك هو ${verificationCode}`
     ),
   ]);
 
