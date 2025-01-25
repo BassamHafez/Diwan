@@ -176,9 +176,11 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
     cost += userPrice * usersCount;
     accountData.allowedUsers = usersCount;
+  } else {
+    accountData.allowedUsers = 0;
   }
 
-  if (compoundsCount) {
+  if (compoundsCount && compoundsCount >= 1) {
     let compoundFeature = "ADD_COMPOUND_LESS_THAN_10";
 
     if (compoundsCount < 10) {
@@ -195,9 +197,11 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
     cost += compoundPrice * compoundsCount;
     accountData.allowedCompounds = compoundsCount;
+  } else {
+    return next(new ApiError("You must subscribe to compounds", 400));
   }
 
-  if (estatesCount) {
+  if (estatesCount && estatesCount >= 1) {
     let estateFeature = "ADD_ESTATE_LESS_THAN_10";
 
     if (estatesCount < 10) {
@@ -214,6 +218,8 @@ exports.subscribe = catchAsync(async (req, res, next) => {
 
     cost += estatePrice * estatesCount;
     accountData.allowedEstates = estatesCount;
+  } else {
+    accountData.allowedEstates = 0;
   }
 
   if (maxEstatesInCompound) {
