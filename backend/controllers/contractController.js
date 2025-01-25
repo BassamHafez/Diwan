@@ -144,6 +144,13 @@ exports.createContract = catchAsync(async (req, res, next) => {
       tenant.name
     }, You have a new contract starting on ${newStartDate.toLocaleDateString()} and ending on ${newEndDate.toLocaleDateString()} at "${
       estate.name
+    }"
+
+    \n\n
+    مرحبا ${
+      tenant.name
+    }, لديك عقد جديد يبدأ في ${newStartDate.toLocaleDateString()} وينتهي في ${newEndDate.toLocaleDateString()} في "${
+      estate.name
     }"`
   );
 
@@ -215,7 +222,10 @@ exports.cancelContract = catchAsync(async (req, res, next) => {
 
   sendWAText(
     formatSaudiNumber(contract.tenant.phone),
-    `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been canceled.`
+    `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been canceled.
+
+    \n\n
+    مرحبا ${contract.tenant.name}, تم إلغاء عقدك في "${estate.name}"`
   );
 
   res.status(200).json({
@@ -544,7 +554,10 @@ exports.settleContract = catchAsync(async (req, res, next) => {
 
   sendWAText(
     formatSaudiNumber(contract.tenant.phone),
-    `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.`
+    `Hello ${contract.tenant.name}, Your contract at "${estate.name}" has been settled with an amount of ${settlementAmount} SAR.
+
+    \n\n
+    مرحبا ${contract.tenant.name}, تم تسوية عقدك في "${estate.name}" بمبلغ ${settlementAmount} ريال سعودي`
   );
 
   res.status(200).json({

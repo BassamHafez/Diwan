@@ -64,7 +64,10 @@ const checkScheduledMissions = async () => {
             .then((contract) => {
               sendWAText(
                 formatSaudiNumber(contract.tenant.phone),
-                `Hello ${contract.tenant.name}, your contract for "${contract.estate.name}" has finished.`
+                `Hello ${contract.tenant.name}, your contract for "${contract.estate.name}" has finished.
+                \n\n
+                مرحبًا ${contract.tenant.name}، انتهى عقدك لـ "${contract.estate.name}".
+                `
               );
             })
         );
@@ -132,7 +135,15 @@ const checkScheduledMissions = async () => {
                       revenue.amount
                     } for the estate "${
                       estateName || compoundName || "Diwan property"
-                    }".`
+                    }".
+
+                    \n\n
+                    مرحبًا ${revenue.tenant.name}، تذكير ديوان بدفع ${
+                      revenue.amount
+                    } للعقار "${
+                      estateName || compoundName || "Diwan property"
+                    }".
+                    `
                   );
                 }
 
@@ -143,7 +154,15 @@ const checkScheduledMissions = async () => {
                       revenue.amount
                     } is due on ${revenue.dueDate.toDateString()} for the estate "${
                       estateName || compoundName || "Diwan property"
-                    }".`
+                    }".
+
+                    \n\n
+                    تذكير ديوان: دفع ${revenue.tenant.name} بقيمة ${
+                      revenue.amount
+                    } مستحق في ${revenue.dueDate.toDateString()} للعقار "${
+                      estateName || compoundName || "Diwan property"
+                    }".
+                    `
                   );
                 }
               }
@@ -193,7 +212,15 @@ const checkScheduledMissions = async () => {
                       expense.amount
                     } for the estate "${
                       estateName || compoundName || "Diwan property"
-                    }" by ${expense.dueDate.toDateString()}.`
+                    }" by ${expense.dueDate.toDateString()}.
+
+                    \n\n
+                    تذكير ديوان: يجب على ${
+                      contactName || "الخدمة"
+                    } استلام مبلغ ${expense.amount} للعقار "${
+                      estateName || compoundName || "Diwan property"
+                    }" بحلول ${expense.dueDate.toDateString()}.
+                    `
                   );
                 }
               }
@@ -298,7 +325,11 @@ const checkSubscriptions = async () => {
 
       sendWAText(
         formatSaudiNumber(task.accountOwner.phone),
-        `Hello ${task.accountOwner.name}, your subscription has expired.\nPlease renew your subscription to continue using Diiwan.com .`
+        `Hello ${task.accountOwner.name}, your subscription has expired.\nPlease renew your subscription to continue using Diiwan.com .
+        
+        \n\n
+        عزيزي ${task.accountOwner.name}، انتهى اشتراكك. \nيرجى تجديد اشتراكك للمتابعة في استخدام Diiwan.com.
+        `
       );
 
       const html = subscriptionExpirationHtml(task.accountOwner.name);
@@ -306,7 +337,11 @@ const checkSubscriptions = async () => {
       sendEmail(
         task.accountOwner.email,
         "Your Subscription Has Ended",
-        `Dear ${task.accountOwner.name},\nWe wanted to let you know that your subscription to Diiwan.com has ended.`,
+        `Dear ${task.accountOwner.name},\nWe wanted to let you know that your subscription to Diiwan.com has ended.
+        
+        \n\n
+        عزيزي ${task.accountOwner.name}،\nنود أن نعلمك أن اشتراكك في Diiwan.com قد انتهى.
+        `,
         html
       );
 

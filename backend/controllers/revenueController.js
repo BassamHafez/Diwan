@@ -127,7 +127,12 @@ exports.payRevenue = catchAsync(async (req, res, next) => {
           formatSaudiNumber(updatedRevenue.tenant.phone),
           `${updatedRevenue.amount} SAR received for "${
             updatedRevenue.estate.name
-          }" on (${new Date(paidAt).toLocaleDateString()})`
+          }" on (${new Date(paidAt).toLocaleDateString()})
+
+          \n\n
+          ${updatedRevenue.amount} ريال تم استلامها لـ "${
+            updatedRevenue.estate.name
+          }" في (${new Date(paidAt).toLocaleDateString()})`
         )
       : Promise.resolve();
 
