@@ -11,6 +11,10 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    account: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Account",
+    },
     status: {
       type: String,
       enum: ["pending", "processing", "completed", "archived"],
