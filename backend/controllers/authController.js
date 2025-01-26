@@ -144,6 +144,32 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+exports.saveTokenAndUserIfExist = catchAsync(async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1];
+  }
+
+  if (!token) next();
+
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) next();
+
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
+    return next(
+      new ApiError("User recently changed password! Please log in again.", 401)
+    );
+  }
+
+  req.user = currentUser;
+  next();
+});
+
 exports.restrictTo =
   (...roles) =>
   (req, res, next) => {

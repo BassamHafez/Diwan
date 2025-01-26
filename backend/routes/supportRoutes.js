@@ -8,6 +8,7 @@ const supportValidator = require("../utils/validators/supportValidator");
 router.post(
   "/messages",
   supportValidator.validateCreateSupportMessage,
+  authController.saveTokenAndUserIfExist,
   supportController.createSupportMessage
 );
 

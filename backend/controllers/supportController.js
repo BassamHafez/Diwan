@@ -16,8 +16,10 @@ exports.getAllSupportMessages = factory.getAll(Message, popOptions);
 exports.deleteSupportMessage = factory.deleteOne(Message);
 
 exports.createSupportMessage = catchAsync(async (req, res, next) => {
-  if (req.user) req.body.user = req.user.id;
-  if (req.account) req.body.account = req.account.id;
+  if (req.user) {
+    req.body.user = req.user.id;
+    req.body.account = req.user.account;
+  }
 
   await Promise.all([
     Message.create(req.body),
