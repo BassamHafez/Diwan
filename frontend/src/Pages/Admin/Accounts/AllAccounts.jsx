@@ -57,7 +57,8 @@ const AllAccounts = () => {
           .trim()
           .toLowerCase()
           .includes(searchFilter.trim().toLowerCase()) ||
-        acc.phone.includes(searchFilter)
+        acc.phone.includes(searchFilter) ||
+        acc._id.includes(searchFilter)
     );
   }, [cleanAccountData, searchFilter]);
 
@@ -69,7 +70,7 @@ const AllAccounts = () => {
       </div>
       <div className="d-flex align-items-center">
         <div className="position-relative my-3 p-2">
-          <SearchField onSearch={onSearch} text={key("searchContacts")} />
+          <SearchField onSearch={onSearch} text={key("searchAccounts")} />
         </div>
       </div>
       <Row className="g-3">

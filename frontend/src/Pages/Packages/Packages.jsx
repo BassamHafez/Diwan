@@ -1,8 +1,10 @@
 import styles from "./Packages.module.css";
 import PackagesTab from "./PackagesTab";
-import { Tab, Tabs } from "../../shared/bootstrap";
+import { Alert, Tab, Tabs } from "../../shared/bootstrap";
+import { Link } from "../../shared/index";
 import { useTranslation, useFilterPackagesDuration } from "../../shared/hooks";
 import { LoadingOne } from "../../shared/components";
+import { fire } from "../../shared/images";
 
 const Packages = () => {
   const { t: key } = useTranslation();
@@ -43,6 +45,13 @@ const Packages = () => {
           </div>
         </Tab>
       </Tabs>
+      <div className="px-2">
+        <Alert variant="warning">
+          <img className={styles.pack_shape_svg} src={fire} alt="fire" />
+          <span>{key("customPackageMSg1")}</span>{" "}
+          <Link to={"/custom-package"}>{key("here")}</Link>
+        </Alert>
+      </div>
     </div>
   );
 };

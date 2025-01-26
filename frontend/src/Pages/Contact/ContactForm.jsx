@@ -1,6 +1,6 @@
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import { ErrorMessage, Field, Form, Formik } from "../../shared/index";
-import { toast, object} from "../../shared/constants";
+import { toast, object } from "../../shared/constants";
 import {
   useMutation,
   useTranslation,
@@ -11,7 +11,7 @@ import { InputErrorMessage, ButtonTwo } from "../../shared/components";
 import { Row, Col } from "../../shared/bootstrap";
 import { cleanUpData } from "../../Components/Logic/LogicFun";
 
-const ContactForm = () => {
+const ContactForm = ({ isVip, hideModal }) => {
   const token = useSelector((state) => state.userInfo.token);
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const { t: key } = useTranslation();
@@ -32,8 +32,8 @@ const ContactForm = () => {
     name: profileInfo?.name || "",
     email: profileInfo?.email || "",
     phone: profileInfo?.phone || "",
-    subject: "",
-    message: "",
+    subject: isVip ? "VIP Package" : "",
+    message: isVip ? key("eliteIntialMessage") : "",
   };
 
   const onSubmit = (values, { resetForm }) => {
@@ -51,21 +51,24 @@ const ContactForm = () => {
             onSuccess: (data) => {
               if (data?.status === "success") {
                 resetForm();
-                resolve(key("sentSuccess"));
+                if (hideModal && isVip) {
+                  hideModal();
+                }
+                resolve();
               } else {
-                reject(key("wrong"));
+                reject();
               }
             },
             onError: (error) => {
               console.log(error);
-              reject(key("wrong"));
+              reject();
             },
           }
         );
       }),
       {
         pending: key(key("sendingMessage")),
-        success: key("sentSuccess"),
+        success: isVip ? key("weWillContactYou") : key("sentSuccess"),
         error: key("wrong"),
       }
     );
@@ -118,15 +121,17 @@ const ContactForm = () => {
               <ErrorMessage name="phone" component={InputErrorMessage} />
             </div>
           </Col>
-          <Col md={6}>
-            <div className="field">
-              <label htmlFor="subject">
-                {key("subject")} {requiredLabel}
-              </label>
-              <Field id="subject" type="text" name="subject" />
-              <ErrorMessage name="subject" component={InputErrorMessage} />
-            </div>
-          </Col>
+          {!isVip && (
+            <Col md={6}>
+              <div className="field">
+                <label htmlFor="subject">
+                  {key("subject")} {requiredLabel}
+                </label>
+                <Field id="subject" type="text" name="subject" />
+                <ErrorMessage name="subject" component={InputErrorMessage} />
+              </div>
+            </Col>
+          )}
           <Col md={12}>
             <div className="field">
               <label htmlFor="message">

@@ -79,6 +79,7 @@ const CompoundsReportForm = ({
       printDataValues.compoundId = printDataValues.compoundId.label;
     }
 
+    console.log("printed",printDataValues)
     toast.promise(
       new Promise((resolve, reject) => {
         mutate(
@@ -98,7 +99,7 @@ const CompoundsReportForm = ({
                   getSearchData(
                     data.data?.expenses,
                     data.data?.revenues,
-                    updatedValues
+                    printDataValues
                   );
                 }
 

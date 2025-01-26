@@ -116,7 +116,6 @@ const AddCompound = ({ hideModal, refetch }) => {
                 await refetch();
                 dispatch(fetchAccountData(token));
                 if (values.tags?.length > 0) {
-                  console.log("ddd");
                   refetchTags();
                 }
                 resolve();

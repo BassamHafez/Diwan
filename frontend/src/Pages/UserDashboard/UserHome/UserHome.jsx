@@ -1,7 +1,12 @@
 import styles from "./UserHome.module.css";
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { faTriangleExclamation } from "../../../shared/constants";
-import { ScrollTopBtn, LoadingOne, NoData } from "../../../shared/components";
+import {
+  ScrollTopBtn,
+  LoadingOne,
+  NoData,
+  CheckSubscriptionRender,
+} from "../../../shared/components";
 import {
   useNavigate,
   useTranslation,
@@ -136,21 +141,16 @@ const UserHome = () => {
               getStatusBgColor={getStatusBgColor}
               showDetails={showDetails}
             />
-            {accountInfo?.account?.isTasksAllowed === false ? (
-              <div className={styles.information_section}>
-                <NoData
-                  type="upgrade"
-                  text={`${key("upgradePackage")} ${key("isTasksAllowed")}`}
-                />
-              </div>
-            ) : (
+            <CheckSubscriptionRender
+              name="isTasksAllowed"
+              accountData={accountInfo?.account}
+            >
               <OverdueTasks
                 myData={myData}
                 refetch={refetch}
                 accountInfo={accountInfo}
               />
-            )}
-
+            </CheckSubscriptionRender>
             <Col sm={12}>
               <PendingRevenues
                 myData={myData}
@@ -164,6 +164,7 @@ const UserHome = () => {
         <div>
           <NoData
             type="upgrade"
+            verySmallSize={true}
             text={`${key("upgradePackage")} ${key("isAnalysisAllowed")}`}
           />
           {expiredAlert}

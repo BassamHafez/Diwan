@@ -1,23 +1,24 @@
-import Col from "react-bootstrap/Col";
 import styles from "./Packages.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import ButtonThree from "../../Components/UI/Buttons/ButtonThree";
-import { useTranslation } from "react-i18next";
-import triangle from "../../assets/svg/triangles.svg";
-import shape from "../../assets/svg/shape.svg";
-import fire from "../../assets/svg/fire.svg";
-import chooseFeatures from "../../assets/chooseFeatures.png";
-import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import MainModal from "../../Components/UI/Modals/MainModal";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
-import { toast } from "react-toastify";
 import fetchAccountData from "../../Store/accountInfo-actions";
+import { triangle, shape, crown, vip } from "../../shared/images";
+import { toast, faCircleCheck, faYinYang } from "../../shared/constants";
+import { MainModal, ButtonThree, ModalForm } from "../../shared/components";
+import {
+  useDispatch,
+  useSelector,
+  useState,
+  useNavigate,
+  useTranslation,
+} from "../../shared/hooks";
+import { FontAwesomeIcon } from "../../shared/index";
+import { Col } from "../../shared/bootstrap";
+import ContactForm from "../Contact/ContactForm";
 
-const PackageItem = ({ pack, type }) => {
+const PackageItem = ({ pack, type}) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showVipContactModal, setShowVipContactModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const token = useSelector((state) => state.userInfo.token);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const profileInfo = useSelector((state) => state.profileInfo.data);
@@ -43,7 +44,13 @@ const PackageItem = ({ pack, type }) => {
       : "0";
 
   const getReadyPackage = async () => {
-    const values = { packageId: pack._id };
+    setIsLoading(true);
+    let values = {};
+    if (type === "vip") {
+      values = { price: pack._id };
+    } else {
+      values = { packageId: pack._id };
+    }
     const res = await mainFormsHandlerTypeRaw({
       formData: values,
       token: token,
@@ -54,6 +61,7 @@ const PackageItem = ({ pack, type }) => {
       notifySuccess(key("addedSuccess"));
       setSubCost(res.data?.subscriptionCost);
       dispatch(fetchAccountData(token));
+      setIsLoading(false);
       setShowPackageData(true);
     } else if (
       res.response.data.message ===
@@ -78,6 +86,7 @@ const PackageItem = ({ pack, type }) => {
     } else {
       notifyError(key("wrong"));
     }
+    setIsLoading(false);
   };
 
   const subscribtionHandler = () => {
@@ -85,8 +94,8 @@ const PackageItem = ({ pack, type }) => {
       setShowLoginModal(true);
       return;
     }
-    if (type === "custom") {
-      navigate("/custom-package");
+    if (type === "vip") {
+      setShowVipContactModal(true);
       return;
     }
     getReadyPackage();
@@ -110,9 +119,9 @@ const PackageItem = ({ pack, type }) => {
                     ? shape
                     : pack.isBestOffer
                     ? triangle
-                    : fire
+                    : crown
                 }
-                alt="svgShape"
+                alt="package_Shape"
               />
               <h3>{isArLang ? pack.arTitle : pack.enTitle}</h3>
             </div>
@@ -122,7 +131,7 @@ const PackageItem = ({ pack, type }) => {
                   ? styles.main_bg
                   : pack.isMostPopular
                   ? styles.offer
-                  : styles.custom_badge
+                  : styles.vip_badge
               } ${isArLang ? "me-auto" : "ms-auto"}`}
             >
               <span>
@@ -130,13 +139,13 @@ const PackageItem = ({ pack, type }) => {
                   ? key("mostPopular")
                   : pack.isBestOffer
                   ? key("deal")
-                  : key("cust")}
+                  : "vip"}
               </span>
             </div>
           </div>
 
           <div className={styles.price}>
-            {type !== "custom" ? (
+            {type !== "vip" ? (
               <>
                 <span className={styles.price_number}>
                   {pack.price} {key("sarSmall")}
@@ -151,8 +160,7 @@ const PackageItem = ({ pack, type }) => {
               </>
             ) : (
               <span className={`${styles.price_number} fs-2 mb-2`}>
-                {key("VariablePrice")}{" "}
-                <span className="text-secondary fs-5">/{key("month")}</span>
+                {key("elitePackageBtn4")}
               </span>
             )}
           </div>
@@ -173,7 +181,7 @@ const PackageItem = ({ pack, type }) => {
                     {key(feature.label)}{" "}
                     {feature.value === "true" ? "" : `(${feature.value})`}
                   </li>
-                ) : type === "custom" ? (
+                ) : type === "vip" ? (
                   <li key={`${feature.label}_${index}`}>
                     <FontAwesomeIcon
                       className={`${styles.list_icon}`}
@@ -184,21 +192,32 @@ const PackageItem = ({ pack, type }) => {
                 ) : null;
               })}
 
-              {type === "custom" && (
+              {type === "vip" && (
                 <>
-                  <div className={styles.chooseFeatures}>
-                    <img src={chooseFeatures} alt="chooseFeatures" />
+                  <div className={styles.vip_img}>
+                    <img src={vip} alt="vip Img" />
                   </div>
                 </>
               )}
             </ul>
           </div>
           <div className="text-center pt-4 pb-2">
-            <ButtonThree
-              onClick={subscribtionHandler}
-              color={pack.isBestOffer ? undefined : "white"}
-              text={key("orderPackage")}
-            />
+            {type === "vip" ? (
+              <ButtonThree onClick={subscribtionHandler}>
+                {key("contact")}
+              </ButtonThree>
+            ) : (
+              <ButtonThree
+                onClick={subscribtionHandler}
+                color={pack.isBestOffer ? undefined : "white"}
+              >
+                {isLoading ? (
+                  <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
+                ) : (
+                  key("orderPackage")
+                )}
+              </ButtonThree>
+            )}
           </div>
         </div>
       </Col>
@@ -228,6 +247,18 @@ const PackageItem = ({ pack, type }) => {
             <br /> {key("reviewPackage")}
           </h5>
         </MainModal>
+      )}
+
+      {showVipContactModal && (
+        <ModalForm
+          show={showVipContactModal}
+          onHide={() => setShowVipContactModal(false)}
+        >
+          <ContactForm
+            isVip={true}
+            hideModal={() => setShowVipContactModal(false)}
+          />
+        </ModalForm>
       )}
     </>
   );

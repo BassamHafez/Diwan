@@ -52,8 +52,7 @@ const useValidation = () => {
     [key]
   );
 
-
-//messages (text Area)
+  //messages (text Area)
   const messageValidation = useMemo(
     () =>
       string()
@@ -63,7 +62,6 @@ const useValidation = () => {
   );
   const noteValidation = useMemo(() => string().min(5, key("min5")), [key]);
 
-
   //numbers
   const positiveNumbersValidation = useMemo(
     () => number().min(0, key("positiveValidation")),
@@ -72,6 +70,15 @@ const useValidation = () => {
 
   //date
   const dateValidation = useMemo(() => date().required(key("fieldReq")), [key]);
+
+  const monthsValidation = useMemo(
+    () =>
+      number()
+        .min(1, key("invalidMonth"))
+        .max(12, key("invalidMonth"))
+        .required(key("fieldReq")),
+    [key]
+  );
   const noFutureDateValidation = useMemo(
     () =>
       date()
@@ -119,7 +126,6 @@ const useValidation = () => {
         }),
     [key]
   );
-
 
   //select options
   const selectOptionValidationTypeNumber = useMemo(
@@ -169,7 +175,6 @@ const useValidation = () => {
     [key]
   );
 
-
   return {
     mainReqValidation,
     phoneValidation,
@@ -183,6 +188,7 @@ const useValidation = () => {
     selectOptionValidationTypeNumber,
     selectOptionValidationTypeString,
     dateValidation,
+    monthsValidation,
     dateGreater,
     noFutureDateValidation,
     endDateValidation,
