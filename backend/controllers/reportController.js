@@ -23,7 +23,11 @@ exports.getIncomeReport = catchAsync(async (req, res, next) => {
     .select("isVIP isFinancialReportsAllowed")
     .lean();
 
-  if (!account || !account.isFinancialReportsAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isFinancialReportsAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -132,7 +136,11 @@ exports.getIncomeDetailsReport = catchAsync(async (req, res, next) => {
     .select("isVIP isFinancialReportsAllowed")
     .lean();
 
-  if (!account || !account.isFinancialReportsAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isFinancialReportsAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -208,7 +216,11 @@ exports.getPaymentsReport = catchAsync(async (req, res, next) => {
     .select("isVIP isFinancialReportsAllowed")
     .lean();
 
-  if (!account || !account.isFinancialReportsAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isFinancialReportsAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -283,7 +295,11 @@ exports.getContractsReport = catchAsync(async (req, res, next) => {
     .select("isVIP isOperationalReportsAllowed")
     .lean();
 
-  if (!account || !account.isOperationalReportsAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isOperationalReportsAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -352,7 +368,11 @@ exports.getCompoundsReport = catchAsync(async (req, res, next) => {
     .select("isVIP isCompoundsReportsAllowed")
     .lean();
 
-  if (!account || !account.isCompoundsReportsAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isCompoundsReportsAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
@@ -452,7 +472,11 @@ exports.getCompoundDetailsReport = catchAsync(async (req, res, next) => {
     .select("isVIP isCompoundsReportsAllowed")
     .lean();
 
-  if (!account || !account.isCompoundsReportsAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isCompoundsReportsAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
