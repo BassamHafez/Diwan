@@ -4,11 +4,20 @@ const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const sendEmail = require("../utils/sendEmail");
 
-exports.getAllSupportMessages = factory.getAll(Message);
+const popOptions = [
+  {
+    path: "account",
+    select:
+      "owner name phone email address region city subscriptionEndDate isVIP createdAt",
+  },
+];
+
+exports.getAllSupportMessages = factory.getAll(Message, popOptions);
 exports.deleteSupportMessage = factory.deleteOne(Message);
 
 exports.createSupportMessage = catchAsync(async (req, res, next) => {
   if (req.user) req.body.user = req.user.id;
+  if (req.account) req.body.account = req.account.id;
 
   await Promise.all([
     Message.create(req.body),
