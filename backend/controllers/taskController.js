@@ -28,7 +28,11 @@ exports.checkTasksPermission = async (req, res, next) => {
       .select("isTasksAllowed isVIP")
       .lean();
 
-    if (!account || !account.isTasksAllowed || !account.isVIP) {
+    if (!account) {
+      return next(new ApiError("Account not found", 404));
+    }
+
+    if (!account.isTasksAllowed && !account.isVIP) {
       return next(
         new ApiError("Your Subscription does not allow this feature", 403)
       );

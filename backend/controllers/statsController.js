@@ -19,7 +19,11 @@ exports.getStats = catchAsync(async (req, res, next) => {
     .select("isAnalysisAllowed isVIP")
     .lean();
 
-  if (!account || !account.isAnalysisAllowed || !account.isVIP) {
+  if (!account) {
+    return next(new ApiError("Account not found", 404));
+  }
+
+  if (!account.isAnalysisAllowed && !account.isVIP) {
     return next(
       new ApiError("Your Subscription does not allow this feature", 403)
     );
