@@ -337,6 +337,7 @@ export const getContractStatus = (isCanceled, startDate, endDate) => {
 };
 
 // revenues
+import { addMonths, differenceInMonths, format } from "date-fns";
 
 export const calculateRevenues = (
   totalAmount,
@@ -352,42 +353,91 @@ export const calculateRevenues = (
     day: 1,
     week: 7,
     month: 30,
-    year: 365,
   };
 
-  if (!unitMultipliers[paymentPeriodUnit]) {
+  if (!paymentPeriodUnit || (paymentPeriodUnit !== "year" && !unitMultipliers[paymentPeriodUnit])) {
     console.error(
       "Invalid paymentPeriodUnit. Use 'day', 'week', 'month', or 'year'"
     );
+    return [];
   }
 
-  const intervalInDays =
-    paymentPeriodValue * unitMultipliers[paymentPeriodUnit];
+  if (paymentPeriodUnit === "year") {
+    const totalYears = end.getFullYear() - start.getFullYear();
+    const baseAmount = Math.floor(totalAmount / totalYears);
+    let remainingAmount = totalAmount - baseAmount * totalYears;
 
-  const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
-  const numIntervals = Math.ceil(totalDays / intervalInDays);
+    let currentDate = new Date(start);
 
-  const baseAmount = Math.floor(totalAmount / numIntervals);
-  let remainingAmount = totalAmount - baseAmount * numIntervals;
+    for (let i = 0; i < totalYears; i++) {
+      let amount = baseAmount;
+      if (remainingAmount > 0) {
+        amount++;
+        remainingAmount--;
+      }
 
-  let currentDate = new Date(start);
-  for (let i = 0; i < numIntervals; i++) {
-    let amount = baseAmount;
-    if (remainingAmount > 0) {
-      amount++;
-      remainingAmount--;
+      revenues.push({
+        amount: amount,
+        dueDate: format(currentDate, "yyyy-MM-dd"),
+      });
+
+      currentDate.setFullYear(currentDate.getFullYear() + 1);
     }
 
-    revenues.push({
-      amount: amount,
-      dueDate: formattedDate(currentDate),
-    });
+    return revenues;
+  } else if (paymentPeriodUnit === "month") {
+    const totalMonths = differenceInMonths(end, start);
+    const baseAmount = Math.floor(totalAmount / totalMonths);
+    let remainingAmount = totalAmount - baseAmount * totalMonths;
 
-    currentDate.setDate(currentDate.getDate() + intervalInDays);
+    let currentDate = new Date(start);
+
+    for (let i = 0; i < totalMonths; i++) {
+      let amount = baseAmount;
+      if (remainingAmount > 0) {
+        amount++;
+        remainingAmount--;
+      }
+
+      revenues.push({
+        amount: amount,
+        dueDate: format(currentDate, "yyyy-MM-dd"),
+      });
+
+      currentDate = addMonths(currentDate, 1);
+    }
+
+    return revenues;
+  } else {
+    const intervalInDays =
+      paymentPeriodValue * unitMultipliers[paymentPeriodUnit];
+
+    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const numIntervals = Math.ceil(totalDays / intervalInDays);
+
+    const baseAmount = Math.floor(totalAmount / numIntervals);
+    let remainingAmount = totalAmount - baseAmount * numIntervals;
+
+    let currentDate = new Date(start);
+    for (let i = 0; i < numIntervals; i++) {
+      let amount = baseAmount;
+      if (remainingAmount > 0) {
+        amount++;
+        remainingAmount--;
+      }
+
+      revenues.push({
+        amount: amount,
+        dueDate: format(currentDate, "yyyy-MM-dd"),
+      });
+
+      currentDate.setDate(currentDate.getDate() + intervalInDays);
+    }
+
+    return revenues;
   }
-
-  return revenues;
 };
+
 
 const revenuesStatus = {
   en: {

@@ -31,16 +31,18 @@
   background-color: #f9c1bf;
   color: #f11d16;
 }
-.custom_badge {
-  background-color: #ffdfab;
-  color: var(--main_color);
+.vip_badge {
+  background-color: rgb(248, 224, 86);
+  color: #ff2351;
+  padding-inline: 15px;
 }
 .package_type h3 {
   font-size: 1.875rem;
   font-weight: 700;
   margin: 0;
 }
-.package_type img {
+.package_type img,
+.pack_shape_svg {
   width: 40px;
   margin-inline: 7px;
 }
@@ -154,11 +156,12 @@
 .package_side {
   padding: 1.25rem;
 }
-.chooseFeatures {
-  width: 16.25rem;
+.vip_img {
+  width: 9.375rem;
   margin: auto;
+  margin-top: 20px;
 }
-.chooseFeatures img {
+.vip_img img {
   width: 100%;
 }
 .select_type {

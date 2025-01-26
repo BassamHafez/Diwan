@@ -9,7 +9,6 @@ import managmentImg from "../assets/house-with-garage-garage.webp";
 import cityImg from "../assets/luxurious-villa-with-modern-architectural-design.webp";
 import forgetPassImg from "../assets/forgetPassword.png";
 import noDataImg from "../assets/noData.webp";
-import finishTasks from "../assets/finishTasks.jpg";
 import noExpenses from "../assets/noExpenses.webp";
 import estate from "../assets/estate.webp";
 
@@ -33,14 +32,19 @@ import office from "../assets/icons/office.png";
 import accounts from "../assets/icons/accounts.png";
 import topOffice from "../assets/topOffice.webp";
 import popular from "../assets/popular.webp";
+import crown from "../assets/crown.png";
+import vip from "../assets/vip.png";
 
 //svg
 import circles from "../assets/svg/circles.svg";
 import dash from "../assets/svg/dash.svg";
 import terms from "../assets/svg/terms.svg";
-
 import support from "../assets/svg/support.svg";
-import upgrade from "../assets/svg/Upgrade-rafiki.svg";
+import summary from "../assets/svg/summary.svg";
+import upgrade from "../assets/svg/upgrade.svg";
+import triangle from "../assets/svg/triangles.svg";
+import shape from "../assets/svg/shape.svg";
+import fire from "../assets/svg/fire.svg";
 
 export {
   logo,
@@ -72,9 +76,14 @@ export {
   organizationImage,
   homeKey,
   noDataImg,
-  finishTasks,
   noExpenses,
   estate,
   support,
-  upgrade
+  upgrade,
+  summary,
+  triangle,
+  shape,
+  fire,
+  crown,
+  vip
 };

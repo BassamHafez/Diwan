@@ -12,6 +12,7 @@ import {
 import { MainModal, ButtonOne } from "../../../shared/components";
 import { Col } from "../../../shared/bootstrap";
 import { avatar } from "../../../shared/images";
+import UserDetailsBlock from "../../UserDashboard/UserProfile/UserDetailsBlock";
 
 const UserItem = ({
   userData,
@@ -21,6 +22,7 @@ const UserItem = ({
   isAdminPage,
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const deleteItem = useDeleteItem();
   const profileInfo = useSelector((state) => state.profileInfo.data);
   const isIdExist = selectedUsers?.find((id) => id === userData?._id);
@@ -55,6 +57,14 @@ const UserItem = ({
     setShowDeleteModal(false);
   }, []);
 
+  const showDetailsModalHandler = useCallback(() => {
+    setShowDetailsModal(true);
+  }, []);
+
+  const hideDetailsModalHandler = useCallback(() => {
+    setShowDetailsModal(false);
+  }, []);
+
   return (
     <>
       <Col lg={4} md={6}>
@@ -65,7 +75,7 @@ const UserItem = ({
               : styles.transparent_border
           } pb-3`}
         >
-          <div className={styles.header}>
+          <div className={styles.header} style={{cursor:"pointer"}} onClick={showDetailsModalHandler}>
             <img
               src={
                 userData.photo
@@ -158,6 +168,18 @@ const UserItem = ({
           okBtn={key("delete")}
         >
           <h5>{key("deleteText")}</h5>
+        </MainModal>
+      )}
+      {showDetailsModal && (
+        <MainModal
+          show={showDetailsModal}
+          onHide={hideDetailsModalHandler}
+          cancelBtn={key("cancel")}
+          modalSize="xl"
+        >
+          <div className={isArLang ? "text-end" : "text-start"}>
+            <UserDetailsBlock profileInfo={userData} isProfile={false} />
+          </div>
         </MainModal>
       )}
     </>

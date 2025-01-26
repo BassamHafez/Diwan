@@ -40,6 +40,7 @@ const CompoundsReport = ({ compoundsOptions, landlordOptions, filterType }) => {
   const getSearchData = useCallback((ex, rev, formValues) => {
     setExpenses(ex);
     setRevenues(rev);
+    console.log("formCalu", formValues);
     setDataEnteried(formValues);
   }, []);
 

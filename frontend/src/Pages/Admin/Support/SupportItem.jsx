@@ -16,11 +16,14 @@ import {
 import { ModalForm, MainModal, ButtonOne } from "../../../shared/components";
 import { Col } from "../../../shared/bootstrap";
 import { noAvatar } from "../../../shared/images";
+import SubscribeVip from "./SupportForm/SubscribeVip";
 
 const SupportItem = ({ msgData, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
   const deleteItem = useDeleteItem();
+  let isArLang = localStorage.getItem("i18nextLng") === "ar";
 
   const { t: key } = useTranslation();
 
@@ -66,6 +69,14 @@ const SupportItem = ({ msgData, refetch }) => {
 
   const hideUpdateModalHandler = useCallback(() => {
     setShowUpdateModal(false);
+  }, []);
+
+  const showSubscribeModalHandler = useCallback(() => {
+    setShowSubscribeModal(true);
+  }, []);
+
+  const hideSubscribeModalHandler = useCallback(() => {
+    setShowSubscribeModal(false);
   }, []);
 
   return (
@@ -124,15 +135,29 @@ const SupportItem = ({ msgData, refetch }) => {
           <div className="d-flex justify-content-between align-items-center position-relative flex-wrap px-1 mt-4">
             <ButtonOne
               text={key("delete")}
-              classes="bg-danger"
+              classes="bg-danger m-1"
               borderd={true}
               onClick={showDeleteModalHandler}
             />
-            <ButtonOne
-              onClick={showUpdateModalHandler}
-              text={key("update")}
-              borderd={true}
-            />
+            <div
+              className={`${
+                isArLang ? "me-auto" : "ms-auto"
+              } d-flex flex-wrap align-items-center`}
+            >
+              <ButtonOne
+                onClick={showSubscribeModalHandler}
+                text={key("subscribe")}
+                borderd={true}
+                classes="m-1 bg-secondary"
+              />
+
+              <ButtonOne
+                onClick={showUpdateModalHandler}
+                text={key("update")}
+                borderd={true}
+                classes="m-1"
+              />
+            </div>
           </div>
         </div>
       </Col>
@@ -160,6 +185,16 @@ const SupportItem = ({ msgData, refetch }) => {
             hideModal={hideUpdateModalHandler}
             msgStatus={msgData?.status}
             msgId={msgData?._id}
+          />
+        </ModalForm>
+      )}
+
+      {showSubscribeModal && (
+        <ModalForm show={showSubscribeModal} onHide={hideSubscribeModalHandler} modalSize="md">
+          <SubscribeVip
+            refetch={refetch}
+            hideModal={hideSubscribeModalHandler}
+            accountId={msgData?.accountId}
           />
         </ModalForm>
       )}
