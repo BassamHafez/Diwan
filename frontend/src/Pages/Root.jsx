@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import useIsOnline from "../hooks/useIsOnline";
 import AdminMainContainer from "./Admin/AdminMainContainer/AdminMainContainer";
 import NetworkError from "./Error/NetworkError";
-import noConnectionImg from "../assets/noConnection.webp";
 import { useEffect } from "react";
 import {
   calculateRemainingTime,
@@ -65,15 +64,7 @@ const Root = () => {
   }, [subscriptionEndDate, dispatch, isLogin, role]);
 
   if (!isOnline) {
-    return (
-      <NetworkError>
-        <img
-          className="standard_img"
-          src={noConnectionImg}
-          alt="No Connection"
-        />
-      </NetworkError>
-    );
+    return <NetworkError />;
   }
 
   if (role === USER_ROLES.ADMIN) {

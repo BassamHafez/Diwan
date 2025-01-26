@@ -1,5 +1,8 @@
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
-import { supportMessagesStatusOptions } from "../../../Components/Logic/StaticLists";
+import {
+  supportMessagesStatusOptions,
+  supportTypeOptions,
+} from "../../../Components/Logic/StaticLists";
 import SupportItem from "./SupportItem";
 import styles from "../Admin.module.css";
 import { Select } from "../../../shared/index";
@@ -22,6 +25,7 @@ import { Row } from "../../../shared/bootstrap";
 const Support = () => {
   const [searchFilter, setSearchFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [typesFilter, setTypesFilter] = useState("");
   const token = useSelector((state) => state.userInfo.token);
   const { t: key } = useTranslation();
   let isArLang = localStorage.getItem("i18nextLng") === "ar";
@@ -47,8 +51,13 @@ const Support = () => {
     setSearchFilter(searchInput);
   }, []);
 
-  const filterChangeHandler = useCallback((val) => {
-    setStatusFilter(val ? val : "");
+  const filterChangeHandler = useCallback((val, isTypeFilter) => {
+    const myVal = val ? val : "";
+    if (isTypeFilter) {
+      setTypesFilter(myVal);
+    } else {
+      setStatusFilter(myVal);
+    }
   }, []);
 
   const filteredData = useMemo(() => {
@@ -64,9 +73,10 @@ const Support = () => {
             .trim()
             .toLowerCase()
             .includes(searchFilter.trim().toLowerCase())) &&
-        (!statusFilter || msg.status.trim() === statusFilter.trim())
+        (!statusFilter || msg.status.trim() === statusFilter.trim()) &&
+        (!typesFilter || msg.subject.trim() === typesFilter.trim())
     );
-  }, [messages, searchFilter, statusFilter]);
+  }, [messages, searchFilter, statusFilter, typesFilter]);
 
   return (
     <div className="admin_body height_container position-relative p-2">
@@ -83,15 +93,27 @@ const Support = () => {
             text={key("searchMessages")}
           />
         </div>
-        <div>
+        <div className="d-flex align-items-center flex-wrap">
           <Select
-            options={supportMessagesStatusOptions[currentLang]}
-            onChange={(val) => filterChangeHandler(val ? val.value : null)}
-            className={`${isArLang ? "text-end" : "text-start"} my-2 ${
+            options={supportTypeOptions[currentLang]}
+            onChange={(val) =>
+              filterChangeHandler(val ? val.value : null, true)
+            }
+            className={`${isArLang ? "text-end" : "text-start"} m-2 ${
               styles.select_type
             }`}
             isRtl={isArLang ? true : false}
             placeholder={key("status")}
+            isClearable
+          />
+          <Select
+            options={supportMessagesStatusOptions[currentLang]}
+            onChange={(val) => filterChangeHandler(val ? val.value : null)}
+            className={`${isArLang ? "text-end" : "text-start"} m-2 ${
+              styles.select_type
+            }`}
+            isRtl={isArLang ? true : false}
+            placeholder={key("type")}
             isClearable
           />
         </div>

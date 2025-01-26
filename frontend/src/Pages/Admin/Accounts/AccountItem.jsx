@@ -69,6 +69,7 @@ const AccountItem = ({ acc, refetch }) => {
                       ["address", acc?.address],
                       ["taxNumber", acc?.taxNumber],
                       ["commercialRecord", acc?.commercialRecord],
+                      ["accountID", acc?._id],
                     ]}
                   />
                 </ul>

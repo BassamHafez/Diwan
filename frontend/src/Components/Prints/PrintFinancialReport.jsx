@@ -18,6 +18,7 @@ const PrintFinancialReport = ({
   dataEnteried,
   isCompoundsReport,
 }) => {
+
   const { t: key } = useTranslation();
   const profileInfo = useSelector((state) => state.profileInfo.data);
 

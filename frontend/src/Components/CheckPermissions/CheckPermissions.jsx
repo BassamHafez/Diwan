@@ -20,7 +20,6 @@ const CheckPermissions = memo(
       if (isTimeExpired === true) {
         notifyError();
       }
-      console.log("no");
     };
 
     if (!myPermissions?.length > 0) {
