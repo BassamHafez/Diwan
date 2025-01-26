@@ -1,45 +1,32 @@
 import {
   noDataImg,
-  finishTasks,
+  summary,
   noExpenses,
   estate,
   support,
   upgrade,
 } from "../../../shared/images";
-
 import styles from "./NoData.module.css";
 
-const NoData = ({ text, type, smallSize }) => {
-  let myImage = noDataImg;
-  switch (type) {
-    case "tasks":
-      myImage = finishTasks;
-      break;
-    case "expenses":
-      myImage = noExpenses;
-      break;
-    case "estate":
-      myImage = estate;
-      break;
-    case "support":
-      myImage = support;
-      break;
-    case "upgrade":
-      myImage = upgrade;
-      break;
+const NoData = ({ text, type, smallSize, verySmallSize }) => {
+  const imageMap = {
+    tasks: summary,
+    expenses: noExpenses,
+    estate: estate,
+    support: support,
+    upgrade: upgrade,
+  };
+  const myImage = imageMap[type] || noDataImg;
 
-    default:
-      myImage = noDataImg;
-      break;
-  }
+  const imgSizeClass = verySmallSize
+    ? styles.verySmall
+    : smallSize
+    ? styles.small_size
+    : styles.medium_size;
 
   return (
-    <div
-      className={`${styles.noData} ${
-        smallSize ? styles.small_size : styles.medium_size
-      }`}
-    >
-      <img src={myImage} alt="noDataImg" />
+    <div className={`${styles.noData} ${imgSizeClass}`}>
+      <img src={myImage} alt={`No data available for ${type || "general"}`} />
       <span>{text}</span>
     </div>
   );

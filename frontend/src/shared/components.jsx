@@ -4,6 +4,7 @@ import SearchField from "../Components/Search/SearchField";
 import LoadingOne from "../Components/UI/Loading/LoadingOne";
 import ButtonOne from "../Components/UI/Buttons/ButtonOne";
 import ButtonTwo from "../Components/UI/Buttons/ButtonTwo";
+import ButtonThree from "../Components/UI/Buttons/ButtonThree";
 import MainModal from "../Components/UI/Modals/MainModal";
 import ModalForm from "../Components/UI/Modals/ModalForm";
 import LogOutModal from "../Components/UI/Modals/LogOutModal";
@@ -24,6 +25,8 @@ import HomeTestimonalsSlider from "../Pages/Home/HomeTestimonalsSlider";
 import Hero from "../Components/Hero/Hero";
 import CheckMySubscriptions from "../Components/CheckPermissions/CheckMySubscriptions";
 import CheckPermissions from "../Components/CheckPermissions/CheckPermissions";
+import EdietPenIcon from "../Components/UI/Buttons/EdietPenIcon";
+import CheckSubscriptionRender from "../Components/CheckPermissions/CheckSubscriptionRender";
 
 export {
   MainTitle,
@@ -32,6 +35,7 @@ export {
   LoadingOne,
   ButtonOne,
   ButtonTwo,
+  ButtonThree,
   MainModal,
   LogOutModal,
   InputErrorMessage,
@@ -51,5 +55,7 @@ export {
   HomeTestimonalsSlider,
   Hero,
   CheckMySubscriptions,
-  CheckPermissions
+  CheckPermissions,
+  CheckSubscriptionRender,
+  EdietPenIcon
 };

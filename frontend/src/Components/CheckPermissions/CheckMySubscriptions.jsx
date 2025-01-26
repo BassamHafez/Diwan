@@ -9,6 +9,10 @@ const CheckMySubscriptions = memo(({ name, type, children, accountInfo }) => {
   const notifyError = () =>
     toast(key(`${type === "number" ? "featureEnded" : "unAvailableFeature"}`));
 
+  if (accountInfo?.account?.isVIP === true) {
+    return children;
+  }
+
   const isFeatureAvailable =
     type === "number"
       ? currentFeatures[name] > 0

@@ -594,33 +594,32 @@ const Contacts = () => {
         <MainModal
           show={showSelectContactTypeModal}
           onHide={() => setShowSelectContactTypeModal(false)}
-          modalSize="xl"
         >
-          <h2 className="my-3">{key("contactType")}</h2>
+          <h4 className="my-3">{key("contactType")}</h4>
           <div className={styles.select_contact_type}>
             <div onClick={() => triggerAddModalDependsOnSelection("broker")}>
-              <h5>
+              <span>
                 {key("add")} {key("broker")}
-              </h5>
+              </span>
             </div>
             <div onClick={() => triggerAddModalDependsOnSelection("tenant")}>
-              <h5>
+              <span>
                 {key("add")} {key("tenant")}
-              </h5>
+              </span>
             </div>
             <div onClick={() => triggerAddModalDependsOnSelection("landlord")}>
-              <h5>
+              <span>
                 {key("add")} {key("landlord")}
-              </h5>
+              </span>
             </div>
             <CheckMySubscriptions
               name="isServiceContactsAllowed"
               accountInfo={accountInfo}
             >
               <div onClick={() => triggerAddModalDependsOnSelection("service")}>
-                <h5>
+                <span>
                   {key("add")} {key("service")}
-                </h5>
+                </span>
               </div>
             </CheckMySubscriptions>
           </div>

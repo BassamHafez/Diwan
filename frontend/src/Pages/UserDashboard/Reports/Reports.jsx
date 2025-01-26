@@ -25,8 +25,8 @@ import {
 import { Row, Col } from "../../../shared/bootstrap";
 import {
   CheckMySubscriptions,
+  CheckSubscriptionRender,
   LoadingOne,
-  NoData,
 } from "../../../shared/components";
 
 const Reports = () => {
@@ -270,72 +270,59 @@ const Reports = () => {
           <Col sm={8} lg={9} xl={10}>
             <div className={`${styles.report_content} position-relative`}>
               {accountData === undefined && <LoadingOne />}
-              {reportTypeFilter === "landlordReport" &&
-                (accountData?.isFinancialReportsAllowed ? (
+              {reportTypeFilter === "landlordReport" && (
+                <CheckSubscriptionRender
+                  name="isFinancialReportsAllowed"
+                  accountData={accountData}
+                >
                   <LandlordReport
                     landlordOptions={landlordOptions}
                     compoundsOptions={compoundsOptions}
                     estatesOptions={estatesOptions}
                     filterType={landlordFilter}
                   />
-                ) : (
-                  <NoData
-                    type="upgrade"
-                    text={`${key("upgradePackage")} ${key(
-                      "isFinancialReportsAllowed"
-                    )}`}
-                  />
-                ))}
+                </CheckSubscriptionRender>
+              )}
 
-              {reportTypeFilter === "operationalReport" &&
-                (accountData?.isOperationalReportsAllowed ? (
+              {reportTypeFilter === "operationalReport" && (
+                <CheckSubscriptionRender
+                  name="isOperationalReportsAllowed"
+                  accountData={accountData}
+                >
                   <OperationalReport
                     landlordOptions={landlordOptions}
                     compoundsOptions={compoundsOptions}
                     estatesOptions={estatesOptions}
                     filterType={operationalFilter}
                   />
-                ) : (
-                  <NoData
-                    type="upgrade"
-                    text={`${key("upgradePackage")} ${key(
-                      "isOperationalReportsAllowed"
-                    )}`}
-                  />
-                ))}
+                </CheckSubscriptionRender>
+              )}
 
               {reportTypeFilter === "compoundsReport" &&
               compoundsFilter === "compoundsReport" ? (
-                accountData?.isCompoundsReportsAllowed ? (
+                <CheckSubscriptionRender
+                  name="isCompoundsReportsAllowed"
+                  accountData={accountData}
+                >
                   <CompoundsReport
                     landlordOptions={landlordOptions}
                     compoundsOptions={compoundsOptions}
                     filterType={compoundsFilter}
                   />
-                ) : (
-                  <NoData
-                    type="upgrade"
-                    text={`${key("upgradePackage")} ${key(
-                      "isCompoundsReportsAllowed"
-                    )}`}
-                  />
-                )
+                </CheckSubscriptionRender>
               ) : (
                 reportTypeFilter === "compoundsReport" &&
-                compoundsFilter === "compoundDetailsReport" &&
-                (accountData?.isCompoundsReportsAllowed ? (
-                  <CompoundDetailsReports
-                    compoundsOptions={compoundsOptions}
-                    filterType={compoundsFilter}
-                  />
-                ) : (
-                  <NoData
-                    type="upgrade"
-                    text={`${key("upgradePackage")} ${key(
-                      "isCompoundsReportsAllowed"
-                    )}`}
-                  />
-                ))
+                compoundsFilter === "compoundDetailsReport" && (
+                  <CheckSubscriptionRender
+                    name="isCompoundsReportsAllowed"
+                    accountData={accountData}
+                  >
+                    <CompoundDetailsReports
+                      compoundsOptions={compoundsOptions}
+                      filterType={compoundsFilter}
+                    />
+                  </CheckSubscriptionRender>
+                )
               )}
             </div>
           </Col>

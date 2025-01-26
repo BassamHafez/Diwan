@@ -11,7 +11,10 @@ import styles from "./Tasks.module.css";
 import { useTranslation } from "react-i18next";
 import Row from "react-bootstrap/esm/Row";
 import { useSelector } from "react-redux";
-import { CheckMySubscriptions } from "../../../shared/components";
+import {
+  CheckMySubscriptions,
+  CheckSubscriptionRender,
+} from "../../../shared/components";
 
 const TaskContent = memo(
   ({
@@ -108,7 +111,10 @@ const TaskContent = memo(
               </CheckPermissions>
             </CheckMySubscriptions>
           </div>
-          {isTasksAllowed ? (
+          <CheckSubscriptionRender
+            name="isTasksAllowed"
+            accountData={accountInfo?.account}
+          >
             <Row
               className="mt-3 gy-3 position-relative"
               style={{ minHeight: "50vh" }}
@@ -125,18 +131,17 @@ const TaskContent = memo(
                     />
                   ))
                 ) : (
-                  <NoData type="tasks" text={key("noTasks")} />
+                  <NoData
+                    type="tasks"
+                    verySmallSize={true}
+                    text={key("noTasks")}
+                  />
                 )
               ) : (
                 <LoadingOne />
               )}
             </Row>
-          ) : (
-            <NoData
-              type="upgrade"
-              text={`${key("upgradePackage")} ${key("isTasksAllowed")}`}
-            />
-          )}
+          </CheckSubscriptionRender>
         </div>
         {showAddTaskModal && (
           <ModalForm

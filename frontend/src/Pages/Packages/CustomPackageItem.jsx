@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleChevronLeft,
   faCircleChevronRight,
+  faYinYang,
 } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from "react-redux";
 import MainModal from "../../Components/UI/Modals/MainModal";
@@ -28,6 +29,7 @@ const CustomPackageItem = ({
 }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [subCost, setSubCost] = useState(0);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const profileInfo = useSelector((state) => state.profileInfo.data);
@@ -41,6 +43,7 @@ const CustomPackageItem = ({
   const dispatch = useDispatch();
 
   const sendPackageData = async () => {
+    setIsLoading(true);
     if (compoundsCount && !estatesCount) {
       notifyError(key("uselessCompound"));
       return;
@@ -94,6 +97,7 @@ const CustomPackageItem = ({
     } else {
       setShowLoginModal(true);
     }
+    setIsLoading(false);
   };
 
   const paymentMethods = () => {
@@ -152,11 +156,13 @@ const CustomPackageItem = ({
           profileInfo={profileInfo}
         >
           <div className="text-center pt-4 pb-2">
-            <ButtonThree
-              onClick={sendPackageData}
-              color="white"
-              text={key("orderPackage")}
-            />
+            <ButtonThree onClick={sendPackageData} color="white">
+              {isLoading ? (
+                <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
+              ) : (
+                <span>{key("orderPackage")}</span>
+              )}
+            </ButtonThree>
           </div>
         </CheckPermissions>
       </div>

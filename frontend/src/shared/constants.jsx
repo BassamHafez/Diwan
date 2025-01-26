@@ -44,7 +44,7 @@ export {
   faClockRotateLeft,
   faTag,
   faWrench,
-  faTrashCan 
+  faTrashCan ,
 } from "@fortawesome/free-solid-svg-icons";
 export {
   faFolderOpen,

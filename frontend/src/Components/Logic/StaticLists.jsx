@@ -36,6 +36,17 @@ export const customPackage = {
     { label: "customPackageMSg3", value: "false" },
   ],
 };
+export const elitePackage = {
+  _id: "1",
+  arTitle: "باقة النخبة",
+  enTitle: "Elite Package",
+  features: [
+    { label: "elitePackageMSg1", value: "false" },
+    { label: "elitePackageMSg2", value: "false" },
+    { label: "elitePackageMSg3", value: "false" },
+    { label: "elitePackageMSg4", value: "false" },
+  ],
+};
 export const maxEstatesInCompoundOriginalOptions = [
   { label: "3", value: 3 },
   { label: "10", value: 10 },
@@ -282,6 +293,16 @@ export const supportMessagesStatusOptions = {
     { label: "معلقة", value: "pending" },
     { label: "مكتملة", value: "completed" },
     { label: "مؤرشفة", value: "archived" },
+  ],
+};
+export const supportTypeOptions = {
+  en: [
+    { label: "All", value: "" },
+    { label: "packages", value: "VIP Package" },
+  ],
+  ar: [
+    { label: "الكل", value: "" },
+    { label: "الباقات", value: "VIP Package" },
   ],
 };
 
@@ -536,9 +557,11 @@ export const countriesOptions = {
     { label: "أرمينيا", value: "Armenia-أرمينيا" },
     { label: "أستراليا", value: "Australia-أستراليا" },
     { label: "النمسا", value: "Austria-النمسا" },
+    { label: "النرويج", value: "Norway-النرويج" },
     { label: "أذربيجان", value: "Azerbaijan-أذربيجان" },
     { label: "الباهاما", value: "Bahamas-الباهاما" },
     { label: "البحرين", value: "Bahrain-البحرين" },
+    { label: "باكستان", value: "Pakistan-باكستان" },
     { label: "بنغلاديش", value: "Bangladesh-بنغلاديش" },
     { label: "باربادوس", value: "Barbados-باربادوس" },
     { label: "بيلاروسيا", value: "Belarus-بيلاروسيا" },
@@ -605,6 +628,7 @@ export const countriesOptions = {
     { label: "فنلندا", value: "Finland-فنلندا" },
     { label: "فرنسا", value: "France-فرنسا" },
     { label: "الغابون", value: "Gabon-الغابون" },
+    { label: "عمان", value: "Oman-عمان" },
     { label: "غامبيا", value: "Gambia-غامبيا" },
     { label: "جورجيا", value: "Georgia-جورجيا" },
     { label: "ألمانيا", value: "Germany-ألمانيا" },
@@ -671,6 +695,7 @@ export const countriesOptions = {
     { label: "نيجيريا", value: "Nigeria-نيجيريا" },
     { label: "جزر مارشال", value: "Marshall Islands-جزر مارشال" },
     { label: "فلسطين", value: "Palestine-فلسطين" },
+    { label: "بالاو", value: "Palau-بالاو" },
     { label: "بنما", value: "Panama-بنما" },
     {
       label: "بابوا غينيا الجديدة",
@@ -742,6 +767,9 @@ export const countriesOptions = {
     { label: "اليمن", value: "Yemen-اليمن" },
     { label: "زامبيا", value: "Zambia-زامبيا" },
     { label: "زيمبابوي", value: "Zimbabwe-زيمبابوي" },
+    { label: "كوريا الشمالية", value: "North Korea-كوريا الشمالية" },
+    { label: "كوريا الجنوبية", value: "South Korea-كوريا الجنوبية" },
+    { label: "مقدونيا الشمالية", value: "North Macedonia-مقدونيا الشمالية" },
   ],
 };
 
@@ -767,22 +795,6 @@ export const reportsFiltering = {
     { label: "المصروفات", value: "expense" },
   ],
 };
-
-//dummy data
-export const chartsData = [
-  { totalPaid: 700, totalPending: 200, month: 1 },
-  { totalPaid: 900, totalPending: 1500, month: 2 },
-  { totalPaid: 1000, totalPending: 200, month: 3 },
-  { totalPaid: 800, totalPending: 300, month: 4 },
-  { totalPaid: 500, totalPending: 1000, month: 5 },
-  { totalPaid: 1200, totalPending: 1600, month: 6 },
-  { totalPaid: 1600, totalPending: 300, month: 7 },
-  { totalPaid: 900, totalPending: 800, month: 8 },
-  { totalPaid: 1500, totalPending: 1200, month: 9 },
-  { totalPaid: 400, totalPending: 200, month: 10 },
-  { totalPaid: 1800, totalPending: 1100, month: 11 },
-  { totalPaid: 1800, totalPending: 1100, month: 12 },
-];
 
 // ----------------------------------------------------------Saudi Arabia----------------------------
 
