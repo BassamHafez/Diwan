@@ -15,7 +15,7 @@ import { FontAwesomeIcon } from "../../shared/index";
 import { Col } from "../../shared/bootstrap";
 import ContactForm from "../Contact/ContactForm";
 
-const PackageItem = ({ pack, type}) => {
+const PackageItem = ({ pack, type }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showVipContactModal, setShowVipContactModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -43,17 +43,28 @@ const PackageItem = ({ pack, type}) => {
         )
       : "0";
 
+  const handlePackageErrors = (message) => {
+    const errorMessages = {
+      "Package compounds less than the existing compounds":
+        key("subErrorCompound"),
+      "Package estates less than the existing estates": key("subErrorEstates"),
+      "Package users less than the existing members": key("subErrorUsers"),
+      "Max estates in compound less than existing max estates":
+        key("subErrorMaxEstate"),
+      "VIP account can't subscribe": key("vipPrevent"),
+    };
+
+    notifyError(errorMessages[message] || key("wrong"));
+  };
+
   const getReadyPackage = async () => {
     setIsLoading(true);
-    let values = {};
-    if (type === "vip") {
-      values = { price: pack._id };
-    } else {
-      values = { packageId: pack._id };
-    }
+    const values =
+      type === "vip" ? { price: pack._id } : { packageId: pack._id };
+
     const res = await mainFormsHandlerTypeRaw({
       formData: values,
-      token: token,
+      token,
       method: "post",
       type: `accounts/${accountInfo?.account?._id}/subscribe-package`,
     });
@@ -63,28 +74,8 @@ const PackageItem = ({ pack, type}) => {
       dispatch(fetchAccountData(token));
       setIsLoading(false);
       setShowPackageData(true);
-    } else if (
-      res.response.data.message ===
-      "Package compounds less than the existing compounds"
-    ) {
-      notifyError(key("subErrorCompound"));
-    } else if (
-      res.response.data.message ===
-      "Package estates less than the existing estates"
-    ) {
-      notifyError(key("subErrorEstates"));
-    } else if (
-      res.response.data.message ===
-      "Package users less than the existing members"
-    ) {
-      notifyError(key("subErrorUsers"));
-    } else if (
-      res.response.data.message ===
-      "Max estates in compound less than existing max estates"
-    ) {
-      notifyError(key("subErrorMaxEstate"));
     } else {
-      notifyError(key("wrong"));
+      handlePackageErrors(res.response?.data?.message);
     }
     setIsLoading(false);
   };
@@ -203,7 +194,7 @@ const PackageItem = ({ pack, type}) => {
           </div>
           <div className="text-center pt-4 pb-2">
             {type === "vip" ? (
-              <ButtonThree onClick={subscribtionHandler}>
+              <ButtonThree color="white" onClick={subscribtionHandler}>
                 {key("contact")}
               </ButtonThree>
             ) : (

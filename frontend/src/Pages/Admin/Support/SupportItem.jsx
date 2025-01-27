@@ -161,7 +161,6 @@ const SupportItem = ({ msgData, refetch }) => {
           </div>
         </div>
       </Col>
-
       {showDeleteModal && (
         <MainModal
           show={showDeleteModal}
@@ -194,7 +193,7 @@ const SupportItem = ({ msgData, refetch }) => {
           <SubscribeVip
             refetch={refetch}
             hideModal={hideSubscribeModalHandler}
-            accountId={msgData?.accountId}
+            accountId={msgData?.account?._id}
           />
         </ModalForm>
       )}

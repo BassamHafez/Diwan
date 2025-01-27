@@ -12,6 +12,8 @@ import {
   AccordionContent,
 } from "../../../shared/components";
 import { Accordion, Col } from "../../../shared/bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCrown } from "@fortawesome/free-solid-svg-icons";
 
 const AccountItem = ({ acc, refetch }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -54,7 +56,12 @@ const AccountItem = ({ acc, refetch }) => {
     <>
       <Col xl={4} md={6}>
         <div className={styles.item}>
-          <h5 className="mb-3">{acc.name}</h5>
+          <h5 className="mb-3">
+            {acc.isVIP && (
+              <FontAwesomeIcon className="text-warning" icon={faCrown} />
+            )}{" "}
+            {acc.name}{" "}
+          </h5>
 
           <div className="mb-4">
             <Accordion>

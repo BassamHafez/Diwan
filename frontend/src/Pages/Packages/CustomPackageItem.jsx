@@ -16,6 +16,7 @@ import { toast } from "react-toastify";
 import CheckPermissions from "../../Components/CheckPermissions/CheckPermissions";
 import fetchAccountData from "../../Store/accountInfo-actions";
 import fire from "../../assets/svg/fire.svg";
+import { crown, vip } from "../../shared/images";
 
 const CustomPackageItem = ({
   features,
@@ -26,6 +27,7 @@ const CustomPackageItem = ({
   isNoFixedHeight,
   estatesCount,
   compoundsCount,
+  isMySub,
 }) => {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showPackageData, setShowPackageData] = useState(false);
@@ -33,7 +35,7 @@ const CustomPackageItem = ({
   const [subCost, setSubCost] = useState(0);
   const accountInfo = useSelector((state) => state.accountInfo.data);
   const profileInfo = useSelector((state) => state.profileInfo.data);
-
+  const isVipAcc = accountInfo?.account?.isVIP;
   const navigate = useNavigate();
   const token = JSON.parse(localStorage.getItem("token"));
   const { t: key } = useTranslation();
@@ -41,6 +43,21 @@ const CustomPackageItem = ({
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
   const dispatch = useDispatch();
+
+  const handleSubscriptionErrors = (message) => {
+    const errorMessages = {
+      "Subscribed compounds less than the existing compounds":
+        key("subErrorCompound"),
+      "Subscribed estates less than the existing estates":
+        key("subErrorEstates"),
+      "Subscribed users less than the existing members": key("subErrorUsers"),
+      "Max estates in compound less than existing max estates":
+        key("subErrorMaxEstate"),
+      "VIP account can't subscribe": key("vipPrevent"),
+    };
+
+    notifyError(errorMessages[message] || key("wrong"));
+  };
 
   const sendPackageData = async () => {
     setIsLoading(true);
@@ -59,6 +76,7 @@ const CustomPackageItem = ({
       });
 
       const myType = `accounts/${accountInfo?.account?._id}/subscribe`;
+
       const res = await mainFormsHandlerTypeRaw({
         token: token,
         formData: formData,
@@ -71,28 +89,8 @@ const CustomPackageItem = ({
         setSubCost(res.data?.subscriptionCost);
         dispatch(fetchAccountData(token));
         setShowPackageData(true);
-      } else if (
-        res.response.data.message ===
-        "Subscribed compounds less than the existing compounds"
-      ) {
-        notifyError(key("subErrorCompound"));
-      } else if (
-        res.response.data.message ===
-        "Subscribed estates less than the existing estates"
-      ) {
-        notifyError(key("subErrorEstates"));
-      } else if (
-        res.response.data.message ===
-        "Subscribed users less than the existing members"
-      ) {
-        notifyError(key("subErrorUsers"));
-      } else if (
-        res.response.data.message ===
-        "Max estates in compound less than existing max estates"
-      ) {
-        notifyError(key("subErrorMaxEstate"));
       } else {
-        notifyError(key("wrong"));
+        handleSubscriptionErrors(res.response?.data?.message);
       }
     } else {
       setShowLoginModal(true);
@@ -109,10 +107,14 @@ const CustomPackageItem = ({
     <div className={styles.package_side}>
       <div className={`${styles.package} ${styles.custom_border}`}>
         <div className={styles.package_type}>
-          <img src={fire} alt="fire" />
+          <img src={isVipAcc && isMySub ? crown : fire} alt="logo" />
           <div className="d-flex flex-column">
             <h4 className="text-center fw-bold">
-              {title ? title : key("customPackage")}{" "}
+              {isVipAcc && isMySub
+                ? key("eliteTitle")
+                : title
+                ? title
+                : key("customPackage")}{" "}
             </h4>
             {remainingTime && (
               <span className={styles.time_span}>
@@ -127,26 +129,41 @@ const CustomPackageItem = ({
           }`}
         >
           <ul>
-            {features?.map(
-              (feature, index) =>
-                feature.value !== false &&
-                feature.value !== undefined &&
-                Number(feature.value) > 0 && (
-                  <li key={index}>
-                    <FontAwesomeIcon
-                      className={`${styles.list_icon}`}
-                      icon={
-                        isArLang ? faCircleChevronLeft : faCircleChevronRight
-                      }
-                    />
-                    {key(feature.label)}{" "}
-                    {typeof feature.value !== "boolean"
-                      ? `(${Number(feature.value) > 0 ? feature.value : 0})`
-                      : feature.value === true
-                      ? ""
-                      : ""}
-                  </li>
-                )
+            {isVipAcc && isMySub ? (
+              <>
+                <li>
+                  <FontAwesomeIcon
+                    className={`${styles.list_icon}`}
+                    icon={isArLang ? faCircleChevronLeft : faCircleChevronRight}
+                  />
+                  {key("elitePackageMSg2")}
+                </li>
+                <div className={styles.vip_img}>
+                  <img src={vip} alt="vip" />
+                </div>
+              </>
+            ) : (
+              features?.map(
+                (feature, index) =>
+                  feature.value !== false &&
+                  feature.value !== undefined &&
+                  Number(feature.value) > 0 && (
+                    <li key={index}>
+                      <FontAwesomeIcon
+                        className={`${styles.list_icon}`}
+                        icon={
+                          isArLang ? faCircleChevronLeft : faCircleChevronRight
+                        }
+                      />
+                      {key(feature.label)}{" "}
+                      {typeof feature.value !== "boolean"
+                        ? `(${Number(feature.value) > 0 ? feature.value : 0})`
+                        : feature.value === true
+                        ? ""
+                        : ""}
+                    </li>
+                  )
+              )
             )}
           </ul>
         </div>
@@ -160,7 +177,7 @@ const CustomPackageItem = ({
               {isLoading ? (
                 <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
               ) : (
-                <span>{key("orderPackage")}</span>
+                <span>{isMySub ? key("update") : key("orderPackage")}</span>
               )}
             </ButtonThree>
           </div>

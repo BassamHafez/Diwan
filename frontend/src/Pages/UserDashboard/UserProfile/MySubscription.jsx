@@ -46,6 +46,7 @@ const MySubscription = ({ chooseActiveActive }) => {
           chooseActiveActive={chooseActiveActive}
           remainingTime={remainingTime}
           isNoFixedHeight={true}
+          isMySub={true}
         />
       </Col>
     </Row>

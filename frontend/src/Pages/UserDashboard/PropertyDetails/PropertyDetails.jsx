@@ -442,6 +442,7 @@ const PropertyDetails = () => {
                     tasks={tasks}
                     refetch={refetchTasks}
                     propId={propId}
+                    accountInfo={accountInfo}
                     isTasksAllowed={accountInfo?.account?.isTasksAllowed}
                   />
                 </Tab>
