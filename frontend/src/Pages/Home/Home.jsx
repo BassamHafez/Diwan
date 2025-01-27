@@ -3,7 +3,7 @@ import AOS from "aos";
 import Packages from "../Packages/Packages";
 import About from "../About/About";
 import Contact from "../Contact/Contact";
-import { useTranslation, useEffect } from "../../shared/hooks";
+import { useTranslation, useEffect, useNavigate } from "../../shared/hooks";
 import {
   MainTitle,
   HomeTestimonalsSlider,
@@ -13,6 +13,16 @@ import {
 
 const Home = () => {
   const { t: key } = useTranslation();
+  const role = JSON.parse(localStorage.getItem("role"));
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (role === "admin") {
+      navigate("/admin-dashboard");
+    } else if (role === "user") {
+      navigate("/dashboard");
+    }
+  }, [role, navigate]);
 
   useEffect(() => {
     AOS.init({ disable: "mobile" });

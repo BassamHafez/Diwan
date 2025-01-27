@@ -129,7 +129,7 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
               }
               if (data?.status === "success") {
                 await refetch();
-                refetchDetails();
+                await refetchDetails();
                 queryClient.invalidateQueries(["estates", token]);
                 queryClient.invalidateQueries(["compounds", token]);
                 resetForm();
