@@ -103,7 +103,7 @@ const Support = () => {
               styles.select_type
             }`}
             isRtl={isArLang ? true : false}
-            placeholder={key("status")}
+            placeholder={key("type")}
             isClearable
           />
           <Select
@@ -113,7 +113,7 @@ const Support = () => {
               styles.select_type
             }`}
             isRtl={isArLang ? true : false}
-            placeholder={key("type")}
+            placeholder={key("status")}
             isClearable
           />
         </div>

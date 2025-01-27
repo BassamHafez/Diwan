@@ -365,6 +365,7 @@ const CompoundDetails = () => {
                       tasks={tasks}
                       refetch={refetchTasks}
                       compId={compId}
+                      accountInfo={accountInfo}
                       isTasksAllowed={accountInfo?.account?.isTasksAllowed}
                     />
                   </div>

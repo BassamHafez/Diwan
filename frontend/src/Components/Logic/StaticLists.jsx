@@ -306,6 +306,17 @@ export const supportTypeOptions = {
   ],
 };
 
+//accounts
+export const AccountsTypeOptions = {
+  en: [
+    { label: "All", value: "" },
+    { label: "VIP", value: true },
+  ],
+  ar: [
+    { label: "الكل", value: "" },
+    { label: "VIP", value: true },
+  ],
+};
 //countries
 export const countriesOptions = {
   en: [

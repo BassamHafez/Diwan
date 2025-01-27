@@ -15,11 +15,7 @@ import {
   FontAwesomeIcon,
   Select,
 } from "../../../shared/index";
-import {
-  faSpinner,
-  toast,
-  object,
-} from "../../../shared/constants";
+import { faSpinner, toast, object } from "../../../shared/constants";
 import {
   useEffect,
   useState,
@@ -133,9 +129,9 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
               }
               if (data?.status === "success") {
                 await refetch();
-                await refetchDetails();
-                await queryClient.invalidateQueries(["estates", token]);
-                await queryClient.invalidateQueries(["compounds", token]);
+                refetchDetails();
+                queryClient.invalidateQueries(["estates", token]);
+                queryClient.invalidateQueries(["compounds", token]);
                 resetForm();
                 resolve();
                 hideModal();

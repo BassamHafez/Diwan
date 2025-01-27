@@ -661,6 +661,7 @@
   "subSuccess":"Subscribed successfully",
   "invalidMonth":"Invalid Month",
   "inMonths":"In Months",
+  "vipPrevent":"You are already subscribed in Elite Package (VIP)",
   "-----------------------permissions----------------------------": "-------------------------permissions---------------------------",
   "FAVORITES": "Favorites",
   "ADD_COMPOUND": "Add Estate",
