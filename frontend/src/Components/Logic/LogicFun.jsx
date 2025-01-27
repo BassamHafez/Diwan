@@ -97,7 +97,7 @@ export const generatePDF = (id, name, isFilesExtractAllowed) => {
   }
   const element = document.getElementById(`${id}`);
   const options = {
-    margin: 2,
+    margin: [10, 0, 10, 0],
     filename: name ? name : "file",
     html2canvas: { scale: 4 },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },

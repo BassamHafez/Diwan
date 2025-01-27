@@ -18,6 +18,7 @@
   padding-inline: 0.625rem;
   color: white;
   border-radius: 0.625rem;
+  width: 100%;
 }
 .avatar,
 .header h2,
@@ -39,6 +40,8 @@
   box-shadow: 0 0 0.1875rem rgba(0, 0, 0, 0.163);
   padding: 0.625rem;
   border-radius: 0.625rem;
+  page-break-inside: avoid;
+  page-break-after: auto;
 }
 .information h5 {
   margin: 0.1875rem 0 0.625rem 0;
@@ -66,19 +69,21 @@
   font-size: 0.9375rem;
   text-align: center;
 }
-
 .contract_table {
-  border-collapse: separate !important;
   border-spacing: 0;
+  width: 100%;
+  border-collapse: collapse;
+  page-break-inside: avoid;
+}
+.table_body tr {
+  page-break-inside: avoid;
+  page-break-after: auto ;
 }
 .table_body tr td {
   text-align: center;
   background-color: transparent;
   padding: 0.625rem;
   font-size: 15px;
-}
-.note_td {
-  font-size: 0.875rem;
 }
 .table_head tr th {
   background-color: #f8f9fd;
@@ -87,6 +92,10 @@
   font-weight: 500;
   padding: 0.625rem;
 }
+.note_td {
+  font-size: 0.875rem;
+}
+
 
 .notes {
   text-align: start;

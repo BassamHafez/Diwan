@@ -33,10 +33,15 @@
 }
 
 .contract_table {
-  border-collapse: separate !important;
   border-spacing: 0;
+  width: 100%;
+  border-collapse: collapse;
+  page-break-inside: avoid;
 }
-
+.table_body tr {
+  page-break-inside: avoid;
+  page-break-after: auto ;
+}
 .table_body tr td {
   text-align: center;
   background-color: transparent;
