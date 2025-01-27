@@ -105,30 +105,6 @@ export const generatePDF = (id, name, isFilesExtractAllowed) => {
   html2pdf(element, options);
 };
 
-// export const generatePDF = (id, name, isFilesExtractAllowed) => {
-//   if (isFilesExtractAllowed === false) {
-//     notifyError();
-//     return;
-//   }
-
-//   const element = document.getElementById(`${id}`);
-//   const options = {
-//     margin: 2,
-//     filename: name ? name : "file",
-//     html2canvas: {
-//       scale: 4, // Increase resolution
-//       useCORS: true, // Enable cross-origin image loading
-//     },
-//     jsPDF: {
-//       unit: "mm",
-//       format: "a4",
-//       orientation: "portrait",
-//     },
-//   };
-
-//   html2pdf().set(options).from(element).save();
-// };
-
 export const filterAndRenameKeys = (
   data,
   keysToKeepAndRename,
@@ -337,7 +313,7 @@ export const getContractStatus = (isCanceled, startDate, endDate) => {
 };
 
 // revenues
-import { addMonths, differenceInMonths, format } from "date-fns";
+import { addMonths, addYears, differenceInMonths, format } from "date-fns";
 
 export const calculateRevenues = (
   totalAmount,
@@ -355,7 +331,10 @@ export const calculateRevenues = (
     month: 30,
   };
 
-  if (!paymentPeriodUnit || (paymentPeriodUnit !== "year" && !unitMultipliers[paymentPeriodUnit])) {
+  if (
+    !paymentPeriodUnit ||
+    (paymentPeriodUnit !== "year" && !unitMultipliers[paymentPeriodUnit])
+  ) {
     console.error(
       "Invalid paymentPeriodUnit. Use 'day', 'week', 'month', or 'year'"
     );
@@ -363,13 +342,16 @@ export const calculateRevenues = (
   }
 
   if (paymentPeriodUnit === "year") {
-    const totalYears = end.getFullYear() - start.getFullYear();
-    const baseAmount = Math.floor(totalAmount / totalYears);
-    let remainingAmount = totalAmount - baseAmount * totalYears;
+    const intervalYears = paymentPeriodValue || 1;
+    const totalIntervals = Math.ceil(
+      (end.getFullYear() - start.getFullYear() + 1) / intervalYears
+    );
+    const baseAmount = Math.floor(totalAmount / totalIntervals);
+    let remainingAmount = totalAmount - baseAmount * totalIntervals;
 
     let currentDate = new Date(start);
 
-    for (let i = 0; i < totalYears; i++) {
+    for (let i = 0; i < totalIntervals; i++) {
       let amount = baseAmount;
       if (remainingAmount > 0) {
         amount++;
@@ -381,18 +363,20 @@ export const calculateRevenues = (
         dueDate: format(currentDate, "yyyy-MM-dd"),
       });
 
-      currentDate.setFullYear(currentDate.getFullYear() + 1);
+      currentDate = addYears(currentDate, intervalYears);
     }
 
     return revenues;
   } else if (paymentPeriodUnit === "month") {
+    const intervalMonths = paymentPeriodValue || 1;
     const totalMonths = differenceInMonths(end, start);
-    const baseAmount = Math.floor(totalAmount / totalMonths);
-    let remainingAmount = totalAmount - baseAmount * totalMonths;
+    const totalIntervals = Math.ceil(totalMonths / intervalMonths);
+    const baseAmount = Math.floor(totalAmount / totalIntervals);
+    let remainingAmount = totalAmount - baseAmount * totalIntervals;
 
     let currentDate = new Date(start);
 
-    for (let i = 0; i < totalMonths; i++) {
+    for (let i = 0; i < totalIntervals; i++) {
       let amount = baseAmount;
       if (remainingAmount > 0) {
         amount++;
@@ -404,7 +388,7 @@ export const calculateRevenues = (
         dueDate: format(currentDate, "yyyy-MM-dd"),
       });
 
-      currentDate = addMonths(currentDate, 1);
+      currentDate = addMonths(currentDate, intervalMonths);
     }
 
     return revenues;
@@ -412,7 +396,7 @@ export const calculateRevenues = (
     const intervalInDays =
       paymentPeriodValue * unitMultipliers[paymentPeriodUnit];
 
-    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    const totalDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
     const numIntervals = Math.ceil(totalDays / intervalInDays);
 
     const baseAmount = Math.floor(totalAmount / numIntervals);
@@ -437,7 +421,6 @@ export const calculateRevenues = (
     return revenues;
   }
 };
-
 
 const revenuesStatus = {
   en: {
