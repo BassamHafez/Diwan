@@ -1,6 +1,5 @@
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
 import VerifyPhoneForm from "./VerifyPhoneForm";
-import verifiedImage from "../../assets/verified.jpg";
 import { FontAwesomeIcon } from "../../shared/index";
 import { toast, faWhatsapp } from "../../shared/constants";
 import {
@@ -12,6 +11,7 @@ import {
 } from "../../shared/hooks";
 import { ModalForm, ButtonOne, MainTitle } from "../../shared/components";
 import { Row, Col } from "../../shared/bootstrap";
+import {verifiedImage} from "../../shared/images";
 
 const VerifyPhonePage = () => {
   const [showVerifyCodeModal, setShowVerifyCodeModal] = useState(false);

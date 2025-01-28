@@ -48,11 +48,11 @@ const TotalExAndRev = ({ type, paidAmount, total }) => {
             name: {
               offsetY: -10,
               color: "#fff",
-              fontSize: "13px",
+              fontSize: "0.75rem",
             },
             value: {
               color: "#fff",
-              fontSize: "30px",
+              fontSize: "1.5625rem",
               show: true,
             },
           },
