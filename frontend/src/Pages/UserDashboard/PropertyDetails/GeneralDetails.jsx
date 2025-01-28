@@ -1,7 +1,22 @@
-import { useTranslation } from "react-i18next";
 import styles from "./PropertyDetails.module.css";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Contracts from "./Contracts";
+import Revenue from "./Revenue";
+import CompoundEstates from "./CompoundEstates";
+import UpdateCompound from "../PropertyForms/UpdateCompound";
+import UpdateEstate from "../PropertyForms/UpdateEstate";
+import AOS from "aos";
+import CurrentContract from "./CurrentContract";
+import CompoundContracts from "./CompoundContracts";
+import Expenses from "./Expenses";
+import { memo } from "react";
 import {
+  CheckAllowedCompounds,
+  CheckPermissions,
+  ModalForm,
+  ButtonOne,
+} from "../../../shared/components";
+import {
+  faBuilding,
   faBolt,
   faBuildingUser,
   faCaretDown,
@@ -14,27 +29,17 @@ import {
   faStreetView,
   faUserTie,
   faWrench,
-} from "@fortawesome/free-solid-svg-icons";
-import Row from "react-bootstrap/esm/Row";
-import Col from "react-bootstrap/esm/Col";
-import ButtonOne from "../../../Components/UI/Buttons/ButtonOne";
-import Contracts from "./Contracts";
-import Revenue from "./Revenue";
-import CompoundEstates from "./CompoundEstates";
-import { useCallback, useEffect, useState } from "react";
-import ModalForm from "../../../Components/UI/Modals/ModalForm";
-import UpdateCompound from "../PropertyForms/UpdateCompound";
-import { faBuilding } from "@fortawesome/free-regular-svg-icons";
-import UpdateEstate from "../PropertyForms/UpdateEstate";
-import AOS from "aos";
-import CurrentContract from "./CurrentContract";
-import CompoundContracts from "./CompoundContracts";
-import Expenses from "./Expenses";
-import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissions";
-import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
-import { memo } from "react";
-import { useSelector } from "react-redux";
-import {propDetailsImage,propDetailsImage2} from "../../../shared/images";
+} from "../../../shared/constants";
+import { propDetailsImage, propDetailsImage2 } from "../../../shared/images";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useSelector,
+  useTranslation,
+} from "../../../shared/hooks";
+import { Row, Col } from "../../../shared/bootstrap";
+import { FontAwesomeIcon } from "../../../shared/index";
 
 const GeneralDetails = memo(
   ({

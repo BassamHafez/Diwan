@@ -1,6 +1,6 @@
-import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import {invoiceImage} from "../../../shared/images";
+import { invoiceImage } from "../../../shared/images";
+import { useTranslation } from "../../../shared/hooks";
+import { Link } from "../../../shared/index";
 
 const PolicyList = ({ list }) => {
   const { t: key } = useTranslation();

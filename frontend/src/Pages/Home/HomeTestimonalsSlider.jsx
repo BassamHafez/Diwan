@@ -1,15 +1,14 @@
-import { useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation, Autoplay } from "swiper/modules";
-import styles from "./HomeTestimonalsSlider.module.css";
 import AOS from "aos";
-import { like, dislike, love } from "../../shared/images";
-import { useQuery } from "@tanstack/react-query";
 import { mainFormsHandlerTypeRaw } from "../../util/Http";
-import LoadingOne from "../../Components/UI/Loading/LoadingOne";
 import TestimonialItem from "../../Components/TestimonialItem/TestimonialItem";
+import { useQuery, useEffect } from "../../shared/hooks";
+import { like, dislike, love } from "../../shared/images";
+import { LoadingOne } from "../../shared/components";
+import styles from "./HomeTestimonalsSlider.module.css";
 
 const HomeTestimonalsSlider = () => {
   const { data, isFetching } = useQuery({
