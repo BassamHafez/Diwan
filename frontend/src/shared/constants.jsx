@@ -45,6 +45,14 @@ export {
   faTag,
   faWrench,
   faTrashCan ,
+  faBolt,
+  faBuildingUser,
+  faDroplet,
+  faEarthAsia,
+  faMapLocationDot,
+  faSignature,
+  faStreetView,
+  faUserTie,
 } from "@fortawesome/free-solid-svg-icons";
 export {
   faFolderOpen,

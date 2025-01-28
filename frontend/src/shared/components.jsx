@@ -23,10 +23,11 @@ import MainFooter from "../Components/Footer/MainFooter";
 import PolicyList from "../Components/UI/Blocks/PolicyList";
 import HomeTestimonalsSlider from "../Pages/Home/HomeTestimonalsSlider";
 import Hero from "../Components/Hero/Hero";
+import EdietPenIcon from "../Components/UI/Buttons/EdietPenIcon";
 import CheckMySubscriptions from "../Components/CheckPermissions/CheckMySubscriptions";
 import CheckPermissions from "../Components/CheckPermissions/CheckPermissions";
-import EdietPenIcon from "../Components/UI/Buttons/EdietPenIcon";
 import CheckSubscriptionRender from "../Components/CheckPermissions/CheckSubscriptionRender";
+import CheckAllowedCompounds from "../Components/CheckPermissions/CheckAllowedCompounds";
 
 export {
   MainTitle,
@@ -57,5 +58,6 @@ export {
   CheckMySubscriptions,
   CheckPermissions,
   CheckSubscriptionRender,
+  CheckAllowedCompounds,
   EdietPenIcon
 };

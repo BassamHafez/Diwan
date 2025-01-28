@@ -1,17 +1,20 @@
-import Col from "react-bootstrap/esm/Col";
-import Row from "react-bootstrap/esm/Row";
 import styles from "./UserProfile.module.css";
 import SecurityForm from "./ProfileForms/SecurityForm";
-import { useTranslation } from "react-i18next";
-import MainModal from "../../../Components/UI/Modals/MainModal";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { mainDeleteFunHandler } from "../../../util/Http";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { userActions } from "../../../Store/userInfo-slice";
 import { saveIsLoginState } from "../../../Store/userInfo-actions";
-import {passImage} from "../../../shared/images"
+import { MainModal } from "../../../shared/components";
+import { passImage } from "../../../shared/images";
+import { Col, Row } from "../../../shared/bootstrap";
+import { toast } from "../../../shared/constants";
+import {
+  useState,
+  useDispatch,
+  useSelector,
+  useTranslation,
+} from "../../../shared/hooks";
+
 const ProfileSecurity = () => {
   const { t: key } = useTranslation();
   const [showDeActivateModal, setShowDeActivateModal] = useState(false);
@@ -21,7 +24,7 @@ const ProfileSecurity = () => {
   const navigate = useNavigate();
   const notifySuccess = (message) => toast.success(message);
   const notifyError = (message) => toast.error(message);
-  
+
   const LogOutProcess = () => {
     localStorage.removeItem("userData");
     dispatch(userActions.setRole(""));
