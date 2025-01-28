@@ -5,7 +5,6 @@ import avatar from "../assets/default.png";
 import noAvatar from "../assets/noAvatar.png";
 import organizationImage from "../assets/organization.png";
 //main
-import managmentImg from "../assets/house-with-garage-garage.webp";
 import cityImg from "../assets/luxurious-villa-with-modern-architectural-design.webp";
 import forgetPassImg from "../assets/forgetPassword.png";
 import noDataImg from "../assets/noData.webp";
@@ -51,7 +50,6 @@ export {
   whiteLogo,
   avatar,
   noAvatar,
-  managmentImg,
   cityImg,
   mada,
   masterCard,

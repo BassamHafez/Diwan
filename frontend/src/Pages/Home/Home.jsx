@@ -40,7 +40,7 @@ const Home = () => {
           data-aos-duration="1000"
         >
           <MainTitle title={key("packages")} />
-          <h2 className="mb-5 mt-3 fw-bold">{key("choosePackage")}</h2>
+          <h5 className="mb-5 mt-3 fw-bold h2">{key("choosePackage")}</h5>
           <Packages />
         </div>
       </section>
