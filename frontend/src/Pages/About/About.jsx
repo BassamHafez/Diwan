@@ -9,7 +9,7 @@ import {
   AccordionContent,
 } from "../../shared/components";
 import { Row, Col, Accordion } from "../../shared/bootstrap";
-import { cityImg, managmentImg, whiteLogo } from "../../shared/images";
+import { cityImg, whiteLogo } from "../../shared/images";
 
 const About = () => {
   const { t: key } = useTranslation();
@@ -93,16 +93,6 @@ const About = () => {
           <Row dir="ltr">
             <Col md={6}>
               <div className={styles.section1_img_side}>
-                <div className={styles.section1_img2}>
-                  <ImgComponent
-                    src={managmentImg}
-                    width="280px"
-                    height="11.6875rem"
-                    hash={imgHash.about1}
-                    lazyLoad={true}
-                    alt="managmentImg"
-                  />
-                </div>
                 <div className={styles.section1_img}>
                   <ImgComponent
                     src={cityImg}
