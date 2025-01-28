@@ -24,8 +24,6 @@ import CompoundEstates from "./CompoundEstates";
 import { useCallback, useEffect, useState } from "react";
 import ModalForm from "../../../Components/UI/Modals/ModalForm";
 import UpdateCompound from "../PropertyForms/UpdateCompound";
-import propDetailsImage from "../../../assets/propDetails.png";
-import propDetailsImage2 from "../../../assets/propDetails2.png";
 import { faBuilding } from "@fortawesome/free-regular-svg-icons";
 import UpdateEstate from "../PropertyForms/UpdateEstate";
 import AOS from "aos";
@@ -36,6 +34,7 @@ import CheckPermissions from "../../../Components/CheckPermissions/CheckPermissi
 import CheckAllowedCompounds from "../../../Components/CheckPermissions/CheckAllowedCompounds";
 import { memo } from "react";
 import { useSelector } from "react-redux";
+import {propDetailsImage,propDetailsImage2} from "../../../shared/images";
 
 const GeneralDetails = memo(
   ({

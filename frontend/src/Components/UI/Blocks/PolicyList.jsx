@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import invoiceImage from "../../../assets/invoice.jpg";
 import { Link } from "react-router-dom";
+import {invoiceImage} from "../../../shared/images";
 
 const PolicyList = ({ list }) => {
   const { t: key } = useTranslation();

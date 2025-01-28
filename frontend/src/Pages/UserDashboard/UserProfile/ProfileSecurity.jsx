@@ -1,6 +1,5 @@
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
-import passImage from "../../../assets/Login-amico.png";
 import styles from "./UserProfile.module.css";
 import SecurityForm from "./ProfileForms/SecurityForm";
 import { useTranslation } from "react-i18next";
@@ -12,7 +11,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { userActions } from "../../../Store/userInfo-slice";
 import { saveIsLoginState } from "../../../Store/userInfo-actions";
-
+import {passImage} from "../../../shared/images"
 const ProfileSecurity = () => {
   const { t: key } = useTranslation();
   const [showDeActivateModal, setShowDeActivateModal] = useState(false);
