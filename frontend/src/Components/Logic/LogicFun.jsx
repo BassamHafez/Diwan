@@ -3,6 +3,15 @@ import * as XLSX from "xlsx";
 import VerifyPhoneAlert from "../VerifyPhone/VerifyPhoneAlert";
 import { toast } from "react-toastify";
 import { mainAlertTime } from "./StaticLists";
+import {
+  differenceInCalendarDays,
+  differenceInCalendarMonths,
+  addMonths,
+  addYears,
+  differenceInMonths,
+  format,
+  differenceInCalendarYears,
+} from "date-fns";
 
 // main func
 const notifyAlert = () =>
@@ -214,46 +223,66 @@ export const formatWhatsAppLink = (phone) => {
 //contract func
 export const generatePeriodOptions = (
   unit,
-  daysDifference,
+  startDate,
+  endDate,
   renamedUnit,
   pluralUnit,
   everyWord
 ) => {
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
   let values = [];
   switch (unit) {
-    case "day":
+    case "day": {
+      const daysDifference = differenceInCalendarDays(end, start);
       values = [1, 2, 3, 7, 14, 30].filter((val) => val <= daysDifference);
       break;
-    case "week":
+    }
+    case "week": {
+      const daysDifference = differenceInCalendarDays(end, start);
       values = [1, 2, 4, 6, 8].filter((val) => val * 7 <= daysDifference);
       break;
-    case "month":
-      values = [1, 2, 3, 6, 12].filter((val) => val * 30 <= daysDifference);
+    }
+    case "month": {
+      const monthsDifference = differenceInCalendarMonths(end, start);
+      values = [1, 2, 3, 6, 12].filter((val) => val <= monthsDifference);
       break;
-    case "year":
-      values = [1, 2, 5, 10].filter((val) => val * 365 <= daysDifference);
+    }
+    case "year": {
+      const yearsDifference = differenceInCalendarYears(end, start);
+      values = [1, 2, 5, 10].filter((val) => val <= yearsDifference);
       break;
+    }
     default:
       values = [];
   }
+
   return values.map((val) => ({
     label: `${everyWord} ${val !== 1 ? `${val} ${pluralUnit}` : renamedUnit}`,
     value: val,
   }));
 };
 
-export const calculateDaysDifference = (start, end) => {
-  const startDate = new Date(start);
-  const endDate = new Date(end);
-  const diffInMs = endDate - startDate;
-  return Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
-};
-
 export const filterTimeUnitDpendsOnDaysDifference = (
   unitOptions,
-  daysDifference,
+  startDate,
+  endDate,
   isArLang
 ) => {
+  const daysDifference = differenceInCalendarDays(
+    new Date(endDate),
+    new Date(startDate)
+  );
+  const monthsDifference = differenceInCalendarMonths(
+    new Date(endDate),
+    new Date(startDate)
+  );
+  const yearsDifference = differenceInCalendarYears(
+    new Date(endDate),
+    new Date(startDate)
+  );
+
   const filteredUnits = unitOptions[isArLang ? "ar" : "en"].filter((unit) => {
     switch (unit.value) {
       case "day":
@@ -261,9 +290,9 @@ export const filterTimeUnitDpendsOnDaysDifference = (
       case "week":
         return daysDifference >= 7;
       case "month":
-        return daysDifference >= 30;
+        return monthsDifference >= 1;
       case "year":
-        return daysDifference >= 365;
+        return yearsDifference >= 1;
       default:
         return false;
     }
@@ -313,8 +342,6 @@ export const getContractStatus = (isCanceled, startDate, endDate) => {
 };
 
 // revenues
-import { addMonths, addYears, differenceInMonths, format } from "date-fns";
-
 export const calculateRevenues = (
   totalAmount,
   paymentPeriodValue,
@@ -335,6 +362,7 @@ export const calculateRevenues = (
     !paymentPeriodUnit ||
     (paymentPeriodUnit !== "year" && !unitMultipliers[paymentPeriodUnit])
   ) {
+    console.log(paymentPeriodUnit);
     console.error(
       "Invalid paymentPeriodUnit. Use 'day', 'week', 'month', or 'year'"
     );

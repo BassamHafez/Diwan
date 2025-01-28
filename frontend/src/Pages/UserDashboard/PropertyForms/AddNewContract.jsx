@@ -1,7 +1,6 @@
 import { mainFormsHandlerTypeRaw } from "../../../util/Http";
 import { unitOptions } from "../../../Components/Logic/StaticLists";
 import {
-  calculateDaysDifference,
   calculateRevenues,
   filterTimeUnitDpendsOnDaysDifference,
   generatePeriodOptions,
@@ -61,11 +60,10 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
 
   useEffect(() => {
     if (startDate && endDate) {
-      const daysDifference = calculateDaysDifference(startDate, endDate);
-
       const filteredUnits = filterTimeUnitDpendsOnDaysDifference(
         unitOptions,
-        daysDifference,
+        startDate,
+        endDate,
         isArLang
       );
 
@@ -80,12 +78,11 @@ const AddNewContract = ({ hideModal, refetch, refetchDetails }) => {
 
   useEffect(() => {
     if (paymentPeriodUnit && startDate && endDate) {
-      const daysDifference = calculateDaysDifference(startDate, endDate);
-
       setPaymentPeriodValueOptions(
         generatePeriodOptions(
           paymentPeriodUnit,
-          daysDifference,
+          startDate,
+          endDate,
           key(paymentPeriodUnit),
           key(`plural${paymentPeriodUnit}`),
           key("every")

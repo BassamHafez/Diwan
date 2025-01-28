@@ -5,7 +5,7 @@ import MainTitle from "../../../Components/UI/Words/MainTitle";
 
 const ContractRevenues = (props) => {
   const { t: key } = useTranslation();
-
+  
   return (
     <div className="position-relative">
       <div className="d-flex justify-content-center mb-2">
