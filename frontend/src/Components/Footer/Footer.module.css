@@ -6,7 +6,7 @@
     width: 100vw;
 }
 .footer_p{
-    background-color: var(--sub_color);
+    background-color: var(--deep_navy);
     color: white;
     display: flex;
     justify-content: center;

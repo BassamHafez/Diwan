@@ -6,8 +6,9 @@
 }
 .nav_list a {
   padding: 0;
-  margin-inline: 1.25rem;
+  margin-inline: 0.9375rem;
   font-weight: 600;
+  font-size: 1.0625rem;
   color: black;
   border-bottom: 0.125rem solid transparent;
   transition: all 0.4s;

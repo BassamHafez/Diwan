@@ -24,16 +24,16 @@
 
 /* sec2  about*/
 .section2_img_side {
-  background-color: var(--sub_color);
+  background-color: var(--deep_navy);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 40vh;
   min-width: 85%;
-  border-radius: 80px 10px 80px 10px;
+  border-radius: 100px 10px 100px 10px;
 }
 .section2_logo_img {
-  width: 200px;
+  width: 250px;
 }
 .section2_logo_img img {
   width: 100%;

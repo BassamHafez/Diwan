@@ -1,6 +1,7 @@
 //brand
 import logo from "../assets/logo/logo.png";
 import whiteLogo from "../assets/logo/whiteLogo.png";
+import logoWithCaption from "../assets/logo/logoWithCaption.png"
 import avatar from "../assets/default.webp";
 import noAvatar from "../assets/noAvatar.webp";
 import organizationImage from "../assets/organization.webp";
@@ -100,5 +101,6 @@ export {
   love,
   propDetailsImage,
   propDetailsImage2,
-  verifiedImage
+  verifiedImage,
+  logoWithCaption
 };
