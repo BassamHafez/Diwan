@@ -1,4 +1,4 @@
-# Diwan
+# Diiwan
 <h4>Skills</h4>
 Html, CSS, React Bootstrap, React Js, Redux toolkit , Mongo db, Node Js
 

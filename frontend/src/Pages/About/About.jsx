@@ -9,7 +9,7 @@ import {
   AccordionContent,
 } from "../../shared/components";
 import { Row, Col, Accordion } from "../../shared/bootstrap";
-import { cityImg, whiteLogo } from "../../shared/images";
+import { cityImg, logoWithCaption } from "../../shared/images";
 
 const About = () => {
   const { t: key } = useTranslation();
@@ -74,7 +74,7 @@ const About = () => {
                 data-aos-duration="1000"
               >
                 <div className={styles.section2_logo_img}>
-                  <img src={whiteLogo} alt="logo" />
+                  <img src={logoWithCaption} alt="logo" />
                 </div>
               </div>
             </Col>
