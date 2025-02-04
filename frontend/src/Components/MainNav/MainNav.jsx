@@ -75,7 +75,7 @@ const MainNav = () => {
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll" className={styles.nav_collapse}>
             <Nav
-              className={`${isArLang ? "ms-auto" : "me-auto"}  my-2 my-lg-0 ${
+              className={`${isArLang ? "ms-auto" : "me-auto"} my-lg-0 ${
                 styles.nav_list
               }`}
               navbarScroll
