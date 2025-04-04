@@ -90,7 +90,7 @@ const UpdateSubscriptions = ({ hideModal, refetch, sub }) => {
             {key("cancel")}
           </button>
 
-          <button className="submit_btn my-2" type="submit">
+          <button className="submit_btn my-2" type={isPending ? "button" : "submit"}>
             {key("update")}
           </button>
         </div>

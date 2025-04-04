@@ -240,7 +240,7 @@ const CompoundsReportForm = ({
                 profileInfo={profileInfo}
                 btnActions={["COMPOUNDS_REPORTS"]}
               >
-                <button className="submit_btn" type="submit">
+                <button className="submit_btn" type={isPending ? "button" : "submit"}>
                   {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
                   ) : (

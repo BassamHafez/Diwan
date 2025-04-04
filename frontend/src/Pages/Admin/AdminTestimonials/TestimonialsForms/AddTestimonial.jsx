@@ -167,7 +167,7 @@ const AddTestimonial = ({ hideModal, refetch }) => {
               {key("cancel")}
             </button>
 
-            <button className="submit_btn my-2" type="submit">
+            <button className="submit_btn my-2" type={isPending ? "button" : "submit"}>
               {isPending ? (
                 <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
               ) : (
