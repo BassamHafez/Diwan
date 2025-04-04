@@ -328,7 +328,7 @@ const ReportsForm = ({
                 profileInfo={profileInfo}
                 btnActions={[permissionArr]}
               >
-                <button className="submit_btn" type="submit">
+                <button className="submit_btn" type={isPending ? "button" : "submit"}>
                   {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
                   ) : (

@@ -92,7 +92,7 @@ const VerificationCode = ({ show, onHide }) => {
               </div>
 
               <div className="d-flex justify-content-center align-items-center mt-3 px-2">
-                <button className="submit_btn" type="submit">
+                <button className="submit_btn" type={isPending ? "button" : "submit"}>
                   {isPending ? (
                     <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
                   ) : (

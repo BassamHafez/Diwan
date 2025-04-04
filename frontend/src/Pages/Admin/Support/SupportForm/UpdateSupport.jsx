@@ -133,7 +133,7 @@ const UpdateSupport = ({ msgStatus, msgId, refetch, hideModal }) => {
             {key("cancel")}
           </button>
 
-          <button className="submit_btn bg-main my-2" type="submit">
+          <button className="submit_btn bg-main my-2" type={isPending ? "button" : "submit"}>
             {key("update")}
           </button>
         </div>

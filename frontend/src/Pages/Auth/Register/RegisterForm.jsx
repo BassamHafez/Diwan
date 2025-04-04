@@ -134,7 +134,7 @@ const RegisterForm = () => {
           </div>
 
           <div className="text-center my-4 px-5 position-relative">
-            <ButtonOne type="submit" borderd={true} classes="w-100">
+            <ButtonOne type={isPending ? "button" : "submit"} borderd={true} classes="w-100">
               {isPending ? (
                 <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
               ) : (

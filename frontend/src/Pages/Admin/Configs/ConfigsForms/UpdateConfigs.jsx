@@ -198,7 +198,7 @@ const UpdateConfigs = () => {
           </Row>
 
           <div className="d-flex justify-content-end align-items-center mt-3">
-            <button className="submit_btn my-2" type="submit">
+            <button className="submit_btn my-2" type={isPending ? "button" : "submit"}>
               {isPending ? (
                 <FontAwesomeIcon className="fa-spin" icon={faSpinner} />
               ) : (

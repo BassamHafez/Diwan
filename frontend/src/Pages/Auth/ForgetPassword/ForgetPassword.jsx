@@ -98,7 +98,7 @@ const ForgetPassword = () => {
                 </div>
 
                 <div className="d-flex justify-content-center align-items-center mt-4 px-2">
-                  <button type="submit" className="submit_btn bg-main">
+                  <button type={isPending ? "button" : "submit"} className="submit_btn bg-main">
                     {isPending ? (
                       <FontAwesomeIcon className="fa-spin" icon={faYinYang} />
                     ) : (

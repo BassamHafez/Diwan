@@ -24,7 +24,7 @@ const ContactForm = ({ isVip, hideModal }) => {
   } = useValidation();
   const requiredLabel = <span className="text-danger">*</span>;
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: mainFormsHandlerTypeRaw,
   });
 
@@ -150,7 +150,10 @@ const ContactForm = ({ isVip, hideModal }) => {
         </Row>
 
         <div className="text-center">
-          <ButtonTwo type="submit" text={key("sendMsg")} />
+          <ButtonTwo
+            type={isPending ? "button" : "submit"}
+            text={key("sendMsg")}
+          />
         </div>
       </Form>
     </Formik>
