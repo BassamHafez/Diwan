@@ -1,21 +1,15 @@
-# Diiwan
-<h4>Skills</h4>
-Html, CSS, React Bootstrap, React Js, Redux toolkit , Mongo db, Node Js
+<h3>Description</h3>
+<p>A modern platform designed to enhance the financial efficiency of real estate portfolios for owners and managers.</p>
 
-<h4>Description</h4>
-A modern platform designed to enhance the financial efficiency of real estate portfolios for owners and
-managers.
-<h5>Features</h5>
+<h3>Features</h3>
 <ul>
-  <li>Enables users to manage estates, compounds, contracts, revenues, expenses and more.</li>
-  <li>Financial management of portfolios, tenant management, rent collection, and maintenance tracking.
-</li>
-  <li>Performance indicators for portfolios, such as occupancy rates and financial comparisons.
-</li>
-  <li>Notifications, including SMS & Mail alerts, to streamline tenant communication and improve rental efficiency.
-</li>
-  <li>Centralized property management, with detailed tracking of tenant payments and property documents.
-</li>
-  <li>Storage and classification of documents related to owners and tenants by property.
-</li>
+  <li>Manage estates, compounds, contracts, revenues, expenses, and more.</li>
+  <li>Handle tenant profiles, rent collection, and maintenance requests.</li>
+  <li>Track portfolio performance with occupancy and financial indicators.</li>
+  <li>Send SMS and email alerts for efficient tenant communication.</li>
+  <li>Centralized management of tenant payments and property documents.</li>
+  <li>Store and categorize documents for both owners and tenants.</li>
+  <li>Flexible pricing plans with integrated electronic payments.</li>
+  <li>Multi-admin support with role-based permission control.</li>
+  <li>Powerful dashboard for owners, landlords, and brokers.</li>
 </ul>
