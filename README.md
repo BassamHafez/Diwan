@@ -1,3 +1,6 @@
+<h3>Tools</h3>
+<p>React JS, Redux Toolkit, React Bootstrap, Css, Html, Node Js, Mongo db</p>
+
 <h3>Description</h3>
 <p>A modern platform designed to enhance the financial efficiency of real estate portfolios for owners and managers.</p>
 
