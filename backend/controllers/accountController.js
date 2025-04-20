@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const axios = require("axios");
 const Account = require("../models/accountModel");
 const User = require("../models/userModel");
 const Package = require("../models/packageModel");
@@ -15,6 +16,13 @@ const sendEmail = require("../utils/sendEmail");
 const { newMemberHtml } = require("../utils/htmlMessages");
 const { formatSaudiNumber } = require("../utils/formatNumbers");
 const { getSubscriptionPrice } = require("../utils/subscribeHelpers");
+
+const store = process.env.TELR_STORE_ID;
+const authkey = process.env.TELR_AUTH_KEY;
+const authorised = process.env.TELR_AUTHORISED_URL;
+const declined = process.env.TELR_DECLINED_URL;
+const cancelled = process.env.TELR_CANCELLED_URL;
+const test = process.env.NODE_ENV !== "production" ? "1" : "0";
 
 const memberPopOptions = {
   path: "members.user",
@@ -77,7 +85,9 @@ exports.getMyAccount = catchAsync(async (req, res, next) => {
 });
 
 exports.getMyPurchases = catchAsync(async (req, res, next) => {
-  const purchases = await Purchase.find({ account: req.user.account }).lean();
+  const purchases = await Purchase.find({ account: req.user.account })
+    .select("amount status type customPackage date billInfo")
+    .lean();
 
   res.status(200).json({
     status: "success",
@@ -85,6 +95,35 @@ exports.getMyPurchases = catchAsync(async (req, res, next) => {
       purchases,
     },
   });
+});
+
+exports.checkPurchaseStatus = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  let retryCount = 0;
+  const maxRetries = 2;
+  const retryDelay = 1500; // 1.5 sec
+
+  async function attemptCheck() {
+    const purchase = await Purchase.findById(id).select("status").lean();
+
+    if (!purchase) {
+      return next(new ApiError("Purchase not found", 404));
+    }
+
+    if (purchase.status !== "completed" && retryCount < maxRetries) {
+      retryCount++;
+
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+
+      return attemptCheck();
+    }
+
+    res.status(200).json({
+      status: purchase.status === "completed" ? "COMPLETED" : "NOT_COMPLETED",
+    });
+  }
+
+  await attemptCheck();
 });
 
 exports.subscribe = catchAsync(async (req, res, next) => {
@@ -279,45 +318,53 @@ exports.subscribe = catchAsync(async (req, res, next) => {
     return next(new ApiError("Invalid subscription", 400));
   }
 
-  await Promise.all([
-    Account.findByIdAndUpdate(id, accountData),
+  const purchaseId = new mongoose.Types.ObjectId();
 
-    ScheduledMission.deleteOne({
-      account: id,
-      type: "SUBSCRIPTION_EXPIRATION",
-      isDone: false,
-    }),
+  const options = {
+    method: "POST",
+    url: "https://secure.telr.com/gateway/order.json",
+    headers: { accept: "application/json", "Content-Type": "application/json" },
+    data: {
+      method: "create",
+      store,
+      authkey,
+      framed: 0,
+      order: {
+        cartid: purchaseId.toString(),
+        test,
+        amount: cost,
+        currency: "SAR",
+        description: "custom subscription",
+      },
+      return: {
+        authorised,
+        declined,
+        cancelled,
+      },
+    },
+  };
 
-    Purchase.create({
-      account: id,
-      amount: cost,
-      type: "custom",
-      customPackage: req.body,
-    }),
-  ]);
+  const { data } = await axios.request(options);
+  const { order } = data;
+  const { ref, url } = order;
 
-  await Promise.all([
-    ScheduledMission.create({
-      account: id,
-      accountOwner: account.owner,
-      type: "SUBSCRIPTION_EXPIRATION",
-      scheduledAt: expireDate,
-    }),
-
-    sendWAText(
-      formatSaudiNumber(account.owner.phone),
-      `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
-
-      \n\n
-      تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.
-      `
-    ),
-  ]);
+  await Purchase.create({
+    _id: purchaseId,
+    account: id,
+    amount: cost,
+    type: "custom",
+    customPackage: req.body,
+    accountData,
+    telrRef: ref,
+  });
 
   res.status(200).json({
     status: "success",
     data: {
-      subscriptionCost: cost,
+      paymentUrl: url,
+      purchaseId,
+      purchaseRef: ref,
+      amount: cost,
     },
   });
 });
@@ -676,6 +723,7 @@ exports.addVIP = catchAsync(async (req, res, next) => {
   await Promise.all([
     ScheduledMission.create({
       account: id,
+      accountOwner: updatedAccount.owner,
       type: "SUBSCRIPTION_EXPIRATION",
       scheduledAt: expireDate,
     }),
@@ -702,3 +750,169 @@ exports.addVIP = catchAsync(async (req, res, next) => {
     message: "Account is now VIP",
   });
 });
+
+exports.telrWebhook = catchAsync(async (req, res, next) => {
+  // console.log("webhook body", req.body);
+
+  const {
+    tran_store,
+    tran_type,
+    tran_class,
+    tran_test,
+    tran_ref,
+    tran_prevref,
+    tran_firstref,
+    tran_currency,
+    tran_amount,
+    tran_cartid,
+    tran_desc,
+    tran_status,
+    tran_authcode,
+    tran_authmessage,
+    tran_check,
+    card_code,
+    card_payment,
+    bin_number,
+    card_issuer,
+    card_country,
+    card_last4,
+    card_check,
+    cart_lang,
+    integration_id,
+    actual_payment_date,
+    bill_fname,
+    bill_sname,
+    bill_addr1,
+    bill_city,
+    bill_country,
+    bill_email,
+    bill_phone1,
+    bill_check,
+  } = req.body;
+
+  amount = parseFloat(tran_amount);
+
+  if (tran_type !== "sale" && tran_status !== "A" && tran_status !== "H") {
+    return res.status(400);
+  }
+
+  const purchase = await Purchase.findById(tran_cartid).populate({
+    path: "account",
+    populate: {
+      path: "owner",
+      select: "name email phone",
+    },
+  });
+
+  if (!purchase) {
+    return res.status(404);
+  }
+
+  purchase.status = "completed";
+  purchase.paymentInfo = {
+    tran_store,
+    tran_type,
+    tran_class,
+    tran_test,
+    tran_ref,
+    tran_prevref,
+    tran_firstref,
+    tran_currency,
+    tran_amount: amount,
+    tran_desc,
+    tran_status,
+    tran_authcode,
+    tran_authmessage,
+    tran_check,
+    card_code,
+    card_payment,
+    bin_number,
+    card_issuer,
+    card_country,
+    card_last4,
+    card_check,
+    cart_lang,
+    integration_id,
+    actual_payment_date: new Date(actual_payment_date),
+  };
+  purchase.billInfo = {
+    bill_fname,
+    bill_sname,
+    bill_addr1,
+    bill_city,
+    bill_country,
+    bill_email,
+    bill_phone1,
+  };
+
+  switch (purchase.type) {
+    case "custom":
+      await processCustomSubscription(purchase);
+      break;
+    case "package":
+      // await processPackageSubscription(purchase);
+      break;
+    case "vip":
+      // await processVIPSubscription(purchase);
+      break;
+    default:
+      return res.status(400);
+  }
+
+  return res.status(200);
+});
+
+async function processCustomSubscription(purchase) {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    await Account.findByIdAndUpdate(
+      purchase.account._id,
+      purchase.accountData,
+      { session }
+    );
+
+    await ScheduledMission.deleteOne(
+      {
+        account: purchase.account._id,
+        type: "SUBSCRIPTION_EXPIRATION",
+        isDone: false,
+      },
+      { session }
+    );
+
+    const expireDate = purchase.accountData.subscriptionEndDate;
+
+    await purchase.save({ session });
+
+    await ScheduledMission.create(
+      [
+        {
+          account: purchase.account._id,
+          accountOwner: purchase.account.owner,
+          type: "SUBSCRIPTION_EXPIRATION",
+          scheduledAt: expireDate,
+        },
+      ],
+      { session }
+    );
+
+    await sendWAText(
+      formatSaudiNumber(purchase.account.owner.phone),
+      `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
+  
+        \n\n
+        تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.
+        `
+    );
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error; // Re-throw the error for further handling
+  } finally {
+    session.endSession();
+  }
+}

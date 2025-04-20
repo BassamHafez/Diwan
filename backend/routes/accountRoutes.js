@@ -23,6 +23,7 @@ router.delete(
 router.get("/my-account", accountController.getMyAccount);
 
 router.get("/purchases", accountController.getMyPurchases);
+router.get('/purchases/:id', accountController.checkPurchaseStatus);
 
 router.patch(
   "/:id",
