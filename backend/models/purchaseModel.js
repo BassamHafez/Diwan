@@ -30,10 +30,14 @@ const purchaseSchema = new mongoose.Schema({
     ref: "Package",
   },
   customPackage: Object,
+  accountData: Object,
   date: {
     type: Date,
     default: Date.now,
   },
+  telrRef: String,
+  paymentInfo: Object,
+  billInfo: Object,
 });
 
 const Purchase = mongoose.model("Purchase", purchaseSchema);

@@ -13,6 +13,7 @@ const ApiError = require("./utils/ApiError");
 const startCronJobs = require("./cronJobs");
 const ensureDirectories = require("./utils/createStaticFiles");
 const globalErrorHandler = require("./controllers/errorController");
+const { telrWebhook } = require("./controllers/accountController");
 const mountRoutes = require("./routes");
 
 const app = express();
@@ -73,6 +74,7 @@ app.use(
 app.use(compression());
 
 // ROUTES
+app.post("/api/v1/telr-webhook", telrWebhook);
 mountRoutes(app);
 
 app.all("*", (req, res, next) => {
