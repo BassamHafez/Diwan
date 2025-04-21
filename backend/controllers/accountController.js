@@ -345,6 +345,11 @@ exports.subscribe = catchAsync(async (req, res, next) => {
   };
 
   const { data } = await axios.request(options);
+
+  if (!data || data.error || !data.order) {
+    return next(new ApiError("Error getting payment link", 500));
+  }
+
   const { order } = data;
   const { ref, url } = order;
 
