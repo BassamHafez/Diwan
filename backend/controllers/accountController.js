@@ -453,67 +453,60 @@ exports.subscribeInPackage = catchAsync(async (req, res, next) => {
     );
   }
 
+  const purchaseId = new mongoose.Types.ObjectId();
+
+  const options = {
+    method: "POST",
+    url: "https://secure.telr.com/gateway/order.json",
+    headers: { accept: "application/json", "Content-Type": "application/json" },
+    data: {
+      method: "create",
+      store,
+      authkey,
+      framed: 0,
+      order: {
+        cartid: purchaseId.toString(),
+        test,
+        amount: package.price,
+        currency: "SAR",
+        description: "package subscription",
+      },
+      return: {
+        authorised,
+        declined,
+        cancelled,
+      },
+    },
+  };
+
+  const { data } = await axios.request(options);
+  const { order } = data;
+  const { ref, url } = order;
+
   const expireDate = new Date(
     Date.now() + package.duration * 30.25 * 24 * 60 * 60 * 1000 // 30 days + 6 hours
   );
 
-  await Promise.all([
-    Account.findByIdAndUpdate(id, {
-      subscriptionEndDate: expireDate,
-
-      allowedUsers: parseInt(features.allowedUsers) || 0,
-      allowedCompounds: parseInt(features.allowedCompounds) || 0,
-      allowedEstates: parseInt(features.allowedEstates) || 0,
-      maxEstatesInCompound: parseInt(features.maxEstatesInCompound),
-      isFavoriteAllowed: Boolean(features.isFavoriteAllowed),
-      isRemindersAllowed: Boolean(features.isRemindersAllowed),
-      isAnalysisAllowed: Boolean(features.isAnalysisAllowed),
-      isFinancialReportsAllowed: Boolean(features.isFinancialReportsAllowed),
-      isOperationalReportsAllowed: Boolean(
-        features.isOperationalReportsAllowed
-      ),
-      isCompoundsReportsAllowed: Boolean(features.isCompoundsReportsAllowed),
-      isTasksAllowed: Boolean(features.isTasksAllowed),
-      isFilesExtractAllowed: Boolean(features.isFilesExtractAllowed),
-      isServiceContactsAllowed: Boolean(features.isServiceContactsAllowed),
-      isUserPermissionsAllowed: Boolean(features.isUserPermissionsAllowed),
-    }),
-
-    ScheduledMission.deleteOne({
-      account: id,
-      type: "SUBSCRIPTION_EXPIRATION",
-      isDone: false,
-    }),
-
-    Purchase.create({
-      account: id,
-      amount: package.price,
-      type: "package",
-      package: packageId,
-    }),
-  ]);
-
-  await Promise.all([
-    ScheduledMission.create({
-      account: id,
-      accountOwner: account.owner,
-      type: "SUBSCRIPTION_EXPIRATION",
-      scheduledAt: expireDate,
-    }),
-
-    sendWAText(
-      formatSaudiNumber(account.owner.phone),
-      `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
-
-      \n\n
-      تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.`
-    ),
-  ]);
+  await Purchase.create({
+    _id: purchaseId,
+    account: id,
+    amount: package.price,
+    type: "package",
+    package: packageId,
+    accountData: {
+      features,
+      expireDate,
+    },
+    telrRef: ref,
+  });
 
   res.status(200).json({
     status: "success",
     data: {
-      subscriptionCost: package.price,
+      paymentUrl: url,
+      purchaseId,
+      purchaseRef: ref,
+      amount: package.price,
     },
   });
 });
@@ -855,7 +848,7 @@ exports.telrWebhook = catchAsync(async (req, res, next) => {
       await processCustomSubscription(purchase);
       break;
     case "package":
-      // await processPackageSubscription(purchase);
+      await processPackageSubscription(purchase);
       break;
     case "vip":
       // await processVIPSubscription(purchase);
@@ -904,6 +897,8 @@ async function processCustomSubscription(purchase) {
       { session }
     );
 
+    await session.commitTransaction();
+
     await sendWAText(
       formatSaudiNumber(purchase.account.owner.phone),
       `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
@@ -912,8 +907,79 @@ async function processCustomSubscription(purchase) {
         تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.
         `
     );
+  } catch (error) {
+    await session.abortTransaction();
+    throw error; // Re-throw the error for further handling
+  } finally {
+    session.endSession();
+  }
+}
+
+async function processPackageSubscription(purchase) {
+  const session = await mongoose.startSession();
+
+  try {
+    session.startTransaction();
+
+    const { expireDate, features } = purchase.accountData;
+
+    await Account.findByIdAndUpdate(
+      purchase.account._id,
+      {
+        subscriptionEndDate: expireDate,
+
+        allowedUsers: parseInt(features.allowedUsers) || 0,
+        allowedCompounds: parseInt(features.allowedCompounds) || 0,
+        allowedEstates: parseInt(features.allowedEstates) || 0,
+        maxEstatesInCompound: parseInt(features.maxEstatesInCompound),
+        isFavoriteAllowed: Boolean(features.isFavoriteAllowed),
+        isRemindersAllowed: Boolean(features.isRemindersAllowed),
+        isAnalysisAllowed: Boolean(features.isAnalysisAllowed),
+        isFinancialReportsAllowed: Boolean(features.isFinancialReportsAllowed),
+        isOperationalReportsAllowed: Boolean(
+          features.isOperationalReportsAllowed
+        ),
+        isCompoundsReportsAllowed: Boolean(features.isCompoundsReportsAllowed),
+        isTasksAllowed: Boolean(features.isTasksAllowed),
+        isFilesExtractAllowed: Boolean(features.isFilesExtractAllowed),
+        isServiceContactsAllowed: Boolean(features.isServiceContactsAllowed),
+        isUserPermissionsAllowed: Boolean(features.isUserPermissionsAllowed),
+      },
+      { session }
+    );
+
+    await ScheduledMission.deleteOne(
+      {
+        account: purchase.account._id,
+        type: "SUBSCRIPTION_EXPIRATION",
+        isDone: false,
+      },
+      { session }
+    );
+
+    await purchase.save({ session });
+
+    await ScheduledMission.create(
+      [
+        {
+          account: purchase.account._id,
+          accountOwner: purchase.account.owner,
+          type: "SUBSCRIPTION_EXPIRATION",
+          scheduledAt: expireDate,
+        },
+      ],
+      { session }
+    );
 
     await session.commitTransaction();
+
+    await sendWAText(
+      formatSaudiNumber(purchase.account.owner.phone),
+      `Your subscription at Diiwan.com has been updated successfully. Your new subscription will end at ${expireDate.toLocaleString()}.
+  
+        \n\n
+        تم تحديث اشتراكك في Diiwan.com بنجاح. سينتهي اشتراكك الجديد في ${expireDate.toLocaleString()}.`
+    );
   } catch (error) {
     await session.abortTransaction();
     throw error; // Re-throw the error for further handling
