@@ -3,6 +3,8 @@ const factory = require("./handlerFactory");
 const catchAsync = require("../utils/catchAsync");
 const ApiError = require("../utils/ApiError");
 const sendEmail = require("../utils/sendEmail");
+const { sendWAText } = require("../utils/sendWAMessage");
+const { formatSaudiNumber } = require("../utils/formatNumbers");
 
 const popOptions = [
   {
@@ -41,10 +43,36 @@ exports.updateSupportMessageStatus = catchAsync(async (req, res, next) => {
   const msgId = req.params.id;
   const { status } = req.body;
 
-  const result = await Message.updateOne({ _id: msgId }, { status });
+  const message = await Message.findByIdAndUpdate(
+    msgId,
+    { status },
+    { new: true, runValidators: true }
+  ).populate("user", "name email phone");
 
-  if (result.modifiedCount < 1) {
+  if (!message) {
     return next(new ApiError("Message not found", 404));
+  }
+
+  if (status === "completed") {
+    if (message.email || message.user.email) {
+      sendEmail(
+        message.email || message.user.email,
+        "Support Message Completed",
+        `تم إغلاق طلب الدعم الخاص بك  تحت عنوان "${message.subject}"\n\n` +
+          `نشكرك على صبرك وتفهمك.\n\n` +
+          `إذا كان لديك أي استفسارات أخرى، فلا تتردد في التواصل معنا.`
+      );
+    }
+
+    if (message.phone || message.user.phone) {
+      const phone = formatSaudiNumber(message.phone || message.user.phone);
+      sendWAText(
+        phone,
+        `تم إغلاق طلب الدعم الخاص بك  تحت عنوان "${message.subject}"\n\n` +
+          `نشكرك على صبرك وتفهمك.\n\n` +
+          `إذا كان لديك أي استفسارات أخرى، فلا تتردد في التواصل معنا.`
+      );
+    }
   }
 
   res.status(200).json({
